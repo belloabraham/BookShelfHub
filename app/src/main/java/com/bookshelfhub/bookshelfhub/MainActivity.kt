@@ -7,12 +7,19 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
+import com.bookshelfhub.bookshelfhub.databinding.FragmentSignupBinding
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var layout: ActivityMainBinding;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+
+        layout = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(layout.root)
+
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)

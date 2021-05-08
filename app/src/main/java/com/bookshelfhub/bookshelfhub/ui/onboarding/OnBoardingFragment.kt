@@ -18,6 +18,8 @@ class OnBoardingFragment:Fragment() {
     ): View {
         layout= FragmentOnboardingBinding.inflate(inflater, container, false);
 
+        val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment()
+        val actionSignUp = OnBoardingFragmentDirections.actionOnBoardingFragmentToSignUpFragment()
 
         return layout.root
     }

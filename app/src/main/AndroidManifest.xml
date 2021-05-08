@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub">
-        <activity android:name=".WelcomeActivity"></activity>
+        <activity android:name=".WelcomeActivity"/>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
