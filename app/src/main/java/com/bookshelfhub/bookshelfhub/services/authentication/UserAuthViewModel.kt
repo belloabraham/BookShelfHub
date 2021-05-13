@@ -3,8 +3,11 @@ package com.bookshelfhub.bookshelfhub.services.authentication
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class UserAuthViewModel : ViewModel() {
+@HiltViewModel
+class UserAuthViewModel @Inject constructor() : ViewModel() {
 
     private var isAuthenticated: MutableLiveData<Boolean>
 

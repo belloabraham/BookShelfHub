@@ -4,15 +4,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginHorizontal="@dimen/size_16"
+    android:layout_marginTop="@dimen/size_16"
+    android:layout_marginBottom="@dimen/size_25"
     tools:context=".ui.onboarding.OnBoardingFragment">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+    <com.smarteist.autoimageslider.SliderView
+        android:id="@+id/sliderView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/size_4"
+        app:layout_constraintBottom_toTopOf="@+id/btn_signup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:sliderAnimationDuration="600"
+        app:sliderAutoCycleDirection="back_and_forth"
+        app:sliderIndicatorAnimationDuration="600"
+        app:sliderIndicatorGravity="start|top"
+        app:sliderIndicatorMargin="15dp"
+        app:sliderIndicatorOrientation="horizontal"
+        app:sliderIndicatorPadding="3dp"
+        app:sliderStartAutoCycle="true"
+        app:sliderAutoCycleEnabled="true"
+        app:sliderIndicatorRadius="2dp"
+        app:sliderIndicatorSelectedColor="@color/black"
+        app:sliderIndicatorUnselectedColor="@android:color/white"
+        app:sliderScrollTimeInSec="3" />
+
+
+
+    <Button
+        android:id="@+id/btn_signup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_4"
+        android:padding="@dimen/size_12"
+        android:text="@string/sign_up"
+        android:layout_marginHorizontal="@dimen/size_16"
+        android:textAllCaps="false"
+        android:textSize="@dimen/txt_size_18sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size_16"
+        android:padding="@dimen/size_12"
+        android:text="@string/login"
+        android:textAllCaps="false"
+        android:textSize="@dimen/txt_size_18sp"
+        android:backgroundTint="@color/blue_grey_100"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

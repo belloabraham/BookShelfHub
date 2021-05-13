@@ -12,12 +12,14 @@
         tools:layout="@layout/fragment_onboarding">
         <action
             android:id="@+id/action_onBoardingFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_right" />
         <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:enterAnim="@anim/zoom_slide_in_left"
-            app:exitAnim="@anim/zoom_slide_out_left" />
+            app:enterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
