@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
-import com.bookshelfhub.bookshelfhub.databinding.FragmentSignupBinding
 
 class LoginFragment:Fragment() {
 
     private lateinit var layout: FragmentLoginBinding;
+    private val args:LoginFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -18,8 +19,7 @@ class LoginFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentLoginBinding.inflate(inflater, container, false);
-
-
+        layout.description.setText(args.description)
         return layout.root
     }
 

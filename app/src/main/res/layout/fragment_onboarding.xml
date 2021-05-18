@@ -26,11 +26,9 @@
         app:sliderIndicatorMargin="15dp"
         app:sliderIndicatorOrientation="horizontal"
         app:sliderIndicatorPadding="3dp"
-        app:sliderStartAutoCycle="true"
-        app:sliderAutoCycleEnabled="true"
         app:sliderIndicatorRadius="2dp"
-        app:sliderIndicatorSelectedColor="@color/black"
-        app:sliderIndicatorUnselectedColor="@android:color/white"
+        app:sliderIndicatorSelectedColor="?attr/colorSecondary"
+        app:sliderIndicatorUnselectedColor="@color/blue_grey_100"
         app:sliderScrollTimeInSec="3" />
 
 

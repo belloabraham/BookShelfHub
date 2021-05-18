@@ -10,7 +10,6 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
-import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController.ClickListener
 import com.smarteist.autoimageslider.SliderAnimations
@@ -26,6 +25,7 @@ class OnBoardingFragment:Fragment() {
 
     private lateinit var layout: FragmentOnboardingBinding;
 
+    //Injecting and instance of Slider Adapter class with Dagger
     @Inject
     lateinit var sliderAdapter:SliderAdapter
 
@@ -33,47 +33,53 @@ class OnBoardingFragment:Fragment() {
 
         layout = FragmentOnboardingBinding.inflate(inflater, container, false);
 
+        //Setting up Slider view for Onboarding
         layout.sliderView.setSliderAdapter(sliderAdapter)
-
         layout.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM)
         layout.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
         layout.sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT)
-       // layout.sliderView.setIndicatorSelectedColor(Color.WHITE);
-       // layout.sliderView.setIndicatorUnselectedColor(Color.GRAY);
-
+        layout.sliderView.setAutoCycle(true)
+        layout.sliderView.startAutoCycle()
         layout.sliderView.setOnIndicatorClickListener(ClickListener { position ->
             layout.sliderView.setCurrentPagePosition(
                 position
             )
         })
-
         addSliderItems(sliderAdapter)
 
+
+        //Navigate to Login Fragment
         layout.btnLogin.setOnClickListener {
-            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment()
+            val buttonText = getString(R.string.login)
+            val description =getString(R.string.login_desicription)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(buttonText, description)
             findNavController().navigate(actionLogin)
         }
 
+        //Navigate to Login Fragment
         layout.btnSignup.setOnClickListener {
-            val actionSignUp = OnBoardingFragmentDirections.actionOnBoardingFragmentToSignUpFragment()
-            findNavController().navigate(actionSignUp)
+           val buttonText = getString(R.string.sign_up)
+            val description =getString(R.string.sign_up_desicription)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(buttonText, description)
+            findNavController().navigate(actionLogin)
         }
 
         return layout.root
     }
 
     private fun addSliderItems(sliderAdapter: SliderAdapter){
-        val titles = resources.getStringArray(R.array.titles)
-        val subTitles = resources.getStringArray(R.array.subTitles)
-        val description = resources.getStringArray(R.array.description)
-        val resourceIds:IntArray = intArrayOf(R.drawable.logo,R.drawable.logo, R.drawable.logo )
-        val length:Int = titles.size-1;
+        if (sliderAdapter.count<=0){
+            val titles = resources.getStringArray(R.array.titles)
+            val subTitles = resources.getStringArray(R.array.subTitles)
+            val description = resources.getStringArray(R.array.description)
+            val resourceIds:IntArray = intArrayOf(R.drawable.shelf,R.drawable.upload, R.drawable.group )
+            val length:Int = titles.size-1;
 
-        for (i in 0..length ){
-            val sliderItem = SliderItem(titles[i], subTitles[i], description[i], resourceIds[i]);
-            sliderAdapter.addItem(sliderItem)
+            for (i in 0..length ){
+                val sliderItem = SliderItem(titles[i], subTitles[i], description[i], resourceIds[i]);
+                sliderAdapter.addItem(sliderItem)
+            }
         }
-
     }
 
 }

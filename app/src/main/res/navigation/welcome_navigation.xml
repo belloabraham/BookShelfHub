@@ -11,11 +11,6 @@
         android:label="OnBoardingFragment"
         tools:layout="@layout/fragment_onboarding">
         <action
-            android:id="@+id/action_onBoardingFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_right" />
-        <action
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -25,10 +20,22 @@
         android:id="@+id/loginFragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.login.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <argument
+            android:name="buttonText"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_loginFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_right" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+    </fragment>
     <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.signup.SignUpFragment"
-        android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup" />
+        android:id="@+id/verificationFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.verification.VerificationFragment"
+        android:label="fragment_verification"
+        tools:layout="@layout/fragment_verification" />
 </navigation>
