@@ -41,8 +41,6 @@
         android:padding="@dimen/size_12"
         android:text="@string/sign_up"
         android:layout_marginHorizontal="@dimen/size_16"
-        android:textAllCaps="false"
-        android:textSize="@dimen/txt_size_18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -54,8 +52,6 @@
         android:layout_marginHorizontal="@dimen/size_16"
         android:padding="@dimen/size_12"
         android:text="@string/login"
-        android:textAllCaps="false"
-        android:textSize="@dimen/txt_size_18sp"
         android:backgroundTint="@color/blue_grey_100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

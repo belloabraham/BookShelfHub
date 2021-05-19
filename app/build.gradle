@@ -72,11 +72,20 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
-    //OnBoarding Image Auto Slider
-    implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+
+    //UI Libraries
+    //--Country dialing code picker
+    implementation 'com.hbb20:ccp:2.5.1'
+    //--ToolTip
+    implementation "com.github.skydoves:balloon:1.3.4"
+    //--OnBoarding Image Auto Slider
+    implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
+
+
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:27.1.0')

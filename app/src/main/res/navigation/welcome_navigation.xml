@@ -21,16 +21,13 @@
         android:name="com.bookshelfhub.bookshelfhub.ui.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
-        <argument
-            android:name="buttonText"
-            app:argType="string" />
         <action
             android:id="@+id/action_loginFragment_to_verificationFragment"
             app:destination="@id/verificationFragment"
             app:enterAnim="@anim/enter_from_right"
             app:popExitAnim="@anim/exit_to_right" />
         <argument
-            android:name="description"
+            android:name="login_signup"
             app:argType="string" />
     </fragment>
     <fragment

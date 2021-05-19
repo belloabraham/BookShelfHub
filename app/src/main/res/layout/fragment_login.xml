@@ -8,6 +8,16 @@
     android:layout_marginHorizontal="@dimen/size_16"
     tools:context=".ui.login.LoginFragment">
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:text="Login"
+        style="@style/TextAppearance.MaterialComponents.Headline4"
+        android:textColor="?attr/colorSecondaryVariant"
+        android:layout_marginTop="@dimen/size_25"/>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,60 +28,127 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_width="@dimen/size_150"
+            android:layout_height="@dimen/size_150"
             android:src="@drawable/logo"
+            android:layout_marginBottom="@dimen/size_25"
             android:paddingBottom="@dimen/size_25" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_32"
-            app:layout_constraintEnd_toEndOf="parent"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:textSize="@dimen/txt_size_18sp"
-                android:inputType="phone"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompat"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/phone_num" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/errorAlert"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.hbb20.CountryCodePicker
+                    android:id="@+id/ccp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    app:ccp_autoDetectCountry="true"
+                    app:ccp_showFlag="false"
+                    app:ccp_showNameCode="false" />
+
+                <View
+                    android:layout_width="@dimen/line_height"
+                    android:layout_height="@dimen/size_25"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="@dimen/size_7"
+                    android:background="@color/blue_grey_100" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:backgroundTint="@color/white"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:helperTextEnabled="true"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/phoneNumEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:hint="@string/phone_num"
+                        android:inputType="phone"
+                        android:textSize="@dimen/size_18sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <ImageView
+                android:id="@+id/errorAlert"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginTop="2dp"
+                android:padding="2dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_info_24_red"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/linearLayoutCompat"
+                app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat"
+                app:layout_constraintVertical_bias="0.52" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+        <View
+            android:id="@+id/bottomLine"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_height="@dimen/line_height"
+            android:background="?attr/colorPrimary" />
 
         <Button
             android:id="@+id/btn_phone_login"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:text="@string/continue_login"
+            android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/size_16"
             android:padding="@dimen/size_12"
-            android:textAllCaps="false"
-            android:textSize="@dimen/txt_size_18sp"
             app:strokeColor="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-           android:paddingVertical="@dimen/size_16"
-            android:layout_marginVertical="@dimen/size_16"/>
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_marginVertical="@dimen/size_8"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/or"
+            android:textAllCaps="true"
+            android:textSize="@dimen/size_18sp"
+            android:layout_marginVertical="@dimen/size_8"/>
 
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_google_login"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/size_32"
+            android:layout_height="@dimen/button_height"
+            android:paddingEnd="@dimen/size_70"
+            android:paddingStart="@dimen/size_25"
             android:textColor="@color/white"
             android:paddingVertical="@dimen/size_16"
             android:drawablePadding="@dimen/size_16"
             android:gravity="center"
             android:backgroundTint="@color/blue_grey_100"
-            android:text="@string/continue_w_g"
-            android:textAllCaps="false"
-            android:textSize="@dimen/txt_size_18sp"
             android:drawableStart="@drawable/ic_google_signin"/>
 
 

@@ -4,16 +4,16 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
-    <string name="continue_w_g">Continue with Google</string>
-    <string name="login">Log in</string>
+    <string name="google_btn_text">%1$s with Google</string>
+    <string name="login">Login</string>
     <string name="sign_up">Sign up</string>
 
-    <string name="continue_login">Continue</string>
+    <string name="with_phone">%1$s with phone</string>
 
-    <string name="sign_up_desicription">Enter your phone number and click continue to begin sign up process or use an alternative Google sign up below</string>
+    <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %1$s.</string>
 
-    <string name="login_desicription">Enter your phone number and click continue to begin login process or use an alternative Google login below</string>
-
-    <string name="phone_num">Phone number</string>
+    <string name="phone_num">Enter phone number</string>
     <string name="or">Or</string>
+
+    <string name="phone_error_msg">Enter a valid phone number</string>
 </resources>
