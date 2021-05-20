@@ -52,7 +52,7 @@
         android:layout_marginHorizontal="@dimen/size_16"
         android:padding="@dimen/size_12"
         android:text="@string/login"
-        android:backgroundTint="@color/blue_grey_100"
+        android:backgroundTint="?attr/colorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -13,7 +13,9 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub">
         <activity android:name=".TestActivity" />
-        <activity android:name=".WelcomeActivity"/>
+        <activity android:name=".WelcomeActivity"
+            android:windowSoftInputMode="stateAlwaysVisible"
+            />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">

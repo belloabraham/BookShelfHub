@@ -44,33 +44,38 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
 dependencies {
-
+    //Android Jetpack
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    //Navigation Component
+    //--Navigation Component
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
 
-    //Live Data
+    //--Live Data
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
 
-    //View Model
+    //--View Model
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
 
-    //Testing
+    //--Testing
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    //Dagger Hilt
+    //--Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    //implementation 'androidx.hilt:hilt-navigation-compose:1.0.0-alpha02'
+
+
+    //--Data Store
+    implementation("androidx.datastore:datastore-preferences:1.0.0-beta01")
 
 
     //Picasso
@@ -84,6 +89,8 @@ dependencies {
     implementation "com.github.skydoves:balloon:1.3.4"
     //--OnBoarding Image Auto Slider
     implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
+    //--OTP Code Input UI
+    implementation 'com.github.aabhasr1:OtpView:v1.1.2-ktx'
 
 
 

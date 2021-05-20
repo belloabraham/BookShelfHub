@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/errorAlert"
+                app:layout_constraintEnd_toStartOf="@+id/errorAlertBtn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -79,6 +79,7 @@
                         android:id="@+id/phoneNumEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
                         android:backgroundTint="@color/white"
                         android:hint="@string/phone_num"
                         android:inputType="phone"
@@ -88,8 +89,8 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <ImageView
-                android:id="@+id/errorAlert"
+            <ImageButton
+                android:id="@+id/errorAlertBtn"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:layout_marginTop="2dp"
@@ -148,7 +149,7 @@
             android:paddingVertical="@dimen/size_16"
             android:drawablePadding="@dimen/size_16"
             android:gravity="center"
-            android:backgroundTint="@color/blue_grey_100"
+            android:backgroundTint="?attr/colorSecondary"
             android:drawableStart="@drawable/ic_google_signin"/>
 
 

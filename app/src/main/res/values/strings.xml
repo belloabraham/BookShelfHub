@@ -14,6 +14,11 @@
 
     <string name="phone_num">Enter phone number</string>
     <string name="or">Or</string>
-
     <string name="phone_error_msg">Enter a valid phone number</string>
+
+    <string name="name">Name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="email">Email</string>
+
 </resources>

@@ -51,14 +51,14 @@ class OnBoardingFragment:Fragment() {
         //Navigate to Login Fragment
         layout.btnLogin.setOnClickListener {
             val login = getString(R.string.login)
-            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(login)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(login, false)
             findNavController().navigate(actionLogin)
         }
 
         //Navigate to Login Fragment
         layout.btnSignup.setOnClickListener {
            val signUp = getString(R.string.sign_up)
-            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp, true)
             findNavController().navigate(actionLogin)
         }
 
