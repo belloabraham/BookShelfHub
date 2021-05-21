@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="orange">#FFFFAB40</color>
+    <color name="white_94">#fff0f0f0</color>
+
+    <color name="orange">#FFAB40</color>
 
     <color name="purple_700">#FF320066</color>
     <color name="white_black">@color/white</color>

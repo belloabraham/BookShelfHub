@@ -1,8 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.verification.VerificationFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.welcome.VerificationFragment"
+    android:paddingVertical="@dimen/size_25">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/size_25"
+        android:gravity="center"
+        android:layout_gravity="top">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/verify_phone"
+            android:textAlignment="center"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:layout_marginTop="@dimen/size_25"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="@dimen/size_16sp"
+            android:layout_marginTop="@dimen/size_25"
+            android:textColor="?attr/colorSecondaryVariant"
+            android:text="@string/enter_code_sent" />
+
+        <TextView
+            android:id="@+id/phone_number_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="@dimen/size_16sp"
+            android:layout_marginBottom="@dimen/size_25"/>
+
+        <in.aabhasjindal.otptextview.OtpTextView
+            android:id="@+id/otp_view"
+            android:layout_marginTop="@dimen/size_25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:height="45dp"
+            app:width="40dp"
+            app:bar_enabled="false"
+            app:bar_height="2dp"
+            app:hide_otp="true"
+            app:hide_otp_drawable="@drawable/otp_hide_background"
+            app:otp_box_background_inactive="@drawable/otp_background_inactive"
+            app:otp_box_background_active="@drawable/otp_background_active"
+            app:length="@integer/otp_code_length"
+            app:bar_error_color="@color/error_red"
+            android:layout_marginBottom="@dimen/size_25"
+            app:otp_text_size="30sp"/>
+
+        <TextView
+            android:id="@+id/timerTxtView"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="@dimen/size_25"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="@dimen/size_16sp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/resendCodeTxtView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resend_code"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/size_25"
+            style="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="@dimen/size_16sp"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+        <Button
+            android:id="@+id/verifyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_16"
+            android:padding="@dimen/size_12"
+            android:layout_marginBottom="@dimen/size_25"
+            android:text="@string/verify" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</FrameLayout>

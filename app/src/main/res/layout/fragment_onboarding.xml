@@ -7,7 +7,7 @@
     android:layout_marginHorizontal="@dimen/size_16"
     android:layout_marginTop="@dimen/size_16"
     android:layout_marginBottom="@dimen/size_25"
-    tools:context=".ui.onboarding.OnBoardingFragment">
+    tools:context=".ui.welcome.OnBoardingFragment">
 
 
     <com.smarteist.autoimageslider.SliderView
@@ -22,6 +22,7 @@
         app:sliderAnimationDuration="600"
         app:sliderAutoCycleDirection="back_and_forth"
         app:sliderIndicatorAnimationDuration="600"
+        app:sliderIndicatorMarginLeft="@dimen/size_4"
         app:sliderIndicatorGravity="start|top"
         app:sliderIndicatorMargin="15dp"
         app:sliderIndicatorOrientation="horizontal"
@@ -40,7 +41,6 @@
         android:layout_marginBottom="@dimen/size_4"
         android:padding="@dimen/size_12"
         android:text="@string/sign_up"
-        android:layout_marginHorizontal="@dimen/size_16"
         app:layout_constraintBottom_toTopOf="@+id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -49,7 +49,6 @@
         android:id="@+id/btn_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/size_16"
         android:padding="@dimen/size_12"
         android:text="@string/login"
         android:backgroundTint="?attr/colorSecondary"

@@ -1,5 +1,3 @@
 package com.bookshelfhub.bookshelfhub.models
 
-data class User(val name:String, val email: String, val phone:String){
-
-}
+data class User(var name:String, var email: String, var phone:String)

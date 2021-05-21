@@ -10,6 +10,8 @@
 
     <string name="with_phone">%1$s with phone</string>
 
+    <string name="seconds_remaining">%1$d secs</string>
+
     <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %1$s.</string>
 
     <string name="phone_num">Enter phone number</string>
@@ -20,5 +22,17 @@
     <string name="phone_number">Phone number</string>
     <string name="date_of_birth">Date of Birth</string>
     <string name="email">Email</string>
+
+
+    <string name="verify_phone">Verify Phone Number</string>
+    <string name="enter_code_sent">Enter the 6 digit code sent to</string>
+
+    <string name="resend_code">Didn\'t receive code? Resend code</string>
+    <string name="resend_code_link">Resend code</string>
+
+    <string name="verify">Verify</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

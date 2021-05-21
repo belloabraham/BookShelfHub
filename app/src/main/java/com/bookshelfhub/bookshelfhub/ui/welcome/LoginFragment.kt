@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.login
+package com.bookshelfhub.bookshelfhub.ui.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,23 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.navGraphViewModels
-import com.bookshelfhub.bookshelfhub.OnBoardingViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
-import com.hbb20.CountryCodePicker
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -38,7 +32,6 @@ class LoginFragment:Fragment() {
 
     private lateinit var layout: FragmentLoginBinding;
     private val args:LoginFragmentArgs by navArgs()
-    private val onboardingViewModel: OnBoardingViewModel by activityViewModels()
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -64,14 +57,12 @@ class LoginFragment:Fragment() {
         layout.btnPhoneLogin.setText(loginSignupText)
         layout.btnGoogleLogin.setText(googleBtnText)
         layout.ccp.registerCarrierNumberEditText(layout.phoneNumEditText)
-        onboardingViewModel.setIsNewUser(args.isNewUser)
 
 
         lifecycleScope.launch(IO) {
-           val number = settingsUtil.getString(Settings.PHONE.key)
-            val dialingCode = settingsUtil.getString(Settings.DIALING_CODE.key)
+           val number = settingsUtil.getString(Settings.PHONE.KEY)
+            val dialingCode = settingsUtil.getString(Settings.DIALING_CODE.KEY)
             if (number!=null && dialingCode==layout.ccp.selectedCountryCodeWithPlus){
-                onboardingViewModel.setPhoneNumber(number)
                 withContext(Main) {
                     val phone  = number.replace(layout.ccp.selectedCountryCodeWithPlus,"")
                     layout.phoneNumEditText.setText(phone)
@@ -92,8 +83,8 @@ class LoginFragment:Fragment() {
             lifecycleScope.launch(Main) {
                 delay(100)
                 withContext(Main){
-                    tooltip.showPhoneNumErrorBottom(layout.errorAlertBtn, getString(R.string.phone_error_msg), layout.phoneNumEditText) {
-                        keyboardUtil.showKeyboard(it)
+                    tooltip.showPhoneNumErrorBottom(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
+                        keyboardUtil.showKeyboard(layout.phoneNumEditText)
                     }
                 }
             }
@@ -106,12 +97,13 @@ class LoginFragment:Fragment() {
                 keyboardUtil.hideKeyboard(layout.phoneNumEditText)
                 if (layout.ccp.isValidFullNumber){
                     layout.errorAlertBtn.visibility = View.GONE
-
-                    savePhoneNumber()
+                    val phoneNumber=layout.ccp.fullNumberWithPlus
+                    savePhoneNumber(phoneNumber)
+                    val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
+                    findNavController().navigate(actionVerifyPhone)
 
                 }else{
                     layout.errorAlertBtn.visibility = View.VISIBLE
-
                 }
             actionId == EditorInfo.IME_ACTION_DONE
         })
@@ -120,23 +112,29 @@ class LoginFragment:Fragment() {
         layout.btnPhoneLogin.setOnClickListener {
             if (layout.ccp.isValidFullNumber){
                 layout.errorAlertBtn.visibility = View.GONE
-                savePhoneNumber()
+                val phoneNumber=layout.ccp.fullNumberWithPlus
+                savePhoneNumber(phoneNumber)
+
+
+
+                //val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
+               // findNavController().navigate(actionVerifyPhone)
+
+
+
             }else{
                 layout.errorAlertBtn.visibility = View.VISIBLE
-
             }
         }
 
         return layout.root
     }
 
-    private fun savePhoneNumber(){
-        val number = layout.ccp.fullNumberWithPlus
+    private fun savePhoneNumber(number: String){
         lifecycleScope.launch(IO) {
-            settingsUtil.setString(Settings.PHONE.key, number)
-            settingsUtil.setString(Settings.DIALING_CODE.key, layout.ccp.selectedCountryCodeWithPlus)
+            settingsUtil.setString(Settings.PHONE.KEY, number)
+            settingsUtil.setString(Settings.DIALING_CODE.KEY, layout.ccp.selectedCountryCodeWithPlus)
         }
-        onboardingViewModel.setPhoneNumber(number)
     }
 
 }

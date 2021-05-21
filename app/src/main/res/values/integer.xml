@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="value_150">150</integer>
+
+    <integer name="otp_code_length">150</integer>
+
 </resources>

@@ -6,14 +6,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="@dimen/size_25"
     android:layout_marginHorizontal="@dimen/size_16"
-    tools:context=".ui.login.LoginFragment">
+    tools:context=".ui.welcome.LoginFragment">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start|top"
-        android:text="Login"
+        android:text="@string/login"
         style="@style/TextAppearance.MaterialComponents.Headline4"
         android:textColor="?attr/colorSecondaryVariant"
         android:layout_marginTop="@dimen/size_25"/>

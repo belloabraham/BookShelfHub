@@ -12,13 +12,13 @@ import com.skydoves.balloon.*
 open class SkyDove (private val context:Context) {
 
 
-    open fun showPhoneNumErrorBottom(anchorView:View, message:String, editText: AppCompatEditText, event: (AppCompatEditText)->Unit ){
+    open fun showPhoneNumErrorBottom(anchorView:View, message:String, event: ()->Unit ){
 
-        val balloon = showPhoneNumberError(message,editText, event)
+        val balloon = showPhoneNumberError(message, event)
         balloon.showAlignBottom(anchorView)
     }
 
-    private fun showPhoneNumberError(message:String, editText: AppCompatEditText, event: (AppCompatEditText)->Unit):Balloon{
+    private fun showPhoneNumberError(message:String, event: ()->Unit):Balloon{
         val balloon = createBalloon(context) {
             setArrowSize(15)
             setWidth(BalloonSizeSpec.WRAP)
@@ -36,7 +36,7 @@ open class SkyDove (private val context:Context) {
             setBackgroundColorResource(R.color.black)
             setBalloonAnimation(BalloonAnimation.ELASTIC)
             setOnBalloonDismissListener {
-                event(editText)
+                event()
             }
             setLifecycleOwner(lifecycleOwner)
         }

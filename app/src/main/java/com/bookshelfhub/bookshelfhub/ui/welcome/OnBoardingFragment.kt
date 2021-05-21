@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.onboarding
+package com.bookshelfhub.bookshelfhub.ui.welcome
 
 import android.os.Bundle
 import android.view.LayoutInflater

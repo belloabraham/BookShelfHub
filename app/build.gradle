@@ -62,6 +62,7 @@ dependencies {
     //--View Model
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //--Testing
     testImplementation 'junit:junit:4.+'
@@ -91,6 +92,10 @@ dependencies {
     implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
     //--OTP Code Input UI
     implementation 'com.github.aabhasr1:OtpView:v1.1.2-ktx'
+    //--Lottie Animation
+    implementation 'com.airbnb.android:lottie:3.7.0'
+    //--Text Link builder
+    implementation 'com.klinkerapps:link_builder:2.0.5'
 
 
 

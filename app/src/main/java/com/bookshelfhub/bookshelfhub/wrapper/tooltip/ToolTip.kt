@@ -7,13 +7,4 @@ import androidx.lifecycle.LifecycleOwner
 
 class ToolTip(context: Context) : SkyDove(context) {
 
-
-    override fun showPhoneNumErrorBottom(
-        anchorView: View,
-        message: String,
-        editText: AppCompatEditText,
-        event: (AppCompatEditText) -> Unit
-    ) {
-        super.showPhoneNumErrorBottom(anchorView, message, editText, event)
-    }
 }

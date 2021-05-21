@@ -2,8 +2,10 @@ package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.Utils.TimerUtil
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
+import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.Module
 import dagger.Provides
@@ -39,6 +41,12 @@ object FragmentModule {
     @Provides
     fun getToolTip(@ActivityContext context: Context):ToolTip{
         return ToolTip(context)
+    }
+
+    @FragmentScoped
+    @Provides
+    fun getTextLinkBuilder():TextLinkBuilder{
+        return TextLinkBuilder()
     }
 
 
