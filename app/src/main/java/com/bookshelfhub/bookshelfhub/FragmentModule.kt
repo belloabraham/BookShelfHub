@@ -1,9 +1,11 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.TimerUtil
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
+import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
@@ -18,18 +20,6 @@ import dagger.hilt.android.scopes.FragmentScoped
 @Module
 @InstallIn(FragmentComponent::class)
 object FragmentModule {
-
-    @FragmentScoped
-    @Provides
-    fun getSliderAdapter(imageLoader: ImageLoader):SliderAdapter{
-        return SliderAdapter(imageLoader)
-    }
-
-    @FragmentScoped
-    @Provides
-    fun getImageLoader():ImageLoader{
-        return ImageLoader()
-    }
 
     @FragmentScoped
     @Provides
@@ -49,5 +39,9 @@ object FragmentModule {
         return TextLinkBuilder()
     }
 
-
+    @FragmentScoped
+    @Provides
+    fun getConnectionUtil(@ApplicationContext context: Context):ConnectionUtil{
+        return ConnectionUtil(context)
+    }
 }

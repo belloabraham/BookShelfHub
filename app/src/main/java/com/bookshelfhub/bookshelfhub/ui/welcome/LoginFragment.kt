@@ -6,19 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import de.mateware.snacky.Snacky
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -32,6 +39,8 @@ class LoginFragment:Fragment() {
 
     private lateinit var layout: FragmentLoginBinding;
     private val args:LoginFragmentArgs by navArgs()
+    private lateinit var phoneNumber:String
+    private val welcomeActivityViewModel:WelcomeActivityViewModel by activityViewModels()
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -40,6 +49,8 @@ class LoginFragment:Fragment() {
     lateinit var tooltip: ToolTip
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var connectionUtil: ConnectionUtil
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,41 +104,45 @@ class LoginFragment:Fragment() {
 
         //Try to login or signup user when the done key gets press on keyboard if phone number is valid
         layout.phoneNumEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+               keyboardUtil.hideKeyboard(layout.phoneNumEditText)
 
-                keyboardUtil.hideKeyboard(layout.phoneNumEditText)
-                if (layout.ccp.isValidFullNumber){
-                    layout.errorAlertBtn.visibility = View.GONE
-                    val phoneNumber=layout.ccp.fullNumberWithPlus
-                    savePhoneNumber(phoneNumber)
-                    val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
-                    findNavController().navigate(actionVerifyPhone)
-
-                }else{
-                    layout.errorAlertBtn.visibility = View.VISIBLE
-                }
-            actionId == EditorInfo.IME_ACTION_DONE
+            if (connectionUtil.isConnected()){
+                startPhoneNumberVerification()
+            }else{
+                Snackbar.make(v, R.string.connection_error, Snackbar.LENGTH_LONG).show()
+            }
+               actionId == EditorInfo.IME_ACTION_DONE
         })
 
         //Try to login or signup user when the login or signup button gets press if phone number is valid
+
         layout.btnPhoneLogin.setOnClickListener {
-            if (layout.ccp.isValidFullNumber){
-                layout.errorAlertBtn.visibility = View.GONE
-                val phoneNumber=layout.ccp.fullNumberWithPlus
-                savePhoneNumber(phoneNumber)
-
-
-
-                //val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
-               // findNavController().navigate(actionVerifyPhone)
-
-
-
+            if (connectionUtil.isConnected()){
+                startPhoneNumberVerification()
             }else{
-                layout.errorAlertBtn.visibility = View.VISIBLE
+                Snackbar.make(it, R.string.connection_error, Snackbar.LENGTH_LONG).show()
             }
         }
 
+        welcomeActivityViewModel.getIsCodeSent().observe(viewLifecycleOwner, Observer { isCodeSent ->
+
+                val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
+                findNavController().navigate(actionVerifyPhone)
+        })
+
         return layout.root
+    }
+
+
+    private fun startPhoneNumberVerification(){
+        if (layout.ccp.isValidFullNumber){
+            layout.errorAlertBtn.visibility = View.GONE
+            phoneNumber=layout.ccp.fullNumberWithPlus
+            savePhoneNumber(phoneNumber)
+            (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber)
+        }else{
+            layout.errorAlertBtn.visibility = View.VISIBLE
+        }
     }
 
     private fun savePhoneNumber(number: String){

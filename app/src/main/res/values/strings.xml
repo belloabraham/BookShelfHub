@@ -24,6 +24,13 @@
     <string name="email">Email</string>
 
 
+    <string name="phone_sign_in_error">Unable to sign you in at this moment, try again later.</string>
+
+    <string name="too_many_request_error">Unable to sign you in as a result of too many sign in attempt, try again in the next 24hr.</string>
+
+
+    <string name="connection_error">Unable to connect. Check your network data connection and try again.</string>
+
     <string name="verify_phone">Verify Phone Number</string>
     <string name="enter_code_sent">Enter the 6 digit code sent to</string>
 
@@ -31,6 +38,8 @@
     <string name="resend_code_link">Resend code</string>
 
     <string name="verify">Verify</string>
+
+    <string name="otp_error_msg">Enter a valid code</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

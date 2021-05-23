@@ -5,19 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {

@@ -2,7 +2,10 @@ package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import android.app.Activity
 import android.content.Context
+import android.text.TextUtils
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
+import com.bookshelfhub.bookshelfhub.ui.welcome.WelcomeActivityViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -11,28 +14,34 @@ import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.qualifiers.ActivityContext
 import java.util.concurrent.TimeUnit
 
-open class Phone(private  val activity: Activity) {
-    private var auth: FirebaseAuth
+open class Phone(private  val activity: Activity, val welcomeActViewModel: WelcomeActivityViewModel )
+{
+
+    private val auth: FirebaseAuth = Firebase.auth
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
-    private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
-    private var storedVerificationId: String? = ""
+    private val callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private var storedVerificationId: String? = null
+
+
 
     init {
-        auth = Firebase.auth
 
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                signInWithPhoneAuthCredential(credential)
+                welcomeActViewModel.setOTPCode("000000")
+                signInWithPhoneAuthCredential(credential, welcomeActViewModel)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
 
-                //TODO something went wrong, try again message on the UI
                 if (e is FirebaseAuthInvalidCredentialsException) {
-                    // Invalid request
+                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
                 } else if (e is FirebaseTooManyRequestsException) {
-                    // The SMS quota for the project has been exceeded
+                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.too_many_request_error))
+                }else{
+                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.phone_sign_in_error))
+                    //TODO Log error to Chrashlytics
                 }
             }
 
@@ -40,18 +49,17 @@ open class Phone(private  val activity: Activity) {
                 verificationId: String,
                 token: PhoneAuthProvider.ForceResendingToken
             ) {
-                //TODO Hide lottie animation and navigate to the Verification fragment
                 // Save verification ID and resending token so we can use them later
                 storedVerificationId = verificationId
                 resendToken = token
+                welcomeActViewModel.setIsCodeSent(true)
             }
         }
 
     }
 
-    private fun startPhoneNumberVerification(phoneNumber: String) {
-        //TODO Show lottie animation that message is being sent
-        val options = PhoneAuthOptions.newBuilder(auth)
+     open fun startPhoneNumberVerification(phoneNumber: String) {
+         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
             .setActivity(activity)
@@ -60,44 +68,39 @@ open class Phone(private  val activity: Activity) {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    private fun verifyPhoneNumberWithCode(verificationId: String?, code: String) {
-        //TODO pass authentication code here for verification of phone number to get credential for sign in
-
-        // [START verify_with_code]
-        val credential = PhoneAuthProvider.getCredential(verificationId!!, code)
-        // [END verify_with_code]
+    open fun verifyPhoneNumberWithCode(code: String) {
+            val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, code)
+            signInWithPhoneAuthCredential(credential, welcomeActViewModel)
     }
 
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, welcomeActViewModel:WelcomeActivityViewModel) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    //TODO Show a message sign in is successful
-                    // Sign in success, update UI with the signed-in user's information
                     val user = task.result?.user
+                    welcomeActViewModel.setIsSignedInSuccessfully(user!=null)
                 } else {
-                    //Todo Sign in failed, display a message and update the UI
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         //TODO wrong verification code
+                        welcomeActViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
                     }
                 }
             }
     }
 
-    // [START resend_verification]
-    private fun resendVerificationCode(phoneNumber: String, token: PhoneAuthProvider.ForceResendingToken?) {
+
+    open fun resendVerificationCode(phoneNumber: String) {
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)       // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
             .setActivity(activity)                 // Activity (for callback binding)
             .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
-        if (token != null) {
-            optionsBuilder.setForceResendingToken(token) // callback's ForceResendingToken
+        if (resendToken != null) {
+            optionsBuilder.setForceResendingToken(resendToken) // callback's ForceResendingToken
         }
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
     }
-    // [END resend_verification]
 
 
 }

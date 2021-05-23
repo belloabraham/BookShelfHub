@@ -6,6 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="@dimen/size_25"
     android:layout_marginHorizontal="@dimen/size_16"
+    android:id="@+id/rootLayout"
     tools:context=".ui.welcome.LoginFragment">
 
     <TextView
@@ -149,6 +150,7 @@
             android:paddingVertical="@dimen/size_16"
             android:drawablePadding="@dimen/size_16"
             android:gravity="center"
+            android:layout_marginBottom="@dimen/size_25"
             android:backgroundTint="?attr/colorSecondary"
             android:drawableStart="@drawable/ic_google_signin"/>
 

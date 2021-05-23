@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
+import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController.ClickListener
 import com.smarteist.autoimageslider.SliderAnimations
@@ -25,13 +26,14 @@ class OnBoardingFragment:Fragment() {
 
     private lateinit var layout: FragmentOnboardingBinding;
 
-    //Injecting and instance of Slider Adapter class with Dagger
-    @Inject
+
     lateinit var sliderAdapter:SliderAdapter
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 
         layout = FragmentOnboardingBinding.inflate(inflater, container, false);
+
+        sliderAdapter = SliderAdapter(ImageLoader())
 
         //Setting up Slider view for Onboarding
         layout.sliderView.setSliderAdapter(sliderAdapter)
@@ -66,7 +68,6 @@ class OnBoardingFragment:Fragment() {
     }
 
     private fun addSliderItems(sliderAdapter: SliderAdapter){
-        if (sliderAdapter.count<=0){
             val titles = resources.getStringArray(R.array.titles)
             val subTitles = resources.getStringArray(R.array.subTitles)
             val description = resources.getStringArray(R.array.description)
@@ -77,7 +78,6 @@ class OnBoardingFragment:Fragment() {
                 val sliderItem = SliderItem(titles[i], subTitles[i], description[i], resourceIds[i]);
                 sliderAdapter.addItem(sliderItem)
             }
-        }
     }
 
 }

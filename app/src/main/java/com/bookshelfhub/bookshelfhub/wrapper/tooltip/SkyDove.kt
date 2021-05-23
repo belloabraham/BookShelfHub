@@ -1,11 +1,8 @@
 package com.bookshelfhub.bookshelfhub.wrapper.tooltip
 
 import android.content.Context
-import android.util.Log
 import android.view.View
-import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.bookshelfhub.bookshelfhub.R
 import com.skydoves.balloon.*
 
@@ -31,7 +28,7 @@ open class SkyDove (private val context:Context) {
             setPadding(8)
             setText(message)
             setTextColorResource(R.color.white)
-            setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.error_background))
+            setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.tooltip_error_background))
             setTextSize(14f)
             setBackgroundColorResource(R.color.black)
             setBalloonAnimation(BalloonAnimation.ELASTIC)

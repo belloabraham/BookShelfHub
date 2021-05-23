@@ -5,6 +5,9 @@
 
     <color name="orange">#FFAB40</color>
 
+    <color name="dark_overlay">#8C000000</color>
+
+
     <color name="purple_700">#FF320066</color>
     <color name="white_black">@color/white</color>
 

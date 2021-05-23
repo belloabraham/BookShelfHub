@@ -2,6 +2,6 @@
 <resources>
     <integer name="value_150">150</integer>
 
-    <integer name="otp_code_length">150</integer>
+    <integer name="otp_code_length">6</integer>
 
 </resources>
