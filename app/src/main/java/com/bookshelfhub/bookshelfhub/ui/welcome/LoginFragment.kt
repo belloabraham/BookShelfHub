@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -21,11 +20,11 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
+import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import de.mateware.snacky.Snacky
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -40,7 +39,7 @@ class LoginFragment:Fragment() {
     private lateinit var layout: FragmentLoginBinding;
     private val args:LoginFragmentArgs by navArgs()
     private lateinit var phoneNumber:String
-    private val welcomeActivityViewModel:WelcomeActivityViewModel by activityViewModels()
+    private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -124,10 +123,13 @@ class LoginFragment:Fragment() {
             }
         }
 
-        welcomeActivityViewModel.getIsCodeSent().observe(viewLifecycleOwner, Observer { isCodeSent ->
-
-                val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(args.isNewUser, phoneNumber)
+        phoneAuthViewModel.getIsCodeSent().observe(viewLifecycleOwner, Observer { isCodeSent ->
+            if (isCodeSent){
+                val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(phoneNumber)
                 findNavController().navigate(actionVerifyPhone)
+            }
+            phoneAuthViewModel.setIsCodeSent(false)
+
         })
 
         return layout.root
@@ -140,6 +142,10 @@ class LoginFragment:Fragment() {
             phoneNumber=layout.ccp.fullNumberWithPlus
             savePhoneNumber(phoneNumber)
             (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber)
+            layout.btnPhoneLogin.isEnabled = false
+            layout.btnGoogleLogin.isEnabled = false
+            layout.ccp.isEnabled = false
+            layout.phoneNumEditText.isEnabled=false
         }else{
             layout.errorAlertBtn.visibility = View.VISIBLE
         }

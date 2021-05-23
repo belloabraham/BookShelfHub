@@ -39,9 +39,4 @@ object FragmentModule {
         return TextLinkBuilder()
     }
 
-    @FragmentScoped
-    @Provides
-    fun getConnectionUtil(@ApplicationContext context: Context):ConnectionUtil{
-        return ConnectionUtil(context)
-    }
 }

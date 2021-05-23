@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController.ClickListener
@@ -30,6 +31,11 @@ class OnBoardingFragment:Fragment() {
     lateinit var sliderAdapter:SliderAdapter
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
+
+        if (UserAuth().getIsUserAuthenticated()){
+            val actionUserInfo = OnBoardingFragmentDirections.actionOnBoardingFragmentDirectionToUserInfoFragment()
+            findNavController().navigate(actionUserInfo)
+        }
 
         layout = FragmentOnboardingBinding.inflate(inflater, container, false);
 

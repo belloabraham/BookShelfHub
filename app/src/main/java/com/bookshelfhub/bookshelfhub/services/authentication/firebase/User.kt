@@ -6,9 +6,18 @@ import com.google.firebase.ktx.Firebase
 
 open class User {
 
+    private val auth: FirebaseAuth = Firebase.auth
+
     open fun getIsUserAuthenticated():Boolean{
-        val auth: FirebaseAuth = Firebase.auth
         return auth.currentUser!=null
+    }
+
+    open fun getUserId():String{
+      return  auth.currentUser!!.uid
+    }
+
+    open fun getEmail():String?{
+        return  auth.currentUser?.email
     }
 
 }

@@ -8,21 +8,27 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
 
+    @Inject
+    lateinit var userAuth: UserAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
        hideSystemUI(window)
         super.onCreate(savedInstanceState)
 
         val intent: Intent
-        intent = if (UserAuth().getIsUserAuthenticated()){
-            Intent(this, MainActivity::class.java);
+        if (userAuth.getIsUserAuthenticated()){
+            //TODO get user data from database using user ID if user data exist the naviagate straigth to mainactivity
+             //Todo  else navigate to welcome activity
+           intent = Intent(this, MainActivity::class.java);
         }else{
-            Intent(this, WelcomeActivity::class.java);
+           intent = Intent(this, WelcomeActivity::class.java);
         }
         finish()
         startActivity(intent)

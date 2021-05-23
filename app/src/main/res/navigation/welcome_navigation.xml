@@ -14,6 +14,9 @@
             android:id="@+id/action_onBoardingFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             app:enterAnim="@anim/enter_from_right" />
+        <action
+            android:id="@+id/action_onBoardingFragmentDirection_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -40,9 +43,6 @@
             android:id="@+id/action_verificationFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment"
             app:enterAnim="@anim/enter_from_right" />
-        <argument
-            android:name="isNewUser"
-            app:argType="boolean" />
         <argument
             android:name="phoneNumber"
             app:argType="string" />

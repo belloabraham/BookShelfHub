@@ -25,10 +25,10 @@
         android:id="@+id/lottieContainerView">
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieAnimView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:lottie_colorFilter="@color/white"
-            app:lottie_rawRes="@raw/text_code_sent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:lottie_rawRes="@raw/mail_send"
+            android:clickable="false"
             app:lottie_loop="true"
             app:lottie_cacheComposition="false"
             app:lottie_speed="3"

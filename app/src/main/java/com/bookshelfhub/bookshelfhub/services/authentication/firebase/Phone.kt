@@ -1,20 +1,16 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import android.app.Activity
-import android.content.Context
-import android.text.TextUtils
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
-import com.bookshelfhub.bookshelfhub.ui.welcome.WelcomeActivityViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.qualifiers.ActivityContext
 import java.util.concurrent.TimeUnit
 
-open class Phone(private  val activity: Activity, val welcomeActViewModel: WelcomeActivityViewModel )
+open class Phone(private  val activity: Activity, val welcomeActViewModel: PhoneAuthViewModel)
 {
 
     private val auth: FirebaseAuth = Firebase.auth
@@ -74,16 +70,19 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Welco
     }
 
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, welcomeActViewModel:WelcomeActivityViewModel) {
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, welcomeActViewModel: PhoneAuthViewModel) {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
                     val user = task.result?.user
+                    welcomeActViewModel.setIsNewUser(task.result?.additionalUserInfo?.isNewUser)
                     welcomeActViewModel.setIsSignedInSuccessfully(user!=null)
+
                 } else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         //TODO wrong verification code
-                        welcomeActViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
+                        //welcomeActViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
+                        welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
                     }
                 }
             }
@@ -96,9 +95,7 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Welco
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
             .setActivity(activity)                 // Activity (for callback binding)
             .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
-        if (resendToken != null) {
-            optionsBuilder.setForceResendingToken(resendToken) // callback's ForceResendingToken
-        }
+        optionsBuilder.setForceResendingToken(resendToken)
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
     }
 
