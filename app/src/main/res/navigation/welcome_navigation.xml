@@ -16,7 +16,8 @@
             app:enterAnim="@anim/enter_from_right" />
         <action
             android:id="@+id/action_onBoardingFragmentDirection_to_userInfoFragment"
-            app:destination="@id/userInfoFragment" />
+            app:destination="@id/userInfoFragment"
+            app:enterAnim="@anim/enter_from_right" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

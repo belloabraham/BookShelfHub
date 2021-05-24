@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
@@ -39,6 +40,7 @@ class VerificationFragment:Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+                phoneAuthViewModel.setIsCodeSent(false)
         layout= FragmentVerificationBinding.inflate(inflater, container, false);
         layout.phoneNumberTxt.setText(args.phoneNumber)
 
@@ -66,11 +68,10 @@ class VerificationFragment:Fragment(){
                 textLinkBuilder.createTextLink(layout.resendCodeTxtView, getString(R.string.resend_code_link),
                     ContextCompat.getColor(this@VerificationFragment.requireContext(), R.color.purple_700)
                 ){
-                    (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber)
+                        (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.mail_send)
                 }
 
                 phoneAuthViewModel.startTimer(60000L)
-
 
                 phoneAuthViewModel.getTimerTimeRemaining().observe(viewLifecycleOwner, Observer { timeRemainingInSec ->
 
@@ -114,7 +115,6 @@ class VerificationFragment:Fragment(){
                           startActivity(intent)*/
                     }
                 })
-
 
                 return layout.root
     }

@@ -26,7 +26,7 @@ class SplashActivity : AppCompatActivity() {
         if (userAuth.getIsUserAuthenticated()){
             //TODO get user data from database using user ID if user data exist the naviagate straigth to mainactivity
              //Todo  else navigate to welcome activity
-           intent = Intent(this, MainActivity::class.java);
+           intent = Intent(this, WelcomeActivity::class.java);
         }else{
            intent = Intent(this, WelcomeActivity::class.java);
         }

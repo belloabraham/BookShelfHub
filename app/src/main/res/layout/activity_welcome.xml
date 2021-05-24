@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/rootView"
     tools:context=".WelcomeActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -25,8 +26,8 @@
         android:id="@+id/lottieContainerView">
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottieAnimView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:lottie_rawRes="@raw/mail_send"
             android:clickable="false"
             app:lottie_loop="true"

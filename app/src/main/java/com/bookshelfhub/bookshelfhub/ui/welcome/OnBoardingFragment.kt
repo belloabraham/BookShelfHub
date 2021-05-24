@@ -29,10 +29,12 @@ class OnBoardingFragment:Fragment() {
 
 
     lateinit var sliderAdapter:SliderAdapter
+    @Inject
+    lateinit var userAuth:UserAuth
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 
-        if (UserAuth().getIsUserAuthenticated()){
+        if (userAuth.getIsUserAuthenticated()){
             val actionUserInfo = OnBoardingFragmentDirections.actionOnBoardingFragmentDirectionToUserInfoFragment()
             findNavController().navigate(actionUserInfo)
         }

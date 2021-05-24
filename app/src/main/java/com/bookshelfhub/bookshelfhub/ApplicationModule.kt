@@ -32,10 +32,10 @@ object ApplicationModule {
         return ConnectionUtil(context)
     }
 
-
     @Singleton
     @Provides
     fun getUserAuthentication(): UserAuth {
         return UserAuth()
     }
+
 }

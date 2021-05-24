@@ -48,8 +48,7 @@ class LoginFragment:Fragment() {
     lateinit var tooltip: ToolTip
     @Inject
     lateinit var settingsUtil: SettingsUtil
-    @Inject
-    lateinit var connectionUtil: ConnectionUtil
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,22 +104,20 @@ class LoginFragment:Fragment() {
         layout.phoneNumEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
                keyboardUtil.hideKeyboard(layout.phoneNumEditText)
 
-            if (connectionUtil.isConnected()){
                 startPhoneNumberVerification()
-            }else{
-                Snackbar.make(v, R.string.connection_error, Snackbar.LENGTH_LONG).show()
-            }
+
                actionId == EditorInfo.IME_ACTION_DONE
         })
 
         //Try to login or signup user when the login or signup button gets press if phone number is valid
 
         layout.btnPhoneLogin.setOnClickListener {
-            if (connectionUtil.isConnected()){
                 startPhoneNumberVerification()
-            }else{
-                Snackbar.make(it, R.string.connection_error, Snackbar.LENGTH_LONG).show()
-            }
+        }
+
+        layout.btnGoogleLogin.setOnClickListener {
+            val errorMsg = String.format(getString(R.string.google_signin_error), args.loginSignup)
+            (requireActivity() as WelcomeActivity).signInOrSignUpWithGoogle(errorMsg)
         }
 
         phoneAuthViewModel.getIsCodeSent().observe(viewLifecycleOwner, Observer { isCodeSent ->
@@ -128,8 +125,6 @@ class LoginFragment:Fragment() {
                 val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(phoneNumber)
                 findNavController().navigate(actionVerifyPhone)
             }
-            phoneAuthViewModel.setIsCodeSent(false)
-
         })
 
         return layout.root
@@ -141,9 +136,7 @@ class LoginFragment:Fragment() {
             layout.errorAlertBtn.visibility = View.GONE
             phoneNumber=layout.ccp.fullNumberWithPlus
             savePhoneNumber(phoneNumber)
-            (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber)
-            layout.btnPhoneLogin.isEnabled = false
-            layout.btnGoogleLogin.isEnabled = false
+            (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber, R.raw.mail_send)
             layout.ccp.isEnabled = false
             layout.phoneNumEditText.isEnabled=false
         }else{

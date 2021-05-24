@@ -6,6 +6,7 @@ import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.TimerUtil
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
@@ -16,6 +17,7 @@ import dagger.hilt.android.components.FragmentComponent
 import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.FragmentScoped
+import javax.inject.Singleton
 
 @Module
 @InstallIn(FragmentComponent::class)

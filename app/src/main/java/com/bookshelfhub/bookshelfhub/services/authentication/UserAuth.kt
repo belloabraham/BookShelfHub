@@ -4,7 +4,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import javax.inject.Inject
 
-class UserAuth: User() {
+class UserAuth @Inject constructor(): User() {
 
 }

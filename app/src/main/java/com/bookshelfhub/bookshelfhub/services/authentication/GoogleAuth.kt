@@ -1,4 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
-open class GoogleAuth {
+import android.app.Activity
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.Google
+
+open class GoogleAuth(activity: Activity, googleAuthViewModel:GoogleAuthViewModel):Google(activity, googleAuthViewModel) {
 }

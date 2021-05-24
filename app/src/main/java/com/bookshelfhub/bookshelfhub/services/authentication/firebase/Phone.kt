@@ -71,20 +71,22 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Phone
 
 
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, welcomeActViewModel: PhoneAuthViewModel) {
+        welcomeActViewModel.setSignInStarted(true)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
                     val user = task.result?.user
                     welcomeActViewModel.setIsNewUser(task.result?.additionalUserInfo?.isNewUser)
-                    welcomeActViewModel.setIsSignedInSuccessfully(user!=null)
+                    welcomeActViewModel.setIsSignedInSuccessfully(user != null)
 
-                } else {
+                }else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         //TODO wrong verification code
                         //welcomeActViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
                         welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
                     }
                 }
+                welcomeActViewModel.setSignInCompleted(true)
             }
     }
 

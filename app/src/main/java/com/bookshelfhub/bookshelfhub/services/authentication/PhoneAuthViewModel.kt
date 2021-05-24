@@ -21,6 +21,8 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
     private var isSignedInSuccessfully: MutableLiveData<Boolean>
     private var isCodeSent: MutableLiveData<Boolean>
     private var isNewUser:Boolean? = null
+    private var signInStarted: MutableLiveData<Boolean>
+    private var signInCompleted: MutableLiveData<Boolean>
 
     init{
         timeRemainingInMillis  = MutableLiveData<Long>()
@@ -28,9 +30,24 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
         isVerificationCompleted  = MutableLiveData<Boolean>()
         isSignedInSuccessfully  = MutableLiveData<Boolean>()
         signedInFailedError = MutableLiveData<String>()
+        signInCompleted  = MutableLiveData<Boolean>()
+        signInStarted  = MutableLiveData<Boolean>()
         isCodeSent = MutableLiveData<Boolean>()
     }
 
+    fun setSignInCompleted(value:Boolean){
+        signInCompleted.value=value
+    }
+    fun getSignInCompleted():LiveData<Boolean>{
+        return signInCompleted
+    }
+
+    fun setSignInStarted(value:Boolean){
+        signInStarted.value=value
+    }
+    fun getSignInStarted():LiveData<Boolean>{
+        return signInStarted
+    }
 
     fun setIsCodeSent(value:Boolean){
         isCodeSent.value=value
@@ -54,7 +71,6 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
         isSignedInSuccessfully.value=value
     }
 
-    //TODO How to get sign in success or
     fun getIsSignedInFailedError():LiveData<String>{
         return signedInFailedError
     }
@@ -72,6 +88,8 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
     fun setOTPCode(otpCode: String){
         this.otpCode.value=otpCode
     }
+
+
 
     fun startTimer(length: Long){
         if (!timerStarted){
