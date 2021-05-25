@@ -58,6 +58,30 @@ class WelcomeActivity : AppCompatActivity() {
                 hideAnimation()
             }
         })
+
+        googleAuthViewModel.getIsAuthenticationdComplete().observe(this, Observer { isAuthComplete ->
+            if (isAuthComplete){
+                hideAnimation()
+            }
+        })
+
+        googleAuthViewModel.getAuthenticationError().observe(this, Observer { authErrorMsg ->
+
+            Snackbar.make(layout.rootView, authErrorMsg, Snackbar.LENGTH_LONG)
+                .setAction(R.string.try_again) {
+                    val errorMsg = authErrorMsg.replace(getString(R.string.authentication)+": ", "")
+                    signInOrSignUpWithGoogle(errorMsg)
+                }
+                .show()
+        })
+
+        googleAuthViewModel.getSignInError().observe(this, Observer { signInErrorMsg ->
+            Snackbar.make(layout.rootView, signInErrorMsg, Snackbar.LENGTH_LONG)
+                .setAction(R.string.try_again) {
+                    signInOrSignUpWithGoogle(signInErrorMsg)
+                }
+                .show()
+        })
     }
 
 
@@ -109,22 +133,32 @@ class WelcomeActivity : AppCompatActivity() {
 
 
     fun signInOrSignUpWithGoogle(signInErrorMsg:String){
-         resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data: Intent? = result.data
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                try {
-                    // Google Sign In was successful, authenticate with Firebase
-                    val account = task.getResult(ApiException::class.java)!!
-                    googleAuth.authWithGoogle(account.idToken!!, signInErrorMsg)
-                } catch (e: ApiException) {
-                    // Google Sign In failed, update UI appropriately
-                    googleAuthViewModel.setAuthenticationError(signInErrorMsg)
-                }
+        if (!layout.lottieAnimView.isAnimating) {
+            if (connectionUtil.isConnected()){
+                showAnimation(R.raw.google_sign_in)
+                resultLauncher =
+                    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                        if (result.resultCode == Activity.RESULT_OK) {
+                            val data: Intent? = result.data
+                            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                            try {
+                                // Google Sign In was successful, authenticate with Firebase
+                                val account = task.getResult(ApiException::class.java)!!
+                                googleAuth.authWithGoogle(account.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
+                            } catch (e: ApiException) {
+                                // Google Sign In failed, update UI appropriately
+                                    hideAnimation()
+                                googleAuthViewModel.setSignInError(signInErrorMsg)
+                            }
+                        }else{
+                            hideAnimation()
+                        }
+                    }
+                googleAuth.signInOrSignUpWithGoogle(resultLauncher)
+            }else{
+                Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
             }
         }
-
-        googleAuth.signInOrSignUpWithGoogle(resultLauncher)
     }
 
 }

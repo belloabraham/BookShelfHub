@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
+import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import com.google.android.material.snackbar.Snackbar
@@ -40,6 +41,7 @@ class LoginFragment:Fragment() {
     private val args:LoginFragmentArgs by navArgs()
     private lateinit var phoneNumber:String
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
+    private val googleAuthViewModel: GoogleAuthViewModel by activityViewModels()
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -124,6 +126,23 @@ class LoginFragment:Fragment() {
             if (isCodeSent){
                 val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(phoneNumber)
                 findNavController().navigate(actionVerifyPhone)
+            }
+        })
+
+        googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
+            if (isAuthSuccessful){
+                val isNewUser = phoneAuthViewModel.getIsNewUser()
+                if (isNewUser!=null && isNewUser==true){
+                    val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
+                    findNavController().navigate(actionUserInfo)
+                }
+
+                /*  //TODO Check for user data on the cloud (firestore) using welcomeviewmodel and userID, listen for user value changed
+                         //Todo if there is user data navigate to main activity straight
+                      val intent = Intent(this, MainActivity::class.java)
+                         finish()
+                         startActivity(intent)*/
+
             }
         })
 

@@ -24,15 +24,17 @@ open class Google (val activity: Activity, val googleAuthViewModel: GoogleAuthVi
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
-    open fun authWithGoogle(idToken: String, errorMsg:String) {
+    open fun authWithGoogle(idToken: String, authErrorMsg:String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
+                googleAuthViewModel.setIsAuthenticationdComplete(true)
                 if (task.isSuccessful) {
                     val user = firebaseAuth.currentUser
-                   googleAuthViewModel.setIsAuthenticatedCompleted(user!=null)
+                    googleAuthViewModel.setIsNewUser(task.result?.additionalUserInfo?.isNewUser)
+                    googleAuthViewModel.setIsAuthenticatedSuccessful(user!=null)
                 } else {
-                    googleAuthViewModel.setAuthenticationError(errorMsg)
+                    googleAuthViewModel.setAuthenticationError(authErrorMsg)
                 }
             }
     }

@@ -34,6 +34,9 @@
         <argument
             android:name="isNewUser"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_loginFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/verificationFragment"

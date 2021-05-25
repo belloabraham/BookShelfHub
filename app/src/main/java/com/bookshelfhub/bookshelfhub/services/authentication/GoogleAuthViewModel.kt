@@ -9,20 +9,39 @@ import javax.inject.Inject
 @HiltViewModel
 class GoogleAuthViewModel @Inject constructor(): ViewModel(){
     private var authenticationError: MutableLiveData<String>
-    private var isAuthenticationCompleted: MutableLiveData<Boolean>
+    private var isAuthenticationComplete: MutableLiveData<Boolean>
+    private var signInError: MutableLiveData<String>
+    private var isNewUser:Boolean? = null
+    private var isAuthenticationSuccessful: MutableLiveData<Boolean>
 
     init {
-        isAuthenticationCompleted = MutableLiveData<Boolean>()
+        isAuthenticationComplete = MutableLiveData<Boolean>()
+        isAuthenticationSuccessful = MutableLiveData<Boolean>()
         authenticationError = MutableLiveData<String>()
+        signInError = MutableLiveData<String>()
     }
 
-    fun setIsAuthenticatedCompleted(value:Boolean){
-        isAuthenticationCompleted.value=value
-    }
-    fun getIsAuthenticatedCompleted(): LiveData<Boolean> {
-        return isAuthenticationCompleted
+    fun setIsNewUser(isNewUser:Boolean?){
+        this.isNewUser = isNewUser
     }
 
+    fun getIsNewUser():Boolean?{
+        return isNewUser
+    }
+
+    fun setIsAuthenticatedSuccessful(value:Boolean){
+        isAuthenticationSuccessful.value=value
+    }
+    fun getIsAuthenticatedSuccessful(): LiveData<Boolean> {
+        return isAuthenticationSuccessful
+    }
+
+    fun getSignInError():LiveData<String>{
+        return signInError
+    }
+    fun setSignInError(value:String?){
+        signInError.value=value
+    }
 
     fun getAuthenticationError():LiveData<String>{
         return authenticationError
@@ -31,5 +50,11 @@ class GoogleAuthViewModel @Inject constructor(): ViewModel(){
         authenticationError.value=value
     }
 
+    fun setIsAuthenticationdComplete(value:Boolean){
+        isAuthenticationComplete.value=value
+    }
+    fun getIsAuthenticationdComplete(): LiveData<Boolean> {
+        return isAuthenticationComplete
+    }
 
 }
