@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.Utils.StringUtils
 import com.bookshelfhub.bookshelfhub.Utils.TimerUtil
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
@@ -39,6 +40,12 @@ object FragmentModule {
     @Provides
     fun getTextLinkBuilder():TextLinkBuilder{
         return TextLinkBuilder()
+    }
+
+    @FragmentScoped
+    @Provides
+    fun getStringUtils(): StringUtils {
+        return StringUtils()
     }
 
 }

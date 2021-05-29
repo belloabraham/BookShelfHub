@@ -8,24 +8,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GoogleAuthViewModel @Inject constructor(): ViewModel(){
-    private var authenticationError: MutableLiveData<String>
-    private var isAuthenticationComplete: MutableLiveData<Boolean>
-    private var signInError: MutableLiveData<String>
-    private var isNewUser:Boolean? = null
-    private var isAuthenticationSuccessful: MutableLiveData<Boolean>
+    private var authenticationError: MutableLiveData<String> = MutableLiveData<String>()
+    private var isAuthenticationComplete: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var signInError: MutableLiveData<String> = MutableLiveData<String>()
+    private var isNewUser:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isAuthenticationSuccessful: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
-    init {
-        isAuthenticationComplete = MutableLiveData<Boolean>()
-        isAuthenticationSuccessful = MutableLiveData<Boolean>()
-        authenticationError = MutableLiveData<String>()
-        signInError = MutableLiveData<String>()
+
+    fun setIsNewUser(isNewUser:Boolean){
+        this.isNewUser.value = isNewUser
     }
 
-    fun setIsNewUser(isNewUser:Boolean?){
-        this.isNewUser = isNewUser
-    }
-
-    fun getIsNewUser():Boolean?{
+    fun getIsNewUser():LiveData<Boolean>{
         return isNewUser
     }
 
@@ -39,21 +33,21 @@ class GoogleAuthViewModel @Inject constructor(): ViewModel(){
     fun getSignInError():LiveData<String>{
         return signInError
     }
-    fun setSignInError(value:String?){
+    fun setSignInError(value:String){
         signInError.value=value
     }
 
     fun getAuthenticationError():LiveData<String>{
         return authenticationError
     }
-    fun setAuthenticationError(value:String?){
+    fun setAuthenticationError(value:String){
         authenticationError.value=value
     }
 
-    fun setIsAuthenticationdComplete(value:Boolean){
+    fun setIsAuthenticationComplete(value:Boolean){
         isAuthenticationComplete.value=value
     }
-    fun getIsAuthenticationdComplete(): LiveData<Boolean> {
+    fun getIsAuthenticationComplete(): LiveData<Boolean> {
         return isAuthenticationComplete
     }
 

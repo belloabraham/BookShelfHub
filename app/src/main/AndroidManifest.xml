@@ -16,7 +16,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub">
-        <activity android:name=".TestActivity" />
         <activity android:name=".WelcomeActivity"
             android:windowSoftInputMode="stateAlwaysVisible"
             />

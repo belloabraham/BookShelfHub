@@ -1,5 +1,8 @@
+<!DOCTYPE resources [
+    <!ENTITY appname "BookShelfHub">
+    ]>
 <resources>
-    <string name="app_name">BookShelfHub</string>
+    <string name="app_name">&appname;</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -10,8 +13,9 @@
     <!-- TODO: Phone Sign in / Sign up-->
     <string name="with_phone">%1$s with phone</string>
     <string name="seconds_remaining">%1$d secs</string>
+    <string name="sending_otp_code">Sending a one time pass code to your phone number</string>
     <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %1$s.</string>
-    <string name="phone_num">Enter phone number</string>
+    <string name="enter_phone_num">Enter phone number</string>
     <string name="or">Or</string>
     <string name="verify_phone">Verify Phone Number</string>
     <string name="enter_code_sent">Enter the 6 digit code sent to</string>
@@ -29,14 +33,18 @@
     <!-- TODO: Form field data -->
     <string name="name">Name</string>
     <string name="phone_number">Phone number</string>
-    <string name="date_of_birth">Date of Birth</string>
+    <string name="empty_name_error">Name field is required</string>
+    <string name="valid_phone_error">Enter a valid phone number</string>
+    <string name="valid_email_error">Enter a valid email address</string>
+
     <string name="email">Email</string>
-
-
+    <string name="about_you">Tell us about you</string>
+    <string name="adding_user">Please wait, adding user to &appname;....</string>
+    <string name="continue_login_signup">Continue</string>
+    <string name="user_add_error">Error: unable to add user, check your network connection and try again.</string>
 
     <!-- TODO: No internet connection error msg -->
     <string name="connection_error">Unable to connect. Check your network data connection and try again.</string>
-
 
 
     <!-- TODO: Google Sign in / Sign up -->

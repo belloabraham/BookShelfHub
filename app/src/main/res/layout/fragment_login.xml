@@ -31,7 +31,7 @@
             android:id="@+id/imageView3"
             android:layout_width="@dimen/size_150"
             android:layout_height="@dimen/size_150"
-            android:src="@drawable/logo"
+            android:src="@drawable/sending_sms"
             android:layout_marginBottom="@dimen/size_25"
             android:paddingBottom="@dimen/size_25" />
 
@@ -82,7 +82,7 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="actionDone"
                         android:backgroundTint="@color/white"
-                        android:hint="@string/phone_num"
+                        android:hint="@string/enter_phone_num"
                         android:inputType="phone"
                         android:textSize="@dimen/size_18sp" />
 
@@ -120,8 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginTop="@dimen/size_16"
-            android:padding="@dimen/size_12"
-            app:strokeColor="?attr/colorPrimary" />
+            android:padding="@dimen/size_12" />
 
         <TextView
             android:id="@+id/description"

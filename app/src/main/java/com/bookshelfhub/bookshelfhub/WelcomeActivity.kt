@@ -8,13 +8,13 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.enums.AuthType
+import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
@@ -24,15 +24,19 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WelcomeActivity : AppCompatActivity() {
 
+    private lateinit var signInErrorMsg: String
     private lateinit var layout: ActivityWelcomeBinding
     private lateinit var phoneAuth:PhoneAuth
     private lateinit var googleAuth:GoogleAuth
     private val phoneAuthViewModel: PhoneAuthViewModel by viewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by viewModels()
+    private val userAuthViewModel: UserAuthViewModel by viewModels()
     private lateinit var resultLauncher:ActivityResultLauncher<Intent>
 
     @Inject
      lateinit var connectionUtil: ConnectionUtil
+    @Inject
+    lateinit var userAuth: UserAuth
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,24 +47,81 @@ class WelcomeActivity : AppCompatActivity() {
         phoneAuth= PhoneAuth(this, phoneAuthViewModel)
         googleAuth = GoogleAuth(this, googleAuthViewModel)
 
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val data: Intent? = result.data
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                    try {
+                        // Google Sign In was successful, authenticate with Firebase
+                        val account = task.getResult(ApiException::class.java)!!
+                        googleAuth.authWithGoogle(account.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
+                    } catch (e: ApiException) {
+                        // Google Sign In failed, update UI appropriately
+                        hideAnimation()
+                        googleAuthViewModel.setSignInError(signInErrorMsg)
+                    }
+                }else{
+                    hideAnimation()
+                }
+            }
+
+        phoneAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
+            hideAnimation()
+        })
+
         phoneAuthViewModel.getIsCodeSent().observe(this, Observer { isCodeSent ->
                 hideAnimation()
         })
 
         phoneAuthViewModel.getSignInStarted().observe(this, Observer { signInStarted ->
             if (signInStarted){
-                showAnimation(R.raw.loading)
+                showAnimation(R.raw.loading, "")
             }
         })
 
         phoneAuthViewModel.getSignInCompleted().observe(this, Observer { signInCompleted ->
-            if (signInCompleted){
+            if (!userAuth.getIsUserAuthenticated()){
                 hideAnimation()
             }
         })
 
-        googleAuthViewModel.getIsAuthenticationdComplete().observe(this, Observer { isAuthComplete ->
-            if (isAuthComplete){
+        googleAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
+            hideAnimation()
+        })
+
+
+        googleAuthViewModel.getIsAuthenticationComplete().observe(this, Observer { isAuthComplete ->
+            if (!userAuth.getIsUserAuthenticated()){
+                hideAnimation()
+            }
+        })
+
+        userAuthViewModel.getIsAddingUser().observe(this, Observer { isAddingUser ->
+            if (isAddingUser){
+                showAnimation()
+            }else{
+                hideAnimation()
+                if(userAuth.getAuthType()==AuthType.GOOGLE.ID){
+                        if (googleAuthViewModel.getIsNewUser().value==true){
+                            //TODO Show popup sign up success tool tip in elastic anim
+                        }
+                }else if (phoneAuthViewModel.getIsNewUser().value==true){
+                    //TODO Show popup sign up success tool tip in elastic anim
+                }
+                val intent = Intent(this, MainActivity::class.java)
+                finish()
+                startActivity(intent)
+            }
+        })
+
+        userAuthViewModel.getIsExistingUser().observe(this, Observer { isExistingUser ->
+            if (isExistingUser){
+                hideAnimation()
+                val intent = Intent(this, MainActivity::class.java)
+                finish()
+                startActivity(intent)
+            }else{
                 hideAnimation()
             }
         })
@@ -85,7 +146,8 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-    private fun showAnimation(animation: Int){
+    private fun showAnimation(animation: Int= R.raw.loading, animDescription:String=getString(R.string.adding_user)){
+        layout.animDescription.setText(animDescription)
         layout.lottieAnimView.setAnimation(animation)
         layout.lottieContainerView.visibility = View.VISIBLE
         layout.lottieAnimView.playAnimation()
@@ -100,7 +162,7 @@ class WelcomeActivity : AppCompatActivity() {
     fun startPhoneNumberVerification(phoneNumber: String, animation: Int){
         if (!layout.lottieAnimView.isAnimating){
             if (connectionUtil.isConnected()){
-                showAnimation(animation)
+                showAnimation(animation, getString(R.string.sending_otp_code))
                 phoneAuth.startPhoneNumberVerification(phoneNumber)
             }else{
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
@@ -113,7 +175,7 @@ class WelcomeActivity : AppCompatActivity() {
     fun resendVerificationCode(number:String, animation: Int){
         if (!layout.lottieAnimView.isAnimating ){
             if (connectionUtil.isConnected()){
-                showAnimation(animation)
+                showAnimation(animation, getString(R.string.sending_otp_code) )
                 phoneAuth.resendVerificationCode(number)
             }else{
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
@@ -133,27 +195,10 @@ class WelcomeActivity : AppCompatActivity() {
 
 
     fun signInOrSignUpWithGoogle(signInErrorMsg:String){
+        this.signInErrorMsg= signInErrorMsg;
         if (!layout.lottieAnimView.isAnimating) {
             if (connectionUtil.isConnected()){
                 showAnimation(R.raw.google_sign_in)
-                resultLauncher =
-                    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                        if (result.resultCode == Activity.RESULT_OK) {
-                            val data: Intent? = result.data
-                            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                            try {
-                                // Google Sign In was successful, authenticate with Firebase
-                                val account = task.getResult(ApiException::class.java)!!
-                                googleAuth.authWithGoogle(account.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
-                            } catch (e: ApiException) {
-                                // Google Sign In failed, update UI appropriately
-                                    hideAnimation()
-                                googleAuthViewModel.setSignInError(signInErrorMsg)
-                            }
-                        }else{
-                            hideAnimation()
-                        }
-                    }
                 googleAuth.signInOrSignUpWithGoogle(resultLauncher)
             }else{
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()

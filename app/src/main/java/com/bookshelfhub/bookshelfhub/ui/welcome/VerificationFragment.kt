@@ -12,10 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
+import com.bookshelfhub.bookshelfhub.enums.FragSavedState
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -29,8 +30,9 @@ class VerificationFragment:Fragment(){
     private lateinit var layout: FragmentVerificationBinding;
     private val args:VerificationFragmentArgs by navArgs()
     private var otpCode:String? = null
-
+    private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
+    private var inProgress:Boolean=true
 
     @Inject
     lateinit var textLinkBuilder:TextLinkBuilder
@@ -40,6 +42,11 @@ class VerificationFragment:Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+                if (savedInstanceState!=null){
+                    inProgress =  savedInstanceState[FragSavedState.IN_PROGRESS.KEY] as Boolean
+                }
+
                 phoneAuthViewModel.setIsCodeSent(false)
         layout= FragmentVerificationBinding.inflate(inflater, container, false);
         layout.phoneNumberTxt.setText(args.phoneNumber)
@@ -56,7 +63,6 @@ class VerificationFragment:Fragment(){
 
                 layout.verifyBtn.setOnClickListener {
                    if (otpCode?.length == resources.getInteger(R.integer.otp_code_length)  ){
-                        //TODO Start phone number verification
                      (requireActivity() as WelcomeActivity).verifyPhoneNumberWithCode(otpCode!!)
                    }else{
                        layout.otpView.showError()
@@ -71,7 +77,10 @@ class VerificationFragment:Fragment(){
                         (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.mail_send)
                 }
 
-                phoneAuthViewModel.startTimer(60000L)
+                if (inProgress){
+                    phoneAuthViewModel.startTimer(60000L)
+                    inProgress=false
+                }
 
                 phoneAuthViewModel.getTimerTimeRemaining().observe(viewLifecycleOwner, Observer { timeRemainingInSec ->
 
@@ -100,23 +109,30 @@ class VerificationFragment:Fragment(){
 
                 phoneAuthViewModel.getIsSignedInSuccessfully().observe(viewLifecycleOwner, Observer { isSignedInSuccessfully ->
                     if (isSignedInSuccessfully){
-                        val isNewUser = phoneAuthViewModel.getIsNewUser()
-
-                        if (isNewUser!=null && isNewUser==true){
+                        val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
+                        if (isNewUser){
                             val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment()
                             findNavController().navigate(actionUserInfo)
+                        }else{
+                            //Todo try to get user data from the cloud first, if fail, hide animation then navigate to UserInfo fragment where I will try again, if not fail set hide animation and navigate to main activity
+
                         }
+                    }
+                })
 
-                        /*  //TODO Check for user data on the cloud (firestore) using welcomeviewmodel and userID, listen for user value changed
-                          //Todo if there is user data navigate to main activity straight
-                       val intent = Intent(this, MainActivity::class.java)
-
-                          finish()
-                          startActivity(intent)*/
+                userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
+                    if (!isExistingUser){
+                        val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
+                        findNavController().navigate(actionUserInfo)
                     }
                 })
 
                 return layout.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(FragSavedState.IN_PROGRESS.KEY, inProgress)
+        super.onSaveInstanceState(outState)
     }
 
 }

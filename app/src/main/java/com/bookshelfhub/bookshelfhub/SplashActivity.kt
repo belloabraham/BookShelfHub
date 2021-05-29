@@ -24,9 +24,12 @@ class SplashActivity : AppCompatActivity() {
 
         val intent: Intent
         if (userAuth.getIsUserAuthenticated()){
-            //TODO get user data from database using user ID if user data exist the naviagate straigth to mainactivity
-             //Todo  else navigate to welcome activity
-           intent = Intent(this, WelcomeActivity::class.java);
+            //TODO get user data from database using user ID if user data exist then navigate straight to mainactivity
+                 if (true){
+                     intent = Intent(this, MainActivity::class.java);
+                 }else{
+                     intent = Intent(this, WelcomeActivity::class.java);
+                 }
         }else{
            intent = Intent(this, WelcomeActivity::class.java);
         }

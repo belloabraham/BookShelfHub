@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
@@ -22,8 +21,8 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -42,6 +41,7 @@ class LoginFragment:Fragment() {
     private lateinit var phoneNumber:String
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by activityViewModels()
+    private val userAuthViewModel: UserAuthViewModel by activityViewModels()
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -105,9 +105,7 @@ class LoginFragment:Fragment() {
         //Try to login or signup user when the done key gets press on keyboard if phone number is valid
         layout.phoneNumEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
                keyboardUtil.hideKeyboard(layout.phoneNumEditText)
-
                 startPhoneNumberVerification()
-
                actionId == EditorInfo.IME_ACTION_DONE
         })
 
@@ -131,18 +129,20 @@ class LoginFragment:Fragment() {
 
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
             if (isAuthSuccessful){
-                val isNewUser = phoneAuthViewModel.getIsNewUser()
-                if (isNewUser!=null && isNewUser==true){
+                val isNewUser = googleAuthViewModel.getIsNewUser().value!!
+                if (isNewUser){
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
                     findNavController().navigate(actionUserInfo)
+                }else{
+                    //Todo try to get user data from the cloud first, if fail stop animation and navigate to UserInfo fragment where I will try again, if pass stop animation and navigate to main activity using setIsAddingUser to false
                 }
+            }
+        })
 
-                /*  //TODO Check for user data on the cloud (firestore) using welcomeviewmodel and userID, listen for user value changed
-                         //Todo if there is user data navigate to main activity straight
-                      val intent = Intent(this, MainActivity::class.java)
-                         finish()
-                         startActivity(intent)*/
-
+        userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
+            if (!isExistingUser){
+                val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
+                findNavController().navigate(actionUserInfo)
             }
         })
 

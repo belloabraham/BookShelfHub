@@ -10,7 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
-open class Phone(private  val activity: Activity, val welcomeActViewModel: PhoneAuthViewModel)
+open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel)
 {
 
     private val auth: FirebaseAuth = Firebase.auth
@@ -23,21 +23,20 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Phone
     init {
 
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                welcomeActViewModel.setOTPCode("000000")
-                signInWithPhoneAuthCredential(credential, welcomeActViewModel)
+                phoneAuthViewModel.setOTPCode("000000")
+                signInWithPhoneAuthCredential(credential, phoneAuthViewModel)
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
-                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
                 } else if (e is FirebaseTooManyRequestsException) {
-                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.too_many_request_error))
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.too_many_request_error))
                 }else{
-                    welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.phone_sign_in_error))
-                    //TODO Log error to Chrashlytics
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.phone_sign_in_error))
+                    //TODO Log error to Crashlytics
                 }
             }
 
@@ -48,7 +47,7 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Phone
                 // Save verification ID and resending token so we can use them later
                 storedVerificationId = verificationId
                 resendToken = token
-                welcomeActViewModel.setIsCodeSent(true)
+                phoneAuthViewModel.setIsCodeSent(true)
             }
         }
 
@@ -66,27 +65,27 @@ open class Phone(private  val activity: Activity, val welcomeActViewModel: Phone
 
     open fun verifyPhoneNumberWithCode(code: String) {
             val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, code)
-            signInWithPhoneAuthCredential(credential, welcomeActViewModel)
+            signInWithPhoneAuthCredential(credential, phoneAuthViewModel)
     }
 
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, welcomeActViewModel: PhoneAuthViewModel) {
-        welcomeActViewModel.setSignInStarted(true)
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, phoneAuthViewModel: PhoneAuthViewModel) {
+        phoneAuthViewModel.setSignInStarted(true)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    val user = task.result?.user
-                    welcomeActViewModel.setIsNewUser(task.result?.additionalUserInfo?.isNewUser)
-                    welcomeActViewModel.setIsSignedInSuccessfully(user != null)
+                    //val user = task.result?.user!!
+                    phoneAuthViewModel.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
+                    phoneAuthViewModel.setIsSignedInSuccessfully(true)
 
                 }else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         //TODO wrong verification code
-                        //welcomeActViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
-                        welcomeActViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
+                        //phoneAuthViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
+                        phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
                     }
                 }
-                welcomeActViewModel.setSignInCompleted(true)
+                phoneAuthViewModel.setSignInCompleted(true)
             }
     }
 

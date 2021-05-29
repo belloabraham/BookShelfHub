@@ -26,8 +26,6 @@ import javax.inject.Inject
 class OnBoardingFragment:Fragment() {
 
     private lateinit var layout: FragmentOnboardingBinding;
-
-
     lateinit var sliderAdapter:SliderAdapter
     @Inject
     lateinit var userAuth:UserAuth

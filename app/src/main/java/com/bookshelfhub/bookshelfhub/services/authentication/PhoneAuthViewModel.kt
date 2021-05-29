@@ -11,29 +11,18 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewModel() {
+class PhoneAuthViewModel @Inject constructor(private val timerUtil: TimerUtil) :ViewModel() {
 
-    private var timeRemainingInMillis: MutableLiveData<Long>
+    private var timeRemainingInMillis: MutableLiveData<Long> = MutableLiveData<Long>()
     private var timerStarted: Boolean = false
-    private var otpCode: MutableLiveData<String>
-    private var signedInFailedError: MutableLiveData<String>
-    private var isVerificationCompleted: MutableLiveData<Boolean>
-    private var isSignedInSuccessfully: MutableLiveData<Boolean>
-    private var isCodeSent: MutableLiveData<Boolean>
-    private var isNewUser:Boolean? = null
-    private var signInStarted: MutableLiveData<Boolean>
-    private var signInCompleted: MutableLiveData<Boolean>
+    private var otpCode: MutableLiveData<String> = MutableLiveData<String>()
+    private var signedInFailedError: MutableLiveData<String> = MutableLiveData<String>()
+    private var isSignedInSuccessfully: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isCodeSent: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isNewUser:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var signInStarted: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var signInCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
-    init{
-        timeRemainingInMillis  = MutableLiveData<Long>()
-        otpCode  = MutableLiveData<String>()
-        isVerificationCompleted  = MutableLiveData<Boolean>()
-        isSignedInSuccessfully  = MutableLiveData<Boolean>()
-        signedInFailedError = MutableLiveData<String>()
-        signInCompleted  = MutableLiveData<Boolean>()
-        signInStarted  = MutableLiveData<Boolean>()
-        isCodeSent = MutableLiveData<Boolean>()
-    }
 
     fun setSignInCompleted(value:Boolean){
         signInCompleted.value=value
@@ -57,10 +46,10 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
     }
 
     fun setIsNewUser(isNewUser:Boolean?){
-         this.isNewUser = isNewUser
+         this.isNewUser.value = isNewUser
     }
 
-    fun getIsNewUser():Boolean?{
+    fun getIsNewUser():LiveData<Boolean>{
         return isNewUser
     }
 
@@ -74,7 +63,8 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
     fun getIsSignedInFailedError():LiveData<String>{
         return signedInFailedError
     }
-    fun setSignedInFailedError(value:String?){
+
+    fun setSignedInFailedError(value:String){
         signedInFailedError.value=value
     }
 
@@ -88,8 +78,6 @@ class PhoneAuthViewModel @Inject constructor(val timerUtil: TimerUtil) :ViewMode
     fun setOTPCode(otpCode: String){
         this.otpCode.value=otpCode
     }
-
-
 
     fun startTimer(length: Long){
         if (!timerStarted){

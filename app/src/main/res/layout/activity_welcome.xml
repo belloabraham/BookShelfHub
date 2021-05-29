@@ -22,19 +22,30 @@
         android:layout_height="match_parent"
         android:background="@color/dark_overlay"
         android:visibility="gone"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:id="@+id/lottieContainerView">
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieAnimView"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:lottie_rawRes="@raw/mail_send"
-            android:clickable="false"
-            app:lottie_loop="true"
-            app:lottie_cacheComposition="false"
-            app:lottie_speed="3"
-            app:lottie_scale="25"
-            app:lottie_autoPlay="true" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottieAnimView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_rawRes="@raw/mail_send"
+                android:clickable="false"
+                app:lottie_loop="true"
+                app:lottie_cacheComposition="false"
+                app:lottie_speed="3"
+                app:lottie_scale="25"
+                app:lottie_autoPlay="true" />
+            <TextView
+                android:id="@+id/animDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </FrameLayout>
