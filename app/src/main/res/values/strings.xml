@@ -52,6 +52,8 @@
     <string name="google_btn_text">%1$s with Google</string>
     <string name="authentication">Authentication</string>
 
-
+    <!-- Todo Notification -->
+    <string  name="notif_channel_desc">&appname; notification channel</string>
+    <string translatable="false"  name="notif_channel_id">&appname;</string>
 
 </resources>

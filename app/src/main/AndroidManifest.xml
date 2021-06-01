@@ -7,6 +7,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+        <queries>
+            <!-- Google Play Store -->
+            <package android:name="com.android.vending" />
+
+            <intent>
+                <action android:name="android.intent.action.VIEW" />
+            </intent>
+        </queries>
+
     <application
         android:allowBackup="true"
         tools:replace="android:supportsRtl"
@@ -29,6 +38,32 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+
+
+        <!-- Firebase Cloud Messaging Configuration -->
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+             See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_bookshelfhub" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notf_color" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/notif_channel_id" />
+        <!-- Firebase Cloud Messaging Custom Service Class  -->
+        <service
+            android:name=".services.notification.firebase.FirebaseCMService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

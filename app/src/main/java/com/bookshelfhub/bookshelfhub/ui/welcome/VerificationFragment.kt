@@ -47,7 +47,6 @@ class VerificationFragment:Fragment(){
                     inProgress =  savedInstanceState[FragSavedState.IN_PROGRESS.KEY] as Boolean
                 }
 
-                phoneAuthViewModel.setIsCodeSent(false)
         layout= FragmentVerificationBinding.inflate(inflater, container, false);
         layout.phoneNumberTxt.setText(args.phoneNumber)
 

@@ -8,13 +8,12 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.*
+import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
@@ -41,6 +40,9 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        GooglePlayServices(this).checkForGooglePlayServices()
+
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
@@ -76,7 +78,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         phoneAuthViewModel.getSignInStarted().observe(this, Observer { signInStarted ->
             if (signInStarted){
-                showAnimation(R.raw.loading, "")
+                showAnimation(R.raw.loading)
             }
         })
 
@@ -146,8 +148,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-    private fun showAnimation(animation: Int= R.raw.loading, animDescription:String=getString(R.string.adding_user)){
-        layout.animDescription.setText(animDescription)
+    private fun showAnimation(animation: Int= R.raw.loading){
         layout.lottieAnimView.setAnimation(animation)
         layout.lottieContainerView.visibility = View.VISIBLE
         layout.lottieAnimView.playAnimation()
@@ -159,10 +160,10 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-    fun startPhoneNumberVerification(phoneNumber: String, animation: Int){
+    fun startPhoneNumberVerification(phoneNumber: String){
         if (!layout.lottieAnimView.isAnimating){
             if (connectionUtil.isConnected()){
-                showAnimation(animation, getString(R.string.sending_otp_code))
+                showAnimation()
                 phoneAuth.startPhoneNumberVerification(phoneNumber)
             }else{
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
@@ -175,7 +176,7 @@ class WelcomeActivity : AppCompatActivity() {
     fun resendVerificationCode(number:String, animation: Int){
         if (!layout.lottieAnimView.isAnimating ){
             if (connectionUtil.isConnected()){
-                showAnimation(animation, getString(R.string.sending_otp_code) )
+                showAnimation(animation)
                 phoneAuth.resendVerificationCode(number)
             }else{
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
@@ -193,6 +194,9 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
 
     fun signInOrSignUpWithGoogle(signInErrorMsg:String){
         this.signInErrorMsg= signInErrorMsg;
@@ -205,5 +209,6 @@ class WelcomeActivity : AppCompatActivity() {
             }
         }
     }
+
 
 }

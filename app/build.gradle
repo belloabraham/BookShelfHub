@@ -97,10 +97,15 @@ dependencies {
     
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
-    //--analytics
+    //--Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
     //--Authentication
     implementation 'com.google.firebase:firebase-auth-ktx'
+    //--Cloud messaging
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    //--Remote config
+    implementation 'com.google.firebase:firebase-config-ktx'
+
 
     //Google Play
     //--Google Play Services Authentication

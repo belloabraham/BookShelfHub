@@ -10,17 +10,11 @@ import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtils
-import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.InvalidInput
-import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
-import com.google.android.material.snackbar.Snackbar
-import com.hbb20.CountryCodePicker
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,17 +22,16 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
 @WithFragmentBindings
 class UserInfoFragment : Fragment() {
     private lateinit var layout:FragmentUserInfoBinding
+    private val PROTONMAIL = "@protonmail.com"
+    private val TUTANOTAMAIL = "@tutanota.com"
     @Inject
     lateinit var userAuth: UserAuth
-    @Inject
-    lateinit var stringUtils: StringUtils
 
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
 
@@ -71,11 +64,11 @@ class UserInfoFragment : Fragment() {
             val phone = layout.phoneEditTxt.text.toString()
             val name = layout.nameEditTxt.text.toString()
 
-            if (!stringUtils.isValidEmailAddress(email)||email.endsWith(InvalidInput.PROTONMAIL.DATA)||email.endsWith(InvalidInput.TUTANOTAMAIL.DATA)){
+            if (!StringUtils.isValidEmailAddress(email)||email.endsWith(PROTONMAIL)||email.endsWith(TUTANOTAMAIL)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
-            }else if(!stringUtils.isValidPhoneNumber(phone)){
+            }else if(!StringUtils.isValidPhoneNumber(phone)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
 

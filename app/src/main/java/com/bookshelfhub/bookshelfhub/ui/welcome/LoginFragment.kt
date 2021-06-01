@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView.OnEditorActionListener
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,11 +18,13 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
+import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.view.toast.Toasty
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -42,6 +45,8 @@ class LoginFragment:Fragment() {
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by activityViewModels()
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
+    private val PHONE = "phone"
+    private val DIALING_CODE="dialingCode"
 
     //Injecting class instance with Dagger Hilt
     @Inject
@@ -71,8 +76,8 @@ class LoginFragment:Fragment() {
 
 
         lifecycleScope.launch(IO) {
-           val number = settingsUtil.getString(Settings.PHONE.KEY)
-            val dialingCode = settingsUtil.getString(Settings.DIALING_CODE.KEY)
+           val number = settingsUtil.getString(PHONE)
+            val dialingCode = settingsUtil.getString(DIALING_CODE)
             if (number!=null && dialingCode==layout.ccp.selectedCountryCodeWithPlus){
                 withContext(Main) {
                     val phone  = number.replace(layout.ccp.selectedCountryCodeWithPlus,"")
@@ -155,7 +160,7 @@ class LoginFragment:Fragment() {
             layout.errorAlertBtn.visibility = View.GONE
             phoneNumber=layout.ccp.fullNumberWithPlus
             savePhoneNumber(phoneNumber)
-            (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber, R.raw.mail_send)
+            (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber)
             layout.ccp.isEnabled = false
             layout.phoneNumEditText.isEnabled=false
         }else{
@@ -165,8 +170,8 @@ class LoginFragment:Fragment() {
 
     private fun savePhoneNumber(number: String){
         lifecycleScope.launch(IO) {
-            settingsUtil.setString(Settings.PHONE.KEY, number)
-            settingsUtil.setString(Settings.DIALING_CODE.KEY, layout.ccp.selectedCountryCodeWithPlus)
+            settingsUtil.setString(PHONE, number)
+            settingsUtil.setString(DIALING_CODE, layout.ccp.selectedCountryCodeWithPlus)
         }
     }
 

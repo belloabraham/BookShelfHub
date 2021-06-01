@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <!-- TODO: Contact Info -->
+    <entry>
+        <key>website</key>
+        <value>https://bookshelfhub.com</value>
+    </entry>
+    <entry>
+        <key>phone</key>
+        <value>+</value>
+    </entry>
+    <entry>
+        <key>social_handle</key>
+        <value>bookshelfhub</value>
+    </entry>
+    <entry>
+        <key>email</key>
+        <value>info@bookshelfhub.com</value>
+    </entry>
+
+    <!-- TODO: App update Info-->
+    <entry>
+        <key>new_version_code</key>
+        <value>1</value>
+    </entry>
+    <entry>
+        <key>change_log</key>
+        <value>Improved performance and bug fixes</value>
+    </entry>
+
+</defaultsMap>
