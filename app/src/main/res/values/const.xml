@@ -10,4 +10,7 @@
     <string name="uri_play_store_apps_list" translatable="false">market://search?q=pub:%s</string>
     <string name="uri_play_store_apps_list_website" translatable="false">https://play.google.com/store/search?q=%s</string>
 
+    <!-- Todo Database -->
+    <string name="db_name" translatable="false">buhflehskoobxyz</string>
+
 </resources>

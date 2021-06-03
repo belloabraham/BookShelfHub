@@ -4,4 +4,6 @@
 
     <integer name="otp_code_length">6</integer>
 
+    <integer name="update_notif_id">100</integer>
+
 </resources>

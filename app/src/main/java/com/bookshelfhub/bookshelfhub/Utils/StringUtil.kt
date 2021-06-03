@@ -1,10 +1,10 @@
 package com.bookshelfhub.bookshelfhub.Utils
 
 import android.util.Patterns
+import org.apache.commons.text.WordUtils
 
-class StringUtils{
+class StringUtil{
 
-    companion object{
         fun isValidEmailAddress(email:String):Boolean{
             return Patterns.EMAIL_ADDRESS.matcher(email).matches()
         }
@@ -12,6 +12,8 @@ class StringUtils{
         fun isValidPhoneNumber(phone:String):Boolean{
             return Patterns.PHONE.matcher(phone).matches()
         }
-    }
 
+        fun capitalize(value:String):String{
+          return WordUtils.capitalize(value)
+        }
 }

@@ -18,6 +18,7 @@ class Application: android.app.Application() {
         setupFirebaseRemoteConfig()
         notificationChannelBuilder = NotificationChannelBuilder(context,context.getString(R.string.notif_channel_id))
         notificationChannelBuilder.createNotificationChannels(context.getString(R.string.notif_channel_desc),R.color.notf_color)
+
     }
 
     private fun setupFirebaseRemoteConfig(){

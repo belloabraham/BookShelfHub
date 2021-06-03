@@ -27,5 +27,9 @@
         <key>change_log</key>
         <value>Improved performance and bug fixes</value>
     </entry>
+    <entry>
+        <key>enforce_update</key>
+        <value>false</value>
+    </entry>
 
 </defaultsMap>

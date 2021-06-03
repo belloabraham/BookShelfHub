@@ -56,4 +56,14 @@
     <string  name="notif_channel_desc">&appname; notification channel</string>
     <string translatable="false"  name="notif_channel_id">&appname;</string>
 
+
+    <!-- Todo App Update -->
+    <string  name="close">Close</string>
+    <string  name="update">Update</string>
+    <string  name="later">Later</string>
+    <string  name="update_req_title">An update is required</string>
+    <string  name="update_mgs">Update &appname;\nIMPROVEMENTS\n%1$s</string>
+    <string  name="update_req_mgs">You need to update &appname; to continue using it.</string>
+    <string  name="update_title">You\'re missing out</string>
+
 </resources>

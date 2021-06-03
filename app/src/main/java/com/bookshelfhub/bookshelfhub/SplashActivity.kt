@@ -7,6 +7,7 @@ import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -14,7 +15,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
-
+    @Inject
+    lateinit var localDb: LocalDb
     @Inject
     lateinit var userAuth: UserAuth
 
@@ -24,8 +26,8 @@ class SplashActivity : AppCompatActivity() {
 
         val intent: Intent
         if (userAuth.getIsUserAuthenticated()){
-            //TODO get user data from database using user ID if user data exist then navigate straight to mainactivity
-                 if (true){
+                val user = localDb.getUsers().value
+                 if (user?.get(0)!=null && userAuth.getUserId() == user.get(0).uId){
                      intent = Intent(this, MainActivity::class.java);
                  }else{
                      intent = Intent(this, WelcomeActivity::class.java);

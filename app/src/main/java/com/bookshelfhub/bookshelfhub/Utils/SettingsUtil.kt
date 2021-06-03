@@ -2,26 +2,41 @@ package com.bookshelfhub.bookshelfhub.Utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.bookshelfhub.bookshelfhub.R
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class SettingsUtil(private val context: Context) {
+class SettingsUtil @Inject constructor  (private val context: Context) {
 
     val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = context.getString(R.string.app_name))
 
-    suspend fun getInt(key:String):Int{
+    suspend fun getLong(key:String, defaultValue:Long):Long{
+        val prefKey = longPreferencesKey(key)
+        val exampleCounterFlow: Flow<Long> = context.dataStore.data
+            .map { preferences ->
+                preferences[prefKey] ?: defaultValue
+            }
+        return exampleCounterFlow.first()
+    }
+
+    suspend fun setLong(key: String, value: Long){
+        val prefKey = longPreferencesKey(key)
+        context.dataStore.edit { preferences ->
+            preferences[prefKey] = value
+        }
+    }
+
+
+    suspend fun getInt(key:String, defaultValue:Int):Int{
         val prefKey = intPreferencesKey(key)
         val exampleCounterFlow: Flow<Int> = context.dataStore.data
             .map { preferences ->
-               preferences[prefKey] ?: 0
+               preferences[prefKey] ?: defaultValue
             }
        return exampleCounterFlow.first()
     }

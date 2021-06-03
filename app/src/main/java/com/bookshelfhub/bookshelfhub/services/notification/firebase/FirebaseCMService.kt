@@ -1,9 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
+import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.messaging.ktx.remoteMessage
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 class FirebaseCMService : FirebaseMessagingService() {
@@ -12,7 +15,8 @@ class FirebaseCMService : FirebaseMessagingService() {
     private val ACTION="action"
     @Inject
     lateinit var notificationHelper: NotificationHelper
-
+    @Inject
+    lateinit var settingsUtil: SettingsUtil
 
     override fun onMessageReceived(cloudMesage: RemoteMessage) {
 
@@ -26,6 +30,10 @@ class FirebaseCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        //TODO Add token to user data and update to firestore
+        runBlocking {
+            settingsUtil.setString(Settings.NOTIF_TOKEN.KEY, token)
+        }
+        //TODO Start a one time request worker that requires internet connection that saves token to the cloud using user id
+        //Todo margin the data with the existing one
     }
 }

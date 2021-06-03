@@ -3,9 +3,16 @@ plugins {
     id 'kotlin-android'
 }
 
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android-extensions'
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+    def javaVersion= JavaVersion.VERSION_1_8
 
     buildFeatures {
         viewBinding true
@@ -28,21 +35,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility javaVersion
+        targetCompatibility javaVersion
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = javaVersion.toString()
     }
     buildFeatures {
         viewBinding true
     }
 }
-
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: "androidx.navigation.safeargs.kotlin"
-apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     //Android Jetpack
@@ -70,9 +72,19 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     //--Data Store
     implementation("androidx.datastore:datastore-preferences:1.0.0-beta01")
+    //--Android - Room
+    def room_version = "2.3.0"
+    implementation("androidx.room:room-runtime:$room_version")
+    //---Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
+    //---Kotlin annotation processing tool (kapt)
+    kapt("androidx.room:room-compiler:$room_version")
+    //---Test helpers
+    testImplementation("androidx.room:room-testing:$room_version")
 
 
-   // implementation 'org.apache.commons:commons-text:1.9'
+    //String Util
+    implementation 'org.apache.commons:commons-text:1.9'
 
     //UI Libraries
     //--Country dialing code picker

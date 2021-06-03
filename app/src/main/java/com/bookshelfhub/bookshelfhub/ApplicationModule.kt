@@ -4,12 +4,10 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtils
+import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import dagger.Module
 import dagger.Provides
@@ -31,9 +29,28 @@ object ApplicationModule {
 
     @Singleton
     @Provides
+    fun getAppUtil(@ApplicationContext context: Context): AppUtil {
+        return AppUtil(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getLocalDb(@ApplicationContext context: Context): LocalDb {
+        return LocalDb(context)
+    }
+
+    @Singleton
+    @Provides
     fun getUserAuthentication(): UserAuth {
         return UserAuth()
     }
+
+    @Singleton
+    @Provides
+    fun getSettingsUtil(@ApplicationContext context: Context): SettingsUtil {
+        return SettingsUtil(context)
+    }
+
 
     @Singleton
     @Provides

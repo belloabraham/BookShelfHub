@@ -19,13 +19,13 @@ open class FirebaseRemoteConfig {
         return 0L
     }
 
-    open fun fetchConfigAsync(onComplete:()->Unit, error:(String)->Unit?){
+    open fun fetchConfigAsync(onComplete:(error:String?)->Unit){
         remoteConfig.fetchAndActivate()
             .addOnCompleteListener {
                 if (it.isSuccessful){
-                    onComplete()
+                    onComplete(null)
                 }else{
-                    error(it.exception!!.message.toString())
+                    onComplete(it.exception!!.message.toString())
                 }
             }
     }

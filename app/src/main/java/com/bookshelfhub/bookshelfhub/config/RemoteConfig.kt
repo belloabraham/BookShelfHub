@@ -1,4 +1,6 @@
 package com.bookshelfhub.bookshelfhub.config
 
-class RemoteConfig:FirebaseRemoteConfig() {
+import javax.inject.Inject
+
+class RemoteConfig @Inject constructor ():FirebaseRemoteConfig() {
 }

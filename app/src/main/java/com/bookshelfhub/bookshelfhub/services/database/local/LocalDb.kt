@@ -1,4 +1,9 @@
 package com.bookshelfhub.bookshelfhub.services.database.local
 
-class LocalDb {
+import android.content.Context
+import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
+import javax.inject.Inject
+
+class LocalDb @Inject constructor(context: Context): RoomDb(context) {
+
 }
