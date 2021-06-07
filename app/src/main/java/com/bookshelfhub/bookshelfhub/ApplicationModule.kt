@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import dagger.Module
@@ -37,6 +38,12 @@ object ApplicationModule {
     @Provides
     fun getLocalDb(@ApplicationContext context: Context): LocalDb {
         return LocalDb(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getCloudDb(@ApplicationContext context: Context): CloudDb {
+        return CloudDb()
     }
 
     @Singleton

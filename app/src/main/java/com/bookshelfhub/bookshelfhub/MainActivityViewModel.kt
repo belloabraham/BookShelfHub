@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil,localDb:LocalDb):ViewModel() {
+class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil,database: Database):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var user: LiveData<List<User>>
     private val NEW_VERSION_CODE="new_version_code"
@@ -25,7 +26,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
 
     init {
         checkForUpdate()
-        user=localDb.getUsers()
+        user=database.getUsers()
     }
 
     fun getUserData():LiveData<List<User>>{

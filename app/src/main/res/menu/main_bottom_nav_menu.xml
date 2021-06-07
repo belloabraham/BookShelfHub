@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/shelf"
+        android:icon="@drawable/ic_shelf"
+        android:title="@string/shelf" />
+
+    <item
+        android:id="@+id/store"
+        android:icon="@drawable/ic_cart"
+        android:title="@string/store" />
+
+    <item
+        android:id="@+id/group"
+        android:icon="@drawable/ic_chat"
+        android:title="@string/group" />
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile" />
+
+</menu>

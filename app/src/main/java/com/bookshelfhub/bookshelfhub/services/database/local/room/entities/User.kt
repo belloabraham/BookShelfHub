@@ -14,5 +14,6 @@ data class User(
      val authType:String,
      val appVersion:String,
      val device:String,
+     @field:JvmField
      val isUploaded: Boolean = false
 )

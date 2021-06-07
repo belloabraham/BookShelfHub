@@ -33,6 +33,7 @@ class VerificationFragment:Fragment(){
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
     private var inProgress:Boolean=true
+    private val timerDuration = 180L
 
     @Inject
     lateinit var textLinkBuilder:TextLinkBuilder
@@ -77,7 +78,7 @@ class VerificationFragment:Fragment(){
                 }
 
                 if (inProgress){
-                    phoneAuthViewModel.startTimer(60000L)
+                    phoneAuthViewModel.startTimer(timerDuration)
                     inProgress=false
                 }
 

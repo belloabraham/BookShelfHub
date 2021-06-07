@@ -10,7 +10,7 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class Application: android.app.Application() {
     private lateinit var notificationChannelBuilder: NotificationChannelBuilder
-
+    private val rmcFetchIntervalInSeconds = 1800L
 
     override fun onCreate() {
         super.onCreate()
@@ -24,7 +24,7 @@ class Application: android.app.Application() {
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 1800
+            this.minimumFetchIntervalInSeconds = rmcFetchIntervalInSeconds
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)

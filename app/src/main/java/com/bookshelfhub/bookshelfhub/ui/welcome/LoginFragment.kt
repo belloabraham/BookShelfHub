@@ -58,7 +58,7 @@ class LoginFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentLoginBinding.inflate(inflater, container, false);
+        layout= FragmentLoginBinding.inflate(inflater, container, false)
 
         //Populate UI controls with data based on User login or Sign up
         layout.title.setText(args.loginSignup)

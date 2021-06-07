@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivityNavigation"
+    app:startDestination="@+id/shelf">
+
+    <fragment
+        android:id="@+id/shelf"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_shelf" />
+
+    <fragment
+        android:id="@+id/store"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.StoreFragment"
+        android:label="@string/store"
+        tools:layout="@layout/fragment_store" />
+
+    <fragment
+        android:id="@+id/groupChat"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.GroupChatFragment"
+        android:label="@string/group_chat"
+        tools:layout="@layout/fragment_group_chat" />
+
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile" />
+</navigation>

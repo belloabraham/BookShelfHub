@@ -1,12 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
+import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.ktx.remoteMessage
-import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class FirebaseCMService : FirebaseMessagingService() {
@@ -30,10 +30,23 @@ class FirebaseCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        runBlocking {
-            settingsUtil.setString(Settings.NOTIF_TOKEN.KEY, token)
-        }
-        //TODO Start a one time request worker that requires internet connection that saves token to the cloud using user id
-        //Todo margin the data with the existing one
+
+        val connected = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val oneTimeNotificationTokenUpload: WorkRequest =
+            OneTimeWorkRequestBuilder<UploadNotificationToken>()
+                .setConstraints(connected)
+                .build()
+
+        val periodicNotificationTokenUpload =
+            PeriodicWorkRequestBuilder<UploadNotificationToken>(30, TimeUnit.MINUTES)
+                .setConstraints(connected)
+                .build()
+
+        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
+        WorkManager.getInstance(applicationContext).enqueue(periodicNotificationTokenUpload)
+
     }
 }

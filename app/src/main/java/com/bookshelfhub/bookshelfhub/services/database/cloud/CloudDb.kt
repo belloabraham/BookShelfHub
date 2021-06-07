@@ -1,4 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
-class CloudDb {
+import javax.inject.Inject
+
+class CloudDb: Firestore() {
 }

@@ -24,8 +24,8 @@ class SplashActivity : AppCompatActivity() {
        hideSystemUI(window)
         super.onCreate(savedInstanceState)
 
-        val intent: Intent
-        if (userAuth.getIsUserAuthenticated()){
+        val intent: Intent = Intent(this, MainActivity::class.java);
+       /* if (userAuth.getIsUserAuthenticated()){
                 val user = localDb.getUsers().value
                  if (user?.get(0)!=null && userAuth.getUserId() == user.get(0).uId){
                      intent = Intent(this, MainActivity::class.java);
@@ -34,7 +34,7 @@ class SplashActivity : AppCompatActivity() {
                  }
         }else{
            intent = Intent(this, WelcomeActivity::class.java);
-        }
+        }*/
         finish()
         startActivity(intent)
 

@@ -19,6 +19,7 @@ import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +40,7 @@ class UserInfoFragment : Fragment() {
     @Inject
     lateinit var userAuth: UserAuth
     @Inject
-    lateinit var localDb: LocalDb
+    lateinit var database: Database
     @Inject
     lateinit var deviceUtil: DeviceUtil
     @Inject
@@ -54,7 +55,7 @@ class UserInfoFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         layout= FragmentUserInfoBinding.inflate(inflater, container, false);
 
@@ -89,11 +90,9 @@ class UserInfoFragment : Fragment() {
 
                 userAuthViewModel.setIsAddingUser(true)
                 lifecycleScope.launch(IO) {
-
                     val user = User(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
-                    localDb.addUser(user)
+                    database.addUser(user)
                     withContext(Main){
-                        //Todo start a worker one time request that requires internet connection and that saves data from local db to the cloud margin the data with the existing one
                       userAuthViewModel.setIsAddingUser(false)
                     }
                 }

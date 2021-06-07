@@ -1,11 +1,14 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import androidx.activity.viewModels
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -16,6 +19,7 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_main.*
 import java.text.Format
 import javax.inject.Inject
 
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var intentUtil: IntentUtil
     private val ENFORCE_UPDATE="enforce_update"
     private val CHANGE_LOG="change_log"
+    private lateinit var navController:NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,17 +51,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
-
-       /* val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications))
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)*/
+        navController = findNavController(R.id.nav_host_fragment)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_bottom_nav_menu, menu)
+        bottom_bar.setupWithNavController(menu!!, navController)
+        return true
+    }
 
     private fun showNewUpdateAlertAndNotification(){
         val title:String

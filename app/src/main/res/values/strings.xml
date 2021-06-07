@@ -1,6 +1,4 @@
-<!DOCTYPE resources [
-    <!ENTITY appname "BookShelfHub">
-    ]>
+<!DOCTYPE resources [<!ENTITY appname "BookShelfHub">]>
 <resources>
     <string name="app_name">&appname;</string>
     <string name="title_home">Home</string>
@@ -53,17 +51,28 @@
     <string name="authentication">Authentication</string>
 
     <!-- Todo Notification -->
-    <string  name="notif_channel_desc">&appname; notification channel</string>
-    <string translatable="false"  name="notif_channel_id">&appname;</string>
+    <string name="notif_channel_desc">&appname; notification channel</string>
+    <string name="notif_channel_id" translatable="false">&appname;</string>
 
 
     <!-- Todo App Update -->
-    <string  name="close">Close</string>
-    <string  name="update">Update</string>
-    <string  name="later">Later</string>
-    <string  name="update_req_title">An update is required</string>
-    <string  name="update_mgs">Update &appname;\nIMPROVEMENTS\n%1$s</string>
-    <string  name="update_req_mgs">You need to update &appname; to continue using it.</string>
-    <string  name="update_title">You\'re missing out</string>
+    <string name="close">Close</string>
+    <string name="update">Update</string>
+    <string name="later">Later</string>
+    <string name="update_req_title">An update is required</string>
+    <string name="update_mgs">Update &appname;\nIMPROVEMENTS\n%1$s</string>
+    <string name="update_req_mgs">You need to update &appname; to continue using it.</string>
+    <string name="update_title">You\'re missing out</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <!-- TODO: Main Activity Bottom Navigation -->
+    <string name="group_chat">Group Chat</string>
+    <string name="shelf">Shelf</string>
+    <string name="group">Group</string>
+    <string name="store">Store</string>
+    <string name="profile">Profile</string>
 
 </resources>
