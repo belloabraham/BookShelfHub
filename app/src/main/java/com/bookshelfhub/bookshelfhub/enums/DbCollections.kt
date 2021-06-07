@@ -1,5 +1,5 @@
 package com.bookshelfhub.bookshelfhub.enums
 
-enum class Collections(val KEY:String) {
+enum class DbCollections(val KEY:String) {
     USERS("users")
 }

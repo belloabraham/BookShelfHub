@@ -2,17 +2,13 @@ package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import androidx.activity.viewModels
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
@@ -20,7 +16,6 @@ import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-import java.text.Format
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -51,11 +46,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        navController = findNavController(R.id.nav_host_fragment)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.findNavController()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_bottom_nav_menu, menu)
+        menuInflater.inflate(R.menu.main_activity_bottom_nav_menu, menu)
         bottom_bar.setupWithNavController(menu!!, navController)
         return true
     }

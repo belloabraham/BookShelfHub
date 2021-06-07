@@ -1,12 +1,17 @@
 package com.bookshelfhub.bookshelfhub.services.database
 
+import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.work.*
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
+import com.bookshelfhub.bookshelfhub.workers.UploadUserData
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class Database @Inject constructor(private val localDb: LocalDb, private val cloudDb:CloudDb) {
+class Database @Inject constructor(private var context: Context, private val localDb: LocalDb, private val cloudDb:CloudDb) {
 
     fun getUsers(): LiveData<List<User>> {
         return localDb.getUsers()
@@ -14,8 +19,22 @@ class Database @Inject constructor(private val localDb: LocalDb, private val clo
 
     suspend fun addUser(user:User){
         localDb.addUser(user)
-        //Todo a one time request worker that add user to the cloud that requires connection
-        //Todo A periodic request worker that Add user to the cloud that requires connection
-        //Todo using cloud db making sure the data is merged
+
+        val connected = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val oneTimeUserDataUpload: WorkRequest =
+            OneTimeWorkRequestBuilder<UploadUserData>()
+                .setConstraints(connected)
+                .build()
+
+        val periodicUserDataUpload =
+            PeriodicWorkRequestBuilder<UploadUserData>(12, TimeUnit.HOURS)
+                .setConstraints(connected)
+                .build()
+
+        WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
+        WorkManager.getInstance(context).enqueue(periodicUserDataUpload)
     }
 }

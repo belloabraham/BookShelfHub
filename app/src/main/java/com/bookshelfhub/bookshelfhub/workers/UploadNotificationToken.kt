@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.enums.Collections
+import com.bookshelfhub.bookshelfhub.enums.DbCollections
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.notification.CloudMessaging
@@ -37,7 +37,7 @@ class UploadNotificationToken (var context: Context, workerParams: WorkerParamet
                val token = hashMapOf(
                    notificationTokenKey to newToken
                )
-               cloudDb.addDataAsync(token,Collections.USERS.KEY, userAuth.getUserId()) {
+               cloudDb.addDataAsync(token,DbCollections.USERS.KEY, userAuth.getUserId()) {
                    runBlocking {
                        settingsUtil.setString(notificationTokenKey, newToken)
                    }

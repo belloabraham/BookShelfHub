@@ -16,12 +16,15 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
+import com.bookshelfhub.bookshelfhub.enums.DbCollections
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
+import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -41,6 +44,8 @@ class UserInfoFragment : Fragment() {
     lateinit var userAuth: UserAuth
     @Inject
     lateinit var database: Database
+    @Inject
+    lateinit var cloudDb: CloudDb
     @Inject
     lateinit var deviceUtil: DeviceUtil
     @Inject
@@ -63,8 +68,22 @@ class UserInfoFragment : Fragment() {
 
         }
 
-        //TODO check if user data exist on the cloud, if so get user data, auto populate UI with it, save data to local db and and set addingUser to false
-        //
+        cloudDb.getDataAsync(DbCollections.USERS.KEY, userAuth.getUserId(), User::class.java){
+            it?.let {
+                val userData = it as User
+                layout.nameEditTxt.setText(userData.name)
+                layout.phoneEditTxt.setText(userData.phone)
+                layout.emailEditTxt.setText(userData.email)
+                lifecycleScope.launch(IO) {
+                    val user = User(userAuth.getUserId(),userData.name, userData.email,userData.phone, userData.photoUri, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
+                    database.addUser(user)
+                    withContext(Main){
+                        userAuthViewModel.setIsAddingUser(false)
+                    }
+                }
+            }
+        }
+
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())

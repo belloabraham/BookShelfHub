@@ -7,7 +7,7 @@
     android:paddingTop="?attr/actionBarSize">
 
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
     <nl.joery.animatedbottombar.AnimatedBottomBar
         android:id="@+id/bottom_bar"
         android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="50dp"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:background="?android:attr/windowBackground"
@@ -42,7 +42,7 @@
         app:abb_indicatorMargin="16dp"
         app:abb_selectedIndex="0"
         app:abb_selectedTabType="text"
-        app:abb_tabs="@menu/main_bottom_nav_menu"
+        app:abb_tabs="@menu/main_activity_bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
