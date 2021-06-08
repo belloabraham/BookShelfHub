@@ -5,10 +5,17 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -24,19 +31,23 @@ class SplashActivity : AppCompatActivity() {
        hideSystemUI(window)
         super.onCreate(savedInstanceState)
 
-        val intent: Intent = Intent(this, MainActivity::class.java);
-       /* if (userAuth.getIsUserAuthenticated()){
-                val user = localDb.getUsers().value
-                 if (user?.get(0)!=null && userAuth.getUserId() == user.get(0).uId){
-                     intent = Intent(this, MainActivity::class.java);
-                 }else{
-                     intent = Intent(this, WelcomeActivity::class.java);
-                 }
+        if (userAuth.getIsUserAuthenticated()){
+            lifecycleScope.launch(IO) {
+                val user = localDb.getUser()
+              withContext(Main){
+                 val intent = if (user.isPresent && userAuth.getUserId() == user.get().uId){
+                      Intent(this@SplashActivity, MainActivity::class.java)
+                  }else{
+                      Intent(this@SplashActivity, WelcomeActivity::class.java)
+                  }
+                  finish()
+                  startActivity(intent)
+              }
+            }
         }else{
-           intent = Intent(this, WelcomeActivity::class.java);
-        }*/
-        finish()
-        startActivity(intent)
+             finish()
+             startActivity(Intent(this, WelcomeActivity::class.java))
+        }
 
     }
 

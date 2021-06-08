@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.enums.DbCollections
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.notification.CloudMessaging
@@ -17,10 +18,17 @@ class UploadNotificationToken (var context: Context, workerParams: WorkerParamet
     private lateinit var cloudDb: CloudDb
     private lateinit var cloudMessaging: CloudMessaging
     private lateinit var settingsUtil: SettingsUtil
+    private lateinit var stringUtil: StringUtil
     private val  notificationTokenKey="notification_token"
 
     override fun doWork(): Result {
-        userAuth=UserAuth()
+        stringUtil = StringUtil()
+        userAuth=UserAuth(stringUtil)
+
+        if (!userAuth.getIsUserAuthenticated()){
+            return Result.retry()
+        }
+
         cloudDb= CloudDb()
         cloudMessaging= CloudMessaging()
         settingsUtil= SettingsUtil(context)
@@ -34,10 +42,7 @@ class UploadNotificationToken (var context: Context, workerParams: WorkerParamet
         cloudMessaging.getNotificationTokenAsync {
             val newToken=it
            if (appToken!=newToken){
-               val token = hashMapOf(
-                   notificationTokenKey to newToken
-               )
-               cloudDb.addDataAsync(token,DbCollections.USERS.KEY, userAuth.getUserId()) {
+               cloudDb.addDataAsync(newToken,DbFields.USERS_COLL.KEY, userAuth.getUserId(), notificationTokenKey) {
                    runBlocking {
                        settingsUtil.setString(notificationTokenKey, newToken)
                    }

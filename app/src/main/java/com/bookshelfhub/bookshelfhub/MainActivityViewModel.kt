@@ -19,19 +19,19 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil,database: Database):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    private var user: LiveData<List<User>>
+    //private var user: LiveData<List<User>>
     private val NEW_VERSION_CODE="new_version_code"
     private val APP_VERSION_CODE="app_version_code"
 
 
     init {
         checkForUpdate()
-        user=database.getUsers()
+        //user=database.getUsers()
     }
 
-    fun getUserData():LiveData<List<User>>{
-        return user
-    }
+  //  fun getUserData():LiveData<List<User>>{
+        //return user
+   // }
 
     fun getIsUpdateAvailable(): LiveData<Boolean> {
         return isUpdateAvailable

@@ -16,15 +16,12 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.DbCollections
-import com.bookshelfhub.bookshelfhub.enums.Settings
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.google.firebase.auth.ktx.userProfileChangeRequest
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -68,7 +65,7 @@ class UserInfoFragment : Fragment() {
 
         }
 
-        cloudDb.getDataAsync(DbCollections.USERS.KEY, userAuth.getUserId(), User::class.java){
+        cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
             it?.let {
                 val userData = it as User
                 layout.nameEditTxt.setText(userData.name)
@@ -84,11 +81,14 @@ class UserInfoFragment : Fragment() {
             }
         }
 
+
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())
+            layout.emailEditTxt.setText(userAuth.getEmail())
         }else{
             layout.emailEditTxtLayout.visibility=View.VISIBLE
+            layout.phoneEditTxt.setText(userAuth.getPhone())
         }
 
         layout.btnContinue.setOnClickListener {

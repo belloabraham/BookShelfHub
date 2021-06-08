@@ -41,10 +41,5 @@ object FragmentModule {
         return TextLinkBuilder()
     }
 
-    @FragmentScoped
-    @Provides
-    fun getStringUtils(): StringUtil {
-        return StringUtil()
-    }
 
 }

@@ -3,11 +3,12 @@ package com.bookshelfhub.bookshelfhub.workers
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.enums.DbCollections
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import kotlinx.coroutines.runBlocking
 
 class UploadUserData(var context: Context, workerParams: WorkerParameters): Worker(context,
@@ -17,25 +18,24 @@ class UploadUserData(var context: Context, workerParams: WorkerParameters): Work
     private lateinit var localDb: LocalDb
     private lateinit var cloudDb: CloudDb
     private lateinit var userAuth: UserAuth
-
+    private lateinit var stringUtil: StringUtil
 
     override fun doWork(): Result {
-
         localDb = LocalDb(context)
-        val listOfUsersData = localDb.getUsers().value?.filter {
-            it.isUploaded==false
-        }
-        val userData = listOfUsersData?.get(0)
-        userData?.let {
+        val user = localDb.getUser()
+        val userData = user.get()
+        if (user.isPresent && !userData.isUploaded){
+            stringUtil = StringUtil()
             cloudDb = CloudDb()
-            userAuth=UserAuth()
-            cloudDb.addDataAsync(it, DbCollections.USERS.KEY, userAuth.getUserId()){
-                it.isUploaded=true
+            userAuth=UserAuth(stringUtil)
+            cloudDb.addDataAsync(userData, DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY){
+               userData.isUploaded=true
                 runBlocking {
-                    localDb.addUser(it)
+                    localDb.addUser(userData)
                 }
             }
         }
+
         return Result.success()
     }
 }

@@ -5,12 +5,11 @@ import javax.inject.Inject
 
 class TimerUtil @Inject constructor(private val intervalInMilliSec:Long) {
 
-    fun startTimer(length:Long, getTimeRemaining: (Long)->Unit){
+    fun startTimer(lengthInMilliSec:Long, getTimeRemaining: (Long)->Unit){
 
-      object : CountDownTimer(length, intervalInMilliSec) {
+      object : CountDownTimer(lengthInMilliSec, intervalInMilliSec) {
             override fun onTick(millisUntilFinished: Long) {
-                val timeRemainingInSec = millisUntilFinished/intervalInMilliSec
-                getTimeRemaining(timeRemainingInSec)
+                getTimeRemaining(millisUntilFinished/intervalInMilliSec)
             }
             override fun onFinish() {
 

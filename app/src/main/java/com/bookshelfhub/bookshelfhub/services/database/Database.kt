@@ -13,10 +13,6 @@ import javax.inject.Inject
 
 class Database @Inject constructor(private var context: Context, private val localDb: LocalDb, private val cloudDb:CloudDb) {
 
-    fun getUsers(): LiveData<List<User>> {
-        return localDb.getUsers()
-    }
-
     suspend fun addUser(user:User){
         localDb.addUser(user)
 

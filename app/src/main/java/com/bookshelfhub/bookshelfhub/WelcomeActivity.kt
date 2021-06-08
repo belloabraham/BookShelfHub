@@ -194,10 +194,6 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     fun signInOrSignUpWithGoogle(signInErrorMsg:String){
         this.signInErrorMsg= signInErrorMsg;
         if (!layout.lottieAnimView.isAnimating) {

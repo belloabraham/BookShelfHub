@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.google.common.base.Optional
 
 @Dao
 interface UserDao {
@@ -13,6 +14,9 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user:User)
 
-    @Query("SELECT * FROM user_table")
-    fun getUsers(): LiveData<List<User>>
+    @Query("SELECT * FROM user LIMIT 1")
+    fun getUser(): Optional<User>
+
+    @Query("SELECT * FROM user LIMIT 1")
+    fun getLiveUser(): LiveData<User>
 }

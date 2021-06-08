@@ -12,7 +12,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
 
-
     @ViewModelScoped
     @Provides
     fun getTimerUtil(): TimerUtil {

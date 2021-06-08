@@ -80,12 +80,11 @@ class PhoneAuthViewModel @Inject constructor(private val timerUtil: TimerUtil) :
     }
 
     fun startTimer(length: Long){
-        if (!timerStarted){
+      if (!timerStarted){
             timerStarted=true
             timerUtil.startTimer(length) {
                 timeRemainingInMillis.value=it
             }
-
         }
     }
 }

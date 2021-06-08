@@ -1,11 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
+import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserInfo
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-open class User {
+open class User(private val stringUtils: StringUtil) {
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -22,11 +23,23 @@ open class User {
     }
 
     open fun getAuthType():String{
-       return auth.currentUser!!.providerId
+
+        auth.currentUser?.let {
+           it.email?.let {
+               return AuthType.GOOGLE.ID
+           }
+            it.phoneNumber?.let {
+                return AuthType.PHONE.ID
+            }
+        }
+       return ""
     }
 
     open fun getName():String?{
-        return  auth.currentUser?.displayName
+        auth.currentUser?.displayName?.let {
+            return  stringUtils.capitalize(it)
+        }
+        return  null
     }
 
     open fun getPhone():String?{

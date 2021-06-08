@@ -16,4 +16,5 @@ class StringUtil{
         fun capitalize(value:String):String{
           return WordUtils.capitalize(value)
         }
+
 }

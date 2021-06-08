@@ -18,9 +18,13 @@ import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -51,6 +55,10 @@ class LoginFragment:Fragment() {
     lateinit var tooltip: ToolTip
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var cloudDb: CloudDb
+    @Inject
+    lateinit var userAuth: UserAuth
 
 
     override fun onCreateView(
@@ -131,11 +139,17 @@ class LoginFragment:Fragment() {
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser().value!!
+                val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
                 if (isNewUser){
-                    val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
                     findNavController().navigate(actionUserInfo)
                 }else{
-                    //Todo try to get user data from the cloud first, if fail stop animation and navigate to UserInfo fragment where I will try again, if pass stop animation and navigate to main activity using setIsAddingUser to false
+                    cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
+                        if(it!=null){
+                            userAuthViewModel.setIsAddingUser(false)
+                        }else{
+                            userAuthViewModel.setIsExistingUser(false)
+                        }
+                    }
                 }
             }
         })

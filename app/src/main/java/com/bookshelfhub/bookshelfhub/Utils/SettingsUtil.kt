@@ -13,7 +13,9 @@ import javax.inject.Inject
 
 class SettingsUtil @Inject constructor  (private val context: Context) {
 
-    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = context.getString(R.string.app_name))
+        companion object{
+            private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("BookShelfHub")
+        }
 
     suspend fun getLong(key:String, defaultValue:Long):Long{
         val prefKey = longPreferencesKey(key)

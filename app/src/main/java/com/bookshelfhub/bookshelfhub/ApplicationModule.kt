@@ -43,7 +43,7 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getCloudDb(@ApplicationContext context: Context): CloudDb {
+    fun getCloudDb(): CloudDb {
         return CloudDb()
     }
 
@@ -55,8 +55,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getUserAuthentication(): UserAuth {
-        return UserAuth()
+    fun getUserAuthentication(stringUtil: StringUtil): UserAuth {
+        return UserAuth(stringUtil)
     }
 
     @Singleton
@@ -65,6 +65,11 @@ object ApplicationModule {
         return SettingsUtil(context)
     }
 
+    @Singleton
+    @Provides
+    fun getStringUtils(): StringUtil {
+        return StringUtil()
+    }
 
     @Singleton
     @Provides

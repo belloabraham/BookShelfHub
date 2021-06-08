@@ -10,7 +10,7 @@
 
     <!-- TODO: Phone Sign in / Sign up-->
     <string name="with_phone">%1$s with phone</string>
-    <string name="seconds_remaining">%1$d secs</string>
+    <string name="time_remaining">%1$d:%2$d secs</string>
     <string name="sending_otp_code">Sending a one time pass code to your phone number</string>
     <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %1$s.</string>
     <string name="enter_phone_num">Enter phone number</string>
