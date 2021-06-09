@@ -19,7 +19,7 @@ class UploadNotificationToken (var context: Context, workerParams: WorkerParamet
     private lateinit var cloudMessaging: CloudMessaging
     private lateinit var settingsUtil: SettingsUtil
     private lateinit var stringUtil: StringUtil
-    private val  notificationTokenKey="notification_token"
+    private val  NOTIFICATION_TOKEN="notification_token"
 
     override fun doWork(): Result {
         stringUtil = StringUtil()
@@ -36,15 +36,15 @@ class UploadNotificationToken (var context: Context, workerParams: WorkerParamet
 
         val appToken:String?
         runBlocking {
-            appToken = settingsUtil.getString(notificationTokenKey)
+            appToken = settingsUtil.getString(NOTIFICATION_TOKEN)
         }
 
         cloudMessaging.getNotificationTokenAsync {
             val newToken=it
            if (appToken!=newToken){
-               cloudDb.addDataAsync(newToken,DbFields.USERS_COLL.KEY, userAuth.getUserId(), notificationTokenKey) {
+               cloudDb.addDataAsync(newToken,DbFields.USERS_COLL.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN) {
                    runBlocking {
-                       settingsUtil.setString(notificationTokenKey, newToken)
+                       settingsUtil.setString(NOTIFICATION_TOKEN, newToken)
                    }
                }
            }
