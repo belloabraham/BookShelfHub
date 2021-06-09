@@ -17,11 +17,12 @@ import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -67,12 +68,12 @@ class UserInfoFragment : Fragment() {
 
         cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
             it?.let {
-                val userData = it as User
+               val userData = it as User
                 layout.nameEditTxt.setText(userData.name)
                 layout.phoneEditTxt.setText(userData.phone)
                 layout.emailEditTxt.setText(userData.email)
                 lifecycleScope.launch(IO) {
-                    val user = User(userAuth.getUserId(),userData.name, userData.email,userData.phone, userData.photoUri, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
+                    val user = UserRecord(userAuth.getUserId(),userData.name, userData.email,userData.phone, userData.photoUri, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
                     database.addUser(user)
                     withContext(Main){
                         userAuthViewModel.setIsAddingUser(false)
@@ -109,7 +110,7 @@ class UserInfoFragment : Fragment() {
 
                 userAuthViewModel.setIsAddingUser(true)
                 lifecycleScope.launch(IO) {
-                    val user = User(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
+                    val user = com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel(), false)
                     database.addUser(user)
                     withContext(Main){
                       userAuthViewModel.setIsAddingUser(false)

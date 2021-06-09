@@ -8,8 +8,6 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch

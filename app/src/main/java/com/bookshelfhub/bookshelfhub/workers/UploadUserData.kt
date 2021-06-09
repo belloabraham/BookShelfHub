@@ -8,7 +8,6 @@ import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import kotlinx.coroutines.runBlocking
 
 class UploadUserData(var context: Context, workerParams: WorkerParameters): Worker(context,
@@ -24,17 +23,18 @@ class UploadUserData(var context: Context, workerParams: WorkerParameters): Work
         localDb = LocalDb(context)
         val user = localDb.getUser()
         val userData = user.get()
-        if (user.isPresent && !userData.isUploaded){
-            stringUtil = StringUtil()
-            cloudDb = CloudDb()
-            userAuth=UserAuth(stringUtil)
-            cloudDb.addDataAsync(userData, DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY){
-               userData.isUploaded=true
-                runBlocking {
-                    localDb.addUser(userData)
-                }
+            if (user.isPresent && !userData.uploaded){
+                stringUtil = StringUtil()
+                cloudDb = CloudDb()
+                userAuth=UserAuth(stringUtil)
+                    cloudDb.addDataAsync(userData, DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY){
+                        val newUserData = userData.copy(uploaded = true)
+                        runBlocking {
+                            localDb.addUser(newUserData)
+                        }
+                    }
             }
-        }
+
 
         return Result.success()
     }

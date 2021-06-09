@@ -20,9 +20,5 @@ class GroupChatFragment : Fragment() {
         return layout.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            GroupChatFragment()
-    }
+
 }

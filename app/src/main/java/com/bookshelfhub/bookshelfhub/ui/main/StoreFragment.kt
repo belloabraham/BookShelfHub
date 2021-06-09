@@ -20,9 +20,4 @@ class StoreFragment : Fragment() {
         return layout.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            StoreFragment()
-    }
 }

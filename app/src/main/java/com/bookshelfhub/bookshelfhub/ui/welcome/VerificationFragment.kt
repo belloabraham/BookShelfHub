@@ -17,11 +17,12 @@ import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.enums.VeriFragSavedState
+import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

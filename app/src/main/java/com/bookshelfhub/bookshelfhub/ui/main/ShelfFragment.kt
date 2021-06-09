@@ -5,10 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bookshelfhub.bookshelfhub.R
+import android.widget.Toast
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.WithFragmentBindings
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
+@WithFragmentBindings
 class ShelfFragment : Fragment() {
+    @Inject
+    lateinit var userAuth: UserAuth
+
 
     private lateinit var layout: FragmentShelfBinding
     override fun onCreateView(
@@ -17,13 +27,12 @@ class ShelfFragment : Fragment() {
     ): View {
         layout= FragmentShelfBinding.inflate(inflater, container, false)
 
+        layout.button.setOnClickListener {
+            Toast.makeText(requireActivity(), userAuth.getProfilePicUri().toString(),Toast.LENGTH_LONG).show()
+
+        }
 
         return layout.root
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            ShelfFragment()
-    }
 }

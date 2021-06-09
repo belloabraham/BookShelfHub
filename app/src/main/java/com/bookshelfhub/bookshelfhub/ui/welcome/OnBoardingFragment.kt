@@ -4,17 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.wrapper.imageloader.ImageLoader
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController.ClickListener
@@ -22,11 +18,6 @@ import com.smarteist.autoimageslider.SliderAnimations
 import com.smarteist.autoimageslider.SliderView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 

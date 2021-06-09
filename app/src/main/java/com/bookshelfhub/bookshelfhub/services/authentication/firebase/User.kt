@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
+import android.net.Uri
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.google.firebase.auth.FirebaseAuth
@@ -46,4 +47,7 @@ open class User(private val stringUtils: StringUtil) {
         return  auth.currentUser?.phoneNumber
     }
 
+    open fun getProfilePicUri(): Uri?{
+        return  auth.currentUser?.photoUrl
+    }
 }

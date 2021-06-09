@@ -19,12 +19,12 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
