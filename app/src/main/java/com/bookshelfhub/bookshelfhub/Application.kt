@@ -4,6 +4,7 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBui
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -15,6 +16,7 @@ class Application: android.app.Application() {
     override fun onCreate() {
         super.onCreate()
         val  context = applicationContext
+        AndroidThreeTen.init(this);
         setupFirebaseRemoteConfig()
         notificationChannelBuilder = NotificationChannelBuilder(context,context.getString(R.string.notif_channel_id))
         notificationChannelBuilder.createNotificationChannels(context.getString(R.string.notif_channel_desc),R.color.notf_color)

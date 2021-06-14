@@ -49,8 +49,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getDatabase(@ApplicationContext context: Context, localDb: LocalDb, cloudDb: CloudDb): Database {
-        return Database(context,localDb, cloudDb )
+    fun getDatabase(@ApplicationContext context: Context, localDb: LocalDb): Database {
+        return Database(context,localDb )
     }
 
     @Singleton

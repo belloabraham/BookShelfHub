@@ -1,8 +1,9 @@
 package com.bookshelfhub.bookshelfhub.Utils
 
 import android.os.Build
+import javax.inject.Inject
 
-class DeviceUtil(private val stringUtil: StringUtil) {
+class DeviceUtil @Inject constructor (private val stringUtil: StringUtil) {
 
     fun getDeviceBrandAndModel():String{
         val manufacturer= Build.MANUFACTURER
@@ -10,10 +11,11 @@ class DeviceUtil(private val stringUtil: StringUtil) {
         if (model.startsWith(manufacturer)){
             return stringUtil.capitalize(manufacturer)
         }
-        return stringUtil.capitalize(manufacturer+" "+model)
+        return stringUtil.capitalize("$manufacturer $model" )
+
     }
 
-    fun getDeviceOSVersionInfo(osVersion:Int):String{
+     fun getDeviceOSVersionInfo(osVersion:Int):String{
         Build.VERSION_CODES.O
             when(osVersion) {
                 Build.VERSION_CODES.P ->
@@ -43,7 +45,5 @@ class DeviceUtil(private val stringUtil: StringUtil) {
             }
         return "Android version greater than 12 - API ${osVersion}"
     }
-
-
 
 }

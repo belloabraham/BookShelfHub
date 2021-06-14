@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.welcome
 
+import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
 import androidx.fragment.app.Fragment
@@ -10,10 +11,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
+import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
@@ -73,10 +71,8 @@ class UserInfoFragment : Fragment() {
                 layout.phoneEditTxt.setText(userData.phone)
                 layout.emailEditTxt.setText(userData.email)
                 lifecycleScope.launch(IO) {
-                    val user = UserRecord(userAuth.getUserId(),userData.name, userData.email,userData.phone, userData.photoUri, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel())
-                    database.addUser(user)
                     withContext(Main){
-                        userAuthViewModel.setIsAddingUser(false)
+                        userAuthViewModel.setIsAddingUser(false, userData)
                     }
                 }
             }
@@ -107,13 +103,12 @@ class UserInfoFragment : Fragment() {
             }else if(!stringUtil.isValidPhoneNumber(phone)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
-
-                userAuthViewModel.setIsAddingUser(true)
                 lifecycleScope.launch(IO) {
-                    val user = com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel(), false)
-                    database.addUser(user)
+                    val localDateTime= DateTimeUtil.getDateTimeAsString()
+                    val user = UserRecord(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel(), deviceUtil.getDeviceOSVersionInfo(
+                        Build.VERSION.SDK_INT), localDateTime)
                     withContext(Main){
-                      userAuthViewModel.setIsAddingUser(false)
+                      userAuthViewModel.setIsAddingUser(false, user)
                     }
                 }
             }

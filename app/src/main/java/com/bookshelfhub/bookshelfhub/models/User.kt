@@ -1,9 +1,9 @@
 package com.bookshelfhub.bookshelfhub.models
 
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IUser
+import org.threeten.bp.LocalDateTime
 
 class User: IUser {
-    override val uId: String = ""
+    override var userId: String = ""
         get() = field
     override var name: String = ""
         get() = field
@@ -18,6 +18,10 @@ class User: IUser {
     override val appVersion: String = ""
         get() = field
     override val device: String = ""
+        get() = field
+    override val deviceOs: String = ""
+        get() = field
+    override val lastUpdated: String=""
         get() = field
     override var uploaded: Boolean = false
         get() = field

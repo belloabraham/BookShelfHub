@@ -33,7 +33,7 @@ class SplashActivity : AppCompatActivity() {
             lifecycleScope.launch(IO) {
                 val user = localDb.getUser()
               withContext(Main){
-                 val intent = if (user.isPresent && userAuth.getUserId() == user.get().uId){
+                 val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
                       Intent(this@SplashActivity, MainActivity::class.java)
                   }else{
                       Intent(this@SplashActivity, WelcomeActivity::class.java)

@@ -135,9 +135,9 @@ class VerificationFragment:Fragment(){
                         }else{
                             cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(),DbFields.USER.KEY, User::class.java){
                                 if(it!=null){
-                                    userAuthViewModel.setIsAddingUser(false)
+                                    val user = it as User
+                                    userAuthViewModel.setIsAddingUser(false, user)
                                 }else{
-                                    findNavController().navigate(actionUserInfo)
                                     userAuthViewModel.setIsExistingUser(false)
                                 }
                             }

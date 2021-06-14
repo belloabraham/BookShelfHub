@@ -9,7 +9,7 @@ import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class Database @Inject constructor(private var context: Context, private val localDb: LocalDb, private val cloudDb:CloudDb) {
+class Database @Inject constructor(private var context: Context, private val localDb: LocalDb) {
 
     suspend fun addUser(userRecord:UserRecord){
         localDb.addUser(userRecord)

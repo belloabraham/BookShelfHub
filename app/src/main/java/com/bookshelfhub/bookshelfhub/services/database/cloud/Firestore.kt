@@ -10,11 +10,9 @@ import com.google.firebase.ktx.Firebase
 
 open class Firestore {
     private val db:FirebaseFirestore = Firebase.firestore
-    private val lastUpdated="last_updated"
+    private val lastUpdated="last_uploaded"
 
     open fun addDataAsync(data: Any, collection:String, document:String, field:String, lastUpdated:FieldValue = FieldValue.serverTimestamp(), onSuccess:()->Unit ){
-
-
         val newData = hashMapOf(
             field to data,
             this.lastUpdated to lastUpdated
@@ -27,17 +25,21 @@ open class Firestore {
             }
             .addOnFailureListener { e ->
             }
-
     }
+
 
     open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:(data:Any?)->Unit){
         db.collection(collection)
             .document(document)
             .get()
-            .addOnSuccessListener {
-                if (it!=null && it.exists()){
-                    it.get(field, type)?.let{
-                        onComplete(it)
+            .addOnSuccessListener { documentSnapShot->
+                if (documentSnapShot!=null && documentSnapShot.exists()){
+                    try {
+                        documentSnapShot.get(field, type)?.let{
+                            onComplete(it)
+                        }
+                    }catch (e:Exception){
+                        onComplete(null)
                     }
                 }else{
                     onComplete(null)
@@ -46,7 +48,6 @@ open class Firestore {
             .addOnFailureListener {
                 onComplete(null)
             }
-
     }
 
 }

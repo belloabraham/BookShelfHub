@@ -2,11 +2,12 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.bookshelfhub.bookshelfhub.models.IUser
 
-@Entity(tableName= "user")
+@Entity(tableName= "User")
 data class UserRecord(
      @PrimaryKey
-     override val uId:String,
+     override val userId: String,
      override var name:String,
      override var email: String,
      override var phone:String,
@@ -14,6 +15,7 @@ data class UserRecord(
      override val authType:String,
      override val appVersion:String,
      override val device:String,
-
-     override var uploaded: Boolean = false
+     override val deviceOs:String,
+     override val lastUpdated: String,
+     override var uploaded: Boolean = false,
 ) : IUser

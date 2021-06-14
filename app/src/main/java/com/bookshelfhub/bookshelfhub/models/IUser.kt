@@ -1,7 +1,10 @@
-package com.bookshelfhub.bookshelfhub.services.database.local.room.entities
+package com.bookshelfhub.bookshelfhub.models
+
+import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 interface IUser {
-    val uId: String
+    val userId:String
     var name: String
     var email: String
     var phone: String
@@ -9,5 +12,7 @@ interface IUser {
     val authType: String
     val appVersion: String
     val device: String
+    val deviceOs:String
+    val lastUpdated: String
     var uploaded: Boolean
 }

@@ -17,7 +17,7 @@ class AppUtil @Inject constructor (private val context: Context) {
                 packageInfo.versionCode.toLong()
             }
         } catch (e: PackageManager.NameNotFoundException) {
-            return 1
+            return 0
         }
     }
 
@@ -26,7 +26,7 @@ class AppUtil @Inject constructor (private val context: Context) {
             val packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0)
              return  packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
-            return "1.0"
+            return ""
         }
     }
 

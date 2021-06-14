@@ -25,6 +25,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -145,7 +146,8 @@ class LoginFragment:Fragment() {
                 }else{
                     cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
                         if(it!=null){
-                            userAuthViewModel.setIsAddingUser(false)
+                            val user = it as User
+                            userAuthViewModel.setIsAddingUser(false, user)
                         }else{
                             userAuthViewModel.setIsExistingUser(false)
                         }
