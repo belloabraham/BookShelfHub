@@ -6,4 +6,6 @@
 
     <integer name="update_notif_id">100</integer>
 
+    <integer name="search_animation_duration">50</integer>
+
 </resources>

@@ -15,6 +15,7 @@
     <!-- Image logo size -->
     <dimen name="size_150">150dp</dimen>
 
+    <dimen name="card_corner_radius">10dp</dimen>
 
     <dimen name="button_height">58dp</dimen>
 
@@ -25,6 +26,25 @@
 
     <!-- Edit Text Font Size -->
     <dimen name="size_18sp">18sp</dimen>
+
+
+    <dimen name="search_dp_4">@dimen/size_4</dimen>
+    <dimen name="search_dp_16">16dp</dimen>
+    <dimen name="search_sp_16">16sp</dimen>
+    <dimen name="search_icon_48">48dp</dimen>
+    <dimen name="search_icon_56">56dp</dimen>
+    <dimen name="search_divider">1dp</dimen>
+    <dimen name="search_stroke_width">1dp</dimen>
+    <dimen name="search_stroke_width_focus">0dp</dimen>
+    <dimen name="search_layout_height">48dp</dimen>
+    <dimen name="search_layout_height_focus">56dp</dimen>
+    <dimen name="search_radius">8dp</dimen>
+    <dimen name="search_radius_focus">0dp</dimen>
+    <dimen name="search_elevation">3dp</dimen>
+    <dimen name="search_elevation_focus">0dp</dimen>
+    <dimen name="search_margins_left_right">16dp</dimen>
+    <dimen name="search_margins_top_bottom">8dp</dimen>
+    <dimen name="search_margins_focus">0dp</dimen>
 
 
 </resources>

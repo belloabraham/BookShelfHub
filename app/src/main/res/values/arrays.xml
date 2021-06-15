@@ -19,11 +19,5 @@
         <item>to jointly review books with friends and students.</item>
     </string-array>
 
-    <integer-array name="resourceIds">
-        <item></item>
-        <item>@drawable/logo</item>
-        <item>@drawable/logo</item>
-    </integer-array>
-
 
 </resources>

@@ -32,8 +32,14 @@
 
     <color name="light_blue_A400">#FF00B0FF</color>
 
+    <color name="icon_color">#757575</color>
+
 
     <color name="blue_grey_100">#B0BEC5</color>
     <color name="night">#022231</color>
+
+
+
+    <color name="search_shadow">#99000000</color>
 
 </resources>

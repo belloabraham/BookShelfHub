@@ -3,28 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainActivityNavigation"
-    app:startDestination="@+id/shelf">
+    app:startDestination="@+id/shelf_fragment">
 
     <fragment
-        android:id="@+id/shelf"
+        android:id="@+id/shelf_fragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment"
-        android:label="@string/title_home"
+        android:label="@string/shelf"
         tools:layout="@layout/fragment_shelf" />
 
     <fragment
-        android:id="@+id/store"
+        android:id="@+id/store_fragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.main.StoreFragment"
         android:label="@string/store"
         tools:layout="@layout/fragment_store" />
 
     <fragment
-        android:id="@+id/groupChat"
+        android:id="@+id/groupChat_fragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.main.GroupChatFragment"
         android:label="@string/group_chat"
         tools:layout="@layout/fragment_group_chat" />
 
     <fragment
-        android:id="@+id/profile"
+        android:id="@+id/profile_fragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.main.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile" />

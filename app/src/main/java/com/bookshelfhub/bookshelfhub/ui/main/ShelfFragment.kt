@@ -5,12 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.core.app.ActivityCompat.finishAfterTransition
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
 
 
@@ -28,11 +29,36 @@ class ShelfFragment : Fragment() {
     ): View {
         layout= FragmentShelfBinding.inflate(inflater, container, false)
 
-        layout.button.setOnClickListener {
-           // Toast.makeText(requireActivity(), userAuth.getProfilePicUri().toString(),Toast.LENGTH_LONG).show()
-            val localDateTime = LocalDateTime.now()
-            Toast.makeText(requireActivity(), localDateTime.toString(),Toast.LENGTH_LONG).show()
+
+        layout.materialSearchView.apply {
+            setOnNavigationClickListener(object : SearchLayout.OnNavigationClickListener {
+                override fun onNavigationClick(hasFocus: Boolean) {
+                    if (hasFocus()) {
+                        layout.materialSearchView.clearFocus()
+                    } else {
+                        layout.materialSearchView.requestFocus()
+                    }
+                }
+            })
+            setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
+                override fun onFocusChange(hasFocus: Boolean) {
+                    layout.materialSearchView.navigationIconSupport = if (hasFocus) {
+                        SearchLayout.NavigationIconSupport.ARROW
+                    } else {
+                        SearchLayout.NavigationIconSupport.SEARCH
+                    }
+                }
+            })
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            if (layout.materialSearchView.hasFocus()){
+                layout.materialSearchView.clearFocus()
+            }else{
+                requireActivity().finish()
+            }
+        }
+
 
         return layout.root
     }

@@ -75,4 +75,8 @@
     <string name="store">Store</string>
     <string name="profile">Profile</string>
 
+    <!-- TODO: Search Edit Text -->
+    <string name="shelf_search_hint">Type a book name</string>
+    <string name="store_search_hint">Type a book name or author</string>
+
 </resources>

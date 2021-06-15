@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/shelf"
-        android:icon="@drawable/ic_shelf"
+        android:icon="@drawable/ic_bookshelf"
         android:title="@string/shelf" />
 
     <item
