@@ -1,6 +1,9 @@
 package com.bookshelfhub.bookshelfhub
 
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -15,11 +18,20 @@ class Application: android.app.Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val  context = applicationContext
-        AndroidThreeTen.init(this);
+        //Initialize firebase (Required for App Check)
+        FirebaseApp.initializeApp(this)
+
+        //Setup App Check
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            SafetyNetAppCheckProviderFactory.getInstance())
+        //Tree Ben Date and Time Initialization
+        AndroidThreeTen.init(this)
+
         setupFirebaseRemoteConfig()
-        notificationChannelBuilder = NotificationChannelBuilder(context,context.getString(R.string.notif_channel_id))
-        notificationChannelBuilder.createNotificationChannels(context.getString(R.string.notif_channel_desc),R.color.notf_color)
+        
+        notificationChannelBuilder = NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
+        notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
     }
 

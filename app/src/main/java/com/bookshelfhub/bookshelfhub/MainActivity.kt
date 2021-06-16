@@ -1,9 +1,9 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -40,6 +40,11 @@ class MainActivity : AppCompatActivity() {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
+        mainActivityViewModel.getSelectedIndex().observe(this, Observer {
+            layout.bottomBar.selectTabAt(it, true)
+        })
+
+
         mainActivityViewModel.getIsUpdateAvailable().observe(this, Observer { updateAvailable ->
             if (updateAvailable){
                showNewUpdateAlertAndNotification()
@@ -50,6 +55,7 @@ class MainActivity : AppCompatActivity() {
        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
+
         layout.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
                 lastIndex: Int,
@@ -57,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
+                navController.popBackStack()
                 when(newIndex){
                     0->
                         navController.navigate(R.id.shelf_fragment)
@@ -71,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
             }
         })
+
 
     }
 

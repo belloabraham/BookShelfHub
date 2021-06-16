@@ -5,8 +5,8 @@
 
 
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/orange</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/light_blue_A400</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/light_blue_A400</item>
@@ -33,6 +33,5 @@
         <item name="android:navigationBarDividerColor" tools:targetApi="p">@android:color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
     </style>
-
 
 </resources>

@@ -17,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil,database: Database):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData<Int>()
     //private var user: LiveData<List<User>>
     private val NEW_VERSION_CODE="new_version_code"
     private val APP_VERSION_CODE="app_version_code"
@@ -30,6 +31,14 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
   //  fun getUserData():LiveData<List<User>>{
         //return user
    // }
+
+    fun setSelectedIndex(index:Int){
+        bottomBarSelectedIndex.value=index
+    }
+
+    fun getSelectedIndex():LiveData<Int>{
+        return bottomBarSelectedIndex
+    }
 
     fun getIsUpdateAvailable(): LiveData<Boolean> {
         return isUpdateAvailable

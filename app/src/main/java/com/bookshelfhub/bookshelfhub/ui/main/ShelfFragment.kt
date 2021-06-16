@@ -1,12 +1,15 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.app.ActivityCompat.finishAfterTransition
+import androidx.activity.viewModels
+import androidx.fragment.app.activityViewModels
+import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
@@ -20,6 +23,8 @@ import javax.inject.Inject
 class ShelfFragment : Fragment() {
     @Inject
     lateinit var userAuth: UserAuth
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
+
 
 
     private lateinit var layout: FragmentShelfBinding
@@ -58,6 +63,12 @@ class ShelfFragment : Fragment() {
                 requireActivity().finish()
             }
         }
+
+
+        layout.gotoStoreBtn.setOnClickListener {
+            mainActivityViewModel.setSelectedIndex(1)
+        }
+
 
 
         return layout.root

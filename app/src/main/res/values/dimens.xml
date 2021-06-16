@@ -12,6 +12,10 @@
     <dimen name="size_7">7dp</dimen>
     <dimen name="size_70">70dp</dimen>
 
+
+    <dimen name="size_50">50dp</dimen>
+
+    <dimen name="size_3">3dp</dimen>
     <!-- Image logo size -->
     <dimen name="size_150">150dp</dimen>
 
@@ -19,10 +23,14 @@
 
     <dimen name="button_height">58dp</dimen>
 
+    <dimen name="size_58">58dp</dimen>
+
     <dimen name="line_height">4px</dimen>
 
     <dimen name="size_16sp">16sp</dimen>
 
+
+    <dimen name="image_btn_size">48dp</dimen>
 
     <!-- Edit Text Font Size -->
     <dimen name="size_18sp">18sp</dimen>

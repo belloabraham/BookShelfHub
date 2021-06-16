@@ -15,12 +15,12 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/welcome_activity_navigation" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dark_overlay"
         android:visibility="gone"
-        android:gravity="center"
+        android:fitsSystemWindows="true"
         android:id="@+id/lottieContainerView">
 
             <com.airbnb.lottie.LottieAnimationView
@@ -29,12 +29,13 @@
                 android:layout_height="@dimen/size_150"
                 app:lottie_rawRes="@raw/mail_send"
                 android:clickable="false"
+                android:layout_gravity="center"
                 app:lottie_loop="true"
                 app:lottie_cacheComposition="false"
                 app:lottie_scale="25"
                 app:lottie_speed="2"
                 app:lottie_autoPlay="true" />
         
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </FrameLayout>
 
 </FrameLayout>
