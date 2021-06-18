@@ -80,6 +80,10 @@
     <!-- TODO: Main Activity -->
     <string name="goto_store">Go to store</string>
     <string name="empty_shelf">Your bookshelf is empty, buy a book or get one for free in the book store.</string>
+    <string name="pick_up">Pick up where you left</string>
+    <string name="continue_reading">Continue Reading</string>
+    <string name="dismiss">Dismiss</string>
+
 
 
     <!-- TODO: Profile Tab -->
@@ -87,13 +91,36 @@
     <string name="need_help">Need help?</string>
     <string name="dark_mode">Dark mode</string>
     <string name="settings">Settings</string>
-    <string name="review">Write a review</string>
+    <string name="write_review">Write a review</string>
     <string name="terms">Terms of use</string>
-    <string name="privacy">Privacy Policy</string>
+    <string name="privacy">Privacy policy</string>
     <string name="about">About</string>
+    <string name="new_update">Download new update</string>
+    <string name="exclamation">!</string>
+    <string name="show_progess">Show progress popup</string>
+    <string name="invite_friends">Invite friends</string>
+    <string name="account">Account</string>
+    <string name="verify_email">Verify email</string>
+    <string name="verify_phone_number">Verify phone number</string>
 
 
 
+
+
+    <string name="title_activity_profile">ProfileActivity</string>
+
+
+
+
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 
 
 </resources>

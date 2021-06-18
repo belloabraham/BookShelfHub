@@ -26,4 +26,8 @@ class AlertDialogHelper(private val activity:Activity, private val title:String,
 
     }
 
+    fun showBottomSheet(){
+
+    }
+
 }

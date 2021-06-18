@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -45,6 +44,15 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+        mainActivityViewModel.getProfileNotiNumber().observe(this, Observer { notiNumber ->
+            if (notiNumber>0){
+                layout.bottomBar.setBadgeAtTabIndex(3, AnimatedBottomBar.Badge("${notiNumber}"))
+            }else{
+                layout.bottomBar.clearBadgeAtTabIndex(3)
+            }
+        })
+
+
         mainActivityViewModel.getIsUpdateAvailable().observe(this, Observer { updateAvailable ->
             if (updateAvailable){
                showNewUpdateAlertAndNotification()
@@ -56,6 +64,8 @@ class MainActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
 
 
+        navigateTo(R.id.shelf_fragment)
+
         layout.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
                 lastIndex: Int,
@@ -63,16 +73,15 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
-                navController.popBackStack()
                 when(newIndex){
                     0->
-                        navController.navigate(R.id.shelf_fragment)
+                        navigateTo(R.id.shelf_fragment)
                     1->
-                        navController.navigate(R.id.store_fragment)
+                        navigateTo(R.id.store_fragment)
                     2->
-                        navController.navigate(R.id.groupChat_fragment)
+                        navigateTo(R.id.groupChat_fragment)
                     3->
-                        navController.navigate(R.id.profile_fragment)
+                        navigateTo(R.id.profile_fragment)
                 }
             }
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
@@ -107,6 +116,11 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         })
+    }
+
+    private fun navigateTo(fragmentId:Int){
+        navController.popBackStack()
+        navController.navigate(fragmentId)
     }
 
 }

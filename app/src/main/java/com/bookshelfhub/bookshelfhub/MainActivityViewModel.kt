@@ -17,13 +17,16 @@ import javax.inject.Inject
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil,database: Database):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isAppUdated: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData<Int>()
+    private var profileNotifNumber: MutableLiveData<Int> = MutableLiveData<Int>()
     //private var user: LiveData<List<User>>
     private val NEW_VERSION_CODE="new_version_code"
     private val APP_VERSION_CODE="app_version_code"
 
 
     init {
+        profileNotifNumber.value=0
         checkForUpdate()
         //user=database.getUsers()
     }
@@ -32,6 +35,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         //return user
    // }
 
+
+    fun getProfileNotiNumber():LiveData<Int>{
+        return profileNotifNumber
+    }
+
     fun setSelectedIndex(index:Int){
         bottomBarSelectedIndex.value=index
     }
@@ -39,6 +47,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     fun getSelectedIndex():LiveData<Int>{
         return bottomBarSelectedIndex
     }
+
+    fun getIsAppUpdated(): LiveData<Boolean> {
+        return isAppUdated
+    }
+
 
     fun getIsUpdateAvailable(): LiveData<Boolean> {
         return isUpdateAvailable
@@ -54,6 +67,10 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
                     if  (newVersionCode > appVersionCode){
                         isUpdateAvailable.value=true
                         settingsUtil.setLong(APP_VERSION_CODE, newVersionCode)
+                    }
+                    if(newVersionCode>appUtil.getAppVersionCode()){
+                        isAppUdated.value=false
+                        profileNotifNumber.value = profileNotifNumber.value?.plus(1)
                     }
                 }
             }

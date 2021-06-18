@@ -5,13 +5,15 @@
 
     <color name="orange">#FFAB40</color>
 
+    <color name="red">#FF0000</color>
+
     <color name="dark_overlay">#8C000000</color>
 
 
     <color name="purple_700">#FF320066</color>
     <color name="white_black">@color/white</color>
 
-    <color name="error_red">#FFF44336</color>
+    <color name="error_red">@color/red</color>
 
     <color name="light_blue">#FF03A9F4</color>
 
@@ -40,6 +42,6 @@
 
 
 
-    <color name="search_shadow">#99000000</color>
+    <color name="search_shadow">#99FFFFFF</color>
 
 </resources>

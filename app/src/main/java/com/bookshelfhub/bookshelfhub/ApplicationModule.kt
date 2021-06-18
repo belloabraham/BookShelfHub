@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.bookshelfhub.bookshelfhub.Utils.*
+import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
@@ -27,6 +28,12 @@ object ApplicationModule {
     @Provides
     fun getConnectionUtil(@ApplicationContext context: Context): ConnectionUtil {
         return ConnectionUtil(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getRemoteConfig(): RemoteConfig {
+        return RemoteConfig()
     }
 
     @Singleton

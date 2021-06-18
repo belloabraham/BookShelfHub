@@ -128,14 +128,13 @@ class MaterialSearchView @JvmOverloads constructor(
         mOnFocusChangeListener?.onFocusChange(true)
         showKeyboard()
 
-        mStrokeWidth = getBackgroundStrokeWidth()
-        mRadius = getBackgroundRadius()
-        mElevation = elevation
+        mStrokeWidth =  getBackgroundStrokeWidth()
+        mRadius =  getBackgroundRadius()
+        mElevation =  elevation
 
         setBackgroundStrokeWidth(context.resources.getDimensionPixelSize(R.dimen.search_stroke_width_focus))
-        setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_radius_focus).toFloat())
-        elevation =
-            context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
+       setBackgroundRadius(resources.getDimensionPixelSize(R.dimen.search_radius_focus).toFloat())
+        elevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation_focus).toFloat()
 
         val left = context.resources.getDimensionPixelSize(R.dimen.search_dp_16)
         val params = mSearchEditText?.layoutParams as LinearLayout.LayoutParams
@@ -151,11 +150,11 @@ class MaterialSearchView @JvmOverloads constructor(
         mViewAnim?.visibility = View.VISIBLE
         mRecyclerView?.visibility = View.VISIBLE
 
-        // layoutTransition = null
+      //  layoutTransition = null
     }
 
     override fun removeFocus() {
-        // layoutTransition = mTransition
+         //layoutTransition = mTransition
 
         mOnFocusChangeListener?.onFocusChange(false)
         hideKeyboard()
@@ -168,7 +167,7 @@ class MaterialSearchView @JvmOverloads constructor(
         setBackgroundRadius(mRadius)
         elevation = mElevation
 
-        setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
+       setLayoutHeight(context.resources.getDimensionPixelSize(R.dimen.search_layout_height))
         margins = Margins.NO_FOCUS
 
         mViewShadow?.visibility = View.GONE
@@ -182,7 +181,7 @@ class MaterialSearchView @JvmOverloads constructor(
         return mBehavior
     }
 
-    fun setBehavior(behavior: CoordinatorLayout.Behavior<*>) {
+     fun setBehavior(behavior: CoordinatorLayout.Behavior<*>) {
         mBehavior = behavior
     }
 

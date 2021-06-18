@@ -66,5 +66,21 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
         }
     }
 
+    suspend fun getBoolean(key:String, defaultValue: Boolean):Boolean{
+        val prefKey = booleanPreferencesKey(key)
+        val exampleCounterFlow: Flow<Boolean?> = context.dataStore.data
+            .map { preferences ->
+                preferences[prefKey]
+            }
+        return exampleCounterFlow.first()?:defaultValue
+    }
+
+    suspend fun setBoolean(key: String, value: Boolean){
+        val prefKey = booleanPreferencesKey(key)
+        context.dataStore.edit { preferences ->
+            preferences[prefKey] = value
+        }
+    }
+
 
 }

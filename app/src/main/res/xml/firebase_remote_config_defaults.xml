@@ -32,4 +32,14 @@
         <value>false</value>
     </entry>
 
+    <!-- TODO: Profile Fragment-->
+    <entry>
+        <key>privacy_url</key>
+        <value>https://bookshelfhub.com/privacy</value>
+    </entry>
+    <entry>
+        <key>terms_url</key>
+        <value>https://bookshelfhub.com/terms</value>
+    </entry>
+
 </defaultsMap>
