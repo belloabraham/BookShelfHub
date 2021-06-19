@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
@@ -22,6 +23,7 @@ open class Google (val activity: Activity, val googleAuthViewModel: GoogleAuthVi
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(activity, gso)
+
     }
 
     open fun authWithGoogle(idToken: String, authErrorMsg:String) {
@@ -29,7 +31,6 @@ open class Google (val activity: Activity, val googleAuthViewModel: GoogleAuthVi
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                  //  val user = firebaseAuth.currentUser
                     googleAuthViewModel.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
                     googleAuthViewModel.setIsAuthenticatedSuccessful(true)
                 } else {

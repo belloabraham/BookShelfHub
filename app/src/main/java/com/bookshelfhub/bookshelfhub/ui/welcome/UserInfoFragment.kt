@@ -34,8 +34,6 @@ import javax.inject.Inject
 @WithFragmentBindings
 class UserInfoFragment : Fragment() {
     private lateinit var layout:FragmentUserInfoBinding
-    private val PROTONMAIL = "@protonmail.com"
-    private val TUTANOTAMAIL = "@tutanota.com"
     @Inject
     lateinit var userAuth: UserAuth
     @Inject
@@ -60,7 +58,7 @@ class UserInfoFragment : Fragment() {
 
         layout= FragmentUserInfoBinding.inflate(inflater, container, false);
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        requireActivity().onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
 
         }
 
@@ -96,7 +94,7 @@ class UserInfoFragment : Fragment() {
             val phone = layout.phoneEditTxt.text.toString()
             val name = layout.nameEditTxt.text.toString()
 
-            if (!stringUtil.isValidEmailAddress(email)||email.endsWith(PROTONMAIL)||email.endsWith(TUTANOTAMAIL)){
+            if (!stringUtil.isValidEmailAddress(email)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)

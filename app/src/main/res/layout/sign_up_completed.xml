@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/size_25"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+        android:text="@string/huray"
+        android:textStyle="bold"
+        android:textColor="?colorAccent"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        android:text="@string/account_created"
+        android:layout_marginVertical="@dimen/size_16"
+        android:layout_gravity="center_horizontal" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/size_25"
+        android:contentDescription="@null"
+        android:src="@drawable/high_five"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/button_height"
+        android:backgroundTint="?colorAccent"
+        android:id="@+id/getStartedBtn"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/get_started"/>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>

@@ -27,14 +27,13 @@
                 android:id="@+id/lottieAnimView"
                 android:layout_width="@dimen/size_150"
                 android:layout_height="@dimen/size_150"
-                app:lottie_rawRes="@raw/mail_send"
                 android:clickable="false"
                 android:layout_gravity="center"
                 app:lottie_loop="true"
                 app:lottie_cacheComposition="false"
                 app:lottie_scale="25"
                 app:lottie_speed="2"
-                app:lottie_autoPlay="true" />
+                app:lottie_autoPlay="false" />
         
     </FrameLayout>
 

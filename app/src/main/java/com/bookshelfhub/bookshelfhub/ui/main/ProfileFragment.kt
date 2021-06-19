@@ -15,12 +15,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.SplashActivity
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
+import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +48,8 @@ class ProfileFragment : Fragment() {
     lateinit var intentUtil: IntentUtil
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var userAuth: UserAuth
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
@@ -54,24 +60,42 @@ class ProfileFragment : Fragment() {
     ): View {
         layout= FragmentProfileBinding.inflate(inflater, container, false)
 
+        lifecycleScope.launch(IO){
+           val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
+            withContext(Main){
+                layout.progressPopupToggle.setChecked(isChecked, true)
+            }
+
+        }
 
         layout.aboutCard.setOnClickListener {
 
         }
         layout.reviewCard.setOnClickListener {
-            startActivity(intentUtil.openAppStoreIntent(requireActivity().packageName))
+            activity?.let {
+                startActivity(intentUtil.openAppStoreIntent(it.packageName))
+            }
         }
         layout.updateCard.setOnClickListener {
-            startActivity(intentUtil.openAppStoreIntent(requireActivity().packageName))
+            activity?.let {
+                startActivity(intentUtil.openAppStoreIntent(it.packageName))
+            }
         }
 
         layout.signOutCard.setOnClickListener {
+            AlertDialogHelper(activity,{
+                userAuth.signOut(activity, userAuth.getAuthType()) {
+                    activity?.finish()
+                    startActivity(Intent(activity, SplashActivity::class.java))
+                }
+            }, cancelable = true
+            ).showAlertDialog(R.string.sign_out,R.string.sign_out_message,R.string.sign_out, R.string.cancel)
         }
 
         layout.privacyPolicyCard.setOnClickListener {
 
             val url = remoteConfig.getString(PRIVACY_URL)
-            val intent = Intent(requireActivity(), WebViewActivity::class.java)
+            val intent = Intent(activity, WebViewActivity::class.java)
             with(intent){
                 putExtra(WebView.TITLE.KEY,getString(R.string.privacy))
                 putExtra(WebView.URL.KEY, url)
@@ -80,7 +104,7 @@ class ProfileFragment : Fragment() {
         }
         layout.termsOfUseCard.setOnClickListener {
             val url = remoteConfig.getString(TERMS_URL)
-            val intent = Intent(requireActivity(), WebViewActivity::class.java)
+            val intent = Intent(activity, WebViewActivity::class.java)
             with(intent){
                 putExtra(WebView.TITLE.KEY,getString(R.string.terms))
                 putExtra(WebView.URL.KEY, url)
@@ -102,8 +126,14 @@ class ProfileFragment : Fragment() {
 
         }
 
-        mainActivityViewModel.getIsAppUpdated().observe(viewLifecycleOwner, Observer { isAppUdated ->
-            if (!isAppUdated){
+        layout.progressPopupToggle.setOnCheckedChangeListener { isChecked->
+            lifecycleScope.launch(IO) {
+                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, isChecked)
+            }
+        }
+
+        mainActivityViewModel.getIsAppUpdated().observe(viewLifecycleOwner, Observer { isAppUpdated ->
+            if (!isAppUpdated){
                layout.updateCard.visibility = View.VISIBLE
             }
         })

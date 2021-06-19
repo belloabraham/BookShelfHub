@@ -46,7 +46,7 @@ open class Firestore {
                 }
             }
             .addOnFailureListener {
-                onComplete(null)
+                onComplete(it.message)
             }
     }
 

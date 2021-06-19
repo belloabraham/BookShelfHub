@@ -18,8 +18,6 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
     private val callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
     private var storedVerificationId: String? = null
 
-
-
     init {
 
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -74,7 +72,6 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    //val user = task.result?.user!!
                     phoneAuthViewModel.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
                     phoneAuthViewModel.setIsSignedInSuccessfully(true)
 

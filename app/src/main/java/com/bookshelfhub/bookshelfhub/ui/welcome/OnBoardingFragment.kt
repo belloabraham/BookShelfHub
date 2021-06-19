@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.welcome
 
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +38,9 @@ class OnBoardingFragment:Fragment() {
             findNavController().navigate(actionUserInfo)
         }
 
-        layout = FragmentOnboardingBinding.inflate(inflater, container, false);
+        layout = FragmentOnboardingBinding.inflate(inflater, container, false)
+
+        layout.terms.setMovementMethod(LinkMovementMethod.getInstance())
 
         sliderAdapter = SliderAdapter(ImageLoader())
 

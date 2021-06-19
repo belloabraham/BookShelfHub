@@ -1,18 +1,33 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
+import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
+import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
+import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import javax.inject.Inject
 
@@ -28,6 +43,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var notificationHelper: NotificationHelper
     @Inject
     lateinit var intentUtil: IntentUtil
+    @Inject
+    lateinit var settingsUtil: SettingsUtil
+
     private val ENFORCE_UPDATE="enforce_update"
     private val CHANGE_LOG="change_log"
     private lateinit var navController:NavController
@@ -63,7 +81,6 @@ class MainActivity : AppCompatActivity() {
        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
 
-
         navigateTo(R.id.shelf_fragment)
 
         layout.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
@@ -88,6 +105,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        showProgressPopupDialog()
 
     }
 
@@ -109,13 +127,45 @@ class MainActivity : AppCompatActivity() {
         }
         val positiveActionText=getString(R.string.update)
         notificationHelper.showNotification(title,msg,R.integer.update_notif_id,packageName,positiveActionText)
-        AlertDialogHelper(this,title,msg).showAlertDialog(positiveActionText,{
+        AlertDialogHelper(this,{
             startActivity(intentUtil.openAppStoreIntent(packageName))
-        },negActionText,{
+        },{
             if(enforceUpdate){
                 finish()
             }
-        })
+        }).showAlertDialog(title,msg,positiveActionText,negActionText)
+
+    }
+
+    private fun showProgressPopupDialog(){
+        lifecycleScope.launch(IO) {
+            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
+            val lastBookRed = settingsUtil.getString(Settings.LAST_BOOK_RED.KEY)
+            val lastBookPercentage = settingsUtil.getInt(Settings.LAST_BOOK_PERCENTAGE.KEY, 0)
+            val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
+            withContext(Main){
+                if (showPopup){
+                    lastBookRed?.let {
+                        val view = View.inflate(this@MainActivity, R.layout.continue_reading, null)
+                        view.findViewById<TextView>(R.id.bookName).text = it
+                        view.findViewById<TextView>(R.id.percentageText).text = String.format(getString(R.string.percent), lastBookPercentage)
+                        view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress = lastBookPercentage
+
+                        MaterialDialogHelper(this@MainActivity, this@MainActivity)
+                            .showBottomSheet(view, R.string.dismiss, R.string.continue_reading,{
+                                if (noOfDismiss<2){
+                                    Toast(this@MainActivity).showToast(R.string.dismiss_msg)
+                                    runBlocking {
+                                        settingsUtil.setInt(Settings.NO_OF_TIME_DISMISSED.KEY, noOfDismiss+1)
+                                    }
+                                }
+                            },{
+                                //TODO Start Book Reading Activity
+                            })
+                    }
+                }
+            }
+        }
     }
 
     private fun navigateTo(fragmentId:Int){

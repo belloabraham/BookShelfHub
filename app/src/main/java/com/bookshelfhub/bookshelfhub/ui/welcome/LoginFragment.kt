@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.welcome
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +26,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -138,6 +138,7 @@ class LoginFragment:Fragment() {
         })
 
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
+
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser().value!!
                 val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()

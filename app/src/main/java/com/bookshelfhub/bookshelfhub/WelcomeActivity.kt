@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
+import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -105,17 +106,14 @@ class WelcomeActivity : AppCompatActivity() {
             if (isAddingUser){
                 showAnimation()
             }else{
-                hideAnimation()
-                if(userAuth.getAuthType()==AuthType.GOOGLE.ID){
-                        if (googleAuthViewModel.getIsNewUser().value==true){
-                            //TODO Show popup sign up success tool tip in elastic anim
-                        }
-                }else if (phoneAuthViewModel.getIsNewUser().value==true){
-                    //TODO Show popup sign up success tool tip in elastic anim
-                }
                 val intent = Intent(this, MainActivity::class.java)
-                finish()
-                startActivity(intent)
+                hideAnimation()
+                if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
+                    signUpCompleted(intent)
+                }else{
+                    finish()
+                    startActivity(intent)
+                }
             }
         })
 
@@ -206,6 +204,17 @@ class WelcomeActivity : AppCompatActivity() {
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun signUpCompleted(intent:Intent){
+        MaterialDialogHelper(this, this){
+            finish()
+            startActivity(intent)
+        }
+            .showDialog(R.layout.sign_up_completed,
+                R.dimen.signup_completed_dialog_max_width,
+                R.id.getStartedBtn, {
+                }, null)
     }
 
 }

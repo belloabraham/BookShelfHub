@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
@@ -16,8 +17,10 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
+import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -37,7 +40,6 @@ class ShelfFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentShelfBinding.inflate(inflater, container, false)
-
 
 
         layout.materialSearchView.apply {
@@ -61,7 +63,6 @@ class ShelfFragment : Fragment() {
             })
         }
 
-
         requireActivity().onBackPressedDispatcher.addCallback(requireActivity()) {
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
@@ -71,25 +72,12 @@ class ShelfFragment : Fragment() {
         }
 
         layout.gotoStoreBtn.setOnClickListener {
-           // mainActivityViewModel.setSelectedIndex(1)
-
-            val view = View.inflate(requireContext(), R.layout.continue_reading, null)
-            view.findViewById<TextView>(R.id.percentageText).text = "60%"
-            view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress = 60
-            view.findViewById<TextView>(R.id.bookName).text = "Things Fall Apart"
-
-
-            MaterialDialog(requireContext(), BottomSheet(LayoutMode.WRAP_CONTENT)).show {
-                cornerRadius(16f)
-                customView(null, view, true,  noVerticalPadding = true, horizontalPadding = true)
-                negativeButton(R.string.continue_reading)
-                positiveButton(R.string.dismiss)
-                lifecycleOwner(viewLifecycleOwner)
-               // debugMode(BuildConfig.DEBUG)
+            //mainActivityViewModel.setSelectedIndex(1)
+            activity?.let {
+                Toast(it).showToast(userAuth.getProvider()!!)
             }
-
+            //userAuth.getProvider()
         }
-
 
 
         return layout.root

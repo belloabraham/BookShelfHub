@@ -60,7 +60,7 @@ class VerificationFragment:Fragment(){
 
         layout= FragmentVerificationBinding.inflate(inflater, container, false);
 
-                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+                requireActivity().onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
 
                 }
 
@@ -87,7 +87,7 @@ class VerificationFragment:Fragment(){
                 }
 
                 textLinkBuilder.createTextLink(layout.resendCodeTxtView, getString(R.string.resend_code_link),
-                    ContextCompat.getColor(this@VerificationFragment.requireContext(), R.color.purple_700)
+                    ContextCompat.getColor(requireContext(), R.color.purple_700)
                 ){
                         (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.mail_send)
                 }
