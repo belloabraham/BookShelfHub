@@ -104,6 +104,7 @@
     <string name="account">Account</string>
     <string name="verify_email">Verify email</string>
     <string name="cancel">Cancel</string>
+    <string name="publish_book">Publish a book</string>
     <string name="verify_phone_number">Verify phone number</string>
     <string name="sign_out_message">Are you sure you want to sign out?</string>
 

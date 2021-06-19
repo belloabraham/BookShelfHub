@@ -72,11 +72,7 @@ class ShelfFragment : Fragment() {
         }
 
         layout.gotoStoreBtn.setOnClickListener {
-            //mainActivityViewModel.setSelectedIndex(1)
-            activity?.let {
-                Toast(it).showToast(userAuth.getProvider()!!)
-            }
-            //userAuth.getProvider()
+            mainActivityViewModel.setSelectedIndex(1)
         }
 
 

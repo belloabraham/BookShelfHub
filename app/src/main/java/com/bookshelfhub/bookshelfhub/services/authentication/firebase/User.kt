@@ -30,19 +30,6 @@ open class User(private val stringUtils: StringUtil) {
         return auth.currentUser?.email
     }
 
-    open fun getProvider(): String {
-
-        auth.currentUser?.let {
-            it.email?.let {
-                return AuthType.GOOGLE.ID
-            }
-            it.phoneNumber?.let {
-                return AuthType.PHONE.ID
-            }
-        }
-        return ""
-    }
-
     open fun getAuthType(): String {
         var id=""
         for (i in auth.currentUser?.providerData!!){
@@ -62,8 +49,8 @@ open class User(private val stringUtils: StringUtil) {
         return auth.currentUser?.phoneNumber
     }
 
-    open fun signOut(activity: Activity?, authType:String, signOutCompleted: () -> Unit) {
-        if (authType=="google.com"){
+    open fun signOut(activity: Activity?, signOutCompleted: () -> Unit) {
+        if (getAuthType()=="google.com"){
             activity?.let {
                 googleSignOut(activity, signOutCompleted)
             }

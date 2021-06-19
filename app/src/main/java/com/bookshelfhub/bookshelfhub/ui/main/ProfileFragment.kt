@@ -84,7 +84,7 @@ class ProfileFragment : Fragment() {
 
         layout.signOutCard.setOnClickListener {
             AlertDialogHelper(activity,{
-                userAuth.signOut(activity, userAuth.getAuthType()) {
+                userAuth.signOut(activity) {
                     activity?.finish()
                     startActivity(Intent(activity, SplashActivity::class.java))
                 }
@@ -124,6 +124,13 @@ class ProfileFragment : Fragment() {
 
         layout.inviteFreindsCard.setOnClickListener {
 
+        }
+
+        layout.publishBookCard.setOnClickListener {
+            AlertDialogHelper(activity,{
+
+            }, cancelable = true
+            ).showAlertDialog(R.string.publish_book,R.string.sign_out_message,R.string.sign_out, R.string.cancel)
         }
 
         layout.progressPopupToggle.setOnCheckedChangeListener { isChecked->
