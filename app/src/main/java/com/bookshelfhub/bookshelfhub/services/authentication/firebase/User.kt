@@ -49,44 +49,13 @@ open class User(private val stringUtils: StringUtil) {
         return auth.currentUser?.phoneNumber
     }
 
-    open fun signOut(activity: Activity?, signOutCompleted: () -> Unit) {
-        if (getAuthType()=="google.com"){
-            activity?.let {
-                googleSignOut(activity, signOutCompleted)
-            }
-        }else{
-           phoneSignOut(signOutCompleted)
-        }
-    }
-
-    private fun phoneSignOut(signOutCompleted: () -> Unit){
+    open fun signOut(signOutCompleted: () -> Unit) {
         val authStateListener =
             AuthStateListener { firebaseAuth ->
-                if (firebaseAuth.currentUser == null) {
-                    signOutCompleted()
-                }
+                signOutCompleted()
             }
         auth.addAuthStateListener(authStateListener)
         auth.signOut()
     }
 
-    private fun googleSignOut(activity: Activity, signOutCompleted: () -> Unit){
-        val authStateListener =
-            AuthStateListener { firebaseAuth ->
-                if (firebaseAuth.currentUser == null) {
-                    val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                        .requestIdToken(activity.getString(R.string.gcp_web_client))
-                        .requestEmail()
-                        .build()
-                    val googleSignInClient = GoogleSignIn.getClient(activity, gso)
-                    googleSignInClient.signOut().addOnCompleteListener {
-                        if (it.isSuccessful){
-                            signOutCompleted()
-                        }
-                    }
-                }
-            }
-        auth.addAuthStateListener(authStateListener)
-        auth.signOut()
-    }
 }

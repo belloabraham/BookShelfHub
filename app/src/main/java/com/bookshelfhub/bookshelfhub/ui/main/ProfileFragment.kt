@@ -3,6 +3,9 @@ package com.bookshelfhub.bookshelfhub.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,13 +21,19 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.SplashActivity
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
+import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
+import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
+import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,14 +51,19 @@ class ProfileFragment : Fragment() {
 
     private val PRIVACY_URL = "privacy_url"
     private val TERMS_URL = "terms_url"
-    @Inject
-    lateinit var remoteConfig: RemoteConfig
+    private val PUBLISHERS_URL = "publishers_url"
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
+    lateinit var remoteConfig: RemoteConfig
+    @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
+    lateinit var clipboardHelper: ClipboardHelper
+    @Inject
     lateinit var userAuth: UserAuth
+    @Inject
+    lateinit var stringUtil: StringUtil
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
@@ -84,9 +98,20 @@ class ProfileFragment : Fragment() {
 
         layout.signOutCard.setOnClickListener {
             AlertDialogHelper(activity,{
-                userAuth.signOut(activity) {
-                    activity?.finish()
-                    startActivity(Intent(activity, SplashActivity::class.java))
+                if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
+                    userAuth.signOut {
+                        activity?.let {
+                            GoogleAuth(it, null).signOut {
+                                it.finish()
+                                startActivity(Intent(it, SplashActivity::class.java))
+                            }
+                        }
+                    }
+                }else{
+                    userAuth.signOut {
+                        activity?.finish()
+                        startActivity(Intent(activity, SplashActivity::class.java))
+                    }
                 }
             }, cancelable = true
             ).showAlertDialog(R.string.sign_out,R.string.sign_out_message,R.string.sign_out, R.string.cancel)
@@ -127,10 +152,16 @@ class ProfileFragment : Fragment() {
         }
 
         layout.publishBookCard.setOnClickListener {
-            AlertDialogHelper(activity,{
-
-            }, cancelable = true
-            ).showAlertDialog(R.string.publish_book,R.string.sign_out_message,R.string.sign_out, R.string.cancel)
+            val link = getString(R.string.publishers_link)
+            MaterialDialogHelper(viewLifecycleOwner, requireContext(),{
+                clipboardHelper.copyToClipBoard(link)
+                activity?.let {
+                    Toast(it).showToast(R.string.link_copied)
+                }
+            })
+                .showAlertDialog(R.string.publish_book, R.string.publish_book_msg, R.string.copy_link, R.string.ok){
+                   startActivity(intentUtil.intent(link))
+                }
         }
 
         layout.progressPopupToggle.setOnCheckedChangeListener { isChecked->

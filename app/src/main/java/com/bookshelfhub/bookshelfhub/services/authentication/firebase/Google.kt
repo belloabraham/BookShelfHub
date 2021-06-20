@@ -11,10 +11,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
-open class Google (val activity: Activity, val googleAuthViewModel: GoogleAuthViewModel) {
+open class Google(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?) {
 
-    private val firebaseAuth = FirebaseAuth.getInstance()
+
+    private val firebaseAuth = Firebase.auth
     private var googleSignInClient: GoogleSignInClient
 
     init {
@@ -31,17 +34,25 @@ open class Google (val activity: Activity, val googleAuthViewModel: GoogleAuthVi
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
-                    googleAuthViewModel.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
-                    googleAuthViewModel.setIsAuthenticatedSuccessful(true)
+                    googleAuthViewModel?.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
+                    googleAuthViewModel?.setIsAuthenticatedSuccessful(true)
                 } else {
-                    googleAuthViewModel.setAuthenticationError(authErrorMsg)
+                    googleAuthViewModel?.setAuthenticationError(authErrorMsg)
                 }
-                googleAuthViewModel.setIsAuthenticationComplete(true)
+                googleAuthViewModel?.setIsAuthenticationComplete(true)
             }
     }
 
     open fun signInOrSignUpWithGoogle(resultLauncher: ActivityResultLauncher<Intent>){
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
+    }
+
+    open fun signOut(signOutCompleted: () -> Unit){
+        googleSignInClient.signOut().addOnCompleteListener {
+            if (it.isSuccessful){
+                signOutCompleted()
+            }
+        }
     }
 }

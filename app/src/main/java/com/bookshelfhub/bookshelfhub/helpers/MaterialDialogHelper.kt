@@ -14,15 +14,15 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bookshelfhub.bookshelfhub.R
 import com.google.android.material.button.MaterialButton
 
-class MaterialDialogHelper(val lifecycleOwner: LifecycleOwner, val context: Context, val onDismissListener:()->Unit={}) {
+class MaterialDialogHelper(private val lifecycleOwner: LifecycleOwner, private val context: Context,
+                           private val positiveBtnClickListener:()->Unit={},
+                           private val negativeBtnClickListener:()->Unit={}, private val onDismissListener:()->Unit={}) {
 
 
     fun showBottomSheet(
         view: View,
         positiveBtnText:Int?,
-        negativeBtnText:Int?,
-        positiveBtnClickListener:()->Unit={},
-       negativeBtnClickListener:()->Unit={}){
+        negativeBtnText:Int?){
 
         MaterialDialog(context, BottomSheet(LayoutMode.WRAP_CONTENT)).show {
             customView(null, view, true, true, true)
@@ -40,7 +40,7 @@ class MaterialDialogHelper(val lifecycleOwner: LifecycleOwner, val context: Cont
     }
 
     fun showDialog(view:Int,
-                   viewMaxWidth:Int,
+                   viewMaxWidth:Int?,
                    firstBtnId:Int?,
                    firstBtnClickListener:()->Unit,
                    secondBtnId:Int?,
@@ -48,13 +48,15 @@ class MaterialDialogHelper(val lifecycleOwner: LifecycleOwner, val context: Cont
 
      val dialog =  MaterialDialog(context).show {
             customView(view, null, noVerticalPadding = true, horizontalPadding = true)
-            maxWidth(viewMaxWidth)
             lifecycleOwner(lifecycleOwner)
             onDismiss {
                 onDismissListener()
             }
         }
 
+        viewMaxWidth?.let {
+            dialog.maxWidth(it)
+        }
 
         dialog.onShow { materialDialog->
             firstBtnId?.let {
@@ -71,6 +73,29 @@ class MaterialDialogHelper(val lifecycleOwner: LifecycleOwner, val context: Cont
                     dialog.dismiss()
                 }
             }
+        }
+    }
+
+    fun showAlertDialog(
+        title:Int,
+        message:Int,
+        positiveBtnText:Int?,
+        negativeBtnText:Int?,
+        onLinkClickListener:String.()->Unit={}
+    ){
+        MaterialDialog(context).show {
+            title(title)
+            message(message) {
+                html { onLinkClickListener(it)}
+                lineSpacing(1.4f)
+            }
+            positiveButton(positiveBtnText){
+                positiveBtnClickListener()
+            }
+            negativeButton(negativeBtnText){
+               negativeBtnClickListener()
+            }
+            lifecycleOwner(lifecycleOwner)
         }
     }
 

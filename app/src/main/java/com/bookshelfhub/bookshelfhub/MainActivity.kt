@@ -151,17 +151,18 @@ class MainActivity : AppCompatActivity() {
                         view.findViewById<TextView>(R.id.percentageText).text = String.format(getString(R.string.percent), lastBookPercentage)
                         view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress = lastBookPercentage
 
-                        MaterialDialogHelper(this@MainActivity, this@MainActivity)
-                            .showBottomSheet(view, R.string.dismiss, R.string.continue_reading,{
-                                if (noOfDismiss<2){
-                                    Toast(this@MainActivity).showToast(R.string.dismiss_msg)
-                                    runBlocking {
-                                        settingsUtil.setInt(Settings.NO_OF_TIME_DISMISSED.KEY, noOfDismiss+1)
-                                    }
+                        MaterialDialogHelper(this@MainActivity, this@MainActivity, {
+                            if (noOfDismiss<2){
+                                Toast(this@MainActivity).showToast(R.string.dismiss_msg)
+                                runBlocking {
+                                    settingsUtil.setInt(Settings.NO_OF_TIME_DISMISSED.KEY, noOfDismiss+1)
                                 }
-                            },{
+                            }
+                        }, {
                                 //TODO Start Book Reading Activity
-                            })
+                            }
+                        )
+                            .showBottomSheet(view, R.string.dismiss, R.string.continue_reading)
                     }
                 }
             }

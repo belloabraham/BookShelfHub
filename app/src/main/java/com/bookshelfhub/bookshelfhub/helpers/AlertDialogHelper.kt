@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.helpers
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.text.Spanned
 
 
 class AlertDialogHelper(private val activity:Activity?, private val positiveAction:()->Unit, private val negativeAction:()->Unit={}, private val cancelable:Boolean=false) {
@@ -24,6 +25,8 @@ class AlertDialogHelper(private val activity:Activity?, private val positiveActi
 
 
     }
+
+
 
     fun showAlertDialog(title:String, msg:String, positiveActionText:String, negativeActionText:String?){
 
