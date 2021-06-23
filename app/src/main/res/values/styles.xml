@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <style name="PhoneNumberErrorBtn">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:visibility">gone</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:src">@drawable/ic_baseline_info_24_red</item>
+    </style>
+
     <style name="ProfileItemCardView">
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
@@ -21,7 +32,7 @@
     </style>
 
     <style name="ProfileItemTitle" parent="@style/TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">@dimen/profile_item_title_size</item>
         <item name="android:layout_marginStart">56dp</item>
         <item name="android:layout_gravity">start|center_vertical</item>
     </style>

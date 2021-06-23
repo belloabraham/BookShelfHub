@@ -3,14 +3,20 @@ package com.bookshelfhub.bookshelfhub
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWebViewBinding
 import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_profile.*
 import javax.inject.Inject
 
 
@@ -20,6 +26,8 @@ class WebViewActivity : AppCompatActivity() {
     private lateinit var layout: ActivityWebViewBinding
     @Inject
     lateinit var stringUtil: StringUtil
+    @Inject
+    lateinit var connectionUtil: ConnectionUtil
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +38,10 @@ class WebViewActivity : AppCompatActivity() {
         val title =   stringUtil.capitalize(intent.getStringExtra(WebView.TITLE.KEY)!!)
          val url = intent.getStringExtra(WebView.URL.KEY)
         setContentView(layout.root)
+
         setSupportActionBar(layout.toolbar)
         supportActionBar?.setTitle(title)
+
 
 
         layout.webView.settings.javaScriptEnabled = true
@@ -51,11 +61,27 @@ class WebViewActivity : AppCompatActivity() {
                 if (layout.progressBar.isShown) {
                     layout.progressBar.visibility = View.GONE
                 }
+                if(!connectionUtil.isConnected()){
+                    Snackbar.make(layout.webView, R.string.no_internet_error_msg, Snackbar.LENGTH_LONG)
+                        .show()
+                }
             }
         }
 
         layout.webView.loadUrl(url!!)
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.web_view_activity_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        layout.webView.reload()
+        return super.onOptionsItemSelected(item)
+    }
+
 
     override fun onSupportNavigateUp(): Boolean {
        goBack()

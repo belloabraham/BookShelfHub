@@ -17,5 +17,6 @@ data class UserRecord(
      override val device:String,
      override val deviceOs:String,
      override val lastUpdated: String,
+     override val mailOrPhoneVerified: Boolean =false,
      override var uploaded: Boolean = false,
 ) : IUser

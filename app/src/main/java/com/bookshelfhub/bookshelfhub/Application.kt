@@ -4,6 +4,8 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBui
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -34,6 +36,7 @@ class Application: android.app.Application() {
         notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
     }
+
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig

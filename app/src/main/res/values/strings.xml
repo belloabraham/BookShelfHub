@@ -66,9 +66,8 @@
 
 
     <!-- TODO: Main Activity Bottom Navigation -->
-    <string name="group_chat">Group Chat</string>
     <string name="shelf">Shelf</string>
-    <string name="group">Group</string>
+    <string name="cart">Cart</string>
     <string name="store">Store</string>
     <string name="profile">Profile</string>
 
@@ -111,7 +110,7 @@
     <string name="link_copied">Link copied</string>
 
     <!-- TODO: Publishers Link **************************** -->
-    <string name="publish_book_msg"><![CDATA[ visit <a href="https://pubs.bookshelfhub.com/">https://pubs.bookshelfhub.com/</a> to register as a publisher ]]></string>
+    <string name="publish_book_msg"><![CDATA[ visit <a href="https://pubs.bookshelfhub.com/">pubs.bookshelfhub.com</a> to register as a publisher ]]></string>
     <string translatable="false" name="publishers_link">https://pubs.bookshelfhub.com/</string>
     <!--TODO **************************** -->
 
@@ -119,6 +118,11 @@
     <string name="get_started">Let\'s get started</string>
     <string name="account_created">Your account have been created successfully.</string>
     <string name="huray">Hurrayyyy!!!</string>
+
+    <!-- TODO: WebView Activity -->
+    <string name="no_internet_error_msg">Error: No internet connection</string>
+    <string name="reload">Reload</string>
+
 
 
 

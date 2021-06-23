@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileNavigation">
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.profile.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about">
+    </fragment>
+    <fragment
+        android:id="@+id/accountFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.profile.AccountFragment"
+        android:label="@string/account"
+        tools:layout="@layout/fragment_account">
+    </fragment>
+</navigation>

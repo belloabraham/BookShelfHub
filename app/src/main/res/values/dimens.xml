@@ -1,7 +1,6 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
 
-    //Root view padding
     <dimen name="size_16">16dp</dimen>
 
     <dimen name="size_32">32dp</dimen>
@@ -15,6 +14,10 @@
 
     <dimen name="size_50">50dp</dimen>
 
+    <dimen name="error_btn_size">26dp</dimen>
+
+
+    <dimen name="profile_item_title_size">18sp</dimen>
     <dimen name="size_3">3dp</dimen>
     <!-- Image logo size -->
     <dimen name="size_150">150dp</dimen>
@@ -46,6 +49,9 @@
     <!-- Edit Text Font Size -->
     <dimen name="size_18sp">18sp</dimen>
 
+    <!-- TODO Expandable Card View -->
+    <dimen name="default_card_height">50dp</dimen>
+    <dimen name="default_vertical_padding">10dp</dimen>
 
     <dimen name="search_dp_4">@dimen/size_4</dimen>
     <dimen name="search_dp_16">16dp</dimen>

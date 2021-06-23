@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="?colorPrimaryVariant"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ProfileItemCardView"
+        app:cardBackgroundColor="?colorPrimaryVariant">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_marginVertical="@dimen/size_4"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:src="@drawable/ic_profile"
+                android:layout_gravity="start"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/account"
+                style="@style/ProfileItemTitle"/>
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_baseline_chevron_right_24"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ProfileItemCardView"
+        app:cardBackgroundColor="?colorPrimaryVariant"
+        >
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_marginVertical="@dimen/size_4"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:src="@drawable/ic_profile"
+                android:layout_gravity="start"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/account"
+                style="@style/ProfileItemTitle"/>
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_baseline_chevron_right_24"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

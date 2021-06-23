@@ -98,9 +98,7 @@ class LoginFragment:Fragment() {
 
         //Hide keyboard and show error message when error button is clicked
         layout.errorAlertBtn.setOnClickListener {
-
             keyboardUtil.hideKeyboard(layout.phoneNumEditText)
-
             lifecycleScope.launch(Main) {
                 delay(100)
                 withContext(Main){
@@ -122,6 +120,7 @@ class LoginFragment:Fragment() {
         //Try to login or signup user when the login or signup button gets press if phone number is valid
 
         layout.btnPhoneLogin.setOnClickListener {
+
                 startPhoneNumberVerification()
         }
 
@@ -169,15 +168,16 @@ class LoginFragment:Fragment() {
 
 
     private fun startPhoneNumberVerification(){
-        if (layout.ccp.isValidFullNumber){
+        val phone = layout.phoneNumEditText.text.toString().replace(" ","").trim()
+        if ((layout.ccp.selectedCountryCodeWithPlus=="+234" && phone.length<9) || !layout.ccp.isValidFullNumber){
+            layout.errorAlertBtn.visibility = View.VISIBLE
+        }else{
             layout.errorAlertBtn.visibility = View.GONE
             phoneNumber=layout.ccp.fullNumberWithPlus
             savePhoneNumber(phoneNumber)
             (requireActivity() as WelcomeActivity).startPhoneNumberVerification(phoneNumber)
             layout.ccp.isEnabled = false
             layout.phoneNumEditText.isEnabled=false
-        }else{
-            layout.errorAlertBtn.visibility = View.VISIBLE
         }
     }
 

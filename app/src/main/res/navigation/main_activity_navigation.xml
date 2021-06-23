@@ -18,10 +18,10 @@
         tools:layout="@layout/fragment_store" />
 
     <fragment
-        android:id="@+id/groupChat_fragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.main.GroupChatFragment"
-        android:label="@string/group_chat"
-        tools:layout="@layout/fragment_group_chat" />
+        android:id="@+id/cart_fragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.CartFragment"
+        android:label="@string/cart"
+        tools:layout="@layout/fragment_cart" />
 
     <fragment
         android:id="@+id/profile_fragment"

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
@@ -21,10 +22,13 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -48,6 +52,10 @@ class UserInfoFragment : Fragment() {
     lateinit var stringUtil:StringUtil
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var keyboardUtil: KeyboardUtil
+    @Inject
+    lateinit var tooltip: ToolTip
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -57,8 +65,10 @@ class UserInfoFragment : Fragment() {
     ): View {
 
         layout= FragmentUserInfoBinding.inflate(inflater, container, false);
+        layout.ccp.registerCarrierNumberEditText(layout.phoneEditTxt)
 
-        requireActivity().onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
 
         }
 
@@ -76,6 +86,22 @@ class UserInfoFragment : Fragment() {
             }
         }
 
+        layout.phoneEditTxt.doOnTextChanged { text, start, before, count ->
+            layout.errorAlertBtn.visibility = View.GONE
+        }
+
+        layout.errorAlertBtn.setOnClickListener {
+            keyboardUtil.hideKeyboard(layout.phoneEditTxt)
+            lifecycleScope.launch(Main) {
+                delay(100)
+                withContext(Main){
+                    tooltip.showPhoneNumErrorBottom(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
+                        keyboardUtil.showKeyboard(layout.phoneEditTxt)
+                    }
+                }
+            }
+        }
+
 
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
@@ -87,19 +113,20 @@ class UserInfoFragment : Fragment() {
         }
 
         layout.btnContinue.setOnClickListener {
+
             layout.nameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
-            layout.phoneEditTxtLayout.error=null
+            layout.errorAlertBtn.visibility = View.GONE
             val email = layout.emailEditTxt.text.toString()
-            val phone = layout.phoneEditTxt.text.toString()
+            val phone = layout.phoneEditTxt.text.toString().replace(" ","").trim()
             val name = layout.nameEditTxt.text.toString()
 
             if (!stringUtil.isValidEmailAddress(email)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
-            }else if(!stringUtil.isValidPhoneNumber(phone)){
-                layout.emailEditTxtLayout.error=getString(R.string.valid_phone_error)
+            }else if((layout.ccp.selectedCountryCodeWithPlus=="+234" && phone.length<9) || !layout.ccp.isValidFullNumber){
+                layout.errorAlertBtn.visibility = View.VISIBLE
             }else{
                 lifecycleScope.launch(IO) {
                     val localDateTime= DateTimeUtil.getDateTimeAsString()
@@ -110,7 +137,6 @@ class UserInfoFragment : Fragment() {
                     }
                 }
             }
-
         }
 
         return layout.root

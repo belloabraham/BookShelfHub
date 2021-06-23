@@ -16,16 +16,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.MainActivityViewModel
-import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.SplashActivity
+import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
-import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
+import com.bookshelfhub.bookshelfhub.enums.Profile
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
@@ -51,7 +49,6 @@ class ProfileFragment : Fragment() {
 
     private val PRIVACY_URL = "privacy_url"
     private val TERMS_URL = "terms_url"
-    private val PUBLISHERS_URL = "publishers_url"
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
@@ -64,7 +61,7 @@ class ProfileFragment : Fragment() {
     lateinit var userAuth: UserAuth
     @Inject
     lateinit var stringUtil: StringUtil
-
+    private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     private lateinit var layout: FragmentProfileBinding
@@ -74,16 +71,21 @@ class ProfileFragment : Fragment() {
     ): View {
         layout= FragmentProfileBinding.inflate(inflater, container, false)
 
+        authType= userAuth.getAuthType()
+
         lifecycleScope.launch(IO){
            val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
             withContext(Main){
-                layout.progressPopupToggle.setChecked(isChecked, true)
+                layout.progressPopupToggle.setChecked(isChecked, false)
             }
-
         }
 
-        layout.aboutCard.setOnClickListener {
+        //layout.accountCard.setOnClickListener {
+         //   startProfileActivity(R.string.account, R.id.accountFragment)
+      //  }
 
+        layout.aboutCard.setOnClickListener {
+            startProfileActivity(R.string.about, R.id.aboutFragment)
         }
         layout.reviewCard.setOnClickListener {
             activity?.let {
@@ -98,7 +100,7 @@ class ProfileFragment : Fragment() {
 
         layout.signOutCard.setOnClickListener {
             AlertDialogHelper(activity,{
-                if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
+                if (authType==AuthType.GOOGLE.ID){
                     userAuth.signOut {
                         activity?.let {
                             GoogleAuth(it, null).signOut {
@@ -170,15 +172,36 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        mainActivityViewModel.getIsAppUpdated().observe(viewLifecycleOwner, Observer { isAppUpdated ->
-            if (!isAppUpdated){
+        mainActivityViewModel.getNewAppUpdateNotifNumber().observe(viewLifecycleOwner, Observer { notifNumber ->
+            if (notifNumber>0){
                layout.updateCard.visibility = View.VISIBLE
             }
         })
 
+        mainActivityViewModel.getUserRecord().observe(viewLifecycleOwner, Observer { userRecord ->
+          if (userRecord.mailOrPhoneVerified){
+              layout.verifyEmailCard.visibility = View.GONE
+              layout.verifyPhoneCard.visibility = View.GONE
+          }else{
+              if (authType==AuthType.GOOGLE.ID){
+                  layout.verifyEmailCard.visibility = View.GONE
+              }else{
+                  layout.verifyPhoneCard.visibility = View.GONE
+              }
+          }
+        })
 
         return layout.root
     }
 
+
+    private fun startProfileActivity(title:Int, fragmentID:Int){
+        val intent = Intent(activity, ProfileActivity::class.java)
+        with(intent){
+            putExtra(Profile.TITLE.KEY,title)
+            putExtra(Profile.FRAGMENT_ID.KEY, fragmentID)
+        }
+        startActivity(intent)
+    }
 
 }

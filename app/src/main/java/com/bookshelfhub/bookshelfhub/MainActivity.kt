@@ -13,13 +13,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
+import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,11 +63,24 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        mainActivityViewModel.getProfileNotiNumber().observe(this, Observer { notiNumber ->
-            if (notiNumber>0){
-                layout.bottomBar.setBadgeAtTabIndex(3, AnimatedBottomBar.Badge("${notiNumber}"))
+        mainActivityViewModel.getIsNewProfileNotif().observe(this, Observer { isNewProfileNotif ->
+
+            val profileTabIndex = 3
+            val notifNumber = mainActivityViewModel.getTotalProfileNotifNumber()
+
+            if (notifNumber>0){
+                layout.bottomBar.setBadgeAtTabIndex(profileTabIndex, AnimatedBottomBar.Badge("${notifNumber}"))
             }else{
-                layout.bottomBar.clearBadgeAtTabIndex(3)
+                layout.bottomBar.clearBadgeAtTabIndex(profileTabIndex)
+            }
+
+        })
+
+        mainActivityViewModel.getUserRecord().observe(this, Observer { userRecord ->
+            if (userRecord.mailOrPhoneVerified){
+                mainActivityViewModel.setVerifyPhoneOrEmailNotif(0)
+            }else{
+                mainActivityViewModel.setVerifyPhoneOrEmailNotif(1)
             }
         })
 
@@ -96,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                     1->
                         navigateTo(R.id.store_fragment)
                     2->
-                        navigateTo(R.id.groupChat_fragment)
+                        navigateTo(R.id.cart_fragment)
                     3->
                         navigateTo(R.id.profile_fragment)
                 }
@@ -169,9 +183,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun navigateTo(fragmentId:Int){
         navController.popBackStack()
         navController.navigate(fragmentId)
     }
+
+
 
 }

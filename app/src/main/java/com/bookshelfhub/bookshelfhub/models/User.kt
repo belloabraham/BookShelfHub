@@ -23,6 +23,8 @@ class User: IUser {
         get() = field
     override val lastUpdated: String=""
         get() = field
+    override val mailOrPhoneVerified: Boolean=false
+        get() = field
     override var uploaded: Boolean = false
         get() = field
 }
