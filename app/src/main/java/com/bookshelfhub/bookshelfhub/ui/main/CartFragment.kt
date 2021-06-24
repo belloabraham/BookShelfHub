@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
+import com.bookshelfhub.bookshelfhub.observable.BookInterest
 
 class CartFragment : Fragment() {
 
@@ -15,6 +16,7 @@ class CartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentCartBinding.inflate(inflater, container, false)
+
 
 
         return layout.root

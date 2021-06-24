@@ -50,12 +50,6 @@ class UserInfoFragment : Fragment() {
     lateinit var appUtil:AppUtil
     @Inject
     lateinit var stringUtil:StringUtil
-    @Inject
-    lateinit var settingsUtil: SettingsUtil
-    @Inject
-    lateinit var keyboardUtil: KeyboardUtil
-    @Inject
-    lateinit var tooltip: ToolTip
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -65,7 +59,6 @@ class UserInfoFragment : Fragment() {
     ): View {
 
         layout= FragmentUserInfoBinding.inflate(inflater, container, false);
-        layout.ccp.registerCarrierNumberEditText(layout.phoneEditTxt)
 
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
@@ -86,23 +79,6 @@ class UserInfoFragment : Fragment() {
             }
         }
 
-        layout.phoneEditTxt.doOnTextChanged { text, start, before, count ->
-            layout.errorAlertBtn.visibility = View.GONE
-        }
-
-        layout.errorAlertBtn.setOnClickListener {
-            keyboardUtil.hideKeyboard(layout.phoneEditTxt)
-            lifecycleScope.launch(Main) {
-                delay(100)
-                withContext(Main){
-                    tooltip.showPhoneNumErrorBottom(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
-                        keyboardUtil.showKeyboard(layout.phoneEditTxt)
-                    }
-                }
-            }
-        }
-
-
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())
@@ -116,22 +92,29 @@ class UserInfoFragment : Fragment() {
 
             layout.nameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
-            layout.errorAlertBtn.visibility = View.GONE
+            layout.phoneEditTxtLayout.error=null
             val email = layout.emailEditTxt.text.toString()
-            val phone = layout.phoneEditTxt.text.toString().replace(" ","").trim()
+            val phone = layout.phoneEditTxt.text.toString()
             val name = layout.nameEditTxt.text.toString()
 
             if (!stringUtil.isValidEmailAddress(email)){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
-            }else if((layout.ccp.selectedCountryCodeWithPlus=="+234" && phone.length<9) || !layout.ccp.isValidFullNumber){
-                layout.errorAlertBtn.visibility = View.VISIBLE
+            }else if(!stringUtil.isValidPhoneNumber(phone)){
+                layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
                 lifecycleScope.launch(IO) {
                     val localDateTime= DateTimeUtil.getDateTimeAsString()
-                    val user = UserRecord(userAuth.getUserId(),name, email,phone, null, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel(), deviceUtil.getDeviceOSVersionInfo(
-                        Build.VERSION.SDK_INT), localDateTime)
+                    val user = UserRecord(userAuth.getUserId(), userAuth.getAuthType())
+                    user.appVersion=appUtil.getAppVersionName()
+                    user.name = name
+                    user.device = deviceUtil.getDeviceBrandAndModel()
+                    user.email = email
+                    user.phone=phone
+                    user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
+                    Build.VERSION.SDK_INT)
+                    user.lastUpdated= localDateTime
                     withContext(Main){
                       userAuthViewModel.setIsAddingUser(false, user)
                     }

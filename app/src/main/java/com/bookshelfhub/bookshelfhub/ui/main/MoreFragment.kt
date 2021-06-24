@@ -1,18 +1,11 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Html
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +14,7 @@ import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
-import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
+import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.Profile
 import com.bookshelfhub.bookshelfhub.enums.Settings
@@ -32,20 +25,17 @@ import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
 @WithFragmentBindings
-class ProfileFragment : Fragment() {
+class MoreFragment : Fragment() {
 
     private val PRIVACY_URL = "privacy_url"
     private val TERMS_URL = "terms_url"
@@ -64,12 +54,12 @@ class ProfileFragment : Fragment() {
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
-    private lateinit var layout: FragmentProfileBinding
+    private lateinit var layout: FragmentMoreBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentProfileBinding.inflate(inflater, container, false)
+        layout= FragmentMoreBinding.inflate(inflater, container, false)
 
         authType= userAuth.getAuthType()
 

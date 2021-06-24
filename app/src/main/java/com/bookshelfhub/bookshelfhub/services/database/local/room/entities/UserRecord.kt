@@ -8,15 +8,36 @@ import com.bookshelfhub.bookshelfhub.models.IUser
 data class UserRecord(
      @PrimaryKey
      override val userId: String,
-     override var name:String,
-     override var email: String,
-     override var phone:String,
-     override var photoUri:String?,
-     override val authType:String,
-     override val appVersion:String,
-     override val device:String,
-     override val deviceOs:String,
-     override val lastUpdated: String,
-     override val mailOrPhoneVerified: Boolean =false,
-     override var uploaded: Boolean = false,
-) : IUser
+     override val authType:String
+) : IUser{
+     override var name:String = ""
+          get() = field
+     set(value){field=value}
+     override var email: String = ""
+          get() = field
+          set(value){field=value}
+     override var phone:String = ""
+          get() = field
+          set(value){field=value}
+     override var photoUri:String? = null
+          get() = field
+          set(value){field=value}
+     override var appVersion:String = ""
+          get() = field
+          set(value){field=value}
+     override var device:String = ""
+          get() = field
+          set(value){field=value}
+     override var deviceOs:String = ""
+          get() = field
+          set(value){field=value}
+     override var lastUpdated: String = ""
+          get() = field
+          set(value){field=value}
+     override var mailOrPhoneVerified: Boolean =false
+          get() = field
+          set(value){field=value}
+     override var uploaded: Boolean = false
+          get() = field
+          set(value){field=value}
+}

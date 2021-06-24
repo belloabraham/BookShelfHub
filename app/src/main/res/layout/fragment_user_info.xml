@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginHorizontal="@dimen/size_16"
     android:paddingVertical="@dimen/size_25"
     android:orientation="vertical"
@@ -47,69 +46,23 @@
             android:hint="@string/email" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/phoneEditTxtLayout">
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:orientation="horizontal">
-
-        <com.hbb20.CountryCodePicker
-            android:id="@+id/ccp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:ccp_autoDetectCountry="true"
-            app:ccp_showFlag="false"
-            app:ccp_showNameCode="false" />
-
-        <View
-            android:layout_width="@dimen/line_height"
-            android:layout_height="@dimen/size_25"
-            android:layout_gravity="center_vertical"
-            android:layout_marginTop="@dimen/size_7"
-            android:background="@color/blue_grey_100" />
-
-        <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/phoneEditTxtLayout"
+        android:visibility="gone"
+        style="@style/Widget.Design.TextInputLayout">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/phoneEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:helperTextEnabled="true"
-            style="@style/Widget.Design.TextInputLayout">
+            android:imeOptions="actionDone"
+            android:hint="@string/enter_phone_num"
+            android:inputType="phone"
+            android:textSize="@dimen/size_18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/phoneEditTxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:imeOptions="actionDone"
-                android:hint="@string/enter_phone_num"
-                android:inputType="phone"
-                android:textSize="@dimen/size_18sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <ImageButton
-            android:id="@+id/errorAlertBtn"
-            style="@style/PhoneNumberErrorBtn"
-            android:layout_width="@dimen/error_btn_size"
-            android:layout_height="@dimen/error_btn_size"
-            android:contentDescription="@null"
-            app:layout_constraintBottom_toBottomOf="@+id/linearLayoutCompat"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/linearLayoutCompat"
-            app:layout_constraintVertical_bias="0.52" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/btn_Continue"

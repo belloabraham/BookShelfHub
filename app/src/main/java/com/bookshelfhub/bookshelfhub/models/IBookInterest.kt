@@ -1,0 +1,39 @@
+package com.bookshelfhub.bookshelfhub.models
+
+interface IBookInterest {
+    var id: Int
+    var historyChecked: Boolean
+    var comicChecked: Boolean
+    var musicChecked: Boolean
+    var computerProgrammingChecked: Boolean
+    var biographyChecked: Boolean
+    var magazineChecked: Boolean
+    var poetryChecked: Boolean
+    var mathematicsAndEngineeringChecked: Boolean
+    var romanceChecked: Boolean
+    var healthAndFitnessChecked: Boolean
+    var religionChecked: Boolean
+    var humourChecked: Boolean
+    var scienceAndTechnologyChecked: Boolean
+    var sportChecked: Boolean
+    var travelChecked: Boolean
+    var lawChecked: Boolean
+    var languagesAndReferenceChecked: Boolean
+    var examAndTestPrepChecked: Boolean
+    var transportationChecked: Boolean
+    var psychologyChecked: Boolean
+    var politicsChecked: Boolean
+    var howToAndManualsChecked: Boolean
+    var literatureChecked: Boolean
+    var artAndCraftChecked: Boolean
+    var fictionChecked: Boolean
+    var dataAnalysisChecked: Boolean
+    var businessAndFinanceChecked: Boolean
+    var cookBooksChecked: Boolean
+    var novelChecked: Boolean
+    var fashionChecked: Boolean
+    var newsChecked: Boolean
+    var photographyChecked: Boolean
+    var christianityChecked: Boolean
+    var islamChecked: Boolean
+}

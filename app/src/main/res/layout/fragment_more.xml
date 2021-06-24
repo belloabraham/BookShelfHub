@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="@dimen/size_50"
-    tools:context=".ui.main.ProfileFragment">
+    android:paddingTop="@dimen/size_16"
+    tools:context=".ui.main.MoreFragment">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -24,6 +25,55 @@
                 app:animationDuration="@integer/nav_anim_duration"
                 app:startExpanded="false"/>
 
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/interestCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/size_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_bookshelf"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/book_interest"
+                        style="@style/ProfileItemTitle"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/notif_circle_size"
+                        android:layout_height="@dimen/notif_circle_size"
+                        android:id="@+id/interestNotifCard"
+                        app:cardCornerRadius="@dimen/notif_circle_size"
+                        style="@style/ProfileNotifCircle">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ProfileNotiText"
+                            android:text="@string/exclamation"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

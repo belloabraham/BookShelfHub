@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BooksOrderedRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentInfoRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
@@ -13,12 +14,20 @@ open class RoomDb(private val context:Context) {
       return  RoomInstance.getDatabase(context).userDao().getUser()
     }
 
+    open fun getBookInterest(): Optional<BookInterestRecord> {
+        return  RoomInstance.getDatabase(context).userDao().getBookInterest()
+    }
+
     open fun getLiveUser(): LiveData<UserRecord> {
         return  RoomInstance.getDatabase(context).userDao().getLiveUser()
     }
 
     open suspend fun addUser(userRecord:UserRecord){
         RoomInstance.getDatabase(context).userDao().addUser(userRecord)
+    }
+
+    suspend fun addBookInterest(bookInterest: BookInterestRecord){
+        RoomInstance.getDatabase(context).userDao().addBookInterest(bookInterest)
     }
 
     open suspend fun addBookOrdered(booksOrderedRecord: BooksOrderedRecord){

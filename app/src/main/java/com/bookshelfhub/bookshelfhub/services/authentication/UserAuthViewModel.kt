@@ -32,8 +32,17 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
     fun setIsAddingUser(value:Boolean, userData: IUser){
         viewModelScope.launch {
             val localDateTime= DateTimeUtil.getDateTimeAsString()
-            val user = UserRecord(userAuth.getUserId(),userData.name, userData.email,userData.phone, userData.photoUri, userAuth.getAuthType(),appUtil.getAppVersionName(), deviceUtil.getDeviceBrandAndModel(), deviceUtil.getDeviceOSVersionInfo(
-                Build.VERSION.SDK_INT), localDateTime )
+            val user = UserRecord(userAuth.getUserId(), userAuth.getAuthType())
+            user.appVersion=appUtil.getAppVersionName()
+            user.name = userData.name
+            user.device = deviceUtil.getDeviceBrandAndModel()
+            user.email = userData.email
+            user.phone=userData.phone
+            user.photoUri=userData.photoUri
+            user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
+                Build.VERSION.SDK_INT)
+            user.lastUpdated= localDateTime
+
             database.addUser(user)
         }
         isAddingUser.value=value

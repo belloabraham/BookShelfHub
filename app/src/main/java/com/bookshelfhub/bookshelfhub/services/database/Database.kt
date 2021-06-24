@@ -2,10 +2,11 @@ package com.bookshelfhub.bookshelfhub.services.database
 
 import android.content.Context
 import androidx.work.*
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
+import com.google.common.base.Optional
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -31,4 +32,9 @@ class Database @Inject constructor(private var context: Context, private val loc
         WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
         WorkManager.getInstance(context).enqueue(periodicUserDataUpload)
     }
+
+    suspend fun addBookInterest(bookInterest: BookInterestRecord){
+        localDb.addBookInterest(bookInterest)
+    }
+
 }

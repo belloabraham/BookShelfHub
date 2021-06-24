@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/profile_fragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.main.ProfileFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.MoreFragment"
         android:label="@string/profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_more" />
 </navigation>

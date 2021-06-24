@@ -1,0 +1,114 @@
+package com.bookshelfhub.bookshelfhub.services.database.local.room.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.bookshelfhub.bookshelfhub.models.IBookInterest
+
+@Entity(tableName= "BookInterest")
+data class BookInterestRecord(
+    @PrimaryKey
+    override var id: Int=1
+) : IBookInterest{
+    override var historyChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var comicChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var musicChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var computerProgrammingChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var biographyChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var magazineChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var poetryChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var romanceChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var religionChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var humourChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var sportChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var travelChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var lawChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var transportationChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var psychologyChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var politicsChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var dataAnalysisChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var novelChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var fashionChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var newsChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var photographyChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var christianityChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var islamChecked:Boolean = false
+        get() = field
+        set(value){field=value}
+    override var mathematicsAndEngineeringChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var healthAndFitnessChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var scienceAndTechnologyChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var languagesAndReferenceChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var examAndTestPrepChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var howToAndManualsChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var literatureChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var artAndCraftChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var fictionChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var businessAndFinanceChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var cookBooksChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+}
