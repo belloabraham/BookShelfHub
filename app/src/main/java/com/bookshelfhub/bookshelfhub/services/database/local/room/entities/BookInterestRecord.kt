@@ -78,7 +78,7 @@ data class BookInterestRecord(
     override var islamChecked:Boolean = false
         get() = field
         set(value){field=value}
-    override var mathematicsAndEngineeringChecked: Boolean = false
+    override var mathsAndEngineeringChecked: Boolean = false
         get() = field
         set(value){field=value}
     override var healthAndFitnessChecked: Boolean = false
@@ -109,6 +109,15 @@ data class BookInterestRecord(
         get() = field
         set(value){field=value}
     override var cookBooksChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var educationChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var civilEngChecked: Boolean = false
+        get() = field
+        set(value){field=value}
+    override var archeologyChecked: Boolean = false
         get() = field
         set(value){field=value}
 }

@@ -6,9 +6,8 @@
     <data>
         <variable
             name="bookInterest"
-            type="com.bookshelfhub.bookshelfhub.observable.BookInterest" />
+            type="com.bookshelfhub.bookshelfhub.observable.BookInterestObservable" />
     </data>
-
 
 
     <androidx.core.widget.NestedScrollView
@@ -25,13 +24,15 @@
 
             <com.google.android.material.chip.ChipGroup
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/chipGroup"
+                android:layout_marginTop="@dimen/size_8">
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isHistoryChecked}"
+                    android:checked="@={bookInterest.isHistory}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/history" />
 
@@ -39,6 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isBiography}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/biography" />
 
@@ -46,20 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/science_technology" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/sport" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
+                    android:checked="@={bookInterest.isComic}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/comic" />
 
@@ -67,6 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isTravel}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/travel" />
 
@@ -74,28 +64,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isScienceAndTechnology}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/business_finance" />
+                    android:text="@string/science_technology" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isSport}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/christianity" />
+                    android:text="@string/sport" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/islam" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isHistoryChecked}"
+                    android:checked="@={bookInterest.isReligion}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/religion" />
 
@@ -103,6 +88,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isBusinessAndFinance}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/business_finance" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isChristianity}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/christianity" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isIslam}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/islam" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isHowToAndManuals}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/manuals" />
 
@@ -110,6 +120,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isHealthAndFitness}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/health_fitness" />
 
@@ -117,6 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isPoetry}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/poetry" />
 
@@ -124,6 +136,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isLaw}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/law" />
 
@@ -131,6 +144,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isArtAndCraft}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/art_craft" />
 
@@ -138,6 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isMusic}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/music" />
 
@@ -145,6 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isFiction}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/fiction" />
 
@@ -152,6 +168,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isLanguagesAndReference}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/languages_reference" />
 
@@ -159,77 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/engineering_mathematics" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/data_analysis" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/computer_programming" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/transportation" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/literature" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/novel" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/photography" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isHistoryChecked}"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/cook_books" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/politics" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/psychology" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
+                    android:checked="@={bookInterest.isNews}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/news" />
 
@@ -237,6 +184,113 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isMathsAndEngineering}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/engineering_mathematics" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isDataAnalysis}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/data_analysis" />
+
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isEducation}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/education" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isArcheology}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/archeology" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isCivilEng}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/civil_eng" />
+
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isComputerProgramming}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/computer_programming" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isTransportation}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/transportation" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isLiterature}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/literature" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isNovel}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/novel" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isPhotography}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/photography" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isCookBooks}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/cook_books" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isPolitics}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/politics" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isPsychology}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/psychology" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
+                    android:checked="@={bookInterest.isFashion}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/fashion" />
 
@@ -244,6 +298,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isHumour}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/humour" />
 
@@ -251,6 +306,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isRomance}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/romance" />
 
@@ -258,23 +314,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isMagazine}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/preparation" />
+                    android:text="@string/magazine" />
+
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isExamAndTestPrep}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/magazine" />
+                    android:text="@string/preparation" />
 
             </com.google.android.material.chip.ChipGroup>
+
+                <com.google.android.material.button.MaterialButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/saveBtn"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/size_16"
+                    android:text="@string/save"/>
+
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.core.widget.NestedScrollView>
-
-
 
 
 </layout>

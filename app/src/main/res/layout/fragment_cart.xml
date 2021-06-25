@@ -5,7 +5,7 @@
     <data>
         <variable
             name="bookInterest"
-            type="com.bookshelfhub.bookshelfhub.observable.BookInterest" />
+            type="com.bookshelfhub.bookshelfhub.observable.BookInterestObservable" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat

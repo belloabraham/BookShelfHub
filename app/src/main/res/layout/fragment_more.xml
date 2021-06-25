@@ -15,7 +15,7 @@
             android:orientation="vertical">
 
             <com.bookshelfhub.bookshelfhub.view.ExpandableCardView
-                android:id="@+id/profile"
+                android:id="@+id/accountBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:title="@string/account"
@@ -178,40 +178,6 @@
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/ProfileItemCardView"
-                android:id="@+id/signOutCard">
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_marginVertical="@dimen/size_4"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:layout_width="@dimen/image_btn_size"
-                        android:layout_height="@dimen/image_btn_size"
-                        android:src="@drawable/ic_sign_out"
-                        android:layout_gravity="start"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/sign_out"
-                        style="@style/ProfileItemTitle"/>
-
-                    <ImageView
-                        android:layout_width="@dimen/image_btn_size"
-                        android:layout_height="@dimen/image_btn_size"
-                        android:layout_gravity="end"
-                        android:src="@drawable/ic_baseline_chevron_right_24"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"/>
-
-                </FrameLayout>
-            </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
@@ -458,6 +424,41 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/refundPolicyCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/size_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_file_document"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/refund_policy"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/termsOfUseCard"
                 style="@style/ProfileItemCardView">
                 <FrameLayout
@@ -489,7 +490,6 @@
 
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
-
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

@@ -12,7 +12,9 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityProfileBinding
 import com.bookshelfhub.bookshelfhub.enums.Profile
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding

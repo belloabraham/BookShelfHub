@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -39,6 +41,7 @@ class MoreFragment : Fragment() {
 
     private val PRIVACY_URL = "privacy_url"
     private val TERMS_URL = "terms_url"
+    private val REFUND_POLICY_URL = "refund_policy_url"
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
@@ -60,6 +63,7 @@ class MoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentMoreBinding.inflate(inflater, container, false)
+        val signoutBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.signOutCard)
 
         authType= userAuth.getAuthType()
 
@@ -69,10 +73,6 @@ class MoreFragment : Fragment() {
                 layout.progressPopupToggle.setChecked(isChecked, false)
             }
         }
-
-        //layout.accountCard.setOnClickListener {
-         //   startProfileActivity(R.string.account, R.id.accountFragment)
-      //  }
 
         layout.aboutCard.setOnClickListener {
             startProfileActivity(R.string.about, R.id.aboutFragment)
@@ -88,7 +88,7 @@ class MoreFragment : Fragment() {
             }
         }
 
-        layout.signOutCard.setOnClickListener {
+        signoutBtn.setOnClickListener {
             AlertDialogHelper(activity,{
                 if (authType==AuthType.GOOGLE.ID){
                     userAuth.signOut {
@@ -110,23 +110,13 @@ class MoreFragment : Fragment() {
         }
 
         layout.privacyPolicyCard.setOnClickListener {
-
-            val url = remoteConfig.getString(PRIVACY_URL)
-            val intent = Intent(activity, WebViewActivity::class.java)
-            with(intent){
-                putExtra(WebView.TITLE.KEY,getString(R.string.privacy))
-                putExtra(WebView.URL.KEY, url)
-            }
-            startActivity(intent)
+            startWebActivity(R.string.privacy, PRIVACY_URL)
         }
         layout.termsOfUseCard.setOnClickListener {
-            val url = remoteConfig.getString(TERMS_URL)
-            val intent = Intent(activity, WebViewActivity::class.java)
-            with(intent){
-                putExtra(WebView.TITLE.KEY,getString(R.string.terms))
-                putExtra(WebView.URL.KEY, url)
-            }
-            startActivity(intent)
+            startWebActivity(R.string.terms, TERMS_URL)
+        }
+        layout.refundPolicyCard.setOnClickListener {
+            startWebActivity(R.string.refund_policy, REFUND_POLICY_URL)
         }
 
         layout.verifyPhoneCard.setOnClickListener {
@@ -137,6 +127,10 @@ class MoreFragment : Fragment() {
         }
         layout.needHelpCard.setOnClickListener {
 
+        }
+
+        layout.interestCard.setOnClickListener {
+            startProfileActivity(R.string.book_interest, R.id.interestFragment)
         }
 
         layout.inviteFreindsCard.setOnClickListener {
@@ -184,6 +178,16 @@ class MoreFragment : Fragment() {
         return layout.root
     }
 
+
+    private fun startWebActivity(title:Int, rmcUrlKey:String){
+        val url = remoteConfig.getString(rmcUrlKey)
+        val intent = Intent(activity, WebViewActivity::class.java)
+        with(intent){
+            putExtra(WebView.TITLE.KEY,getString(title))
+            putExtra(WebView.URL.KEY, url)
+        }
+        startActivity(intent)
+    }
 
     private fun startProfileActivity(title:Int, fragmentID:Int){
         val intent = Intent(activity, ProfileActivity::class.java)

@@ -32,10 +32,14 @@
         <value>false</value>
     </entry>
 
-    <!-- TODO: Profile Fragment-->
+    <!-- TODO: More Fragment-->
     <entry>
         <key>privacy_url</key>
         <value>https://bookshelfhub.com/privacy</value>
+    </entry>
+    <entry>
+        <key>refund_policy_url</key>
+        <value>https://bookshelfhub.com/refund</value>
     </entry>
     <entry>
         <key>terms_url</key>

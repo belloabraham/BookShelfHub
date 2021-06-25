@@ -80,4 +80,41 @@
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ProfileItemCardView"
+        app:cardBackgroundColor="?colorPrimaryVariant"
+        android:id="@+id/signOutCard">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_marginVertical="@dimen/size_4"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:src="@drawable/ic_sign_out_white"
+                android:layout_gravity="start"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/sign_out"
+                android:textColor="@android:color/white"
+                style="@style/ProfileItemTitle"/>
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_chevron_right_white_24"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -8,7 +8,8 @@ import com.bookshelfhub.bookshelfhub.models.IUser
 data class UserRecord(
      @PrimaryKey
      override val userId: String,
-     override val authType:String
+     override val authType:String,
+     override var uploaded: Boolean = false
 ) : IUser{
      override var name:String = ""
           get() = field
@@ -35,9 +36,6 @@ data class UserRecord(
           get() = field
           set(value){field=value}
      override var mailOrPhoneVerified: Boolean =false
-          get() = field
-          set(value){field=value}
-     override var uploaded: Boolean = false
           get() = field
           set(value){field=value}
 }

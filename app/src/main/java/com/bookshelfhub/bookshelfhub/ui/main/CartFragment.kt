@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
-import com.bookshelfhub.bookshelfhub.observable.BookInterest
 
 class CartFragment : Fragment() {
 

@@ -9,7 +9,7 @@ interface IBookInterest {
     var biographyChecked: Boolean
     var magazineChecked: Boolean
     var poetryChecked: Boolean
-    var mathematicsAndEngineeringChecked: Boolean
+    var mathsAndEngineeringChecked: Boolean
     var romanceChecked: Boolean
     var healthAndFitnessChecked: Boolean
     var religionChecked: Boolean
@@ -36,4 +36,7 @@ interface IBookInterest {
     var photographyChecked: Boolean
     var christianityChecked: Boolean
     var islamChecked: Boolean
+    var civilEngChecked: Boolean
+    var educationChecked: Boolean
+    var archeologyChecked: Boolean
 }

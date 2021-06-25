@@ -35,8 +35,6 @@ class UploadUserData(var context: Context, workerParams: WorkerParameters): Work
                         }
                     }
             }
-
-
         return Result.success()
     }
 }
