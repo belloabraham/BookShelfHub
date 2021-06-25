@@ -1,11 +1,11 @@
 package com.bookshelfhub.bookshelfhub
 
+import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
+import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
@@ -27,7 +27,6 @@ class Application: android.app.Application() {
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
             SafetyNetAppCheckProviderFactory.getInstance())
-        //Tree Ben Date and Time Initialization
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()
@@ -35,8 +34,23 @@ class Application: android.app.Application() {
         notificationChannelBuilder = NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
         notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
+         enqueueWorkers()
+
     }
 
+
+    private fun enqueueWorkers(){
+        val connected = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val oneTimeNotificationTokenUpload: WorkRequest =
+            OneTimeWorkRequestBuilder<UploadBookInterest>()
+                .setConstraints(connected)
+                .build()
+
+        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
+    }
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig

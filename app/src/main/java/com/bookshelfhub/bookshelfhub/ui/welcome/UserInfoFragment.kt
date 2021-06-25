@@ -16,11 +16,13 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.models.BookInterest
 import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
@@ -62,21 +64,36 @@ class UserInfoFragment : Fragment() {
 
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-
         }
 
-        cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
-            it?.let {
-               val userData = it as User
-                layout.nameEditTxt.setText(userData.name)
-                layout.phoneEditTxt.setText(userData.phone)
-                layout.emailEditTxt.setText(userData.email)
-                lifecycleScope.launch(IO) {
-                    withContext(Main){
-                        userAuthViewModel.setIsAddingUser(false, userData)
+        cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
+
+                it?.let {
+                    try {
+                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterest::class.java) as BookInterest
+                        bookInterest.uploaded=true
+                        lifecycleScope.launch(IO){
+                            database.addBookInterest(bookInterest)
+                        }
+                    }catch (e:Exception){
                     }
+
+                    try {
+                        val userData = it.get(DbFields.USER.KEY, User::class.java) as User
+                        layout.nameEditTxt.setText(userData.name)
+                        layout.phoneEditTxt.setText(userData.phone)
+                        layout.emailEditTxt.setText(userData.email)
+                        userData.uploaded=true
+                        lifecycleScope.launch(IO) {
+                            withContext(Main){
+                                userAuthViewModel.setIsAddingUser(false, userData)
+                            }
+                        }
+                    }catch (e:Exception){
+                    }
+
                 }
-            }
+
         }
 
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){

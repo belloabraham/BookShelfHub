@@ -26,19 +26,19 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookInterest(bookInterest: BookInterestRecord)
 
-    @Query("SELECT * FROM User LIMIT 1")
-    fun getUser(): Optional<UserRecord>
+    @Query("SELECT * FROM User WHERE userId = :userId")
+    fun getUser(userId:String): Optional<UserRecord>
 
-    @Query("SELECT * FROM BookInterest LIMIT 1")
-    fun getBookInterest(): Optional<BookInterestRecord>
+    @Query("SELECT * FROM BookInterest WHERE userId = :userId")
+    fun getBookInterest(userId:String): Optional<BookInterestRecord>
 
-    @Query("SELECT * FROM User LIMIT 1")
-    fun getLiveUser(): LiveData<UserRecord>
+    @Query("SELECT * FROM User WHERE userId = :userId")
+    fun getLiveUser(userId:String): LiveData<UserRecord>
 
-    @Query("SELECT * FROM PaymentInfo")
-    fun getLivePaymentInfo(): LiveData<PaymentInfoRecord>
+    @Query("SELECT * FROM PaymentInfo WHERE userId = :userId")
+    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfoRecord>
 
-    @Query("SELECT * FROM BooksOrdered")
-    fun getLiveBooksOrdered(): LiveData<BooksOrderedRecord>
+    @Query("SELECT * FROM BooksOrdered WHERE userId = :userId")
+    fun getLiveBooksOrdered(userId:String): LiveData<BooksOrderedRecord>
 
 }

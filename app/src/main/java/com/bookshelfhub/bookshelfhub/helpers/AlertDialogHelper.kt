@@ -4,12 +4,13 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.text.Spanned
+import com.bookshelfhub.bookshelfhub.R
 
 
-class AlertDialogHelper(private val activity:Activity?, private val positiveAction:()->Unit, private val negativeAction:()->Unit={}, private val cancelable:Boolean=false) {
+class AlertDialogHelper(private val activity:Activity?, private val positiveAction:()->Unit={}, private val negativeAction:()->Unit={}, private val cancelable:Boolean=false) {
 
 
-    fun showAlertDialog( title:Int, msg:Int, positiveActionText:Int, negativeActionText:Int? ){
+    fun showAlertDialog(title:Int, msg:Int, positiveActionText:Int = R.string.ok, negativeActionText:Int?=null){
 
         activity?.let {
             showAlertDialog(it.getString(title),

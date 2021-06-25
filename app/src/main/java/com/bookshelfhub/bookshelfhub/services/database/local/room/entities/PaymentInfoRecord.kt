@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class PaymentInfoRecord(
      @PrimaryKey
      override val cardNumber:String,
+     override val userId:String,
      override val nameOnCard:String,
      override val ccv:String,
      override val address:String,

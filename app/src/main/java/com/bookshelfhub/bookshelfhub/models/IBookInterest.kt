@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.models
 
 interface IBookInterest {
-    var id: Int
+    var userId: String
     var historyChecked: Boolean
     var comicChecked: Boolean
     var musicChecked: Boolean
@@ -39,4 +39,5 @@ interface IBookInterest {
     var civilEngChecked: Boolean
     var educationChecked: Boolean
     var archeologyChecked: Boolean
+    var uploaded: Boolean
 }

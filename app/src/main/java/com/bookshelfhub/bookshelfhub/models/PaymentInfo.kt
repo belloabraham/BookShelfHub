@@ -7,6 +7,8 @@ class PaymentInfo:IPaymentInfo {
         get() = field
     override val cardNumber: String = ""
         get() = field
+    override val userId: String = ""
+        get() = field
     override val ccv: String = ""
         get() = field
     override val address: String = ""

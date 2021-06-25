@@ -7,7 +7,8 @@ import com.bookshelfhub.bookshelfhub.models.IBookInterest
 @Entity(tableName= "BookInterest")
 data class BookInterestRecord(
     @PrimaryKey
-    override var id: Int=1
+    override var userId: String,
+    override var uploaded: Boolean = false
 ) : IBookInterest{
     override var historyChecked:Boolean = false
         get() = field

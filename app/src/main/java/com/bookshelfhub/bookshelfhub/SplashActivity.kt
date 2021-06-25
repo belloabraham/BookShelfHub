@@ -31,7 +31,7 @@ class SplashActivity : AppCompatActivity() {
 
         if (userAuth.getIsUserAuthenticated()){
             lifecycleScope.launch(IO) {
-                val user = localDb.getUser()
+                val user = localDb.getUser(userAuth.getUserId())
               withContext(Main){
                  val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
                       Intent(this@SplashActivity, MainActivity::class.java)

@@ -158,10 +158,11 @@
     <string name="computer_programming">Computer Programming</string>
     <string name="archeology">Archeology</string>
     <string name="civil_eng">Civil Engineering</string>
-    <string name="interest_erorr_msg">You have to select more than 3 book interest.</string>
 
+    <string name="select_more_than_3">Select more than 3 book interest</string>
+    <string name="select_more_than_3_msg">You have to select more than 3 book interest.</string>
     <string name="save">Save</string>
-
+    <string name="interest_internet_save_error">Unable to save book interest, no internet connection</string>
 
 
     <!-- TODO: Publishers Link **************************** -->

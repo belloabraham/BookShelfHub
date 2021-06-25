@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.notification.CloudMessaging
 import kotlinx.coroutines.runBlocking
 
-class UploadNotificationToken (var context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadNotificationToken ( var context: Context, workerParams: WorkerParameters): Worker(context,
     workerParams
 ) {
     private lateinit var userAuth: UserAuth

@@ -27,4 +27,7 @@ class User: IUser {
         get() = field
     override var uploaded: Boolean = false
         get() = field
+        set(value) {
+            field=value
+        }
 }

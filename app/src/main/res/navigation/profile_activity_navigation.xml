@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/profileNavigation"
     app:startDestination="@+id/aboutFragment">
-
     <fragment
         android:id="@+id/aboutFragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.more.AboutFragment"

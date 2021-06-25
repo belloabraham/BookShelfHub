@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
@@ -17,7 +18,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, private val localDb: LocalDb):ViewModel() {
+class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, private val localDb: LocalDb, private val userAuth: UserAuth):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData<Int>()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -32,7 +33,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         verifyPhoneOrEmailNotifNumber.value=0
         newAppUpdateNotifNumber.value=0
         checkForUpdate()
-        user=localDb.getLiveUser()
+        user=localDb.getLiveUser(userAuth.getUserId())
     }
 
 
@@ -42,10 +43,6 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
 
     fun getNewAppUpdateNotifNumber():LiveData<Int>{
       return  newAppUpdateNotifNumber
-    }
-
-    fun getVerifyPhoneOrEmailNotifNumber():LiveData<Int>{
-       return verifyPhoneOrEmailNotifNumber
     }
 
      fun setVerifyPhoneOrEmailNotif(value:Int){

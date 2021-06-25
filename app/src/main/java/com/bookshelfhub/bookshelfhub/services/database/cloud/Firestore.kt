@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import com.bookshelfhub.bookshelfhub.models.User
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -28,25 +29,21 @@ open class Firestore {
     }
 
 
-    open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:(data:Any?)->Unit){
+   // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
+     open fun getDataAsync(collection:String, document: String, onComplete:
+     (data:DocumentSnapshot?)->Unit){
         db.collection(collection)
             .document(document)
             .get()
             .addOnSuccessListener { documentSnapShot->
                 if (documentSnapShot!=null && documentSnapShot.exists()){
-                    try {
-                        documentSnapShot.get(field, type)?.let{
-                            onComplete(it)
-                        }
-                    }catch (e:Exception){
-                        onComplete(null)
-                    }
+                    onComplete(documentSnapShot)
                 }else{
                     onComplete(null)
                 }
             }
             .addOnFailureListener {
-                onComplete(it.message)
+                onComplete(null)
             }
     }
 

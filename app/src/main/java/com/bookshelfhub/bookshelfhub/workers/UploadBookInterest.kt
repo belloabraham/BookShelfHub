@@ -5,13 +5,12 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import kotlinx.coroutines.runBlocking
 
-class UploadUserData(var context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadBookInterest (var context: Context, workerParams: WorkerParameters): Worker(context,
     workerParams
 ) {
 
@@ -19,16 +18,17 @@ class UploadUserData(var context: Context, workerParams: WorkerParameters): Work
         val userAuth=UserAuth(StringUtil())
         val userId = userAuth.getUserId()
         val localDb = LocalDb(context)
-        val user = localDb.getUser(userId)
-        val userData = user.get()
-            if (user.isPresent && !userData.uploaded){
-               CloudDb().addDataAsync(userData, DbFields.USERS_COLL.KEY, userId, DbFields.USER.KEY){
-                        val newUserData = userData.copy(uploaded = true)
-                        runBlocking {
-                            localDb.addUser(newUserData)
-                        }
-                    }
+        val  bookInterest = localDb.getBookInterest(userId)
+        val bookInterestData = bookInterest.get()
+        if (bookInterest.isPresent && !bookInterestData.uploaded){
+               CloudDb().addDataAsync(bookInterestData, DbFields.USERS_COLL.KEY, userId, DbFields.BOOK_INTEREST.KEY){
+               val newBookInterestData = bookInterestData.copy(uploaded = true)
+                runBlocking {
+                    localDb.addBookInterest(newBookInterestData)
+                }
             }
+        }
+
         return Result.success()
     }
 }

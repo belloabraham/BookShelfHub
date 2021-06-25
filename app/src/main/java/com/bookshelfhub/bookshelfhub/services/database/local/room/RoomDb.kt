@@ -10,16 +10,16 @@ import com.google.common.base.Optional
 
 open class RoomDb(private val context:Context) {
 
-    open fun getUser(): Optional<UserRecord> {
-      return  RoomInstance.getDatabase(context).userDao().getUser()
+    open fun getUser(userId:String): Optional<UserRecord> {
+      return  RoomInstance.getDatabase(context).userDao().getUser(userId)
     }
 
-    open fun getBookInterest(): Optional<BookInterestRecord> {
-        return  RoomInstance.getDatabase(context).userDao().getBookInterest()
+    open fun getBookInterest(userId:String): Optional<BookInterestRecord> {
+        return  RoomInstance.getDatabase(context).userDao().getBookInterest(userId)
     }
 
-    open fun getLiveUser(): LiveData<UserRecord> {
-        return  RoomInstance.getDatabase(context).userDao().getLiveUser()
+    open fun getLiveUser(userId:String): LiveData<UserRecord> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveUser(userId)
     }
 
     open suspend fun addUser(userRecord:UserRecord){

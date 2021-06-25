@@ -20,11 +20,13 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.models.BookInterest
 import com.bookshelfhub.bookshelfhub.models.User
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +62,8 @@ class LoginFragment:Fragment() {
     lateinit var cloudDb: CloudDb
     @Inject
     lateinit var userAuth: UserAuth
+    @Inject
+    lateinit var database: Database
 
 
     override fun onCreateView(
@@ -144,10 +148,24 @@ class LoginFragment:Fragment() {
                 if (isNewUser){
                     findNavController().navigate(actionUserInfo)
                 }else{
-                    cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId(), DbFields.USER.KEY, User::class.java){
+                    cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
                         if(it!=null){
-                            val user = it as User
-                            userAuthViewModel.setIsAddingUser(false, user)
+                            try {
+                                val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterest::class.java) as BookInterest
+                                bookInterest.uploaded=true
+                                lifecycleScope.launch(IO){
+                                    database.addBookInterest(bookInterest)
+                                }
+                            }catch (e:Exception){
+                            }
+
+                            try {
+                                val user = it.get(DbFields.USER.KEY, User::class.java) as User
+                                user.uploaded=true
+                                userAuthViewModel.setIsAddingUser(false, user)
+                            }catch (ex:Exception){
+                                userAuthViewModel.setIsExistingUser(false)
+                            }
                         }else{
                             userAuthViewModel.setIsExistingUser(false)
                         }
