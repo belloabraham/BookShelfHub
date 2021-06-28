@@ -8,9 +8,10 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -19,35 +20,50 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, private val localDb: LocalDb, private val userAuth: UserAuth):ViewModel() {
-    private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData<Int>()
-    private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
+    private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
+    private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
     private var user: LiveData<UserRecord> = MutableLiveData()
+    private var bookInterest: LiveData<Optional<BookInterestRecord>> = MutableLiveData()
     private val NEW_VERSION_CODE="new_version_code"
     private val APP_VERSION_CODE="app_version_code"
-    private var verifyPhoneOrEmailNotifNumber: MutableLiveData<Int> = MutableLiveData<Int>()
-    private var newAppUpdateNotifNumber: MutableLiveData<Int> = MutableLiveData<Int>()
+    private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
+    private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
+    private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
 
 
     init {
-        verifyPhoneOrEmailNotifNumber.value=0
-        newAppUpdateNotifNumber.value=0
+        val userId =userAuth.getUserId()
+        verifyPhoneOrEmailNotifNo.value=0
+        newAppUpdateNotifNo.value=0
+        bookInterestNotifNo.value=0
         checkForUpdate()
-        user=localDb.getLiveUser(userAuth.getUserId())
+        user=localDb.getLiveUser(userId)
+        bookInterest = localDb.getLiveBookInterest(userId)
     }
 
 
-     fun getTotalProfileNotifNumber():Int{
-        return  newAppUpdateNotifNumber.value!!+verifyPhoneOrEmailNotifNumber.value!!
+    fun getTotalProfileNotifNumber(): Int {
+        return newAppUpdateNotifNo.value!! + verifyPhoneOrEmailNotifNo.value!! + bookInterestNotifNo.value!!
     }
 
     fun getNewAppUpdateNotifNumber():LiveData<Int>{
-      return  newAppUpdateNotifNumber
+      return  newAppUpdateNotifNo
+    }
+
+
+    fun setBookInterestNotifNo(value:Int){
+        bookInterestNotifNo.value=value
+        isNewProfileNotif.value=true
     }
 
      fun setVerifyPhoneOrEmailNotif(value:Int){
-        verifyPhoneOrEmailNotifNumber.value = value
+        verifyPhoneOrEmailNotifNo.value = value
         isNewProfileNotif.value=true
+    }
+
+    fun getBookInterest():LiveData<Optional<BookInterestRecord>>{
+        return bookInterest
     }
 
     fun getUserRecord():LiveData<UserRecord>{
@@ -82,10 +98,10 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
                         settingsUtil.setLong(APP_VERSION_CODE, newVersionCode)
                     }
                     if(newVersionCode>appUtil.getAppVersionCode()){
-                        newAppUpdateNotifNumber.value = 1
+                        newAppUpdateNotifNo.value = 1
                         isNewProfileNotif.value=true
                     }else{
-                        newAppUpdateNotifNumber.value = 0
+                        newAppUpdateNotifNo.value = 0
                         isNewProfileNotif.value=false
                     }
                 }

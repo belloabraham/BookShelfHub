@@ -32,11 +32,14 @@ interface UserDao {
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
     fun getBookInterest(userId:String): Optional<BookInterestRecord>
 
+    @Query("SELECT * FROM PaymentInfo WHERE userId = :userId")
+    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfoRecord>
+
     @Query("SELECT * FROM User WHERE userId = :userId")
     fun getLiveUser(userId:String): LiveData<UserRecord>
 
-    @Query("SELECT * FROM PaymentInfo WHERE userId = :userId")
-    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfoRecord>
+    @Query("SELECT * FROM BookInterest WHERE userId = :userId")
+    fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>>
 
     @Query("SELECT * FROM BooksOrdered WHERE userId = :userId")
     fun getLiveBooksOrdered(userId:String): LiveData<BooksOrderedRecord>

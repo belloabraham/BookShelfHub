@@ -1,13 +1,10 @@
-package com.bookshelfhub.bookshelfhub.observable
+package com.bookshelfhub.bookshelfhub.observables
 
 
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
-import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 
 class BookInterestObservable (private val bkInts:BookInterestRecord): BaseObservable() {

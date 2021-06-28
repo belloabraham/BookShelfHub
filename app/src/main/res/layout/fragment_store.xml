@@ -12,12 +12,13 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:background="?backgroundColor" >
+
     <com.bookshelfhub.bookshelfhub.view.search.widget.MaterialSearchView
         android:id="@+id/material_search_view"
         android:layout_width="match_parent"
         app:search_textHint="@string/store_search_hint"
-        app:search_transitionDuration="0"
         app:search_navigationIconSupport="search"
+        app:search_transitionDuration="@integer/config_navAnimTime"
         android:layout_height="wrap_content" />
 
     </com.google.android.material.appbar.AppBarLayout>

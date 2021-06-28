@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bookInterest"
-            type="com.bookshelfhub.bookshelfhub.observable.BookInterestObservable" />
+            type="com.bookshelfhub.bookshelfhub.observables.BookInterestObservable" />
     </data>
 
 
@@ -22,6 +22,18 @@
         android:layout_height="match_parent"
         android:padding="@dimen/size_8"
         android:paddingBottom="120dp">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_8"
+                android:text="@string/interested_book"/>
+
 
             <com.google.android.material.chip.ChipGroup
                 android:layout_width="wrap_content"
@@ -329,6 +341,10 @@
                     android:text="@string/preparation" />
 
             </com.google.android.material.chip.ChipGroup>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
     </androidx.core.widget.NestedScrollView>
 

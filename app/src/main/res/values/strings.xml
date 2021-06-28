@@ -102,6 +102,7 @@
     <string name="privacy">Privacy policy</string>
     <string name="refund_policy">Refund policy</string>
     <string name="about">About</string>
+    <string name="dark_mode">Enable dark mode</string>
     <string name="new_update">Download new update</string>
     <string name="exclamation">1</string>
     <string name="show_progess">Show progress popup</string>
@@ -122,7 +123,7 @@
     <string name="science_technology">Science and Technology</string>
     <string name="biography">Biography</string>
     <string name="history">History</string>
-    <string name="poetry">Poetry</string>
+    <string name="poetry">Love and Poetry</string>
     <string name="romance">Romance</string>
     <string name="comic">Comic</string>
     <string name="fiction">Fiction</string>
@@ -159,16 +160,27 @@
     <string name="archeology">Archeology</string>
     <string name="civil_eng">Civil Engineering</string>
 
-    <string name="select_more_than_3">Select more than 3 book interest</string>
+    <string name="interest_Saved">Book interest saved</string>
+    <string name="unsaved_interest_title">Save book interest?</string>
+    <string name="unsaved_interest_msg">You have unsaved book interest</string>
+    <string name="interested_book">Select the type of books that you are interested in as this will help us serve you better.</string>
     <string name="select_more_than_3_msg">You have to select more than 3 book interest.</string>
     <string name="save">Save</string>
-    <string name="interest_internet_save_error">Unable to save book interest, no internet connection</string>
 
 
     <!-- TODO: Publishers Link **************************** -->
     <string name="publish_book_msg"><![CDATA[ visit <a href="https://pubs.bookshelfhub.com/">pubs.bookshelfhub.com</a> to register as a publisher ]]></string>
     <string translatable="false" name="publishers_link">https://pubs.bookshelfhub.com/</string>
     <!--TODO **************************** -->
+
+    <!-- TODO: About Page -->
+    <string name="version">Version %1$s</string>
+    <string name="copyright">Copyright © %1$d</string>
+    <string name="contact_us">For more information contact us:</string>
+    <string name="follow_us">Follow us on:</string>
+    <string name="about_statement">Bookshelfhub is a property of BookShelf Hub Resources LTD</string>
+
+
 
     <!-- TODO: WebView Activity -->
     <string name="no_internet_error_msg">Error: No internet connection</string>

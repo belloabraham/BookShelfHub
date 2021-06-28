@@ -113,6 +113,9 @@ class BookInterest:IBookInterest {
         
     override var archeologyChecked: Boolean = false
         get() = field
+    override var added: Boolean = false
+        get() = field
     override var uploaded: Boolean = false
         get() = field
+
 }

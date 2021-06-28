@@ -39,5 +39,6 @@ interface IBookInterest {
     var civilEngChecked: Boolean
     var educationChecked: Boolean
     var archeologyChecked: Boolean
+    var added: Boolean
     var uploaded: Boolean
 }

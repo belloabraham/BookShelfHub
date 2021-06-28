@@ -10,13 +10,13 @@ import es.dmoral.toasty.Toasty
 
 open class Toasty(val context: Activity, val backgroundColor:Int ) {
 
-    open fun showToast(msg:Int){
-        showToast(context.getString(msg))
+    open fun showToast(msg:Int, toastLength:Int = Toasty.LENGTH_SHORT){
+        showToast(context.getString(msg), toastLength)
     }
 
-    open fun showToast(msg:String){
+    open fun showToast(msg:String, toastLength:Int = Toasty.LENGTH_SHORT){
 
-        Toasty.custom(context, msg, R.drawable.logo, backgroundColor, Toasty.LENGTH_SHORT, false,
+        Toasty.custom(context, msg, R.drawable.logo, backgroundColor, toastLength, false,
             true
         ).show()
     }

@@ -1,15 +1,18 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
@@ -25,6 +28,7 @@ import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,20 +67,47 @@ class MoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentMoreBinding.inflate(inflater, container, false)
-        val signoutBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.signOutCard)
+        val signOutBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.signOutCard)
+        val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
+        val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
 
         authType= userAuth.getAuthType()
 
         lifecycleScope.launch(IO){
-           val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
+            val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
             withContext(Main){
-                layout.progressPopupToggle.setChecked(isChecked, false)
+                progressPopupToggle.setChecked(isChecked, false)
+            }
+        }
+
+        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_NO -> {
+                darkModeToggle.setChecked(false, false)
+            }
+            Configuration.UI_MODE_NIGHT_YES -> {
+                darkModeToggle.setChecked(true, false)
+            }
+        }
+
+        darkModeToggle.setOnCheckedChangeListener { isChecked->
+            val mode = if (isChecked){
+                AppCompatDelegate.MODE_NIGHT_YES
+            }else{
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+            AppCompatDelegate.setDefaultNightMode(mode)
+        }
+
+        progressPopupToggle.setOnCheckedChangeListener { isChecked->
+            lifecycleScope.launch(IO) {
+                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, isChecked)
             }
         }
 
         layout.aboutCard.setOnClickListener {
             startProfileActivity(R.string.about, R.id.aboutFragment)
         }
+
         layout.reviewCard.setOnClickListener {
             activity?.let {
                 startActivity(intentUtil.openAppStoreIntent(it.packageName))
@@ -88,7 +119,7 @@ class MoreFragment : Fragment() {
             }
         }
 
-        signoutBtn.setOnClickListener {
+        signOutBtn.setOnClickListener {
             AlertDialogHelper(activity,{
                 if (authType==AuthType.GOOGLE.ID){
                     userAuth.signOut {
@@ -150,15 +181,18 @@ class MoreFragment : Fragment() {
                 }
         }
 
-        layout.progressPopupToggle.setOnCheckedChangeListener { isChecked->
-            lifecycleScope.launch(IO) {
-                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, isChecked)
-            }
-        }
 
         mainActivityViewModel.getNewAppUpdateNotifNumber().observe(viewLifecycleOwner, Observer { notifNumber ->
             if (notifNumber>0){
                layout.updateCard.visibility = View.VISIBLE
+            }
+        })
+
+        mainActivityViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
+            if(bookInterest.isPresent && bookInterest.get().added){
+                layout.interestNotifCard.visibility = View.GONE
+            }else{
+                layout.interestNotifCard.visibility = View.VISIBLE
             }
         })
 

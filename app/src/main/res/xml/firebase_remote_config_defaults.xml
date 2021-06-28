@@ -2,16 +2,8 @@
 <defaultsMap>
     <!-- TODO: Contact Info -->
     <entry>
-        <key>website</key>
-        <value>https://bookshelfhub.com</value>
-    </entry>
-    <entry>
         <key>phone</key>
         <value>+</value>
-    </entry>
-    <entry>
-        <key>social_handle</key>
-        <value>bookshelfhub</value>
     </entry>
     <entry>
         <key>email</key>

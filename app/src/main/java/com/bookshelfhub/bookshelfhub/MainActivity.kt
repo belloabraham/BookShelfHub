@@ -84,6 +84,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
+            if(bookInterest.isPresent && bookInterest.get().added){
+                mainActivityViewModel.setBookInterestNotifNo(0)
+            }else{
+                mainActivityViewModel.setBookInterestNotifNo(1)
+            }
+        })
+
 
         mainActivityViewModel.getIsUpdateAvailable().observe(this, Observer { updateAvailable ->
             if (updateAvailable){

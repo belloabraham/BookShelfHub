@@ -53,6 +53,7 @@
                         android:layout_width="@dimen/notif_circle_size"
                         android:layout_height="@dimen/notif_circle_size"
                         android:id="@+id/interestNotifCard"
+                        android:visibility="gone"
                         app:cardCornerRadius="@dimen/notif_circle_size"
                         style="@style/ProfileNotifCircle">
                         <TextView
@@ -214,52 +215,17 @@
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <View android:layout_width="match_parent"
-                android:layout_height="2px"
-                android:background="?android:attr/listDivider"/>
 
-            <TextView
+            <com.bookshelfhub.bookshelfhub.view.ExpandableCardView
+                android:id="@+id/settingsBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/settings"
-                android:layout_marginTop="@dimen/size_16"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="@dimen/size_16"
-                android:textSize="22sp"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"/>
-
-                 <FrameLayout
-                android:layout_width="match_parent"
-                     android:layout_marginVertical="@dimen/size_4"
-                android:layout_height="52dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/show_progess"
-                    android:gravity="center"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="@dimen/profile_title_margin_start"
-                    android:textSize="18sp"
-                    style="@style/TextAppearance.MaterialComponents.Subtitle1"/>
-
-                <com.bitvale.switcher.SwitcherX
-                    android:id="@+id/progressPopupToggle"
-                    android:layout_width="wrap_content"
-                    android:checked="true"
-                    app:switcher_off_color="?attr/colorSecondary"
-                    app:switcher_on_color="?attr/colorPrimary"
-                    app:switcher_icon_color="@color/white"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="@dimen/size_16"/>
-            </FrameLayout>
-
-            <View android:layout_width="match_parent"
-                android:layout_height="2px"
-                android:background="?android:attr/listDivider"/>
-
-
+                android:layout_height="wrap_content"
+                app:title="@string/settings"
+                app:icon="@drawable/ic_settings"
+                app:inner_view="@layout/settings"
+                app:expandOnClick="true"
+                app:animationDuration="@integer/nav_anim_duration"
+                app:startExpanded="false"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

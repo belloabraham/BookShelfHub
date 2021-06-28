@@ -10,7 +10,31 @@
     <string name="uri_play_store_apps_list" translatable="false">market://search?q=pub:%s</string>
     <string name="uri_play_store_apps_list_website" translatable="false">https://play.google.com/store/search?q=%s</string>
 
+    <string name="url_instagram_website" translatable="false">http://instagram.com/%s</string>
+    <string name="uri_instagram_app" translatable="false">http://instagram.com/_u/%s</string>
+    <string name="id_instagram_app" translatable="false">com.instagram.android</string>
+
+    <string name="url_facebook_website" translatable="false">https://www.facebook.com/%s</string>
+    <string name="uri_facebook_app" translatable="false">fb://page/%s</string>
+    <string name="id_facebook_app" translatable="false">com.facebook.katana</string>
+
+    <string name="url_twitter_website" translatable="false">https://twitter.com/%s</string>
+    <string name="uri_twitter_app" translatable="false">twitter://user?screen_name=%s</string>
+    <string name="id_twitter_app" translatable="false">com.twitter.android</string>
+
+    <string name="facebook" translatable="false">Facebook</string>
+    <string name="instagram" translatable="false">Instagram</string>
+    <string name="twitter" translatable="false">Twitter</string>
+    <string name="website" translatable="false">Website</string>
+    <string name="phone" translatable="false">Phone</string>
+
+
+    <string name="bsh_social_handle" translatable="false">bookshelfhub</string>
+    <string name="bsh_website" translatable="false">https://bookshelfhub.com</string>
+
     <!-- Todo Database -->
     <string name="db_name" translatable="false">buhflehskoobxyz</string>
+
+
 
 </resources>

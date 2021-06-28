@@ -18,6 +18,10 @@ open class RoomDb(private val context:Context) {
         return  RoomInstance.getDatabase(context).userDao().getBookInterest(userId)
     }
 
+    open fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveBookInterest(userId)
+    }
+
     open fun getLiveUser(userId:String): LiveData<UserRecord> {
         return  RoomInstance.getDatabase(context).userDao().getLiveUser(userId)
     }

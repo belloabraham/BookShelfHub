@@ -251,9 +251,7 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     companion object {
-
         private const val DEFAULT_ANIM_DURATION = 350
-
         private const val COLLAPSING = 0
         private const val EXPANDING = 1
     }

@@ -9,6 +9,10 @@ class DateTimeUtil {
         fun getDateTimeAsString():String{
             return LocalDateTime.now().toString()
         }
+
+        fun getYear():Int{
+            return LocalDateTime.now().year
+        }
     }
 
 }
