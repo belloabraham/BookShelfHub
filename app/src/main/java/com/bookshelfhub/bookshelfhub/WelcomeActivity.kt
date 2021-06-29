@@ -1,19 +1,19 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.Window
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withCreated
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
@@ -21,7 +21,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class WelcomeActivity : AppCompatActivity() {
@@ -109,7 +115,13 @@ class WelcomeActivity : AppCompatActivity() {
                 val intent = Intent(this, MainActivity::class.java)
                 hideAnimation()
                 if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
-                    signUpCompleted(intent)
+                   showConfettiAnim()
+                    lifecycleScope.launch(IO) {
+                        delay(1700)
+                        withContext(Main) {
+                            signUpCompleted(intent)
+                        }
+                    }
                 }else{
                     finish()
                     startActivity(intent)
@@ -148,10 +160,16 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-    private fun showAnimation(animation: Int= R.raw.loading){
+     private fun showAnimation(animation: Int = R.raw.loading){
         layout.lottieAnimView.setAnimation(animation)
         layout.lottieContainerView.visibility = View.VISIBLE
         layout.lottieAnimView.playAnimation()
+    }
+
+     private fun showConfettiAnim(){
+        layout.confettiAnimView.setAnimation(R.raw.confetti)
+        layout.confettiContainer.visibility = View.VISIBLE
+        layout.confettiAnimView.playAnimation()
     }
 
     private fun hideAnimation(){

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
@@ -70,7 +71,7 @@ class OnBoardingFragment:Fragment() {
         layout.btnSignup.setOnClickListener {
           val signUp = getString(R.string.sign_up)
             val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp, true)
-            findNavController().navigate(actionLogin)
+           findNavController().navigate(actionLogin)
         }
 
         return layout.root

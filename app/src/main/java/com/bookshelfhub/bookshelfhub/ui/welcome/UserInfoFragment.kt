@@ -52,6 +52,8 @@ class UserInfoFragment : Fragment() {
     lateinit var appUtil:AppUtil
     @Inject
     lateinit var stringUtil:StringUtil
+    @Inject
+    lateinit var keyboardUtil: KeyboardUtil
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -121,6 +123,8 @@ class UserInfoFragment : Fragment() {
             }else if(!stringUtil.isValidPhoneNumber(phone)){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
+                keyboardUtil.hideKeyboard(layout.emailEditTxt)
+                keyboardUtil.hideKeyboard(layout.phoneEditTxt)
                 lifecycleScope.launch(IO) {
                     val localDateTime= DateTimeUtil.getDateTimeAsString()
                     val user = UserRecord(userAuth.getUserId(), userAuth.getAuthType())

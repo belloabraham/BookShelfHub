@@ -96,7 +96,7 @@ class VerificationFragment:Fragment(){
                 textLinkBuilder.createTextLink(layout.resendCodeTxtView, getString(R.string.resend_code_link),
                     ContextCompat.getColor(requireContext(), R.color.purple_700)
                 ){
-                        (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.mail_send)
+                        (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.loading)
                 }
 
 
