@@ -50,13 +50,15 @@ interface UserDao {
 
 
     //Todo Search History
-    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order by id DESC LIMIT 5")
-    fun getShelfSearchHistory(userId:String): LiveData<Optional<List<ShelfSearchHistory>>>
+    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 3")
+    fun getShelfSearchHistory(userId:String): LiveData<List<ShelfSearchHistory>>
 
-    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order by id DESC LIMIT 5")
-    fun getStoreSearchHistory(userId:String): LiveData<Optional<List<StoreSearchHistory>>>
+    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 3")
+    fun getStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addStoreSearchHistory(searchHistory:StoreSearchHistory)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addShelfSearchHistory(searchHistory:ShelfSearchHistory)
 }

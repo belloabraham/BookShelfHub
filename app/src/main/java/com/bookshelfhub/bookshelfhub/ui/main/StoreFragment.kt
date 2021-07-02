@@ -6,14 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.recyclerview.widget.ListAdapter
-import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.adapters.search.viewholder.store.SearchHistoryViewHolder
-import com.bookshelfhub.bookshelfhub.adapters.search.viewholder.store.SearchResultViewHolder
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import me.ibrahimyilmaz.kiel.adapterOf
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class StoreFragment : Fragment() {
 
@@ -26,6 +20,7 @@ class StoreFragment : Fragment() {
 
 
         layout.materialSearchView.apply {
+            setItemAnimator(null)
             setOnNavigationClickListener(object : SearchLayout.OnNavigationClickListener {
                 override fun onNavigationClick(hasFocus: Boolean) {
                     if (hasFocus()) {
@@ -59,27 +54,5 @@ class StoreFragment : Fragment() {
         return layout.root
     }
 
-    private fun getSearchResultAdapter():ListAdapter<Any, RecyclerViewHolder<Any>>{
-        return adapterOf {
-
-            register(
-                layoutResource = R.layout.shelf_history_search_item,
-                viewHolder = ::SearchHistoryViewHolder,
-                onBindViewHolder = { vh, _, model ->
-                    vh.title.text = model.title
-                    vh.author.text = model.title
-                }
-            )
-
-            register(
-                layoutResource = R.layout.shelf_result_search_item,
-                viewHolder = ::SearchResultViewHolder,
-                onBindViewHolder = { vh, _, model ->
-                    vh.author.text = model.title
-                }
-            )
-
-        }
-    }
 
 }

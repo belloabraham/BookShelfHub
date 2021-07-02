@@ -53,11 +53,11 @@ open class RoomDb(private val context:Context) {
         RoomInstance.getDatabase(context).userDao().addShelfSearchHistory(searchHistory)
     }
 
-    open fun getShelfSearchHistory(userId:String):LiveData<Optional<List<ShelfSearchHistory>>> {
+    open fun getShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
       return  RoomInstance.getDatabase(context).userDao().getShelfSearchHistory(userId)
     }
 
-    open fun getStoreSearchHistory(userId:String):LiveData<Optional<List<StoreSearchHistory>>>{
+    open fun getStoreSearchHistory(userId:String):LiveData<List<StoreSearchHistory>>{
        return RoomInstance.getDatabase(context).userDao().getStoreSearchHistory(userId)
     }
 

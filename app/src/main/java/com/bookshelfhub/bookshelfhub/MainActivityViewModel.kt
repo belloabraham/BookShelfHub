@@ -32,8 +32,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
-    private var shelfSearchHistory: LiveData<Optional<List<ShelfSearchHistory>>> = MutableLiveData()
-    private var storeSearchHistory: LiveData<Optional<List<StoreSearchHistory>>> = MutableLiveData()
+    private var shelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
+    private var storeSearchHistory: LiveData<List<StoreSearchHistory>> = MutableLiveData()
 
 
     init {
@@ -54,11 +54,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         return ""
     }
 
-     fun getShelfSearchHistory():LiveData<Optional<List<ShelfSearchHistory>>>{
+     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
          return shelfSearchHistory
      }
 
-    fun getStoreSearchHistory():LiveData<Optional<List<StoreSearchHistory>>>{
+    fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
         return storeSearchHistory
     }
 

@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/itemCardView"
-    android:paddingHorizontal="@dimen/size_16"
     style="@style/ProfileItemCardView">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/size_16"
         android:orientation="horizontal">
 
         <ImageView
@@ -22,6 +22,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16"
             android:orientation="vertical">
 
             <TextView

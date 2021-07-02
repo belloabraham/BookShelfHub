@@ -350,6 +350,10 @@ abstract class SearchLayout @JvmOverloads constructor(
         mRecyclerView?.adapter = adapter
     }
 
+    fun setItemAnimator(@Nullable animator: DefaultItemAnimator?) {
+        mRecyclerView?.itemAnimator = animator
+    }
+
     @Nullable
     fun getAdapter(): RecyclerView.Adapter<*>? {
         return mRecyclerView?.adapter

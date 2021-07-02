@@ -6,9 +6,9 @@ import com.bookshelfhub.bookshelfhub.models.ISearchHistory
 
 @Entity(tableName= "StoreSearchHistory")
 data class StoreSearchHistory(
-    @PrimaryKey (autoGenerate = true)
-    override val id:Long,
     override val isbn:String,
     override val title:String,
     override val userId:String,
+    @PrimaryKey (autoGenerate = true)
+    override val id:Long = 0
 ): ISearchHistory
