@@ -1,12 +1,10 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
-import com.bookshelfhub.bookshelfhub.models.User
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
 open class Firestore {

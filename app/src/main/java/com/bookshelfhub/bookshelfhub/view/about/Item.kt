@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub.view.about
 
 import android.graphics.Bitmap
 import android.view.View
-import com.bookshelfhub.bookshelfhub.view.ViewIdGenerator
 
 
 class Item(private var icon: Bitmap?, private var label: String?, private var onClick: View.OnClickListener?) {

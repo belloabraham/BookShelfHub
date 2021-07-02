@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.view
+package com.bookshelfhub.bookshelfhub.view.about
 
 import android.view.View
 import java.util.concurrent.atomic.AtomicInteger

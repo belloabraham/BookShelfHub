@@ -129,7 +129,9 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.5.0'
     //--Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
-    
+    //RecyclerView
+    implementation 'io.github.ibrahimyilmaz:kiel:1.2.1'
+
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     //--Analytics
@@ -142,6 +144,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx'
     //---App Check
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta01'
+    //--Dynamic Link
+    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
 
 
     //Google Play

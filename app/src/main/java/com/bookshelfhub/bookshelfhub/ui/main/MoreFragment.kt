@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
@@ -150,6 +151,10 @@ class MoreFragment : Fragment() {
             startWebActivity(R.string.refund_policy, REFUND_POLICY_URL)
         }
 
+        layout.earningsCard.setOnClickListener {
+
+        }
+
         layout.verifyPhoneCard.setOnClickListener {
 
         }
@@ -164,8 +169,15 @@ class MoreFragment : Fragment() {
             startProfileActivity(R.string.book_interest, R.id.interestFragment)
         }
 
-        layout.inviteFreindsCard.setOnClickListener {
-
+        layout.referraLinkCard.setOnClickListener {
+            val link = mainActivityViewModel.getReferralLink()
+            val msg = String.format(getString(R.string.your_referral_link), link )
+            activity?.let {
+                AlertDialogHelper(it, {
+                    clipboardHelper.copyToClipBoard(link)
+                }, cancelable = true)
+                    .showAlertDialog(R.string.referral_link, msg, R.string.copy_link, R.string.ok)
+            }
         }
 
         layout.publishBookCard.setOnClickListener {
@@ -208,6 +220,8 @@ class MoreFragment : Fragment() {
               }
           }
         })
+
+
 
         return layout.root
     }

@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.models
 
-class BookInterest:IBookInterest {
+class BookInterestModel:IBookInterest {
     override var userId: String = ""
         get() = field
     override var historyChecked: Boolean = false

@@ -18,11 +18,11 @@
             android:id="@+id/material_search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:search_navigationIconSupport="search"
             app:search_textHint="@string/shelf_search_hint"
             app:search_transitionDuration="@integer/config_navAnimTime" />
     </com.google.android.material.appbar.AppBarLayout>
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

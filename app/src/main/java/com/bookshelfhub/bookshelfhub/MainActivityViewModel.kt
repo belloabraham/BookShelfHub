@@ -43,6 +43,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     }
 
 
+    fun getReferralLink():String{
+
+        return ""
+    }
+
     fun getTotalProfileNotifNumber(): Int {
         return newAppUpdateNotifNo.value!! + verifyPhoneOrEmailNotifNo.value!! + bookInterestNotifNo.value!!
     }

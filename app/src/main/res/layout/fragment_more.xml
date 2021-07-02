@@ -319,7 +319,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/inviteFreindsCard"
+                android:id="@+id/referraLinkCard"
                 style="@style/ProfileItemCardView">
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -329,7 +329,7 @@
                     <ImageView
                         android:layout_width="@dimen/image_btn_size"
                         android:layout_height="@dimen/image_btn_size"
-                        android:src="@drawable/ic_share_24"
+                        android:src="@drawable/ic_link_24"
                         android:layout_gravity="start"
                         android:contentDescription="@null"
                         android:scaleType="centerInside"/>
@@ -337,7 +337,43 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/invite_friends"
+                        android:text="@string/referral_link"
+                        style="@style/ProfileItemTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/earningsCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/size_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_cash"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/earnings"
                         style="@style/ProfileItemTitle"/>
 
 

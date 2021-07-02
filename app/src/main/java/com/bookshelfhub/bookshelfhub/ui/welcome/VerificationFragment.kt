@@ -18,18 +18,16 @@ import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.enums.VeriFragSavedState
-import com.bookshelfhub.bookshelfhub.models.BookInterest
-import com.bookshelfhub.bookshelfhub.models.User
+import com.bookshelfhub.bookshelfhub.models.BookInterestModel
+import com.bookshelfhub.bookshelfhub.models.UserModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -144,7 +142,7 @@ class VerificationFragment:Fragment(){
                             cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
                                 if(it!=null){
                                     try {
-                                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterest::class.java) as BookInterest
+                                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterestModel::class.java) as BookInterestModel
                                         bookInterest.uploaded=true
                                         lifecycleScope.launch(IO){
                                             database.addBookInterest(bookInterest)
@@ -153,7 +151,7 @@ class VerificationFragment:Fragment(){
                                     }
 
                                     try {
-                                        val user = it.get(DbFields.USER.KEY, User::class.java) as User
+                                        val user = it.get(DbFields.USER.KEY, UserModel::class.java) as UserModel
                                         user.uploaded=true
                                         userAuthViewModel.setIsAddingUser(false, user)
                                     }catch (ex:Exception){

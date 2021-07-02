@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.models
 
-class Book {
+class BookModel {
     val isbn: String = ""
         get() = field
     val pubId: String = ""

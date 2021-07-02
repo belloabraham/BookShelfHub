@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.models
 
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IPaymentInfo
 
-class PaymentInfo:IPaymentInfo {
+class PaymentInfoModel:IPaymentInfo {
     override val nameOnCard: String = ""
         get() = field
     override val cardNumber: String = ""

@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.models
 
-class BooksOrdered:IOrder {
+class BooksOrderedModel:IOrder {
     override val bookIsbn: String = ""
         get() = field
     override val userId: String = ""

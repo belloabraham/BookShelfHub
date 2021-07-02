@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrapper.tooltip
+package com.bookshelfhub.bookshelfhub.view.tooltip
 
 import android.content.Context
 import android.view.View

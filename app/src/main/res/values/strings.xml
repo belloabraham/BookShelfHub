@@ -1,6 +1,6 @@
 <!DOCTYPE resources [<!ENTITY appname "BookShelfHub">]>
 <resources>
-    <string translatable="false" name="app_name">&appname;</string>
+    <string name="app_name" translatable="false">&appname;</string>
 
     <!-- TODO: Onboarding Fragment-->
     <string name="login">Login</string>
@@ -106,7 +106,8 @@
     <string name="new_update">Download new update</string>
     <string name="exclamation">1</string>
     <string name="show_progess">Show progress popup</string>
-    <string name="invite_friends">Invite friends</string>
+    <string name="referral_link">Get referral link</string>
+    <string name="share">Share</string>
     <string name="account">Account</string>
     <string name="more">More</string>
     <string name="payment_cards">Payment cards</string>
@@ -118,6 +119,9 @@
     <string name="sign_out_message">Are you sure you want to sign out?</string>
     <string name="copy_link">Copy link</string>
     <string name="link_copied">Link copied</string>
+    <string name="your_referral_link">Your referral link is %1$s</string>
+    <string name="earnings">Earnings</string>
+
 
     <!-- TODO: Book Interest -->
     <string name="science_technology">Science and Technology</string>
@@ -170,7 +174,7 @@
 
     <!-- TODO: Publishers Link **************************** -->
     <string name="publish_book_msg"><![CDATA[ visit <a href="https://pubs.bookshelfhub.com/">pubs.bookshelfhub.com</a> to register as a publisher ]]></string>
-    <string translatable="false" name="publishers_link">https://pubs.bookshelfhub.com/</string>
+    <string name="publishers_link" translatable="false">https://pubs.bookshelfhub.com/</string>
     <!--TODO **************************** -->
 
     <!-- TODO: About Page -->
@@ -181,11 +185,9 @@
     <string name="about_statement">Bookshelfhub is a property of BookShelf Hub Resources LTD</string>
 
 
-
     <!-- TODO: WebView Activity -->
     <string name="no_internet_error_msg">Error: No internet connection</string>
     <string name="reload">Reload</string>
-
 
 
 </resources>

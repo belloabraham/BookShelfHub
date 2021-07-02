@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
@@ -16,21 +15,17 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.models.BookInterest
-import com.bookshelfhub.bookshelfhub.models.User
+import com.bookshelfhub.bookshelfhub.models.BookInterestModel
+import com.bookshelfhub.bookshelfhub.models.UserModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.bookshelfhub.bookshelfhub.wrapper.tooltip.ToolTip
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -72,7 +67,7 @@ class UserInfoFragment : Fragment() {
 
                 it?.let {
                     try {
-                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterest::class.java) as BookInterest
+                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterestModel::class.java) as BookInterestModel
                         bookInterest.uploaded=true
                         lifecycleScope.launch(IO){
                             database.addBookInterest(bookInterest)
@@ -81,7 +76,7 @@ class UserInfoFragment : Fragment() {
                     }
 
                     try {
-                        val userData = it.get(DbFields.USER.KEY, User::class.java) as User
+                        val userData = it.get(DbFields.USER.KEY, UserModel::class.java) as UserModel
                         layout.nameEditTxt.setText(userData.name)
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)

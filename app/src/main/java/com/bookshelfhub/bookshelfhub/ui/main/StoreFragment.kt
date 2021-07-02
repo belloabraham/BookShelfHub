@@ -45,7 +45,7 @@ class StoreFragment : Fragment() {
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
             }else{
-                requireActivity().finish()
+                activity?.finish()
             }
         }
 

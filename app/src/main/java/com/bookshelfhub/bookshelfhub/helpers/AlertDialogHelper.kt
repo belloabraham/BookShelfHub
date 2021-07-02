@@ -23,14 +23,23 @@ class AlertDialogHelper(private val activity:Activity?, private val positiveActi
                 }
             )
         }
-
-
     }
 
-
+    fun showAlertDialog(title:Int, msg:String, positiveActionText:Int = R.string.ok, negativeActionText:Int?=null){
+        activity?.let {
+            showAlertDialog(it.getString(title),
+                msg,
+                it.getString(positiveActionText),
+                if(negativeActionText!=null){
+                    it.getString(negativeActionText)
+                }else{
+                    null
+                }
+            )
+        }
+    }
 
     fun showAlertDialog(title:String, msg:String, positiveActionText:String, negativeActionText:String?){
-
             val builder = AlertDialog.Builder(activity)
             builder.setMessage(msg)
                 .setTitle(title)
@@ -43,7 +52,6 @@ class AlertDialogHelper(private val activity:Activity?, private val positiveActi
                         dialog, id -> negativeAction()
                 } )
             }
-
             builder.create().show()
     }
 

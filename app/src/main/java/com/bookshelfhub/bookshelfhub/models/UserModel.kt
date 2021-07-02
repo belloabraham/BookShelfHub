@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.models
 
 import org.threeten.bp.LocalDateTime
 
-class User: IUser {
+class UserModel: IUser {
     override var userId: String = ""
         get() = field
     override var name: String = ""

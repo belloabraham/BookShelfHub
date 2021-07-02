@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.models
 
-class Review {
+class ReviewModel {
     val userId: String = ""
         get() = field
     val bookIsbn: String = ""
