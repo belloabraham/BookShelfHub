@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/itemCardView"
+    android:paddingHorizontal="@dimen/size_16"
     style="@style/ProfileItemCardView">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -13,9 +14,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/size_16"
+            android:layout_marginVertical="@dimen/size_16"
             android:contentDescription="@null"
-            android:src="@drawable/ic_history"
+            android:src="@drawable/ic_search_normal_24"
             android:id="@+id/recentImg"/>
 
         <TextView
@@ -28,5 +29,4 @@
             android:maxLines="1"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 </com.google.android.material.card.MaterialCardView>

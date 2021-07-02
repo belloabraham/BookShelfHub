@@ -50,10 +50,13 @@ interface UserDao {
 
 
     //Todo Search History
-    @Query("SELECT * FROM LocalSearchHistory WHERE userId = :userId")
-    fun getLocalSearchHistory(userId:String): Optional<LocalSearchHistory>
+    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order by id DESC LIMIT 5")
+    fun getShelfSearchHistory(userId:String): LiveData<Optional<List<ShelfSearchHistory>>>
 
-    @Query("SELECT * FROM CloudSearchHistory WHERE userId = :userId")
-    fun getCloudSearchHistory(userId:String): Optional<CloudSearchHistory>
+    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order by id DESC LIMIT 5")
+    fun getStoreSearchHistory(userId:String): LiveData<Optional<List<StoreSearchHistory>>>
 
+    suspend fun addStoreSearchHistory(searchHistory:StoreSearchHistory)
+
+    suspend fun addShelfSearchHistory(searchHistory:ShelfSearchHistory)
 }

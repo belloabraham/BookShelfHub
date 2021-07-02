@@ -4,9 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.models.ISearchHistory
 
-@Entity(tableName= "CloudSearchHistory")
-data class CloudSearchHistory(
-    @PrimaryKey
+@Entity(tableName= "StoreSearchHistory")
+data class StoreSearchHistory(
+    @PrimaryKey (autoGenerate = true)
+    override val id:Long,
     override val isbn:String,
     override val title:String,
     override val userId:String,

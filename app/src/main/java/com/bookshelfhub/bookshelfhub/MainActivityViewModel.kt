@@ -10,6 +10,8 @@ import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
+    private var shelfSearchHistory: LiveData<Optional<List<ShelfSearchHistory>>> = MutableLiveData()
+    private var storeSearchHistory: LiveData<Optional<List<StoreSearchHistory>>> = MutableLiveData()
 
 
     init {
@@ -40,6 +44,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         checkForUpdate()
         user=localDb.getLiveUser(userId)
         bookInterest = localDb.getLiveBookInterest(userId)
+        shelfSearchHistory = localDb.getShelfSearchHistory(userId)
+        storeSearchHistory = localDb.getStoreSearchHistory(userId)
     }
 
 
@@ -47,6 +53,16 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
 
         return ""
     }
+
+     fun getShelfSearchHistory():LiveData<Optional<List<ShelfSearchHistory>>>{
+         return shelfSearchHistory
+     }
+
+    fun getStoreSearchHistory():LiveData<Optional<List<StoreSearchHistory>>>{
+        return storeSearchHistory
+    }
+
+
 
     fun getTotalProfileNotifNumber(): Int {
         return newAppUpdateNotifNo.value!! + verifyPhoneOrEmailNotifNo.value!! + bookInterestNotifNo.value!!
