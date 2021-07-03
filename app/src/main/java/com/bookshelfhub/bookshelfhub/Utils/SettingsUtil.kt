@@ -82,5 +82,4 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
         }
     }
 
-
 }

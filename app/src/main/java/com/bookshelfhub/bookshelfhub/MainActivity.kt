@@ -1,5 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -7,21 +9,21 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.enums.AuthType
+import com.bookshelfhub.bookshelfhub.enums.Referrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
@@ -46,7 +48,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var intentUtil: IntentUtil
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var dynamicLink: DynamicLink
 
+    private lateinit var userId:String
     private val ENFORCE_UPDATE="enforce_update"
     private val CHANGE_LOG="change_log"
     private lateinit var navController:NavController
@@ -55,12 +60,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        userId=mainActivityViewModel.getUserId()
+
+        val referrer = intent.getStringExtra(Referrer.ID.KEY)
+        getReferrer(referrer, userId)
+
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
+
+        getUserReferrerLinkAsync(userId){
+            it?.let {
+                mainActivityViewModel.setUserReferralLink(it)
+                lifecycleScope.launch(IO){
+                    settingsUtil.setString(Referrer.USER_REF_LINK.KEY,it)
+                }
+            }
+        }
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             layout.bottomBar.selectTabAt(it, true)
         })
+
 
 
         mainActivityViewModel.getIsNewProfileNotif().observe(this, Observer { isNewProfileNotif ->
@@ -192,6 +212,30 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun getReferrer(referrer:String?, userId:String){
+        referrer?.let {
+            if (it.length>userId.length){
+               val pubIdAndIsbn = it.split("@")
+                val publisherId = pubIdAndIsbn[0]
+                val isbn = pubIdAndIsbn[1]
+                val intent = Intent(this, BookItemActivity::class.java)
+                intent.putExtra(Referrer.ISBN.KEY,isbn)
+                val pubRefRecord = PubReferrers(publisherId, isbn)
+                mainActivityViewModel.addPubReferrer(pubRefRecord)
+                startActivity(intent)
+            }
+
+        }
+    }
+
+    fun getUserReferrerLinkAsync(userId:String, onComplete:(String?)->Unit){
+        val title = getString(R.string.app_name)
+        val description =""
+        val imageUrl =""
+        dynamicLink.getLinkAsync(title, description, imageUrl, userId){
+            onComplete(it.toString())
+        }
+    }
 
     private fun navigateTo(fragmentId:Int){
         navController.popBackStack()

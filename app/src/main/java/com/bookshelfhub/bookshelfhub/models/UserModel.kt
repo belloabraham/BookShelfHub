@@ -1,7 +1,5 @@
 package com.bookshelfhub.bookshelfhub.models
 
-import org.threeten.bp.LocalDateTime
-
 class UserModel: IUser {
     override var userId: String = ""
         get() = field
@@ -22,6 +20,8 @@ class UserModel: IUser {
     override val deviceOs: String = ""
         get() = field
     override val lastUpdated: String=""
+        get() = field
+    override var referrerId:String? = null
         get() = field
     override val mailOrPhoneVerified: Boolean=false
         get() = field

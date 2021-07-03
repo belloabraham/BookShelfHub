@@ -83,6 +83,7 @@ class LoginFragment:Fragment() {
         layout.ccp.registerCarrierNumberEditText(layout.phoneNumEditText)
 
 
+
         lifecycleScope.launch(IO) {
            val number = settingsUtil.getString(PHONE)
             val dialingCode = settingsUtil.getString(DIALING_CODE)
@@ -143,8 +144,8 @@ class LoginFragment:Fragment() {
 
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser().value!!
-                val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
                 if (isNewUser){
+                    val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }else{
                     cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
@@ -175,7 +176,7 @@ class LoginFragment:Fragment() {
 
         userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
             if (!isExistingUser){
-                val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
+                val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)
                 findNavController().navigate(actionUserInfo)
             }
         })

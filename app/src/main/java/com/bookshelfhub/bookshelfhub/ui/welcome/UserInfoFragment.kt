@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
@@ -50,6 +51,7 @@ class UserInfoFragment : Fragment() {
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
+    private val args:UserInfoFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,20 +61,26 @@ class UserInfoFragment : Fragment() {
 
         layout= FragmentUserInfoBinding.inflate(inflater, container, false);
 
+        val isNewUser = args.isNewUser
+        val userId = userAuth.getUserId()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
         }
 
-        cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
+        if (!isNewUser) {
+            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userId) {
 
                 it?.let {
                     try {
-                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterestModel::class.java) as BookInterestModel
-                        bookInterest.uploaded=true
-                        lifecycleScope.launch(IO){
+                        val bookInterest = it.get(
+                            DbFields.BOOK_INTEREST.KEY,
+                            BookInterestModel::class.java
+                        ) as BookInterestModel
+                        bookInterest.uploaded = true
+                        lifecycleScope.launch(IO) {
                             database.addBookInterest(bookInterest)
                         }
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                     }
 
                     try {
@@ -80,17 +88,18 @@ class UserInfoFragment : Fragment() {
                         layout.nameEditTxt.setText(userData.name)
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)
-                        userData.uploaded=true
+                        userData.uploaded = true
                         lifecycleScope.launch(IO) {
-                            withContext(Main){
+                            withContext(Main) {
                                 userAuthViewModel.setIsAddingUser(false, userData)
                             }
                         }
-                    }catch (e:Exception){
+                    } catch (e: Exception) {
                     }
 
                 }
 
+            }
         }
 
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
@@ -120,14 +129,26 @@ class UserInfoFragment : Fragment() {
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)
+
+                val referrer = userAuthViewModel.getReferrer()
+                var referrerId:String?=null
+                if (isNewUser){
+                    referrer?.let {
+                        if (it.length==userId.length){
+                            referrerId = it
+                        }
+                    }
+                }
+
                 lifecycleScope.launch(IO) {
                     val localDateTime= DateTimeUtil.getDateTimeAsString()
-                    val user = UserRecord(userAuth.getUserId(), userAuth.getAuthType())
+                    val user = UserRecord(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
                     user.device = deviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone=phone
+                    user.referrerId = referrerId
                     user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
                     user.lastUpdated= localDateTime

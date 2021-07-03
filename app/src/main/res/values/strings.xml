@@ -9,10 +9,10 @@
 
 
     <!-- TODO: Phone Sign in / Sign up-->
-    <string name="with_phone">%1$s with phone</string>
+    <string name="with_phone">%s with phone</string>
     <string name="time_remaining">%1$d:%2$d secs</string>
     <string name="sending_otp_code">Sending a one time pass code to your phone number</string>
-    <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %1$s.</string>
+    <string name="login_signup_desicription">A one time pass code will be sent to your phone number to confirm %s.</string>
     <string name="enter_phone_num">Enter phone number</string>
     <string name="or">Or</string>
     <string name="verify_phone">Verify Phone Number</string>
@@ -46,8 +46,8 @@
 
 
     <!-- TODO: Google Sign in / Sign up -->
-    <string name="google_signin_error">Error, Unable to %1$s</string>
-    <string name="google_btn_text">%1$s with Google</string>
+    <string name="google_signin_error">Error, Unable to %s</string>
+    <string name="google_btn_text">%s with Google</string>
     <string name="authentication">Authentication</string>
 
     <!-- TODO: Sign Up Completed -->
@@ -66,7 +66,7 @@
     <string name="update">Update</string>
     <string name="later">Later</string>
     <string name="update_req_title">An update is required</string>
-    <string name="update_mgs">Update &appname;\nIMPROVEMENTS\n%1$s</string>
+    <string name="update_mgs">Update &appname;\nIMPROVEMENTS\n%s</string>
     <string name="update_req_mgs">You need to update &appname; to continue using it.</string>
     <string name="update_title">You\'re missing out</string>
 
@@ -88,7 +88,7 @@
     <string name="pick_up">Pick up where you left</string>
     <string name="continue_reading">Continue Reading</string>
     <string name="dismiss">Dismiss</string>
-    <string name="percent">%1$d%</string>
+    <string name="percent">%d%</string>
     <string name="dismiss_msg">You can disable popup dialog under profile > settings</string>
 
 
@@ -119,7 +119,7 @@
     <string name="sign_out_message">Are you sure you want to sign out?</string>
     <string name="copy_link">Copy link</string>
     <string name="link_copied">Link copied</string>
-    <string name="your_referral_link">Your referral link is %1$s</string>
+    <string name="your_referral_link">Your referral link is %s</string>
     <string name="earnings">Earnings</string>
 
 
@@ -178,8 +178,8 @@
     <!--TODO **************************** -->
 
     <!-- TODO: About Page -->
-    <string name="version">Version %1$s</string>
-    <string name="copyright">Copyright © %1$d</string>
+    <string name="version">Version %s</string>
+    <string name="copyright">Copyright © %d</string>
     <string name="contact_us">For more information contact us:</string>
     <string name="follow_us">Follow us on:</string>
     <string name="about_statement">Bookshelfhub is a property of BookShelf Hub Resources LTD</string>

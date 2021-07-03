@@ -50,10 +50,10 @@ interface UserDao {
 
 
     //Todo Search History
-    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 3")
+    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 4")
     fun getShelfSearchHistory(userId:String): LiveData<List<ShelfSearchHistory>>
 
-    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 3")
+    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 4")
     fun getStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -61,4 +61,11 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addShelfSearchHistory(searchHistory:ShelfSearchHistory)
+
+    //Todo Referral
+    @Query("SELECT * FROM PubReferrers WHERE isbn = :isbn")
+    fun getPubReferrer(isbn:String): Optional<PubReferrers>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPubReferrer(pubReferrers: PubReferrers)
 }

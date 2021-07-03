@@ -1,11 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.database
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.models.IBookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomInstance
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.google.common.base.Optional
@@ -43,6 +44,13 @@ class Database @Inject constructor(private var context: Context, private val loc
         WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
     }
 
+     fun getLiveUser(userId:String): LiveData<UserRecord> {
+        return  localDb.getLiveUser(userId)
+    }
+
+     fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>> {
+        return  localDb.getLiveBookInterest(userId)
+    }
 
     private fun getConnectedConstraint():Constraints{
         return Constraints.Builder()

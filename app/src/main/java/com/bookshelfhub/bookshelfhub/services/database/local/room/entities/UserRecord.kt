@@ -35,6 +35,8 @@ data class UserRecord(
      override var lastUpdated: String = ""
           get() = field
           set(value){field=value}
+     override var referrerId:String? = null
+          get() = field
      override var mailOrPhoneVerified: Boolean =false
           get() = field
           set(value){field=value}

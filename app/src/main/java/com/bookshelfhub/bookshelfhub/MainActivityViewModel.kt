@@ -8,20 +8,20 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
+import com.skydoves.balloon.createBalloon
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, private val localDb: LocalDb, private val userAuth: UserAuth):ViewModel() {
+class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: LocalDb, val userAuth: UserAuth):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
@@ -34,10 +34,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var shelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
     private var storeSearchHistory: LiveData<List<StoreSearchHistory>> = MutableLiveData()
+    private val userId:String = userAuth.getUserId()
+    private var userReferralLink:String?=null
 
 
     init {
-        val userId =userAuth.getUserId()
         verifyPhoneOrEmailNotifNo.value=0
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
@@ -49,9 +50,22 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     }
 
 
-    fun getReferralLink():String{
-
+    fun getUserReferralLink():String{
         return ""
+    }
+
+    fun setUserReferralLink(value:String):String?{
+        return userReferralLink
+    }
+
+    fun getUserId():String{
+        return userId
+    }
+
+    fun addPubReferrer(pubReferrer:PubReferrers){
+       viewModelScope.launch(IO){
+           localDb.addPubReferrer(pubReferrer)
+       }
     }
 
      fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{

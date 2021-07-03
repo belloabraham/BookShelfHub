@@ -19,8 +19,15 @@ import javax.inject.Inject
 class UserAuthViewModel @Inject constructor(private val database:Database, private val deviceUtil:DeviceUtil, private val appUtil: AppUtil, private val userAuth: UserAuth): ViewModel(){
     private var isAddingUser: MutableLiveData<Boolean>  = MutableLiveData<Boolean>()
     private var isExistingUser: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var referrerId: String? =null
 
 
+    fun getReferrer():String?{
+        return referrerId
+    }
+    fun setReferrer(value:String?){
+        referrerId=value
+    }
     fun setIsExistingUser(value:Boolean){
         isExistingUser.value=value
     }

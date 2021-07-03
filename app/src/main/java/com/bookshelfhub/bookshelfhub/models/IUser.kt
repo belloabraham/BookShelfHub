@@ -15,5 +15,6 @@ interface IUser {
     val deviceOs:String
     val lastUpdated: String
     val mailOrPhoneVerified: Boolean
+    var referrerId: String?
     var uploaded: Boolean
 }

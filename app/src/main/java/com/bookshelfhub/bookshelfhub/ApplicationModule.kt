@@ -7,6 +7,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,6 +29,12 @@ object ApplicationModule {
     @Provides
     fun getRemoteConfig(): RemoteConfig {
         return RemoteConfig()
+    }
+
+    @Singleton
+    @Provides
+    fun getDynamicLink(@ApplicationContext context: Context, userAuth: UserAuth, appUtil: AppUtil): DynamicLink {
+        return DynamicLink(context.getString(R.string.dlink_domain_prefix), context, userAuth, appUtil)
     }
 
     @Singleton

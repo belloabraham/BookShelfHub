@@ -31,9 +31,6 @@
         <argument
             android:name="login_signup"
             app:argType="string" />
-        <argument
-            android:name="isNewUser"
-            app:argType="boolean" />
         <action
             android:id="@+id/action_loginFragment_to_userInfoFragment"
             app:destination="@id/userInfoFragment" />
@@ -55,5 +52,9 @@
         android:id="@+id/userInfoFragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.welcome.UserInfoFragment"
         android:label="fragment_user_info"
-        tools:layout="@layout/fragment_user_info" />
+        tools:layout="@layout/fragment_user_info" >
+        <argument
+            android:name="isNewUser"
+            app:argType="boolean" />
+    </fragment>
 </navigation>

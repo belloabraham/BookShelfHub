@@ -1,22 +1,22 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
@@ -30,7 +30,7 @@ class ShelfFragment : Fragment() {
     lateinit var userAuth: UserAuth
     @Inject
     lateinit var localDb: LocalDb
-    private lateinit var searchHistoryList:List<ShelfSearchHistory>
+    private var searchHistoryList:List<ShelfSearchHistory>? = null
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
     private lateinit var layout: FragmentShelfBinding
@@ -52,12 +52,33 @@ class ShelfFragment : Fragment() {
                 ShelfSearchHistory("1","Marhaba",userId),
                 ShelfSearchHistory("1","Howdy",userId),
                 ShelfSearchHistory("1","Hi",userId),
+                ShelfSearchHistory("1","Hello",userId),
+                ShelfSearchHistory("1","Marhaba",userId),
+                ShelfSearchHistory("1","Howdy",userId),
+                ShelfSearchHistory("1","Hi",userId),
+                ShelfSearchHistory("1","Hello",userId),
+                ShelfSearchHistory("1","Marhaba",userId),
+                ShelfSearchHistory("1","Howdy",userId),
+                ShelfSearchHistory("1","Hi",userId),
+                ShelfSearchHistory("1","Hello",userId),
+                ShelfSearchHistory("1","Marhaba",userId),
+                ShelfSearchHistory("1","Howdy",userId),
+                ShelfSearchHistory("1","Hi",userId),
+                ShelfSearchHistory("1","Hello",userId),
+                ShelfSearchHistory("1","Marhaba",userId),
+                ShelfSearchHistory("1","Howdy",userId),
+                ShelfSearchHistory("1","Hi",userId),
             )
             searchHistoryList=list
+            searchListAdapter.submitList(searchHistoryList)
         })
+
+        layout.orderedBooksRecView.layoutManager = LinearLayoutManager(requireContext())
+        layout.orderedBooksRecView.adapter = searchListAdapter
 
 
         layout.materialSearchView.apply {
+            val params =  layout.materialSearchView.layoutParams as AppBarLayout.LayoutParams
             setAdapter(searchListAdapter)
             setItemAnimator(null)
             setOnNavigationClickListener(object : SearchLayout.OnNavigationClickListener {
@@ -74,11 +95,16 @@ class ShelfFragment : Fragment() {
                 override fun onFocusChange(hasFocus: Boolean) {
                     layout.materialSearchView.navigationIconSupport = if (hasFocus) {
                         searchListAdapter.submitList(searchHistoryList)
+                        params.scrollFlags=0
                         SearchLayout.NavigationIconSupport.ARROW
                     } else {
                         searchListAdapter.submitList(null)
+                        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
+                    layout.materialSearchView.layoutParams = params
+
                 }
             })
 

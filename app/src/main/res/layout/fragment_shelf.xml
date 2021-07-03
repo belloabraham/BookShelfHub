@@ -12,22 +12,29 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="?backgroundColor">
+        android:background="?backgroundColor"
+        android:layout_gravity="top">
         <com.bookshelfhub.bookshelfhub.view.search.widget.MaterialSearchView
-            android:id="@+id/material_search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/material_search_view"
             app:search_navigationIconSupport="search"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:search_textHint="@string/shelf_search_hint"
             app:search_transitionDuration="@integer/config_navAnimTime" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/orderedBooksRecView" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:visibility="gone"
         android:paddingBottom="@dimen/size_50"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/size_25">

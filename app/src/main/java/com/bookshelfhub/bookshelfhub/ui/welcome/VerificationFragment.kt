@@ -115,8 +115,6 @@ class VerificationFragment:Fragment(){
 
                 })
 
-
-
                 phoneAuthViewModel.getOTPCode().observe(viewLifecycleOwner, Observer { otpCode ->
                     layout.otpView.setOTP(otpCode)
 
@@ -134,8 +132,8 @@ class VerificationFragment:Fragment(){
                 phoneAuthViewModel.getIsSignedInSuccessfully().observe(viewLifecycleOwner, Observer { isSignedInSuccessfully ->
                     if (isSignedInSuccessfully){
                         val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
-                        val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment()
                         if (isNewUser){
+                            val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(true)
                             findNavController().navigate(actionUserInfo)
                         }else{
 
@@ -169,7 +167,7 @@ class VerificationFragment:Fragment(){
 
                 userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
                     if (!isExistingUser){
-                        val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment()
+                        val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)
                         findNavController().navigate(actionUserInfo)
                     }
                 })

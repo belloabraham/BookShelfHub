@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withCreated
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
+import com.bookshelfhub.bookshelfhub.enums.Referrer
+import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
@@ -40,15 +42,21 @@ class WelcomeActivity : AppCompatActivity() {
     private val googleAuthViewModel: GoogleAuthViewModel by viewModels()
     private val userAuthViewModel: UserAuthViewModel by viewModels()
     private lateinit var resultLauncher:ActivityResultLauncher<Intent>
+    private var referrer:String?=null
 
     @Inject
      lateinit var connectionUtil: ConnectionUtil
     @Inject
     lateinit var userAuth: UserAuth
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        referrer = intent.getStringExtra(Referrer.ID.KEY)
+        userAuthViewModel.setReferrer(referrer)
+
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(Referrer.ID.KEY, referrer)
 
         GooglePlayServices(this).checkForGooglePlayServices()
 
@@ -112,7 +120,6 @@ class WelcomeActivity : AppCompatActivity() {
             if (isAddingUser){
                 showAnimation()
             }else{
-                val intent = Intent(this, MainActivity::class.java)
                 hideAnimation()
                 if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
                    showConfettiAnim()
@@ -130,12 +137,7 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         userAuthViewModel.getIsExistingUser().observe(this, Observer { isExistingUser ->
-            if (isExistingUser){
-                hideAnimation()
-                val intent = Intent(this, MainActivity::class.java)
-                finish()
-                startActivity(intent)
-            }else{
+            if (!isExistingUser){
                 hideAnimation()
             }
         })

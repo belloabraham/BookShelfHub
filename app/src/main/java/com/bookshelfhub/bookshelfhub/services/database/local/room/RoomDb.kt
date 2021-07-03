@@ -61,4 +61,12 @@ open class RoomDb(private val context:Context) {
        return RoomInstance.getDatabase(context).userDao().getStoreSearchHistory(userId)
     }
 
+    //TODO Referrer
+    open fun getPubReferrer(isbn:String): Optional<PubReferrers> {
+        return  RoomInstance.getDatabase(context).userDao().getPubReferrer(isbn)
+    }
+
+    open suspend fun addPubReferrer(pubReferrers: PubReferrers){
+        RoomInstance.getDatabase(context).userDao().addPubReferrer(pubReferrers)
+    }
 }

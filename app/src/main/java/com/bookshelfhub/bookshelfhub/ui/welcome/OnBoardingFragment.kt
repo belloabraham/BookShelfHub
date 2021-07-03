@@ -35,7 +35,7 @@ class OnBoardingFragment:Fragment() {
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 
         if (userAuth.getIsUserAuthenticated()){
-            val actionUserInfo = OnBoardingFragmentDirections.actionOnBoardingFragmentDirectionToUserInfoFragment()
+            val actionUserInfo = OnBoardingFragmentDirections.actionOnBoardingFragmentDirectionToUserInfoFragment(false)
             findNavController().navigate(actionUserInfo)
         }
 
@@ -63,14 +63,14 @@ class OnBoardingFragment:Fragment() {
         //Navigate to Login Fragment
         layout.btnLogin.setOnClickListener {
             val login = getString(R.string.login)
-            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(login, false)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(login)
             findNavController().navigate(actionLogin)
         }
 
         //Navigate to Login Fragment
         layout.btnSignup.setOnClickListener {
           val signUp = getString(R.string.sign_up)
-            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp, true)
+            val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp)
            findNavController().navigate(actionLogin)
         }
 
