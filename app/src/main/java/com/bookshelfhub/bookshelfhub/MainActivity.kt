@@ -70,9 +70,10 @@ class MainActivity : AppCompatActivity() {
 
         getUserReferrerLinkAsync(userId){
             it?.let {
-                mainActivityViewModel.setUserReferralLink(it)
+                val link = it.toString()
+                mainActivityViewModel.setUserReferralLink(link)
                 lifecycleScope.launch(IO){
-                    settingsUtil.setString(Referrer.USER_REF_LINK.KEY,it)
+                    settingsUtil.setString(Referrer.USER_REF_LINK.KEY,link)
                 }
             }
         }
@@ -80,8 +81,6 @@ class MainActivity : AppCompatActivity() {
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             layout.bottomBar.selectTabAt(it, true)
         })
-
-
 
         mainActivityViewModel.getIsNewProfileNotif().observe(this, Observer { isNewProfileNotif ->
 
@@ -228,12 +227,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getUserReferrerLinkAsync(userId:String, onComplete:(String?)->Unit){
+    fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){
         val title = getString(R.string.app_name)
         val description =""
         val imageUrl =""
         dynamicLink.getLinkAsync(title, description, imageUrl, userId){
-            onComplete(it.toString())
+            onComplete(it)
         }
     }
 

@@ -50,11 +50,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     }
 
 
-    fun getUserReferralLink():String{
-        return ""
+    fun setUserReferralLink(value:String){
+        userReferralLink=value
     }
 
-    fun setUserReferralLink(value:String):String?{
+    fun getUserReferralLink():String?{
         return userReferralLink
     }
 

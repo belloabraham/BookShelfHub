@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -20,10 +21,7 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
-import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.Profile
-import com.bookshelfhub.bookshelfhub.enums.Settings
-import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
@@ -31,6 +29,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -59,6 +58,8 @@ class MoreFragment : Fragment() {
     lateinit var userAuth: UserAuth
     @Inject
     lateinit var stringUtil: StringUtil
+    @Inject
+    lateinit var dynamicLink: DynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
@@ -170,13 +171,28 @@ class MoreFragment : Fragment() {
         }
 
         layout.referraLinkCard.setOnClickListener {
-            val link = mainActivityViewModel.getReferralLink()
-            val msg = String.format(getString(R.string.your_referral_link), link )
-            activity?.let {
-                AlertDialogHelper(it, {
-                    clipboardHelper.copyToClipBoard(link)
-                }, cancelable = true)
-                    .showAlertDialog(R.string.referral_link, msg, R.string.copy_link, R.string.ok)
+            activity?.let { activity ->
+                var link = mainActivityViewModel.getUserReferralLink()
+                if (link==null){
+                    lifecycleScope.launch(IO){
+                      link =  settingsUtil.getString(Referrer.USER_REF_LINK.KEY)
+                        if (link==null){
+                            dynamicLink.getLinkAsync(
+                                getString(R.string.app_name),
+                                "",
+                                ""
+                            ){
+                                if (it!=null){
+                                    showReferralLinkDialog(it.toString(), activity)
+                                }
+                            }
+                        }else{
+                            showReferralLinkDialog(link!!, activity)
+                        }
+                    }
+                }else{
+                   showReferralLinkDialog(link!!, activity)
+                }
             }
         }
 
@@ -221,11 +237,17 @@ class MoreFragment : Fragment() {
           }
         })
 
-
-
         return layout.root
     }
 
+
+    private fun showReferralLinkDialog(link:String, activity:Activity){
+        val msg = String.format(getString(R.string.your_referral_link), link )
+        AlertDialogHelper(activity, {
+            clipboardHelper.copyToClipBoard(link)
+        }, cancelable = true)
+            .showAlertDialog(R.string.referral_link, msg, R.string.copy_link, R.string.ok)
+    }
 
     private fun startWebActivity(title:Int, rmcUrlKey:String){
         val url = remoteConfig.getString(rmcUrlKey)
