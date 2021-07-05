@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginHorizontal="@dimen/size_16"
-    android:paddingVertical="@dimen/size_25"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/size_16"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
-    tools:context=".ui.welcome.UserInfoFragment">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start|top"
-        android:text="@string/about_you"
-        style="@style/TextAppearance.MaterialComponents.Headline4"
-        android:textColor="?attr/colorSecondaryVariant"
-        android:layout_marginVertical="@dimen/size_25"/>
+    tools:context=".ui.more.ProfileFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -50,25 +39,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/phoneEditTxtLayout"
-        android:visibility="gone"
         style="@style/Widget.Design.TextInputLayout">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/phoneEditTxt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
-            android:hint="@string/enter_phone_num"
+            android:hint="@string/phone_number"
             android:inputType="phone"
             android:textSize="@dimen/size_18sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/size_16"
+        android:id="@+id/dobTxtLayout"
+        style="@style/Widget.Design.TextInputLayout">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/dobEditTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:hint="@string/date_of_birth"
+            android:inputType="text"
+            android:textSize="@dimen/size_18sp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
     <Button
-        android:id="@+id/btnContinue"
+        android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="@dimen/button_height"
         android:layout_marginTop="@dimen/size_25"
-        android:text="@string/continue_login_signup"
+        android:text="@string/save"
         android:padding="@dimen/size_12" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

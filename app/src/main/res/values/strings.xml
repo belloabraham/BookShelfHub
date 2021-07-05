@@ -2,6 +2,13 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+    <string name="happy_birthday_title">Happy Birthday %s</string>
+    <string name="happy_birthday_msg">We wanted to get you something truly amazing and inspiring for your birthday. Then we remembered that you already have Bookshelf Hub.</string>
+
+    <string name="happy_birthday_title2">Today is a special day %s</string>
+    <string name="happy_birthday_msg2">We have been calling up to a thousand times to tell you "Happy birthday!"</string>
+
+
     <!-- TODO: Onboarding Fragment-->
     <string name="login">Login</string>
     <string name="sign_up">Sign up</string>
@@ -188,6 +195,13 @@
     <!-- TODO: WebView Activity -->
     <string name="no_internet_error_msg">Error: No internet connection</string>
     <string name="reload">Reload</string>
+
+
+    <!-- TODO: Search -->
+    <string name="cant_find_book">Can\'t find a book? Request for it</string>
+
+    <!-- TODO: Profile -->
+    <string name="date_of_birth">Date of birth</string>
 
 
 </resources>

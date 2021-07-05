@@ -38,6 +38,24 @@
         <value>https://bookshelfhub.com/terms</value>
     </entry>
 
+        <!-- TODO: Happy Birthday-->
+    <entry>
+        <key>hbd_msg_title</key>
+        <value>Happy Birthday %s</value>
+    </entry>
+    <entry>
+        <key>hbd_msg_title2</key>
+        <value>Today is a special day %s</value>
+    </entry>
+    <entry>
+        <key>hbd_msg</key>
+        <value>We wanted to get you something truly amazing and inspiring for your birthday. Then we remembered that you already have Bookshelf Hub.</value>
+    </entry>
+    <entry>
+        <key>hbd_msg2</key>
+        <value>We have been calling up to a thousand times to tell you, "Happy birthday!"</value>
+    </entry>
+
     <!-- TODO: User Referral Description-->
     <entry>
         <key>user_ref_description</key>
@@ -49,7 +67,7 @@
     </entry>
     <entry>
         <key>user_ref_image_uri</key>
-        <value></value>
+        <value>https://i.ibb.co/JckDrDz/app-share-banner.png</value>
     </entry>
 
 </defaultsMap>

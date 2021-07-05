@@ -27,6 +27,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/orderedBooksRecView" />
 
@@ -34,7 +35,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:visibility="gone"
         android:paddingBottom="@dimen/size_50"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/size_25">

@@ -11,6 +11,12 @@
         tools:layout="@layout/fragment_about">
     </fragment>
     <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.more.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile">
+    </fragment>
+    <fragment
         android:id="@+id/interestFragment"
         android:name="com.bookshelfhub.bookshelfhub.ui.more.InterestFragment"
         android:label="@string/book_interest"

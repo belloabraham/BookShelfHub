@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
@@ -75,6 +76,9 @@ class SplashActivity : AppCompatActivity() {
 
     private fun startNextActivity(intent:Intent, referrerId:String?){
         intent.putExtra(PubReferrer.ID.KEY, referrerId)
+        referrerId?.let {
+            Toast(this).showToast(it)
+        }
         finish()
         startActivity(intent)
     }

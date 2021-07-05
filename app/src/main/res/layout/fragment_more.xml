@@ -365,7 +365,7 @@
                     <ImageView
                         android:layout_width="@dimen/image_btn_size"
                         android:layout_height="@dimen/image_btn_size"
-                        android:src="@drawable/ic_cash"
+                        android:src="@drawable/ic_monetization_24"
                         android:layout_gravity="start"
                         android:contentDescription="@null"
                         android:scaleType="centerInside"/>

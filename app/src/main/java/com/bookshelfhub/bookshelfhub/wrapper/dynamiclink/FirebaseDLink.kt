@@ -22,16 +22,16 @@ open class FirebaseDLink (private val domainPrefix:String, private val context:C
                      uniqueId:String = userAuth.getUserId(),
                      minimumVCode:Int=appUtil.getAppVersionCode().toInt(), onComplete:(Uri?)->Unit){
 
-        val shortLinkTask = Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-            link = Uri.parse(String.format(context.getString(R.string.bsh_website), uniqueId))
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+            link = Uri.parse(String.format(context.getString(R.string.dlink_deeplink_domain), uniqueId))
             domainUriPrefix = domainPrefix
             androidParameters(context.packageName) {
                 minimumVersion = minimumVCode
             }
             googleAnalyticsParameters {
-                source = "user-${userAuth.getUserId()}"
+                source = "user-$uniqueId"
                 medium = "android-app"
-                campaign = "android-app-referrer"
+                campaign = "user-referrer"
             }
             socialMetaTagParameters {
                 title = socialTitle
@@ -43,7 +43,6 @@ open class FirebaseDLink (private val domainPrefix:String, private val context:C
         }.addOnFailureListener {
             onComplete(null)
         }
-
     }
 
     open fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
@@ -51,7 +50,11 @@ open class FirebaseDLink (private val domainPrefix:String, private val context:C
             .getDynamicLink(activity.intent)
             .addOnSuccessListener(activity) {
                     pendingDynamicLinkData ->
-                onComplete(pendingDynamicLinkData.link)
+                if (pendingDynamicLinkData!=null){
+                    onComplete(pendingDynamicLinkData.link)
+                }else{
+                    onComplete(null)
+                }
             }
             .addOnFailureListener(activity) { e ->
                 onComplete(null)

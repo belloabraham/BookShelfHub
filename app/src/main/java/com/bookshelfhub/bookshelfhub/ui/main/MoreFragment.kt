@@ -69,6 +69,7 @@ class MoreFragment : Fragment() {
         val signOutBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.signOutCard)
         val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
+        val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
 
         authType= userAuth.getAuthType()
 
@@ -116,6 +117,10 @@ class MoreFragment : Fragment() {
             activity?.let {
                 startActivity(intentUtil.openAppStoreIntent(it.packageName))
             }
+        }
+
+        profileBtn.setOnClickListener {
+            startProfileActivity(R.string.profile, R.id.profileFragment)
         }
 
         signOutBtn.setOnClickListener {
@@ -242,6 +247,7 @@ class MoreFragment : Fragment() {
         val msg = String.format(getString(R.string.your_referral_link), link )
         AlertDialogHelper(activity, {
             clipboardHelper.copyToClipBoard(link)
+                Toast(activity).showToast(R.string.link_copied)
         }, cancelable = true)
             .showAlertDialog(R.string.referral_link, msg, R.string.copy_link, R.string.ok)
     }

@@ -10,7 +10,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import kotlinx.coroutines.runBlocking
 
-class UploadBookInterest (var context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadBookInterest (val context: Context, workerParams: WorkerParameters): Worker(context,
     workerParams
 ) {
 

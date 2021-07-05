@@ -47,30 +47,6 @@ class ShelfFragment : Fragment() {
 
         mainActivityViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchHistoryList=shelfSearchHistory
-            val list = listOf(
-                ShelfSearchHistory("1","Hello",userId),
-                ShelfSearchHistory("1","Marhaba",userId),
-                ShelfSearchHistory("1","Howdy",userId),
-                ShelfSearchHistory("1","Hi",userId),
-                ShelfSearchHistory("1","Hello",userId),
-                ShelfSearchHistory("1","Marhaba",userId),
-                ShelfSearchHistory("1","Howdy",userId),
-                ShelfSearchHistory("1","Hi",userId),
-                ShelfSearchHistory("1","Hello",userId),
-                ShelfSearchHistory("1","Marhaba",userId),
-                ShelfSearchHistory("1","Howdy",userId),
-                ShelfSearchHistory("1","Hi",userId),
-                ShelfSearchHistory("1","Hello",userId),
-                ShelfSearchHistory("1","Marhaba",userId),
-                ShelfSearchHistory("1","Howdy",userId),
-                ShelfSearchHistory("1","Hi",userId),
-                ShelfSearchHistory("1","Hello",userId),
-                ShelfSearchHistory("1","Marhaba",userId),
-                ShelfSearchHistory("1","Howdy",userId),
-                ShelfSearchHistory("1","Hi",userId),
-            )
-            searchHistoryList=list
-            searchListAdapter.submitList(searchHistoryList)
         })
 
         layout.orderedBooksRecView.layoutManager = LinearLayoutManager(requireContext())

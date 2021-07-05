@@ -28,13 +28,18 @@
     <string name="website" translatable="false">Website</string>
     <string name="phone" translatable="false">Phone</string>
 
-
+    <!-- Todo About -->
     <string name="bsh_social_handle" translatable="false">bookshelfhub</string>
     <string name="bsh_website" translatable="false">https://bookshelfhub.com</string>
 
+    <!-- Todo Dynamic Link -->
     <string name="dlink_domain_prefix" translatable="false">https://ref.bookshelfhub.com</string>
     <string name="manifest_dlink_domain_prefix" translatable="false">ref.bookshelfhub.com</string>
     <string name="dlink_deeplink_domain" translatable="false">https://bookshelfhub.com?id=%s</string>
+
+
+    <!-- Todo Profile -->
+    <string name="dob_template" translatable="false">DD/MM/YY</string>
 
 
     <!-- Todo Database -->
