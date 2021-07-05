@@ -38,4 +38,18 @@
         <value>https://bookshelfhub.com/terms</value>
     </entry>
 
+    <!-- TODO: User Referral Description-->
+    <entry>
+        <key>user_ref_description</key>
+        <value>Get PAID in DOLLARS for referrals, read textbooks with video explanations and listen to AUDIO books on the move.</value>
+    </entry>
+    <entry>
+        <key>user_ref_title</key>
+        <value>Bookshelf Hub - Get free and paid textbooks</value>
+    </entry>
+    <entry>
+        <key>user_ref_image_uri</key>
+        <value></value>
+    </entry>
+
 </defaultsMap>

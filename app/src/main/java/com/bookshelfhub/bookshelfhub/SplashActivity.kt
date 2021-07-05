@@ -7,7 +7,7 @@ import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.enums.Referrer
+import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
@@ -74,7 +74,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startNextActivity(intent:Intent, referrerId:String?){
-        intent.putExtra(Referrer.ID.KEY, referrerId)
+        intent.putExtra(PubReferrer.ID.KEY, referrerId)
         finish()
         startActivity(intent)
     }

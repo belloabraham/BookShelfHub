@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -27,7 +25,6 @@ import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import com.google.android.material.card.MaterialCardView
@@ -175,12 +172,12 @@ class MoreFragment : Fragment() {
                 var link = mainActivityViewModel.getUserReferralLink()
                 if (link==null){
                     lifecycleScope.launch(IO){
-                      link =  settingsUtil.getString(Referrer.USER_REF_LINK.KEY)
+                      link =  settingsUtil.getString(PubReferrer.USER_REF_LINK.KEY)
                         if (link==null){
                             dynamicLink.getLinkAsync(
-                                getString(R.string.app_name),
-                                "",
-                                ""
+                                remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
+                                remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
+                                remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)
                             ){
                                 if (it!=null){
                                     showReferralLinkDialog(it.toString(), activity)

@@ -16,8 +16,9 @@ import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.enums.Referrer
+import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
+import com.bookshelfhub.bookshelfhub.enums.UserReferrer
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         userId=mainActivityViewModel.getUserId()
 
-        val referrer = intent.getStringExtra(Referrer.ID.KEY)
+        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
         getReferrer(referrer, userId)
 
         layout = ActivityMainBinding.inflate(layoutInflater)
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 val link = it.toString()
                 mainActivityViewModel.setUserReferralLink(link)
                 lifecycleScope.launch(IO){
-                    settingsUtil.setString(Referrer.USER_REF_LINK.KEY,link)
+                    settingsUtil.setString(PubReferrer.USER_REF_LINK.KEY,link)
                 }
             }
         }
@@ -181,12 +182,13 @@ class MainActivity : AppCompatActivity() {
     private fun showProgressPopupDialog(){
         lifecycleScope.launch(IO) {
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
-            val lastBookRed = settingsUtil.getString(Settings.LAST_BOOK_RED.KEY)
+            val lastBookRedTile = settingsUtil.getString(Settings.LAST_BOOK_RED_TITLE.KEY)
+            val lastBookRedISBN = settingsUtil.getString(Settings.LAST_BOOK_RED_ISBN.KEY)
             val lastBookPercentage = settingsUtil.getInt(Settings.LAST_BOOK_PERCENTAGE.KEY, 0)
             val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
             withContext(Main){
                 if (showPopup){
-                    lastBookRed?.let {
+                    lastBookRedTile?.let {
                         val view = View.inflate(this@MainActivity, R.layout.continue_reading, null)
                         view.findViewById<TextView>(R.id.bookName).text = it
                         view.findViewById<TextView>(R.id.percentageText).text = String.format(getString(R.string.percent), lastBookPercentage)
@@ -200,7 +202,9 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }, {
-                                //TODO Start Book Reading Activity
+                                val intent = Intent(this@MainActivity, ContentActivity::class.java)
+                                intent.putExtra(Settings.LAST_BOOK_RED_ISBN.KEY, lastBookRedISBN)
+                                startActivity(intent)
                             }
                         )
                             .showBottomSheet(view, R.string.dismiss, R.string.continue_reading)
@@ -218,19 +222,18 @@ class MainActivity : AppCompatActivity() {
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
-                intent.putExtra(Referrer.ISBN.KEY,isbn)
+                intent.putExtra(PubReferrer.ISBN.KEY,isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
                 startActivity(intent)
             }
-
         }
     }
 
     fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){
-        val title = getString(R.string.app_name)
-        val description =""
-        val imageUrl =""
+        val title = remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY)
+        val description = remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY)
+        val imageUrl = remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)
         dynamicLink.getLinkAsync(title, description, imageUrl, userId){
             onComplete(it)
         }

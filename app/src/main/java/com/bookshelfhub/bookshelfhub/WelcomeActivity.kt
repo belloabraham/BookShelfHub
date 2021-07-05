@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.animation.Animator
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -11,11 +10,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withCreated
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.enums.Referrer
-import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
@@ -52,11 +49,11 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        referrer = intent.getStringExtra(Referrer.ID.KEY)
+        referrer = intent.getStringExtra(PubReferrer.ID.KEY)
         userAuthViewModel.setReferrer(referrer)
 
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(Referrer.ID.KEY, referrer)
+        intent.putExtra(PubReferrer.ID.KEY, referrer)
 
         GooglePlayServices(this).checkForGooglePlayServices()
 
