@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="@dimen/size_16"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.more.ProfileFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/size_16"
+        android:orientation="vertical">
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/nameEditTxtLayout"
-        android:layout_marginVertical="@dimen/size_16"
+        android:layout_marginBottom="@dimen/size_16"
         style="@style/Widget.Design.TextInputLayout">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -39,6 +44,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/phoneEditTxtLayout"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/size_16"
         style="@style/Widget.Design.TextInputLayout">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/phoneEditTxt"
@@ -50,23 +57,40 @@
             android:textSize="@dimen/size_18sp" />
     </com.google.android.material.textfield.TextInputLayout>
 
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textSize="@dimen/size_18sp"
+       android:text="@string/date_of_birth"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
+    <com.bookshelfhub.bookshelfhub.view.dateEditText.DatePicker
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/size_16"
-        android:id="@+id/dobTxtLayout"
-        style="@style/Widget.Design.TextInputLayout">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/dobEditTxt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:hint="@string/date_of_birth"
-            android:inputType="text"
-            android:textSize="@dimen/size_18sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+        android:layout_marginTop="@dimen/size_8"
+        android:id="@+id/dobDatePicker"/>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_25"
+            android:id="@+id/genderLayout"
+            app:placeholderText="@string/gender"
+            android:hint="@string/gender"
+            android:textColorHint="@color/icon_color"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/genderLayout"
+                android:layout_marginVertical="0dp"
+                android:inputType="none"
+                android:paddingVertical="0dp"
+                android:textSize="@dimen/size_18sp"
+                android:id="@+id/genderDropDown"
+                android:layout_weight="1"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnSave"
@@ -76,4 +100,6 @@
         android:text="@string/save"
         android:padding="@dimen/size_12" />
 
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>

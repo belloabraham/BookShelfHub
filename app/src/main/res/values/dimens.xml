@@ -1,5 +1,6 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Default screen margins, per the Android Design guidelines. -->
+
 
     <dimen name="size_16">16dp</dimen>
 
@@ -10,6 +11,9 @@
     <dimen name="size_12">11dp</dimen>
     <dimen name="size_7">7dp</dimen>
     <dimen name="size_70">70dp</dimen>
+
+
+
 
 
     <dimen name="size_50">50dp</dimen>
@@ -71,6 +75,13 @@
     <dimen name="search_margins_top_bottom">8dp</dimen>
     <dimen name="search_margins_focus">0dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+
+    <dimen name="date_picker_width_case">20dp</dimen>
+    <dimen name="date_picker_text_size">18sp</dimen>
+    <dimen name="date_picker_height_focus">1dp</dimen>
+    <dimen name="date_picker_width_margin">1dp</dimen>
+    <dimen name="date_picker_width_space">6dp</dimen>
 
 
 </resources>

@@ -1,5 +1,7 @@
 package com.bookshelfhub.bookshelfhub.models
 
+import java.util.*
+
 class UserModel: IUser {
     override var userId: String = ""
         get() = field
@@ -24,6 +26,10 @@ class UserModel: IUser {
     override var referrerId:String? = null
         get() = field
     override val mailOrPhoneVerified: Boolean=false
+        get() = field
+    override var gender: String?=null
+        get() = field
+    override var dateOfBirth: String?=null
         get() = field
     override var uploaded: Boolean = false
         get() = field

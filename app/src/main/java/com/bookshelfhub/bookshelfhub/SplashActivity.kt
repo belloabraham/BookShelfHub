@@ -76,9 +76,6 @@ class SplashActivity : AppCompatActivity() {
 
     private fun startNextActivity(intent:Intent, referrerId:String?){
         intent.putExtra(PubReferrer.ID.KEY, referrerId)
-        referrerId?.let {
-            Toast(this).showToast(it)
-        }
         finish()
         startActivity(intent)
     }

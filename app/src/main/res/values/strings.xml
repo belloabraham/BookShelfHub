@@ -202,6 +202,8 @@
 
     <!-- TODO: Profile -->
     <string name="date_of_birth">Date of birth</string>
+    <string name="gender">Gender</string>
+    <string name="tell_us_more">Tell us more about you to help us serve you better</string>
 
 
 </resources>

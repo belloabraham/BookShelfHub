@@ -7,6 +7,8 @@
 
     <color name="red">#FF0000</color>
 
+    <color name="text_hint">#808080</color>
+
     <color name="dark_overlay">#8C000000</color>
 
     <color name="white_overlay">#8CFFFFFF</color>

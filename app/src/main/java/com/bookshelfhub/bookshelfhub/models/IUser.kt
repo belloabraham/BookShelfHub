@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.models
 
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import java.util.*
 
 interface IUser {
     val userId:String
@@ -16,5 +17,7 @@ interface IUser {
     val lastUpdated: String
     val mailOrPhoneVerified: Boolean
     var referrerId: String?
+    var gender: String?
+    var dateOfBirth: String?
     var uploaded: Boolean
 }
