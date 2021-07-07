@@ -97,11 +97,11 @@ class MainActivity : AppCompatActivity() {
         })
 
         mainActivityViewModel.getUserRecord().observe(this, Observer { userRecord ->
-            if (userRecord.mailOrPhoneVerified){
+           /* if (userRecord.mailOrPhoneVerified){
                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(0)
             }else{
                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(1)
-            }
+            }*/
         })
 
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->

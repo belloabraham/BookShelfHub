@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.more
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,13 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.Gender
+import com.bookshelfhub.bookshelfhub.enums.DateFormat
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
@@ -22,9 +25,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -35,8 +36,11 @@ class ProfileFragment : Fragment() {
     @Inject
     lateinit var localDb: LocalDb
     @Inject
+    lateinit var database: Database
+    @Inject
     lateinit var keyboardUtil: KeyboardUtil
     var gender:String?=null
+    var dateOfBirth:String?=null
     private lateinit var layout: FragmentProfileBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,27 +48,33 @@ class ProfileFragment : Fragment() {
     ): View {
         layout= FragmentProfileBinding.inflate(inflater, container, false)
 
-        var userRecord:UserRecord
+        var userRecord:UserRecord? = null
 
         lifecycleScope.launch(IO){
-            userRecord= localDb.getUser(userAuth.getUserId()).get()
+             userRecord = localDb.getUser(userAuth.getUserId()).get()
             withContext(Main){
+                layout.nameEditTxt.setText(userRecord!!.name)
                 if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
                     layout.phoneEditTxtLayout.visibility=View.VISIBLE
-                    layout.phoneEditTxt.setText(userRecord.email)
                 }else{
                     layout.emailEditTxtLayout.visibility=View.VISIBLE
-                    layout.emailEditTxt.setText(userRecord.email)
                 }
-                userRecord.dateOfBirth?.let {
-                   // layout.dobDatePicker.date = it
+                layout.phoneEditTxt.setText(userRecord!!.phone)
+                layout.emailEditTxt.setText(userRecord!!.email)
+
+                userRecord!!.dateOfBirth?.let {
+                    dateOfBirth=it
+                    layout.dobDatePicker.date = DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue )
                 }
-                gender = userRecord.gender
+               userRecord!!.gender?.let {
+                   gender =it
+                   layout.genderLayout.hint = it
+                }
             }
         }
 
         layout.dobDatePicker.setOnDatePickListener {
-            Toast(requireActivity()).showToast(it.toString())
+            dateOfBirth = DateUtil.dateToString(it, DateFormat.MM_DD_YYYY.completeFormatValue)
         }
 
         layout.genderDropDown.setOnFocusChangeListener { v, hasFocus ->
@@ -74,10 +84,47 @@ class ProfileFragment : Fragment() {
         }
 
         layout.genderDropDown.setOnItemClickListener{ parent, view, position, id ->
-           val value = parent.getItemAtPosition(position)
-            Toast(requireActivity()).showToast(value.toString())
+           gender = parent.getItemAtPosition(position).toString().trim()
         }
 
+        layout.btnSave.setOnClickListener {
+            layout.phoneEditTxtLayout.error = null
+            layout.nameEditTxtLayout.error = null
+            layout.emailEditTxtLayout.error = null
+            val email = layout.emailEditTxt.text.toString().trim()
+            val phone = layout.phoneEditTxt.text.toString().trim()
+            val name = layout.nameEditTxt.text.toString().trim()
+            if(TextUtils.isEmpty(name)){
+                layout.nameEditTxtLayout.error = getString(R.string.name_req_error)
+            }else if (TextUtils.isEmpty(phone)){
+                layout.phoneEditTxtLayout.error = getString(R.string.phone_req_error)
+            }else if (TextUtils.isEmpty(email)){
+                layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
+            }else {
+                userRecord?.let { updatedUserRecord ->
+                    updatedUserRecord.dateOfBirth = dateOfBirth
+                    updatedUserRecord.gender = gender
+                    updatedUserRecord.name = name
+                    if (userAuth.getAuthType() == AuthType.GOOGLE.ID) {
+                        if (phone != updatedUserRecord.phone) {
+                            updatedUserRecord.mailOrPhoneVerified = false
+                            updatedUserRecord.phone = phone
+                        }
+                    } else if (email != updatedUserRecord.email) {
+                        updatedUserRecord.mailOrPhoneVerified = false
+                        updatedUserRecord.email = email
+                    }
+                    lifecycleScope.launch(IO) {
+                        updatedUserRecord.uploaded=false
+                        database.addUser(updatedUserRecord)
+                        withContext(Main){
+                            Toast(requireActivity()).showToast(getString(R.string.updated))
+                            requireActivity().finish()
+                        }
+                    }
+                }
+            }
+        }
 
         return layout.root
     }
@@ -87,14 +134,8 @@ class ProfileFragment : Fragment() {
         val genderArr = resources.getStringArray(R.array.genders)
         val spinnerAdapter: ArrayAdapter<*> = ArrayAdapter<Any?>(requireContext(), R.layout.spinner_item, genderArr)
         layout.genderDropDown.setAdapter(spinnerAdapter)
-        val selection:Int? = when(gender){
-            Gender.MALE.Value->0
-            Gender.FEMALE.Value->1
-          else -> null
-      }
-        layout.genderDropDown.setSelection(0)
-        selection?.let {
-            layout.genderDropDown.setSelection(it)
+        gender?.let {
+            layout.genderLayout.hint = it
         }
     }
 

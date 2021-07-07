@@ -227,16 +227,13 @@ class MoreFragment : Fragment() {
         })
 
         mainActivityViewModel.getUserRecord().observe(viewLifecycleOwner, Observer { userRecord ->
-          if (userRecord.mailOrPhoneVerified){
-              layout.verifyEmailCard.visibility = View.GONE
-              layout.verifyPhoneCard.visibility = View.GONE
-          }else{
+         /*if (!userRecord.mailOrPhoneVerified){
               if (authType==AuthType.GOOGLE.ID){
-                  layout.verifyEmailCard.visibility = View.GONE
+                  layout.verifyPhoneCard.visibility = View.VISIBLE
               }else{
-                  layout.verifyPhoneCard.visibility = View.GONE
+                  layout.verifyEmailCard.visibility = View.VISIBLE
               }
-          }
+          }*/
         })
 
         return layout.root

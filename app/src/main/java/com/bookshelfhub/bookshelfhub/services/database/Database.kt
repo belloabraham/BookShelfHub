@@ -3,9 +3,7 @@ package com.bookshelfhub.bookshelfhub.services.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.work.*
-import com.bookshelfhub.bookshelfhub.models.IBookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomInstance
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
@@ -32,11 +30,8 @@ class Database @Inject constructor(private var context: Context, private val loc
         WorkManager.getInstance(context).enqueue(periodicUserDataUpload)
     }
 
-
-    suspend fun addBookInterest(bookInterest: IBookInterest){
-        val bookInterestRecord = bookInterest as BookInterestRecord
-        localDb.addBookInterest(bookInterestRecord)
-
+    suspend fun addBookInterest(bookInterest: BookInterestRecord){
+        localDb.addBookInterest(bookInterest)
         val oneTimeUserDataUpload: WorkRequest =
             OneTimeWorkRequestBuilder<UploadBookInterest>()
                 .setConstraints(getConnectedConstraint())

@@ -6,10 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.DateTimeUtil
+import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.models.IUser
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -36,16 +35,11 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
         return isExistingUser
     }
 
-    fun setIsAddingUser(value:Boolean, userData: IUser){
+    fun setIsAddingUser(value:Boolean, user: UserRecord){
         viewModelScope.launch {
-            val localDateTime= DateTimeUtil.getDateTimeAsString()
-            val user = UserRecord(userAuth.getUserId(), userAuth.getAuthType())
+            val localDateTime= LocalDateTimeUtil.getDateTimeAsString()
             user.appVersion=appUtil.getAppVersionName()
-            user.name = userData.name
             user.device = deviceUtil.getDeviceBrandAndModel()
-            user.email = userData.email
-            user.phone=userData.phone
-            user.photoUri=userData.photoUri
             user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
                 Build.VERSION.SDK_INT)
             user.lastUpdated= localDateTime

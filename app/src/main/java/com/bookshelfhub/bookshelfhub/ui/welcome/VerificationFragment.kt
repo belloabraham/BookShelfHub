@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.welcome
 
 import `in`.aabhasjindal.otptextview.OTPListener
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,17 +15,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.AppUtil
+import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.enums.VeriFragSavedState
-import com.bookshelfhub.bookshelfhub.models.BookInterestModel
-import com.bookshelfhub.bookshelfhub.models.UserModel
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -51,7 +55,13 @@ class VerificationFragment:Fragment(){
     @Inject
     lateinit var database: Database
     @Inject
+    lateinit var json: Json
+    @Inject
     lateinit var textLinkBuilder:TextLinkBuilder
+    @Inject
+    lateinit var deviceUtil: DeviceUtil
+    @Inject
+    lateinit var appUtil: AppUtil
 
             override fun onCreateView(
         inflater: LayoutInflater,
@@ -140,7 +150,9 @@ class VerificationFragment:Fragment(){
                             cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
                                 if(it!=null){
                                     try {
-                                        val bookInterest = it.get(DbFields.BOOK_INTEREST.KEY, BookInterestModel::class.java) as BookInterestModel
+                                        val jsonString = it.get(DbFields.BOOK_INTEREST.KEY).toString()
+                                        val bookInterest = json.fromJson(jsonString, BookInterestRecord::class.java)
+
                                         bookInterest.uploaded=true
                                         lifecycleScope.launch(IO){
                                             database.addBookInterest(bookInterest)
@@ -149,8 +161,15 @@ class VerificationFragment:Fragment(){
                                     }
 
                                     try {
-                                        val user = it.get(DbFields.USER.KEY, UserModel::class.java) as UserModel
-                                        user.uploaded=true
+                                        val userJsonString = it.get(DbFields.USER.KEY).toString()
+                                        val user = json.fromJson(userJsonString, UserRecord::class.java)
+                                        if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
+                                                Build.VERSION.SDK_INT)){
+                                            user.device = deviceUtil.getDeviceBrandAndModel()
+                                            user.deviceOs=deviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
+                                        }else {
+                                            user.uploaded = true
+                                        }
                                         userAuthViewModel.setIsAddingUser(false, user)
                                     }catch (ex:Exception){
                                         userAuthViewModel.setIsExistingUser(false)

@@ -41,16 +41,15 @@
     <!-- Todo Profile -->
     <string name="dob_template" translatable="false">DD/MM/YY</string>
 
-
     <!-- Todo Database -->
     <string name="db_name" translatable="false">buhflehskoobxyz</string>
 
-
     <!-- Todo Date Picker Edit Text -->
-    <string name="dp_day">D</string>
-    <string name="dp_month">M</string>
-    <string name="dp_year">Y</string>
+    <string name="dp_day" translatable="false">D</string>
+    <string name="dp_month" translatable="false">M</string>
+    <string name="dp_year" translatable="false">Y</string>
 
-
+    <!-- Todo Book request -->
+    <string name="book_req_url" translatable="false">https://docs.google.com/forms/d/e/1FAIpQLSdMszPPEIQOd30VrWFGd-jQxxVO4HbWM-NsrTkVIlWNAVOM2Q/viewform?usp=sf_link</string>
 
 </resources>

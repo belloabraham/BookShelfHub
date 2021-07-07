@@ -80,6 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/ProfileItemCardView"
+                android:visibility="gone"
                 android:id="@+id/verifyPhoneCard">
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -130,6 +131,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 style="@style/ProfileItemCardView"
                 android:id="@+id/verifyEmailCard">
                 <FrameLayout

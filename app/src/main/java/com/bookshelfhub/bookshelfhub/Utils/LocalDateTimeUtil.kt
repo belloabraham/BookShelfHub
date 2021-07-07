@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.Utils
 
 import org.threeten.bp.LocalDateTime
 
-class DateTimeUtil {
+class LocalDateTimeUtil {
 
     companion object{
         fun getDateTimeAsString():String{

@@ -203,7 +203,12 @@
     <!-- TODO: Profile -->
     <string name="date_of_birth">Date of birth</string>
     <string name="gender">Gender</string>
-    <string name="tell_us_more">Tell us more about you to help us serve you better</string>
+    <string name="phone_req_error">Your phone number is required</string>
+    <string name="name_req_error">Your name is required</string>
+    <string name="mail_req_error">Your email is required</string>
+    <string name="updated">Updated</string>
 
+    <!-- TODO: Store Fragment -->
+    <string name="request_a_book">Request for a book</string>
 
 </resources>

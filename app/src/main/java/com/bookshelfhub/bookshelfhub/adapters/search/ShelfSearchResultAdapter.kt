@@ -1,12 +1,14 @@
 package com.bookshelfhub.bookshelfhub.adapters.search
 
 import android.content.Context
-import android.os.Bundle
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
+import com.bookshelfhub.bookshelfhub.ContentActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.models.ISearchHistory
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
@@ -14,7 +16,7 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class ShelfSearchResultAdapter(private val context: Context) {
 
-     fun getSearchResultAdapter(): ListAdapter<ISearchHistory, RecyclerViewHolder<ISearchHistory>> {
+     fun getSearchResultAdapter(): ListAdapter<Any, RecyclerViewHolder<Any>> {
         return adapterOf {
 
             register(
@@ -22,6 +24,9 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 viewHolder = ::SearchHistoryViewHolder,
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
+                    vh.itemCardView.setOnClickListener {
+                        startContentActivity(model.isbn, model.title)
+                    }
                 }
             )
 
@@ -30,17 +35,32 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 viewHolder = ::SearchResultViewHolder,
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
+                    vh.itemCardView.setOnClickListener {
+                        startContentActivity(model.isbn, model.title)
+                    }
                 }
             )
 
         }
     }
 
+    fun startContentActivity(isbn:String, title:String){
+        val intent = Intent(context, ContentActivity::class.java)
+        with(intent){
+            putExtra(Book.TITLE.KEY, title)
+            putExtra(Book.ISBN.KEY, isbn)
+            putExtra(Book.IS_SEARCH_ITEM.KEY, true)
+        }
+        context.startActivity(intent)
+    }
+
     private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchHistory>(view) {
         val title: TextView = view.findViewById(R.id.title)
+        val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }
 
     private class SearchResultViewHolder(view: View) : RecyclerViewHolder<StoreSearchHistory>(view) {
         val title: TextView = view.findViewById(R.id.title)
+        val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }
 }

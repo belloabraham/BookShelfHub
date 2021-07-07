@@ -7,10 +7,18 @@ import java.util.*
 class DateUtil {
 
     companion object {
+
+        @JvmStatic
         fun dateToString(date: Date?, pattern: String?): String? {
-            return SimpleDateFormat(pattern, Locale.getDefault()).format(date)
+            try {
+                 return SimpleDateFormat(pattern, Locale.getDefault()).format(date)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+            return null
         }
 
+        @JvmStatic
         fun stringToDate(date: String?, format: String?): Date? {
             try {
                 return SimpleDateFormat(format, Locale.getDefault()).parse(date)

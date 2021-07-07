@@ -16,13 +16,13 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.models.BookInterestModel
-import com.bookshelfhub.bookshelfhub.models.UserModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -50,6 +50,8 @@ class UserInfoFragment : Fragment() {
     lateinit var stringUtil:StringUtil
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
+    @Inject
+    lateinit var json: Json
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val args:UserInfoFragmentArgs by navArgs()
 
@@ -72,10 +74,8 @@ class UserInfoFragment : Fragment() {
 
                 it?.let {
                     try {
-                        val bookInterest = it.get(
-                            DbFields.BOOK_INTEREST.KEY,
-                            BookInterestModel::class.java
-                        ) as BookInterestModel
+                        val jsonObj = it.get(DbFields.BOOK_INTEREST.KEY).toString()
+                        val bookInterest = json.fromJson(jsonObj, BookInterestRecord::class.java)
                         bookInterest.uploaded = true
                         lifecycleScope.launch(IO) {
                             database.addBookInterest(bookInterest)
@@ -84,7 +84,8 @@ class UserInfoFragment : Fragment() {
                     }
 
                     try {
-                        val userData = it.get(DbFields.USER.KEY, UserModel::class.java) as UserModel
+                        val userJsonString = it.get(DbFields.USER.KEY).toString()
+                        val userData = json.fromJson(userJsonString, UserRecord::class.java)
                         layout.nameEditTxt.setText(userData.name)
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)
@@ -141,17 +142,17 @@ class UserInfoFragment : Fragment() {
                 }
 
                 lifecycleScope.launch(IO) {
-                    val localDateTime= DateTimeUtil.getDateTimeAsString()
+                    val localDateTime= LocalDateTimeUtil.getDateTimeAsString()
                     val user = UserRecord(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
                     user.device = deviceUtil.getDeviceBrandAndModel()
                     user.email = email
-                    user.phone=phone
+                    user.phone= phone
                     user.referrerId = referrerId
                     user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
-                    user.lastUpdated= localDateTime
+                    user.lastUpdated = localDateTime
                     withContext(Main){
                       userAuthViewModel.setIsAddingUser(false, user)
                     }

@@ -22,9 +22,9 @@ class UploadUserData(val context: Context, workerParams: WorkerParameters): Work
         val userData = user.get()
             if (user.isPresent && !userData.uploaded){
                CloudDb().addDataAsync(userData, DbFields.USERS_COLL.KEY, userId, DbFields.USER.KEY){
-                        val newUserData = userData.copy(uploaded = true)
+                   userData.uploaded = true
                         runBlocking {
-                            localDb.addUser(newUserData)
+                            localDb.addUser(userData)
                         }
                     }
             }

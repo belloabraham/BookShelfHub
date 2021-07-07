@@ -10,8 +10,7 @@ import androidx.fragment.app.Fragment
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.DateTimeUtil
-import com.bookshelfhub.bookshelfhub.Utils.IconUtil
+import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
 import com.bookshelfhub.bookshelfhub.helpers.builders.AboutPageBuilder
@@ -44,7 +43,7 @@ class AboutFragment : Fragment() {
 
 
         layout.versionText.text = String.format(getString(R.string.version), appUtil.getAppVersionName())
-        layout.copyrightText.text = String.format(getString(R.string.copyright), DateTimeUtil.getYear())
+        layout.copyrightText.text = String.format(getString(R.string.copyright), LocalDateTimeUtil.getYear())
 
         layout.contactGrid.setColumnCount(3)
         layout.socialGrid.setColumnCount(3)

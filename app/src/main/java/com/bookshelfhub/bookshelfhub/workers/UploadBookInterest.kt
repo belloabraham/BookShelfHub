@@ -18,13 +18,13 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
         val userAuth=UserAuth(StringUtil())
         val userId = userAuth.getUserId()
         val localDb = LocalDb(context)
-        val  bookInterest = localDb.getBookInterest(userId)
-        val bookInterestData = bookInterest.get()
+         val  bookInterest = localDb.getBookInterest(userId)
+         val bookInterestData = bookInterest.get()
         if (bookInterest.isPresent && !bookInterestData.uploaded){
                CloudDb().addDataAsync(bookInterestData, DbFields.USERS_COLL.KEY, userId, DbFields.BOOK_INTEREST.KEY){
-               val newBookInterestData = bookInterestData.copy(uploaded = true)
+                   bookInterestData.uploaded=true
                 runBlocking {
-                    localDb.addBookInterest(newBookInterestData)
+                    localDb.addBookInterest(bookInterestData)
                 }
             }
         }

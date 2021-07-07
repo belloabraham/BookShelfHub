@@ -17,12 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bookshelfhub.bookshelfhub.R;
+import com.bookshelfhub.bookshelfhub.Utils.DateUtil;
 import com.bookshelfhub.bookshelfhub.enums.DateFormat;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 
 public class DatePicker extends RelativeLayout {
@@ -216,7 +213,7 @@ public class DatePicker extends RelativeLayout {
         if (!hasFocus && date.length() == LENGTH_DATE_COMPLETE) {
             layoutDatePicker.setVisibility(View.INVISIBLE);
             textDatePickerDate.setVisibility(View.VISIBLE);
-            textDatePickerDate.setText(dateToString(getDate(),
+            textDatePickerDate.setText(DateUtil.dateToString(getDate(),
                     dateFormat.getCompleteFormatValue()));
 
         } else if (layoutDatePicker.getVisibility() == View.INVISIBLE) {
@@ -448,18 +445,18 @@ public class DatePicker extends RelativeLayout {
     }
 
     protected boolean checkMinDate(StringBuilder dateToCheckTmp) {
-        Date realDateToCheckTmp = stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
+        Date realDateToCheckTmp = DateUtil.stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
         return realDateToCheckTmp == null || realDateToCheckTmp.before(minDate);
     }
 
     protected boolean checkMaxDate(StringBuilder dateToCheckTmp) {
-        Date realDateToCheckTmp = stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
+        Date realDateToCheckTmp = DateUtil.stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
         return realDateToCheckTmp == null || realDateToCheckTmp.after(maxDate);
     }
 
     protected boolean checkSameDate(StringBuilder dateToCheckTmp) {
-        Date realDateToCheckTmp = stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
-        return dateToString(realDateToCheckTmp, dateFormat.getValue()).equals(dateToCheckTmp.toString());
+        Date realDateToCheckTmp = DateUtil.stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
+        return DateUtil.dateToString(realDateToCheckTmp, dateFormat.getValue()).equals(dateToCheckTmp.toString());
     }
 
     protected void fillDate() {
@@ -502,14 +499,13 @@ public class DatePicker extends RelativeLayout {
     //region PUBLIC METHOD
     public Date getDate() {
         if (date.length() == LENGTH_DATE_COMPLETE) {
-            return stringToDate(date, dateFormat.getValue());
+            return DateUtil.stringToDate(date, dateFormat.getValue());
         }
         return null;
     }
 
     public boolean setDate(Date newDate) {
-        String tmpDate = dateToString(newDate, dateFormat.getValue());
-
+        String tmpDate = DateUtil.dateToString(newDate, dateFormat.getValue());
         if (tmpDate.length() != LENGTH_DATE_COMPLETE
                 || (minDate != null && newDate.before(minDate))
                 || (maxDate != null && newDate.after(maxDate))) {
@@ -656,7 +652,7 @@ public class DatePicker extends RelativeLayout {
                 .start();
     }
 
-    public static String dateToString(Date date, String pattern) {
+  /*  public static String dateToString(Date date, String pattern) {
         return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
     }
 
@@ -667,7 +663,7 @@ public class DatePicker extends RelativeLayout {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
     //endregion
 
     public interface OnDatePickListener {
