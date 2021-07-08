@@ -9,7 +9,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,7 +33,7 @@ class BookItemActivity : AppCompatActivity() {
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
         if (isSearchItem){
-            lifecycleScope.launch(Dispatchers.IO){
+            lifecycleScope.launch(IO){
                 localDb.addStoreSearchHistory(StoreSearchHistory(isbn!!, title!!, userAuth.getUserId(), author!!))
             }
         }

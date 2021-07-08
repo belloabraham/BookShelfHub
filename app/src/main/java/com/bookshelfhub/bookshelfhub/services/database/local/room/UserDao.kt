@@ -14,39 +14,39 @@ interface UserDao {
 
     //Todo Payment Info
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addPaymentInfo(paymentInfo:PaymentInfoRecord)
+    suspend fun addPaymentInfo(paymentInfo:PaymentInfo)
 
     @Query("SELECT * FROM PaymentInfo WHERE userId = :userId")
-    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfoRecord>
+    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfo>
 
     //Todo User Record
     @Query("SELECT * FROM User WHERE userId = :userId")
-    fun getUser(userId:String): Optional<UserRecord>
+    fun getUser(userId:String): Optional<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUser(userRecord:UserRecord)
+    suspend fun addUser(user:User)
 
     @Query("SELECT * FROM User WHERE userId = :userId")
-    fun getLiveUser(userId:String): LiveData<UserRecord>
+    fun getLiveUser(userId:String): LiveData<User>
 
 
     //Todo Book Interest
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
-    fun getBookInterest(userId:String): Optional<BookInterestRecord>
+    fun getBookInterest(userId:String): Optional<BookInterest>
 
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
-    fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>>
+    fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBookInterest(bookInterest: BookInterestRecord)
+    suspend fun addBookInterest(bookInterest: BookInterest)
 
 
     //Todo Ordered Books
-    @Query("SELECT * FROM BooksOrdered WHERE userId = :userId")
-    fun getLiveBooksOrdered(userId:String): LiveData<BooksOrderedRecord>
+    @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
+    fun getLiveBooksOrdered(userId:String): LiveData<OrderedBooks>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBookOrdered(paymentInfo:BooksOrderedRecord)
+    suspend fun addBookOrdered(paymentInfo:OrderedBooks)
 
 
     //Todo Search History

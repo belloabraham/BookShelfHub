@@ -4,10 +4,10 @@ package com.bookshelfhub.bookshelfhub.observables
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 
 
-class BookInterestObservable (private val bkInts:BookInterestRecord): BaseObservable() {
+class BookInterestObservable (private val bkInts:BookInterest): BaseObservable() {
 
 
     @Bindable
@@ -455,7 +455,7 @@ class BookInterestObservable (private val bkInts:BookInterestRecord): BaseObserv
         }
     }
 
-    fun getBookInterestRecord():BookInterestRecord{
+    fun getBookInterestRecord():BookInterest{
         return bkInts
     }
 

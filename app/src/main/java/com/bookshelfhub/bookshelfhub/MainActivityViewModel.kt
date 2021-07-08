@@ -8,11 +8,9 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
-import com.skydoves.balloon.createBalloon
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -25,8 +23,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
-    private var user: LiveData<UserRecord> = MutableLiveData()
-    private var bookInterest: LiveData<Optional<BookInterestRecord>> = MutableLiveData()
+    private var user: LiveData<User> = MutableLiveData()
+    private var bookInterest: LiveData<Optional<BookInterest>> = MutableLiveData()
     private val NEW_VERSION_CODE="new_version_code"
     private val APP_VERSION_CODE="app_version_code"
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
@@ -97,11 +95,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         isNewProfileNotif.value=true
     }
 
-    fun getBookInterest():LiveData<Optional<BookInterestRecord>>{
+    fun getBookInterest():LiveData<Optional<BookInterest>>{
         return bookInterest
     }
 
-    fun getUserRecord():LiveData<UserRecord>{
+    fun getUserRecord():LiveData<User>{
         return user
     }
 

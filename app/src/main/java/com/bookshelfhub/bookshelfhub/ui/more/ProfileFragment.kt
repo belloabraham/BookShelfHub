@@ -17,7 +17,7 @@ import com.bookshelfhub.bookshelfhub.enums.DateFormat
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -48,25 +48,25 @@ class ProfileFragment : Fragment() {
     ): View {
         layout= FragmentProfileBinding.inflate(inflater, container, false)
 
-        var userRecord:UserRecord? = null
+        var user:User? = null
 
         lifecycleScope.launch(IO){
-             userRecord = localDb.getUser(userAuth.getUserId()).get()
+             user = localDb.getUser(userAuth.getUserId()).get()
             withContext(Main){
-                layout.nameEditTxt.setText(userRecord!!.name)
+                layout.nameEditTxt.setText(user!!.name)
                 if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
                     layout.phoneEditTxtLayout.visibility=View.VISIBLE
                 }else{
                     layout.emailEditTxtLayout.visibility=View.VISIBLE
                 }
-                layout.phoneEditTxt.setText(userRecord!!.phone)
-                layout.emailEditTxt.setText(userRecord!!.email)
+                layout.phoneEditTxt.setText(user!!.phone)
+                layout.emailEditTxt.setText(user!!.email)
 
-                userRecord!!.dateOfBirth?.let {
+                user!!.dateOfBirth?.let {
                     dateOfBirth=it
                     layout.dobDatePicker.date = DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue )
                 }
-               userRecord!!.gender?.let {
+               user!!.gender?.let {
                    gender =it
                    layout.genderLayout.hint = it
                 }
@@ -101,7 +101,7 @@ class ProfileFragment : Fragment() {
             }else if (TextUtils.isEmpty(email)){
                 layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
             }else {
-                userRecord?.let { updatedUserRecord ->
+                user?.let { updatedUserRecord ->
                     updatedUserRecord.dateOfBirth = dateOfBirth
                     updatedUserRecord.gender = gender
                     updatedUserRecord.name = name

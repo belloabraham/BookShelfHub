@@ -20,8 +20,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -75,7 +75,7 @@ class UserInfoFragment : Fragment() {
                 it?.let {
                     try {
                         val jsonObj = it.get(DbFields.BOOK_INTEREST.KEY).toString()
-                        val bookInterest = json.fromJson(jsonObj, BookInterestRecord::class.java)
+                        val bookInterest = json.fromJson(jsonObj, BookInterest::class.java)
                         bookInterest.uploaded = true
                         lifecycleScope.launch(IO) {
                             database.addBookInterest(bookInterest)
@@ -85,7 +85,7 @@ class UserInfoFragment : Fragment() {
 
                     try {
                         val userJsonString = it.get(DbFields.USER.KEY).toString()
-                        val userData = json.fromJson(userJsonString, UserRecord::class.java)
+                        val userData = json.fromJson(userJsonString, User::class.java)
                         layout.nameEditTxt.setText(userData.name)
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)
@@ -143,7 +143,7 @@ class UserInfoFragment : Fragment() {
 
                 lifecycleScope.launch(IO) {
                     val localDateTime= LocalDateTimeUtil.getDateTimeAsString()
-                    val user = UserRecord(userId, userAuth.getAuthType())
+                    val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
                     user.device = deviceUtil.getDeviceBrandAndModel()

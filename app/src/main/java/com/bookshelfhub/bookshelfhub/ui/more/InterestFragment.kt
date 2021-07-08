@@ -14,7 +14,7 @@ import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +37,7 @@ class InterestFragment : Fragment() {
     lateinit var localDb: LocalDb
     @Inject
     lateinit var userAuth: UserAuth
-    private lateinit var oldBookInterest:BookInterestRecord
+    private lateinit var oldBookInterest:BookInterest
     private lateinit var layout: FragmentInterestBinding
 
 
@@ -55,7 +55,7 @@ class InterestFragment : Fragment() {
             bookInterestObservable = if (localDb.getBookInterest(userId).isPresent){
                 BookInterestObservable(bkInterestRecord.get())
             }else{
-                BookInterestObservable(BookInterestRecord(userId))
+                BookInterestObservable(BookInterest(userId))
             }
             withContext(Main){
                 oldBookInterest = bookInterestObservable.getBookInterestRecord().copy()

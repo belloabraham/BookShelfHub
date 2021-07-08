@@ -28,8 +28,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterestRecord
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserRecord
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.view.tooltip.ToolTip
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
@@ -162,7 +162,7 @@ class LoginFragment:Fragment() {
                         if(it!=null){
                             try {
                                 val jsonObj = it.get(DbFields.BOOK_INTEREST.KEY).toString()
-                                val bookInterest = json.fromJson(jsonObj, BookInterestRecord::class.java)
+                                val bookInterest = json.fromJson(jsonObj, BookInterest::class.java)
                                 bookInterest.uploaded=true
                                 lifecycleScope.launch(IO){
                                     database.addBookInterest(bookInterest)
@@ -172,7 +172,7 @@ class LoginFragment:Fragment() {
 
                             try {
                                 val userJsonString = it.get(DbFields.USER.KEY).toString()
-                                val user = json.fromJson(userJsonString, UserRecord::class.java)
+                                val user = json.fromJson(userJsonString, User::class.java)
                                 if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){
                                     user.device = deviceUtil.getDeviceBrandAndModel()

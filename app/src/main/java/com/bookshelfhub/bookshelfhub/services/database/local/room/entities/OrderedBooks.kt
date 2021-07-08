@@ -3,14 +3,14 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "BooksOrdered")
-data class BooksOrderedRecord(
+@Entity(tableName= "OrderedBooks")
+data class OrderedBooks(
     @PrimaryKey
-     val bookIsbn:String,
+     val isbn:String,
      val userId:String,
      val pubId:String,
+     val referrerId:String,
      val bookName:String,
      val bookCoverUrl:String,
-     val orderDateTime:String,
-     val key:String?
-)
+     val orderDateTime:String
+     )

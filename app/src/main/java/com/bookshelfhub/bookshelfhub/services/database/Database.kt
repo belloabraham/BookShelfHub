@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 class Database @Inject constructor(private var context: Context, private val localDb: LocalDb) {
 
-    suspend fun addUser(userRecord:UserRecord){
-        localDb.addUser(userRecord)
+    suspend fun addUser(user:User){
+        localDb.addUser(user)
 
         val oneTimeUserDataUpload: WorkRequest =
             OneTimeWorkRequestBuilder<UploadUserData>()
@@ -30,7 +30,7 @@ class Database @Inject constructor(private var context: Context, private val loc
         WorkManager.getInstance(context).enqueue(periodicUserDataUpload)
     }
 
-    suspend fun addBookInterest(bookInterest: BookInterestRecord){
+    suspend fun addBookInterest(bookInterest: BookInterest){
         localDb.addBookInterest(bookInterest)
         val oneTimeUserDataUpload: WorkRequest =
             OneTimeWorkRequestBuilder<UploadBookInterest>()
@@ -39,11 +39,11 @@ class Database @Inject constructor(private var context: Context, private val loc
         WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
     }
 
-     fun getLiveUser(userId:String): LiveData<UserRecord> {
+     fun getLiveUser(userId:String): LiveData<User> {
         return  localDb.getLiveUser(userId)
     }
 
-     fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>> {
+     fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {
         return  localDb.getLiveBookInterest(userId)
     }
 

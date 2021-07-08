@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(tableName= "User")
-data class UserRecord(
+data class User(
      @PrimaryKey
      val userId: String,
      val authType:String,

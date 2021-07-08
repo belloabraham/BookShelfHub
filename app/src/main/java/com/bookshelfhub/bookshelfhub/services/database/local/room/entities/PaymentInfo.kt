@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName= "PaymentInfo")
-data class PaymentInfoRecord(
+data class PaymentInfo(
      @PrimaryKey
       val cardNumber:String,
       val userId:String,

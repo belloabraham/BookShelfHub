@@ -18,6 +18,23 @@
         <item name="cardBackgroundColor">?backgroundColor</item>
     </style>
 
+
+    <style name="SearchItemTitle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_marginStart">@dimen/size_16</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/size_16sp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="SearchItemAuthor" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+
     <style name="ProfileNotifCircle">
         <item name="cardBackgroundColor">?colorError</item>
         <item name="android:layout_gravity">end|center_vertical</item>

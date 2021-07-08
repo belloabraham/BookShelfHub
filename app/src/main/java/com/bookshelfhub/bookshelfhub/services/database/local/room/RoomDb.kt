@@ -9,39 +9,39 @@ open class RoomDb(private val context:Context) {
 
 
     //Todo User
-    open fun getUser(userId:String): Optional<UserRecord> {
+    open fun getUser(userId:String): Optional<User> {
       return  RoomInstance.getDatabase(context).userDao().getUser(userId)
     }
 
-    open fun getLiveUser(userId:String): LiveData<UserRecord> {
+    open fun getLiveUser(userId:String): LiveData<User> {
         return  RoomInstance.getDatabase(context).userDao().getLiveUser(userId)
     }
 
-    open suspend fun addUser(userRecord:UserRecord){
-        RoomInstance.getDatabase(context).userDao().addUser(userRecord)
+    open suspend fun addUser(user:User){
+        RoomInstance.getDatabase(context).userDao().addUser(user)
     }
 
     //Todo Book Interest
-    open fun getBookInterest(userId:String): Optional<BookInterestRecord> {
+    open fun getBookInterest(userId:String): Optional<BookInterest> {
         return  RoomInstance.getDatabase(context).userDao().getBookInterest(userId)
     }
 
-    open fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterestRecord>> {
+    open fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {
         return  RoomInstance.getDatabase(context).userDao().getLiveBookInterest(userId)
     }
 
-    suspend fun addBookInterest(bookInterest: BookInterestRecord){
+    suspend fun addBookInterest(bookInterest: BookInterest){
         RoomInstance.getDatabase(context).userDao().addBookInterest(bookInterest)
     }
 
     //Todo Ordered Books
-    open suspend fun addBookOrdered(booksOrderedRecord: BooksOrderedRecord){
-        RoomInstance.getDatabase(context).userDao().addBookOrdered(booksOrderedRecord)
+    open suspend fun addBookOrdered(orderedBooks: OrderedBooks){
+        RoomInstance.getDatabase(context).userDao().addBookOrdered(orderedBooks)
     }
 
     //TODO Payment Info
-    open suspend fun addPaymentInfo(paymentInfoRecord: PaymentInfoRecord){
-        RoomInstance.getDatabase(context).userDao().addPaymentInfo(paymentInfoRecord)
+    open suspend fun addPaymentInfo(paymentInfo: PaymentInfo){
+        RoomInstance.getDatabase(context).userDao().addPaymentInfo(paymentInfo)
     }
 
     //TODO Search History

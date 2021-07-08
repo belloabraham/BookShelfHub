@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName= "BookInterest")
-data class BookInterestRecord(
+data class BookInterest(
     @PrimaryKey
      var userId: String,
      var uploaded: Boolean = false,

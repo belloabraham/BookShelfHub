@@ -8,5 +8,4 @@ data class PubReferrers(
     val pubId:String,
     @PrimaryKey
     val isbn:String
-
 )
