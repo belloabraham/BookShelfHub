@@ -8,6 +8,8 @@ import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
+import com.google.common.base.Optional
 import kotlinx.coroutines.runBlocking
 
 class UploadBookInterest (val context: Context, workerParams: WorkerParameters): Worker(context,
@@ -16,9 +18,19 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
 
     override fun doWork(): Result {
         val userAuth=UserAuth(StringUtil())
+
+        if (!userAuth.getIsUserAuthenticated()){
+            Result.retry()
+        }
+
         val userId = userAuth.getUserId()
+
         val localDb = LocalDb(context)
-         val  bookInterest = localDb.getBookInterest(userId)
+         val  bookInterest: Optional<BookInterest>
+             runBlocking {
+                 bookInterest = localDb.getBookInterest(userId)
+             }
+
          val bookInterestData = bookInterest.get()
         if (bookInterest.isPresent && !bookInterestData.uploaded){
                CloudDb().addDataAsync(bookInterestData, DbFields.USERS_COLL.KEY, userId, DbFields.BOOK_INTEREST.KEY){

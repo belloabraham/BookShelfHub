@@ -30,8 +30,9 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
-    private var shelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
-    private var storeSearchHistory: LiveData<List<StoreSearchHistory>> = MutableLiveData()
+    private var shelfShelfSearchHistory: LiveData<List<ShelfSearchResult>> = MutableLiveData()
+    private var storeSearchHistory: LiveData<List<StoreSearchResult>> = MutableLiveData()
+    private var orderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
     private var userReferralLink:String?=null
 
@@ -43,10 +44,15 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         checkForUpdate()
         user=localDb.getLiveUser(userId)
         bookInterest = localDb.getLiveBookInterest(userId)
-        shelfSearchHistory = localDb.getShelfSearchHistory(userId)
-        storeSearchHistory = localDb.getStoreSearchHistory(userId)
+        shelfShelfSearchHistory = localDb.getLiveShelfSearchHistory(userId)
+        storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
+        orderedBooks = localDb.getLiveOrderedBooks(userId)
     }
 
+
+    fun getOrderedBooks():LiveData<List<OrderedBooks>>{
+        return orderedBooks
+    }
 
     fun setUserReferralLink(value:String){
         userReferralLink=value
@@ -66,11 +72,11 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
        }
     }
 
-     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
-         return shelfSearchHistory
+     fun getShelfSearchHistory():LiveData<List<ShelfSearchResult>>{
+         return shelfShelfSearchHistory
      }
 
-    fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
+    fun getStoreSearchHistory():LiveData<List<StoreSearchResult>>{
         return storeSearchHistory
     }
 

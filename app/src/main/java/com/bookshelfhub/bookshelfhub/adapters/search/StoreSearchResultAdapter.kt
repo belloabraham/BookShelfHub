@@ -7,21 +7,26 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookItemActivity
-import com.bookshelfhub.bookshelfhub.ContentActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchResult
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-import java.nio.file.WatchEvent
 
 class StoreSearchResultAdapter (private val context:Context) {
 
-    fun getSearchResultAdapter(): ListAdapter<Any, RecyclerViewHolder<Any>> {
+    fun getSearchResultAdapter(): ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>> {
         return adapterOf {
+
+            diff(
+                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
+                areItemsTheSame = { old, new -> old.isbn == new.isbn }
+            )
+
 
             register(
                 layoutResource = R.layout.store_history_search_item,
@@ -51,7 +56,7 @@ class StoreSearchResultAdapter (private val context:Context) {
                 layoutResource = R.layout.store_result_search_item,
                 viewHolder = ::FindABookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.title.text = model.msg
+                    vh.title.text = model.title
                     vh.itemCardView.setOnClickListener {
                         val intent = Intent(context, WebViewActivity::class.java)
                         with(intent){
@@ -76,13 +81,13 @@ class StoreSearchResultAdapter (private val context:Context) {
         context.startActivity(intent)
     }
 
-    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<StoreSearchHistory>(view) {
+    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<StoreSearchResult>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val author: TextView = view.findViewById(R.id.author)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<StoreSearchHistory>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<StoreSearchResult>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val author: TextView = view.findViewById(R.id.author)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)

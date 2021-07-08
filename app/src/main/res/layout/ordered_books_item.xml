@@ -19,9 +19,8 @@
               android:layout_width="100dp"
               android:layout_height="150dp"
               android:contentDescription="@null"
-              android:src="@drawable/ic_book_sample"
               android:layout_gravity="center_horizontal"
-              android:scaleType="centerInside"
+              android:scaleType="fitXY"
               android:id="@+id/itemImageView"/>
 
       </com.google.android.material.card.MaterialCardView>
@@ -31,7 +30,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
                 android:layout_marginTop="@dimen/size_8"
-                android:layout_gravity="center"
+                android:paddingHorizontal="2dp"
+                android:layout_gravity="start"
                 style="@style/SearchItemAuthor"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

@@ -4,14 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.models.ISearchResult
 
-@Entity(tableName= "OrderedBooks")
-data class OrderedBooks(
-    @PrimaryKey
+@Entity(tableName= "StoreSearchHistory")
+data class StoreSearchResult(
+     @PrimaryKey
      override val isbn:String,
-     val userId:String,
-     val pubId:String,
-     val referrerId:String,
      override val title:String,
-     val bookCoverUrl:String,
-     val orderDateTime:String
-     ): ISearchResult
+     val userId:String,
+     val author:String,
+     val dateTime:String
+):ISearchResult

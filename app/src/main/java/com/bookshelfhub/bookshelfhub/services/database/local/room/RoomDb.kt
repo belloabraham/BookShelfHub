@@ -9,7 +9,7 @@ open class RoomDb(private val context:Context) {
 
 
     //Todo User
-    open fun getUser(userId:String): Optional<User> {
+    open suspend fun getUser(userId:String): Optional<User> {
       return  RoomInstance.getDatabase(context).userDao().getUser(userId)
     }
 
@@ -22,7 +22,7 @@ open class RoomDb(private val context:Context) {
     }
 
     //Todo Book Interest
-    open fun getBookInterest(userId:String): Optional<BookInterest> {
+    open suspend fun getBookInterest(userId:String): Optional<BookInterest> {
         return  RoomInstance.getDatabase(context).userDao().getBookInterest(userId)
     }
 
@@ -35,9 +35,13 @@ open class RoomDb(private val context:Context) {
     }
 
     //Todo Ordered Books
-    open suspend fun addBookOrdered(orderedBooks: OrderedBooks){
+    open suspend fun addOrderedBook(orderedBooks: OrderedBooks){
         RoomInstance.getDatabase(context).userDao().addBookOrdered(orderedBooks)
     }
+    open fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>> {
+       return  RoomInstance.getDatabase(context).userDao().getLiveBooksOrdered(userId)
+    }
+
 
     //TODO Payment Info
     open suspend fun addPaymentInfo(paymentInfo: PaymentInfo){
@@ -45,24 +49,24 @@ open class RoomDb(private val context:Context) {
     }
 
     //TODO Search History
-    open suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
+    open suspend fun addStoreSearchHistory(searchHistory: StoreSearchResult){
         RoomInstance.getDatabase(context).userDao().addStoreSearchHistory(searchHistory)
     }
 
-    open suspend fun addShelfSearchHistory(searchHistory: ShelfSearchHistory){
-        RoomInstance.getDatabase(context).userDao().addShelfSearchHistory(searchHistory)
+    open suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchResult){
+        RoomInstance.getDatabase(context).userDao().addShelfSearchHistory(shelfSearchHistory)
     }
 
-    open fun getShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
-      return  RoomInstance.getDatabase(context).userDao().getShelfSearchHistory(userId)
+    open fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchResult>> {
+      return  RoomInstance.getDatabase(context).userDao().getLiveShelfSearchHistory(userId)
     }
 
-    open fun getStoreSearchHistory(userId:String):LiveData<List<StoreSearchHistory>>{
-       return RoomInstance.getDatabase(context).userDao().getStoreSearchHistory(userId)
+    open fun getLiveStoreSearchHistory(userId:String):LiveData<List<StoreSearchResult>>{
+       return RoomInstance.getDatabase(context).userDao().getLiveStoreSearchHistory(userId)
     }
 
     //TODO Referrer
-    open fun getPubReferrer(isbn:String): Optional<PubReferrers> {
+    open suspend fun getPubReferrer(isbn:String): Optional<PubReferrers> {
         return  RoomInstance.getDatabase(context).userDao().getPubReferrer(isbn)
     }
 

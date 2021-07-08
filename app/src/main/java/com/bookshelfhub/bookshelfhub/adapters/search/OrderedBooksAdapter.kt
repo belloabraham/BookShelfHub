@@ -18,24 +18,32 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class OrderedBooksAdapter (private val context: Context) {
 
-    fun getOrderedBooksAdapter():ListAdapter<Any, RecyclerViewHolder<Any>>{
+    fun getOrderedBooksAdapter():ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>{
+
         return adapterOf {
+
+            diff(
+                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
+                areItemsTheSame = { old, new -> old.isbn == new.isbn }
+            )
+
             register(
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = ::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.title.text = model.bookName
-
+                    vh.title.text = model.title
                     vh.imageView.load(model.bookCoverUrl) {
                         crossfade(true)
                         placeholder(R.drawable.ic_book_sample)
                         transformations(RoundedCornersTransformation())
+                        error(R.drawable.ic_book_sample)
+                        crossfade(200)
                     }
 
                     vh.itemCardView.setOnClickListener {
                         val intent = Intent(context, ContentActivity::class.java)
                         with(intent){
-                            putExtra(Book.TITLE.KEY, model.bookName)
+                            putExtra(Book.TITLE.KEY, model.title)
                             putExtra(Book.ISBN.KEY, model.isbn)
                         }
                         context.startActivity(intent)

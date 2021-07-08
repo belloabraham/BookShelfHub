@@ -47,7 +47,6 @@ class InterestFragment : Fragment() {
     ): View {
         layout= FragmentInterestBinding.inflate(inflater, container, false)
 
-
         lifecycleScope.launch(IO){
             val userId = userAuth.getUserId()
             val  bkInterestRecord = localDb.getBookInterest(userId)

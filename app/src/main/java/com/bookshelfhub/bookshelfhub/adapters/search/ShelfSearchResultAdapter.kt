@@ -9,15 +9,21 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.ContentActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchResult
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class ShelfSearchResultAdapter(private val context: Context) {
 
-     fun getSearchResultAdapter(): ListAdapter<Any, RecyclerViewHolder<Any>> {
+     fun getSearchResultAdapter(): ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>> {
         return adapterOf {
+
+            diff(
+                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
+                areItemsTheSame = { old, new -> old.isbn == new.isbn }
+            )
 
             register(
                 layoutResource = R.layout.shelf_history_search_item,
@@ -44,7 +50,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
         }
     }
 
-    fun startContentActivity(isbn:String, title:String){
+    private fun startContentActivity(isbn:String, title:String){
         val intent = Intent(context, ContentActivity::class.java)
         with(intent){
             putExtra(Book.TITLE.KEY, title)
@@ -54,12 +60,12 @@ class ShelfSearchResultAdapter(private val context: Context) {
         context.startActivity(intent)
     }
 
-    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchHistory>(view) {
+    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchResult>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<StoreSearchHistory>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<OrderedBooks>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }

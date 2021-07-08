@@ -12,6 +12,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/appbarLayout"
         android:background="?backgroundColor"
         android:layout_gravity="top">
         <com.bookshelfhub.bookshelfhub.view.search.widget.MaterialSearchView
@@ -21,7 +22,7 @@
             app:search_navigationIconSupport="search"
             app:layout_scrollFlags="scroll|enterAlways"
             app:search_textHint="@string/shelf_search_hint"
-            app:search_transitionDuration="@integer/config_navAnimTime" />
+            app:search_transitionDuration="0" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:paddingBottom="@dimen/size_50"
+        android:visibility="gone"
+        android:id="@+id/emptyShelf"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/size_25">
 

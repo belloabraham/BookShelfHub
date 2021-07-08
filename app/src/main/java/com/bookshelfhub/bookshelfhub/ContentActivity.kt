@@ -3,11 +3,12 @@ package com.bookshelfhub.bookshelfhub
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityContentBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -34,7 +35,7 @@ class ContentActivity : AppCompatActivity() {
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
         if (isSearchItem){
             lifecycleScope.launch(IO){
-                localDb.addShelfSearchHistory(ShelfSearchHistory(isbn!!, title!!, userAuth.getUserId()))
+                localDb.addShelfSearchHistory(ShelfSearchResult(isbn!!, title!!, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
             }
         }
 

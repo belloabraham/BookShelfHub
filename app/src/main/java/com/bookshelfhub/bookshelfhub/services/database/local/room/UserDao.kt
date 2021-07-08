@@ -21,7 +21,7 @@ interface UserDao {
 
     //Todo User Record
     @Query("SELECT * FROM User WHERE userId = :userId")
-    fun getUser(userId:String): Optional<User>
+    suspend fun getUser(userId:String): Optional<User>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user:User)
@@ -32,7 +32,7 @@ interface UserDao {
 
     //Todo Book Interest
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
-    fun getBookInterest(userId:String): Optional<BookInterest>
+    suspend fun getBookInterest(userId:String): Optional<BookInterest>
 
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
     fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>>
@@ -40,31 +40,30 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookInterest(bookInterest: BookInterest)
 
-
     //Todo Ordered Books
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
-    fun getLiveBooksOrdered(userId:String): LiveData<OrderedBooks>
+    fun getLiveBooksOrdered(userId:String): LiveData<List<OrderedBooks>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookOrdered(paymentInfo:OrderedBooks)
 
 
     //Todo Search History
-    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 4")
-    fun getShelfSearchHistory(userId:String): LiveData<List<ShelfSearchHistory>>
+    @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY dateTime DESC LIMIT 4")
+    fun getLiveShelfSearchHistory(userId:String): LiveData<List<ShelfSearchResult>>
 
-    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order BY id DESC LIMIT 4")
-    fun getStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addStoreSearchHistory(searchHistory:StoreSearchHistory)
+    @Query("SELECT * FROM StoreSearchHistory WHERE userId = :userId Order BY dateTime DESC LIMIT 4")
+    fun getLiveStoreSearchHistory(userId:String): LiveData<List<StoreSearchResult>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addShelfSearchHistory(searchHistory:ShelfSearchHistory)
+    suspend fun addStoreSearchHistory(searchHistory:StoreSearchResult)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addShelfSearchHistory(shelfSearchHistory:ShelfSearchResult)
 
     //Todo Referral
     @Query("SELECT * FROM PubReferrers WHERE isbn = :isbn")
-    fun getPubReferrer(isbn:String): Optional<PubReferrers>
+    suspend fun getPubReferrer(isbn:String): Optional<PubReferrers>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
