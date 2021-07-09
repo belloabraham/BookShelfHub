@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class BookItemActivity : AppCompatActivity() {
 
         if (isSearchItem){
             lifecycleScope.launch(IO){
-                localDb.addStoreSearchHistory(StoreSearchResult(isbn!!, title!!, userAuth.getUserId(), author!!, LocalDateTimeUtil.getDateTimeAsString()))
+                localDb.addStoreSearchHistory(StoreSearchHistory(isbn!!, title!!, userAuth.getUserId(), author!!, LocalDateTimeUtil.getDateTimeAsString()))
             }
         }
     }

@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -19,11 +19,6 @@ class ShelfSearchResultAdapter(private val context: Context) {
 
      fun getSearchResultAdapter(): ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>> {
         return adapterOf {
-
-            diff(
-                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
-                areItemsTheSame = { old, new -> old.isbn == new.isbn }
-            )
 
             register(
                 layoutResource = R.layout.shelf_history_search_item,
@@ -60,7 +55,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
         context.startActivity(intent)
     }
 
-    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchResult>(view) {
+    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchHistory>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }

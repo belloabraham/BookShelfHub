@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 
-@Database(entities = [User::class, PaymentInfo::class, OrderedBooks::class, BookInterest::class, StoreSearchResult::class, ShelfSearchResult::class, PubReferrers::class,], version = 1, exportSchema = false)
+@Database(entities = [User::class, PaymentInfo::class, OrderedBooks::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, PubReferrers::class,], version = 1, exportSchema = false)
 abstract class RoomInstance: RoomDatabase() {
 
     abstract fun userDao():UserDao

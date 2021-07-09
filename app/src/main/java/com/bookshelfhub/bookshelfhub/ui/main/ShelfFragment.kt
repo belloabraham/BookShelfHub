@@ -10,16 +10,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
-import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.adapters.search.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -34,9 +31,8 @@ class ShelfFragment : Fragment() {
    // lateinit var userAuth: UserAuth
     @Inject
     lateinit var localDb: LocalDb
-    private var shelfSearchHistoryList:List<ShelfSearchResult> = emptyList()
+    private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
     private var orderedBookList:List<OrderedBooks> = emptyList()
-    private var searchList:List<ISearchResult> = emptyList()
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val recGridColumn = 3
@@ -60,35 +56,59 @@ class ShelfFragment : Fragment() {
 
             val books = listOf(
                 OrderedBooks("1","1","1","1","50 Shades of grey",
-                "https://i.ibb.co/yyXyxWk/keep-your-focus.jpg",
-                ""),
+                "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("2","2","2","2","Gifted Hands",
-                    "https://i.ibb.co/s1JbH68/nutricious-food.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("3","3","3","3","Tunde on the run",
-                    "https://i.ibb.co/5kGGcbq/ic-place-holder.png",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/ZTvCTYD/true-wealth.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Hello its me",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","The Carebean",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Pirates of the seven seas",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/QvHtgtS/dress-in-holiness.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Shreck",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/vYdcwLt/prioratise-the-word.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("3","3","3","3","Tunde on the run",
-                    "https://i.ibb.co/5kGGcbq/ic-place-holder.png",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/ZTvCTYD/true-wealth.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Hello its me",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","The Carebean",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Pirates of the seven seas",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/QvHtgtS/dress-in-holiness.jpg",
-                    ""),
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Shreck",
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/vYdcwLt/prioratise-the-word.jpg",
-                    "")
+                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "", "", null)
             )
 
             if (books.isNotEmpty()){
@@ -127,7 +147,6 @@ class ShelfFragment : Fragment() {
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     layout.materialSearchView.navigationIconSupport = if (hasFocus) {
-                        searchList = shelfSearchHistoryList.plus(orderedBookList)
                         params.scrollFlags=0
                         SearchLayout.NavigationIconSupport.ARROW
                     } else {
@@ -142,8 +161,8 @@ class ShelfFragment : Fragment() {
 
             setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    val result = searchList.filter {
-                        it.title.contains(newText,true)
+                    val result = orderedBookList.filter {
+                        it.title.contains(newText, true)
                     }
                     searchListAdapter.submitList(result)
                     return true

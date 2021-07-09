@@ -210,5 +210,7 @@
 
     <!-- TODO: Store Fragment -->
     <string name="request_a_book">Request for a book</string>
+    <string name="recommended_for">Recommended for you</string>
+    <string name="trending">Trending</string>
 
 </resources>

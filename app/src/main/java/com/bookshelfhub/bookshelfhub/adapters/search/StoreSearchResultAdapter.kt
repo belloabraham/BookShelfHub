@@ -11,22 +11,16 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.models.BookModel
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.models.ISearchResult
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class StoreSearchResultAdapter (private val context:Context) {
 
-    fun getSearchResultAdapter(): ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>> {
+    fun getSearchResultAdapter(): ListAdapter<Any, RecyclerViewHolder<Any>> {
         return adapterOf {
-
-            diff(
-                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
-                areItemsTheSame = { old, new -> old.isbn == new.isbn }
-            )
-
 
             register(
                 layoutResource = R.layout.store_history_search_item,
@@ -44,16 +38,16 @@ class StoreSearchResultAdapter (private val context:Context) {
                 layoutResource = R.layout.store_result_search_item,
                 viewHolder = ::SearchResultViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.title.text = model.title
-                    vh.author.text = model.title
+                    vh.title.text = model.name
+                    vh.author.text = model.author
                     vh.itemCardView.setOnClickListener {
-                        startBookItemActivity(model.isbn, model.title, model.author)
+                        startBookItemActivity(model.isbn, model.name, model.author)
                     }
                 }
             )
 
             register(
-                layoutResource = R.layout.store_result_search_item,
+                layoutResource = R.layout.cant_find_a_book,
                 viewHolder = ::FindABookViewHolder,
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
@@ -81,13 +75,13 @@ class StoreSearchResultAdapter (private val context:Context) {
         context.startActivity(intent)
     }
 
-    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<StoreSearchResult>(view) {
+    private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<StoreSearchHistory>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val author: TextView = view.findViewById(R.id.author)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<StoreSearchResult>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<BookModel>(view) {
         val title: TextView = view.findViewById(R.id.title)
         val author: TextView = view.findViewById(R.id.author)
         val itemCardView: CardView = view.findViewById(R.id.itemCardView)

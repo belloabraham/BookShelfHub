@@ -13,5 +13,7 @@ data class OrderedBooks(
      val referrerId:String,
      override val title:String,
      val bookCoverUrl:String,
-     val orderDateTime:String
-     ): ISearchResult
+     val orderDateTime:String,
+     val orderYearMonth:String,
+    val additionalInfo:String?
+    ): ISearchResult

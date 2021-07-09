@@ -11,16 +11,108 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:id="@+id/appbarLayout"
         android:background="?backgroundColor" >
-
     <com.bookshelfhub.bookshelfhub.view.search.widget.MaterialSearchView
         android:id="@+id/material_search_view"
         android:layout_width="match_parent"
         app:search_textHint="@string/store_search_hint"
+        app:layout_scrollFlags="scroll|enterAlways"
         app:search_navigationIconSupport="search"
         app:search_transitionDuration="0"
         android:layout_height="wrap_content" />
-
     </com.google.android.material.appbar.AppBarLayout>
+
+
+<androidx.core.widget.NestedScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/size_8"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/recommendedCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/recommended_for"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+            android:id="@+id/recommendedRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:shimmer_demo_child_count="4"
+            app:shimmer_demo_layout="@layout/store_book_item"
+            app:shimmer_demo_layout_manager_type="linear_horizontal" />
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/trendingCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/trending"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+            android:id="@+id/trndingRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:shimmer_demo_child_count="4"
+            app:shimmer_demo_layout="@layout/store_book_item"
+            app:shimmer_demo_layout_manager_type="linear_horizontal" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.core.widget.NestedScrollView>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

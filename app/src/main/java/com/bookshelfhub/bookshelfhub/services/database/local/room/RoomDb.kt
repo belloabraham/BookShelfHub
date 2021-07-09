@@ -49,19 +49,19 @@ open class RoomDb(private val context:Context) {
     }
 
     //TODO Search History
-    open suspend fun addStoreSearchHistory(searchHistory: StoreSearchResult){
+    open suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
         RoomInstance.getDatabase(context).userDao().addStoreSearchHistory(searchHistory)
     }
 
-    open suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchResult){
+    open suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
         RoomInstance.getDatabase(context).userDao().addShelfSearchHistory(shelfSearchHistory)
     }
 
-    open fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchResult>> {
+    open fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
       return  RoomInstance.getDatabase(context).userDao().getLiveShelfSearchHistory(userId)
     }
 
-    open fun getLiveStoreSearchHistory(userId:String):LiveData<List<StoreSearchResult>>{
+    open fun getLiveStoreSearchHistory(userId:String):LiveData<List<StoreSearchHistory>>{
        return RoomInstance.getDatabase(context).userDao().getLiveStoreSearchHistory(userId)
     }
 

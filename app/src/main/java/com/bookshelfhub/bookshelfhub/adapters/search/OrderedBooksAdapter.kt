@@ -33,11 +33,9 @@ class OrderedBooksAdapter (private val context: Context) {
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
                     vh.imageView.load(model.bookCoverUrl) {
-                        crossfade(true)
                         placeholder(R.drawable.ic_book_sample)
                         transformations(RoundedCornersTransformation())
                         error(R.drawable.ic_book_sample)
-                        crossfade(200)
                     }
 
                     vh.itemCardView.setOnClickListener {
@@ -50,7 +48,6 @@ class OrderedBooksAdapter (private val context: Context) {
                     }
                 }
             )
-
         }
     }
 
