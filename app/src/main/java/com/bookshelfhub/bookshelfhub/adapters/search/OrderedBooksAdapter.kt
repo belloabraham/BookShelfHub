@@ -1,5 +1,7 @@
 package com.bookshelfhub.bookshelfhub.adapters.search
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -16,7 +18,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Order
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-class OrderedBooksAdapter (private val context: Context) {
+class OrderedBooksAdapter (private val activity: Activity) {
 
     fun getOrderedBooksAdapter():ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>{
 
@@ -39,12 +41,12 @@ class OrderedBooksAdapter (private val context: Context) {
                     }
 
                     vh.itemCardView.setOnClickListener {
-                        val intent = Intent(context, ContentActivity::class.java)
+                        val intent = Intent(activity, ContentActivity::class.java)
                         with(intent){
                             putExtra(Book.TITLE.KEY, model.title)
                             putExtra(Book.ISBN.KEY, model.isbn)
                         }
-                        context.startActivity(intent)
+                        activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
                     }
                 }
             )

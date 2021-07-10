@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -266,6 +267,13 @@ class MoreFragment : Fragment() {
             putExtra(Profile.FRAGMENT_ID.KEY, fragmentID)
         }
         startActivity(intent)
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): MoreFragment {
+            return MoreFragment()
+        }
     }
 
 }

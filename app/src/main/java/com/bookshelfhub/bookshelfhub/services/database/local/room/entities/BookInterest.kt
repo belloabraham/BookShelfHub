@@ -15,7 +15,6 @@ data class BookInterest(
      var biographyChecked:Boolean = false,
      var magazineChecked:Boolean = false,
      var poetryChecked:Boolean = false,
-     var romanceChecked:Boolean = false,
      var religionChecked:Boolean = false,
      var humourChecked:Boolean = false,
      var sportChecked:Boolean = false,

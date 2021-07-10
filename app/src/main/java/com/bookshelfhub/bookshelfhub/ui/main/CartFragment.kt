@@ -21,5 +21,11 @@ class CartFragment : Fragment() {
         return layout.root
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(): CartFragment {
+            return CartFragment()
+        }
+    }
 
 }

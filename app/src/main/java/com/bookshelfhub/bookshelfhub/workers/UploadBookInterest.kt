@@ -31,8 +31,8 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
                  bookInterest = localDb.getBookInterest(userId)
              }
 
-         val bookInterestData = bookInterest.get()
-        if (bookInterest.isPresent && !bookInterestData.uploaded){
+        if (bookInterest.isPresent && !bookInterest.get().uploaded){
+            val bookInterestData = bookInterest.get()
                CloudDb().addDataAsync(bookInterestData, DbFields.USERS_COLL.KEY, userId, DbFields.BOOK_INTEREST.KEY){
                    bookInterestData.uploaded=true
                 runBlocking {

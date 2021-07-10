@@ -26,7 +26,22 @@
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="p">@color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
+
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:windowEnterTransition">@transition/slide</item>
+        <item name="android:windowExitTransition">@transition/slide</item>
+
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/slide</item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/slide</item>
+
     </style>
+
+
+
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>

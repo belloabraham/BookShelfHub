@@ -35,6 +35,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var orderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
     private var userReferralLink:String?=null
+    private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
 
 
     init {
@@ -90,6 +91,13 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
       return  newAppUpdateNotifNo
     }
 
+
+    fun setOnBackPressed( value:Boolean){
+        onBackPressed.value = value
+    }
+    fun getOnBackPressed():LiveData<Boolean>{
+        return onBackPressed
+    }
 
     fun setBookInterestNotifNo(value:Int){
         bookInterestNotifNo.value=value

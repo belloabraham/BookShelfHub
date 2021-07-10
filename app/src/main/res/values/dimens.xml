@@ -13,9 +13,6 @@
     <dimen name="size_70">70dp</dimen>
 
 
-
-
-
     <dimen name="size_50">50dp</dimen>
 
     <dimen name="error_btn_size">26dp</dimen>
@@ -82,6 +79,11 @@
     <dimen name="date_picker_height_focus">1dp</dimen>
     <dimen name="date_picker_width_margin">1dp</dimen>
     <dimen name="date_picker_width_space">6dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="appbar_padding">16dp</dimen>
+    <dimen name="appbar_padding_top">8dp</dimen>
 
 
 </resources>

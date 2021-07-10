@@ -16,16 +16,4 @@
         android:name="com.bookshelfhub.bookshelfhub.ui.main.StoreFragment"
         android:label="@string/store"
         tools:layout="@layout/fragment_store" />
-
-    <fragment
-        android:id="@+id/cart_fragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.main.CartFragment"
-        android:label="@string/cart"
-        tools:layout="@layout/fragment_cart" />
-
-    <fragment
-        android:id="@+id/profile_fragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.main.MoreFragment"
-        android:label="@string/profile"
-        tools:layout="@layout/fragment_more" />
 </navigation>

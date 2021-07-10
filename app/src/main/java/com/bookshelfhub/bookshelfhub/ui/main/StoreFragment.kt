@@ -5,13 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 
 class StoreFragment : Fragment() {
 
     private lateinit var layout: FragmentStoreBinding
+    private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,16 +48,24 @@ class StoreFragment : Fragment() {
         }
 
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
             }else{
-                activity?.finish()
+               mainActivityViewModel.setOnBackPressed(true)
             }
         }
 
 
+
         return layout.root
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): StoreFragment {
+            return StoreFragment()
+        }
     }
 
 

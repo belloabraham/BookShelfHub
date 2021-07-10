@@ -28,6 +28,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/size_8"
+    android:paddingBottom="50dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -64,14 +65,10 @@
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommendedRecView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:shimmer_demo_child_count="4"
-            app:shimmer_demo_layout="@layout/store_book_item"
-            app:shimmer_demo_layout_manager_type="linear_horizontal" />
-
+            android:layout_height="wrap_content"/>
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -102,13 +99,352 @@
             </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/trndingRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:shimmer_demo_child_count="4"
-            app:shimmer_demo_layout="@layout/store_book_item"
-            app:shimmer_demo_layout_manager_type="linear_horizontal" />
+            />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/artAndCraftCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/art_craft"
+                    style="@style/StoreItemsTitle"/>
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/artAndCraftRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/businessAndFinanceCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/business_finance"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/businessRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/comicCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/comic"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comicRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/cookBooksCard">
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cookBooksRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/historyCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/history"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/lanAndRefCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/languages_reference"
+                    style="@style/StoreItemsTitle"/>
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/langAndRefRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/lawCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/law"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lawRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/loveAndPoetryCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/poetry"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/loveAndPoetryRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/religionCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/religion"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/religionRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/sciAndTechCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/science_technology"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sciAndTechRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/size_4">
+
+            <TextView
+                style="@style/StoreItemsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/cook_books" />
+
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:layout_gravity="end|center_vertical"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_right_24" />
+
+        </FrameLayout>
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -383,18 +383,6 @@ class BookInterestObservable (private val bkInts:BookInterest): BaseObservable()
     }
 
     @Bindable
-    fun getIsRomance():Boolean{
-        return bkInts.romanceChecked
-    }
-
-    fun setIsRomance(value:Boolean){
-        if(bkInts.romanceChecked!=value){
-            bkInts.romanceChecked=value
-            notifyPropertyChanged(BR.isRomance)
-        }
-    }
-
-    @Bindable
     fun getIsExamAndTestPrep():Boolean{
         return bkInts.examAndTestPrepChecked
     }

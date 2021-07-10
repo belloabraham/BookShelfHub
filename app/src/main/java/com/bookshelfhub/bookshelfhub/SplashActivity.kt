@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -30,25 +31,25 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var dynamicLink: DynamicLink
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-       hideSystemUI(window)
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        hideSystemUI(window)
 
         if (userAuth.getIsUserAuthenticated()){
             lifecycleScope.launch(IO) {
                 val user = localDb.getUser(userAuth.getUserId())
-              withContext(Main){
-                 val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
-                      Intent(this@SplashActivity, MainActivity::class.java)
-                  }else{
-                      Intent(this@SplashActivity, WelcomeActivity::class.java)
-                  }
-                  getReferrer(intent)
-              }
+                withContext(Main){
+                    val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
+                        Intent(this@SplashActivity, MainActivity::class.java)
+                    }else{
+                        Intent(this@SplashActivity, WelcomeActivity::class.java)
+                    }
+                    getReferrer(intent)
+                }
             }
         }else{
-             val intent = Intent(this, WelcomeActivity::class.java)
-             getReferrer(intent)
+            val intent = Intent(this, WelcomeActivity::class.java)
+            getReferrer(intent)
         }
 
     }

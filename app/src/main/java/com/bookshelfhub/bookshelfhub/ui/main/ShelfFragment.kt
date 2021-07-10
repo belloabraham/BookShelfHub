@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.room.FtsOptions
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.search.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
@@ -17,18 +20,18 @@ import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
-    //@Inject
-   // lateinit var userAuth: UserAuth
     @Inject
     lateinit var localDb: LocalDb
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
@@ -36,7 +39,6 @@ class ShelfFragment : Fragment() {
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val recGridColumn = 3
-
     private lateinit var layout: FragmentShelfBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +46,8 @@ class ShelfFragment : Fragment() {
     ): View {
         layout= FragmentShelfBinding.inflate(inflater, container, false)
 
-        val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
-        val orderedBooksAdapter = OrderedBooksAdapter(requireContext()).getOrderedBooksAdapter()
+         val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
+         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity()).getOrderedBooksAdapter()
 
         mainActivityViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
@@ -56,58 +58,148 @@ class ShelfFragment : Fragment() {
 
             val books = listOf(
                 OrderedBooks("1","1","1","1","50 Shades of grey",
-                "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Bqv7XLw/bookfair1.png",
                     "", "", null),
                 OrderedBooks("2","2","2","2","Gifted Hands",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/ph2hL56/time-for-yourself.png",
                     "", "", null),
                 OrderedBooks("3","3","3","3","Tunde on the run",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/ckJQXYC/stay-home-blue.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/QDHKYV8/peace-where-love.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Hello its me",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/YdZMYzW/best-place.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","The Carebean",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/D1mYc3s/greate-weekend.png",
                     "", "", null),
                 OrderedBooks("3","3","3","3","Pirates of the seven seas",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Rb40dwX/home-sweet-home.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/k0J2mt0/lazy-sunday.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Shreck",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Dfn7jGQ/my-cosy-home.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/gMpTyLY/bookfair2.png",
                     "", "", null),
                 OrderedBooks("3","3","3","3","Tunde on the run",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Px19qdd/bookfair3.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/ZWbKSZR/bookfair4.png",
+                    "", "", null),
+                OrderedBooks("1","1","1","1","50 Shades of grey",
+                    "https://i.ibb.co/Bqv7XLw/bookfair1.png",
+                    "", "", null),
+                OrderedBooks("2","2","2","2","Gifted Hands",
+                    "https://i.ibb.co/ph2hL56/time-for-yourself.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/ckJQXYC/stay-home-blue.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/QDHKYV8/peace-where-love.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Hello its me",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/YdZMYzW/best-place.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","The Carebean",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/D1mYc3s/greate-weekend.png",
                     "", "", null),
                 OrderedBooks("3","3","3","3","Pirates of the seven seas",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Rb40dwX/home-sweet-home.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/k0J2mt0/lazy-sunday.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Shreck",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/Dfn7jGQ/my-cosy-home.png",
                     "", "", null),
                 OrderedBooks("4","4","4","4","Prince of Persia",
-                    "https://i.ibb.co/Kyqh7G8/sdd.png",
+                    "https://i.ibb.co/gMpTyLY/bookfair2.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/Px19qdd/bookfair3.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/ZWbKSZR/bookfair4.png",
+                    "", "", null),
+                OrderedBooks("1","1","1","1","50 Shades of grey",
+                    "https://i.ibb.co/Bqv7XLw/bookfair1.png",
+                    "", "", null),
+                OrderedBooks("2","2","2","2","Gifted Hands",
+                    "https://i.ibb.co/ph2hL56/time-for-yourself.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/ckJQXYC/stay-home-blue.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/QDHKYV8/peace-where-love.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Hello its me",
+                    "https://i.ibb.co/YdZMYzW/best-place.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","The Carebean",
+                    "https://i.ibb.co/D1mYc3s/greate-weekend.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Pirates of the seven seas",
+                    "https://i.ibb.co/Rb40dwX/home-sweet-home.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/k0J2mt0/lazy-sunday.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Shreck",
+                    "https://i.ibb.co/Dfn7jGQ/my-cosy-home.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/gMpTyLY/bookfair2.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/Px19qdd/bookfair3.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/ZWbKSZR/bookfair4.png",
+                    "", "", null),
+                OrderedBooks("1","1","1","1","50 Shades of grey",
+                    "https://i.ibb.co/Bqv7XLw/bookfair1.png",
+                    "", "", null),
+                OrderedBooks("2","2","2","2","Gifted Hands",
+                    "https://i.ibb.co/ph2hL56/time-for-yourself.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/ckJQXYC/stay-home-blue.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/QDHKYV8/peace-where-love.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Hello its me",
+                    "https://i.ibb.co/YdZMYzW/best-place.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","The Carebean",
+                    "https://i.ibb.co/D1mYc3s/greate-weekend.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Pirates of the seven seas",
+                    "https://i.ibb.co/Rb40dwX/home-sweet-home.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/k0J2mt0/lazy-sunday.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Shreck",
+                    "https://i.ibb.co/Dfn7jGQ/my-cosy-home.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/gMpTyLY/bookfair2.png",
+                    "", "", null),
+                OrderedBooks("3","3","3","3","Tunde on the run",
+                    "https://i.ibb.co/Px19qdd/bookfair3.png",
+                    "", "", null),
+                OrderedBooks("4","4","4","4","Prince of Persia",
+                    "https://i.ibb.co/ZWbKSZR/bookfair4.png",
                     "", "", null)
             )
 
@@ -120,11 +212,12 @@ class ShelfFragment : Fragment() {
                 orderedBookList = books
             }else{
                 layout.emptyShelf.visibility = View.VISIBLE
-                layout.orderedBooksRecView.visibility = View.GONE
+                layout.orderedBooksRecView.visibility = View.INVISIBLE
                 layout.materialSearchView.search_search_edit_text.isEnabled = false
                 layout.materialSearchView.search_image_view_navigation.isEnabled = false
             }
         })
+
 
         layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), recGridColumn)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
@@ -175,14 +268,13 @@ class ShelfFragment : Fragment() {
             })
         }
 
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+        mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner, Observer { isBackPressed ->
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
-            }else{
-               activity?.finish()
+            }else if (isBackPressed){
+                activity?.finish()
             }
-        }
+        })
 
         layout.gotoStoreBtn.setOnClickListener {
             mainActivityViewModel.setSelectedIndex(1)
@@ -190,5 +282,13 @@ class ShelfFragment : Fragment() {
 
         return layout.root
     }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(): ShelfFragment {
+            return ShelfFragment()
+        }
+    }
+
 
 }

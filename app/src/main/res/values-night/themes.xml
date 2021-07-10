@@ -24,7 +24,11 @@
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="p">@android:color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
+
+
     </style>
+
+
 
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">

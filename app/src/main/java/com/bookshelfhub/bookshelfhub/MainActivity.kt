@@ -9,11 +9,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.adapters.main.CartMorePagerAdapter
+import com.bookshelfhub.bookshelfhub.adapters.main.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
@@ -23,6 +22,10 @@ import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
+import com.bookshelfhub.bookshelfhub.ui.main.CartFragment
+import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
+import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
+import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -55,16 +58,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userId:String
     private val ENFORCE_UPDATE="enforce_update"
     private val CHANGE_LOG="change_log"
-    private lateinit var navController:NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         userId=mainActivityViewModel.getUserId()
-
-        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
-        getReferrer(referrer, userId)
 
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -119,11 +118,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-
-       val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.findNavController()
-
-        navigateTo(R.id.shelf_fragment)
+        setUpShelfStoreViewPager()
+        setUpCartMoreViewPager()
 
         layout.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
@@ -132,15 +128,22 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
+                if (newIndex>1){
+                    layout.shelfStoreViewPager.visibility=View.INVISIBLE
+                    layout.cartMoreViewPager.visibility=View.VISIBLE
+                }else{
+                    layout.shelfStoreViewPager.visibility=View.VISIBLE
+                    layout.cartMoreViewPager.visibility=View.INVISIBLE
+                }
                 when(newIndex){
                     0->
-                        navigateTo(R.id.shelf_fragment)
+                       layout.shelfStoreViewPager.setCurrentItem(0, true)
                     1->
-                        navigateTo(R.id.store_fragment)
+                        layout.shelfStoreViewPager.setCurrentItem(1, true)
                     2->
-                        navigateTo(R.id.cart_fragment)
+                        layout.cartMoreViewPager.setCurrentItem(0, true)
                     3->
-                        navigateTo(R.id.profile_fragment)
+                        layout.cartMoreViewPager.setCurrentItem(1, true)
                 }
             }
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
@@ -230,7 +233,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){
+    override fun onStart() {
+        super.onStart()
+        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
+        getReferrer(referrer, userId)
+    }
+
+    private fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){
         val title = remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY)
         val description = remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY)
         val imageUrl = remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)
@@ -239,11 +248,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun navigateTo(fragmentId:Int){
-        navController.popBackStack()
-        navController.navigate(fragmentId)
+
+    private fun setUpShelfStoreViewPager(){
+        val  fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
+        val titles = arrayOf(getString(R.string.shelf), getString(R.string.store))
+        val shelfStoreAdapter = ShelfStorePagerAdapter(supportFragmentManager, fragmentList, titles)
+        layout.shelfStoreViewPager.adapter = shelfStoreAdapter
     }
 
+    private fun setUpCartMoreViewPager(){
+        val  fragmentList = listOf(CartFragment.newInstance(), MoreFragment.newInstance())
+        val titles = arrayOf(getString(R.string.cart), getString(R.string.more))
+        val cartMoreAdapter = CartMorePagerAdapter( supportFragmentManager, fragmentList, titles)
+        layout.cartMoreViewPager.adapter = cartMoreAdapter
+    }
 
 
 }

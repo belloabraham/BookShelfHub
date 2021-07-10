@@ -131,45 +131,47 @@
 
 
     <!-- TODO: Book Interest -->
-    <string name="science_technology">Science and Technology</string>
-    <string name="biography">Biography</string>
-    <string name="history">History</string>
-    <string name="poetry">Love and Poetry</string>
-    <string name="romance">Romance</string>
-    <string name="comic">Comic</string>
     <string name="fiction">Fiction</string>
-    <string name="languages_reference">Languages and Reference</string>
     <string name="data_analysis">Data Analysis</string>
-    <string name="art_craft">Art and Craft</string>
-    <string name="law">Law</string>
-    <string name="business_finance">Business and Finance</string>
     <string name="travel">Travel</string>
     <string name="engineering_mathematics">Engineering and Mathematics</string>
-    <string name="sport">Sport</string>
-    <string name="religion">Religion</string>
     <string name="christianity">Christianity</string>
     <string name="islam">Islam</string>
+    <string name="biography">Biography</string>
     <string name="literature">Literature</string>
     <string name="education">Education</string>
     <string name="health_fitness">Health and Fitness</string>
-    <string name="cook_books">Cook Books</string>
-    <string name="manuals">How-to and Manuals</string>
     <string name="preparation">Exam or Test Preparation</string>
-    <string name="reference">Reference and Dictionary</string>
     <string name="humour">Humour</string>
     <string name="relationships">Relationships</string>
     <string name="psychology">Psychology</string>
     <string name="novel">Novel</string>
     <string name="photography">Photography</string>
     <string name="transportation">Transportation</string>
-    <string name="politics">Politics</string>
     <string name="fashion">Fashion</string>
     <string name="magazine">Magazine</string>
     <string name="music">Music</string>
-    <string name="news">News</string>
     <string name="computer_programming">Computer Programming</string>
     <string name="archeology">Archeology</string>
     <string name="civil_eng">Civil Engineering</string>
+
+    <!-- TODO: Store Categories -->
+    <string name="cook_books">Cook Books</string>//
+    <string name="manuals">How-to and Manuals</string>//
+    <string name="art_craft">Art and Craft</string>//
+    <string name="law">Law</string>//
+    <string name="comic">Comic</string>
+    <string name="business_finance">Business and Finance</string>//
+    <string name="news">News</string>//
+    <string name="languages_reference">Languages and Reference</string>//
+    <string name="science_technology">Science and Technology</string>//
+    <string name="history">History</string>//
+    <string name="poetry">Love and Poetry</string>
+    //
+    <string name="sport">Sport</string>//
+    <string name="religion">Religion</string>//
+    <string name="politics">Politics</string>
+
 
     <string name="interest_Saved">Book interest saved</string>
     <string name="unsaved_interest_title">Save book interest?</string>
@@ -212,5 +214,8 @@
     <string name="request_a_book">Request for a book</string>
     <string name="recommended_for">Recommended for you</string>
     <string name="trending">Trending</string>
+    <string name="title_activity_test">Test</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 
 </resources>

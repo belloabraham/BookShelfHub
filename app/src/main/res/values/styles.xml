@@ -63,7 +63,7 @@
         <item name="cardMaxElevation">0dp</item>
     </style>
 
-    <style name="StoreItemsTitle" parent="@style/TextAppearance.MaterialComponents.Subtitle2">
+    <style name="StoreItemsTitle" parent="@style/TextAppearance.MaterialComponents.Subtitle1">
         <item name="android:textSize">@dimen/profile_item_title_size</item>
         <item name="android:layout_gravity">start|center_vertical</item>
         <item name="android:paddingStart">16dp</item>

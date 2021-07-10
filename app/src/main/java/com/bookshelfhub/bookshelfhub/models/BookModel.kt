@@ -14,5 +14,6 @@ class BookModel {
     val category: String = ""
     val copyrightLawUrl: String = ""
     val authorEmail: String = ""
+    val tags: String = ""
     val trending: Boolean = false
 }
