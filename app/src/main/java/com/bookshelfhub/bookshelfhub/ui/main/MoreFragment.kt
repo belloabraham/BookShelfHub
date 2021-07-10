@@ -91,12 +91,7 @@ class MoreFragment : Fragment() {
         }
 
         darkModeToggle.setOnCheckedChangeListener { isChecked->
-            val mode = if (isChecked){
-                AppCompatDelegate.MODE_NIGHT_YES
-            }else{
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-            AppCompatDelegate.setDefaultNightMode(mode)
+            mainActivityViewModel.setIsNightMode(isChecked)
         }
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->

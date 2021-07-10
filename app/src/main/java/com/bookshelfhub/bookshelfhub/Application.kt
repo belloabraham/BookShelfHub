@@ -35,7 +35,6 @@ class Application: android.app.Application() {
         notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
          enqueueWorkers()
-
     }
 
 

@@ -34,13 +34,13 @@
 
         <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
-            @transition/slide</item>
+            @transition/slide
+        </item>
         <item name="android:windowSharedElementExitTransition">
-            @transition/slide</item>
+            @transition/slide
+        </item>
 
     </style>
-
-
 
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">

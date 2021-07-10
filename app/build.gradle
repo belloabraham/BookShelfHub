@@ -134,6 +134,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     //RecyclerView
     implementation 'io.github.ibrahimyilmaz:kiel:1.2.1'
+    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
+
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:27.1.0')

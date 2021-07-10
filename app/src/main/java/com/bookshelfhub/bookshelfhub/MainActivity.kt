@@ -1,12 +1,17 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
@@ -103,6 +108,8 @@ class MainActivity : AppCompatActivity() {
             }*/
         })
 
+
+
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
             if(bookInterest.isPresent && bookInterest.get().added){
                 mainActivityViewModel.setBookInterestNotifNo(0)
@@ -128,6 +135,7 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
+
                 if (newIndex>1){
                     layout.shelfStoreViewPager.visibility=View.INVISIBLE
                     layout.cartMoreViewPager.visibility=View.VISIBLE
@@ -148,6 +156,17 @@ class MainActivity : AppCompatActivity() {
             }
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
             }
+        })
+
+
+        mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
+            layout.shelfStoreViewPager.currentItem=0
+            val mode = if (isNightMode){
+                AppCompatDelegate.MODE_NIGHT_YES
+            }else{
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+            AppCompatDelegate.setDefaultNightMode(mode)
         })
 
         showProgressPopupDialog()
@@ -262,6 +281,5 @@ class MainActivity : AppCompatActivity() {
         val cartMoreAdapter = CartMorePagerAdapter( supportFragmentManager, fragmentList, titles)
         layout.cartMoreViewPager.adapter = cartMoreAdapter
     }
-
 
 }

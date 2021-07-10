@@ -17,17 +17,17 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityProfileBinding
+    private lateinit var layout: ActivityProfileBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        layout = ActivityProfileBinding.inflate(layoutInflater)
+        setContentView(layout.root)
         val title = intent.getIntExtra(Profile.TITLE.KEY, 0)
         val fragmentId = intent.getIntExtra(Profile.FRAGMENT_ID.KEY,0)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(layout.toolbar)
         supportActionBar?.setTitle(title)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

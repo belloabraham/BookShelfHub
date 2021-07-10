@@ -36,6 +36,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private val userId:String = userAuth.getUserId()
     private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
+    private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
 
     init {
@@ -50,6 +51,13 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         orderedBooks = localDb.getLiveOrderedBooks(userId)
     }
 
+    fun getIsNightMode():LiveData<Boolean>{
+       return isNightMode
+    }
+
+    fun setIsNightMode(value:Boolean){
+        isNightMode.value = value
+    }
 
     fun getOrderedBooks():LiveData<List<OrderedBooks>>{
         return orderedBooks

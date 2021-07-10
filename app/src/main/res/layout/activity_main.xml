@@ -38,7 +38,7 @@
         android:layout_height="@dimen/bottom_vav_height"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
-        android:background="?android:attr/windowBackground"
+        android:background="?backgroundColor"
         app:abb_indicatorAppearance="round"
         app:abb_indicatorHeight="4dp"
         app:abb_indicatorMargin="16dp"

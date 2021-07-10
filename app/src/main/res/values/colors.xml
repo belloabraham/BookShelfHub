@@ -26,6 +26,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+
+    <color name="reading_white">#F2FFFFFF</color>
+
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>
@@ -42,8 +45,6 @@
 
     <color name="blue_grey_100">#B0BEC5</color>
     <color name="night">#022231</color>
-
-
 
     <color name="search_shadow">#99FFFFFF</color>
 

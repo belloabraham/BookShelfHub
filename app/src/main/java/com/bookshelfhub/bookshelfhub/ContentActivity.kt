@@ -1,7 +1,9 @@
 package com.bookshelfhub.bookshelfhub
 
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityContentBinding
@@ -12,6 +14,9 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Shelf
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -38,7 +43,29 @@ class ContentActivity : AppCompatActivity() {
                 localDb.addShelfSearchHistory(ShelfSearchHistory(isbn!!, title!!, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
             }
         }
+        setSupportActionBar(layout.toolbar)
+        supportActionBar?.title = title
 
+        layout.pdfView.fitsSystemWindows = true
+        layout.pdfView
+            .fromAsset("welcome.pdf")
+          /*  .enableSwipe(true) // allows to block changing pages using swipe
+            .enableDoubletap(true)
+            .enableAnnotationRendering(true) // render annotations (such as comments, colors or forms)
+            .nightMode(true) // toggle night mode*/
+            .spacing(0)
+            .load()
 
     }
+
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        super.onBackPressed()
+        return true
+    }
+
+
+
+
 }
