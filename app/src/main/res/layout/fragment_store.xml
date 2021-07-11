@@ -29,6 +29,8 @@
     android:layout_height="match_parent"
     android:paddingTop="@dimen/size_8"
     android:paddingBottom="50dp"
+    android:visibility="invisible"
+    android:id="@+id/booksNestedScroll"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -100,10 +102,9 @@
         </com.google.android.material.card.MaterialCardView>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/trndingRecView"
+            android:id="@+id/trendingRecView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -212,6 +213,27 @@
             style="@style/StoreItemsTitleCard"
             android:id="@+id/cookBooksCard">
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/cook_books"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -252,6 +274,41 @@
             android:id="@+id/historyRecView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/howToCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/manuals"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/howToRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -354,6 +411,75 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/newsCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/news"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/newsRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/politicsCard">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/politics"
+                    style="@style/StoreItemsTitle"/>
+
+
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/politicsRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -406,7 +532,6 @@
                     android:text="@string/science_technology"
                     style="@style/StoreItemsTitle"/>
 
-
                 <ImageView
                     android:layout_width="@dimen/image_btn_size"
                     android:layout_height="@dimen/image_btn_size"
@@ -423,32 +548,62 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <FrameLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/size_4">
+            android:layout_height="50dp"
+            style="@style/StoreItemsTitleCard"
+            android:id="@+id/sportCard">
 
-            <TextView
-                style="@style/StoreItemsTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/cook_books" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_4">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/sport"
+                    style="@style/StoreItemsTitle"/>
 
-            <ImageView
-                android:layout_width="@dimen/image_btn_size"
-                android:layout_height="@dimen/image_btn_size"
-                android:layout_gravity="end|center_vertical"
-                android:contentDescription="@null"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_arrow_right_24" />
+                <ImageView
+                    android:layout_width="@dimen/image_btn_size"
+                    android:layout_height="@dimen/image_btn_size"
+                    android:layout_gravity="end|center_vertical"
+                    android:src="@drawable/ic_arrow_right_24"
+                    android:contentDescription="@null"
+                    android:scaleType="centerInside"/>
 
-        </FrameLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/sportRecView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.core.widget.NestedScrollView>
 
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white_overlay"
+        android:fitsSystemWindows="true"
+        android:id="@+id/loadingContainer">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingAnimView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            app:lottie_rawRes="@raw/bouncing_ball"
+            android:layout_gravity="center"
+            app:lottie_loop="true"
+            app:lottie_cacheComposition="false"
+            app:lottie_autoPlay="true" />
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

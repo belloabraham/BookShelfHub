@@ -156,20 +156,19 @@
     <string name="civil_eng">Civil Engineering</string>
 
     <!-- TODO: Store Categories -->
-    <string name="cook_books">Cook Books</string>//
-    <string name="manuals">How-to and Manuals</string>//
-    <string name="art_craft">Art and Craft</string>//
-    <string name="law">Law</string>//
+    <string name="cook_books">Cook Books</string>
+    <string name="manuals">How-to and Manuals</string>
+    <string name="art_craft">Art and Craft</string>
+    <string name="law">Law</string>
     <string name="comic">Comic</string>
-    <string name="business_finance">Business and Finance</string>//
+    <string name="business_finance">Business and Finance</string>
     <string name="news">News</string>//
-    <string name="languages_reference">Languages and Reference</string>//
-    <string name="science_technology">Science and Technology</string>//
-    <string name="history">History</string>//
+    <string name="languages_reference">Languages and Reference</string>
+    <string name="science_technology">Science and Technology</string>
+    <string name="history">History</string>
     <string name="poetry">Love and Poetry</string>
-    //
-    <string name="sport">Sport</string>//
-    <string name="religion">Religion</string>//
+    <string name="sport">Sport</string>
+    <string name="religion">Religion</string>
     <string name="politics">Politics</string>
 
 
@@ -214,8 +213,8 @@
     <string name="request_a_book">Request for a book</string>
     <string name="recommended_for">Recommended for you</string>
     <string name="trending">Trending</string>
-    <string name="title_activity_test">Test</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="title_activity_book">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

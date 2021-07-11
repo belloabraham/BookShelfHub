@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
-import com.bookshelfhub.bookshelfhub.ContentActivity
+import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.models.ISearchResult
@@ -26,7 +26,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
                     vh.itemCardView.setOnClickListener {
-                        startContentActivity(model.isbn, model.title)
+                        startBookActivity(model.isbn, model.title)
                     }
                 }
             )
@@ -37,7 +37,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
                     vh.itemCardView.setOnClickListener {
-                        startContentActivity(model.isbn, model.title)
+                        startBookActivity(model.isbn, model.title)
                     }
                 }
             )
@@ -45,8 +45,8 @@ class ShelfSearchResultAdapter(private val context: Context) {
         }
     }
 
-    private fun startContentActivity(isbn:String, title:String){
-        val intent = Intent(context, ContentActivity::class.java)
+    private fun startBookActivity(isbn:String, title:String){
+        val intent = Intent(context, BookActivity::class.java)
         with(intent){
             putExtra(Book.TITLE.KEY, title)
             putExtra(Book.ISBN.KEY, isbn)

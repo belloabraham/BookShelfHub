@@ -22,13 +22,13 @@
         <item name="android:statusBarColor" tools:targetApi="l">?backgroundColor</item>
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
-        <item name="android:navigationBarDividerColor" tools:targetApi="p">@android:color/transparent</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="p">
+            @android:color/transparent
+        </item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
 
 
     </style>
-
-
 
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -39,8 +39,15 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
-        <item name="android:navigationBarDividerColor" tools:targetApi="p">@android:color/transparent</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="p">
+            @android:color/transparent
+        </item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
+    </style>
+
+    <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenTextColor">@color/light_blue_A400</item>
     </style>
 
 

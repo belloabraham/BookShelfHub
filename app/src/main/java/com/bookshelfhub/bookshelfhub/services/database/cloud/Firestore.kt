@@ -29,20 +29,25 @@ open class Firestore {
 
    // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
      open fun getDataAsync(collection:String, document: String, onComplete:
-     (data:DocumentSnapshot?)->Unit){
+     (data:DocumentSnapshot?, e:Exception?)->Unit){
         db.collection(collection)
             .document(document)
             .get()
             .addOnSuccessListener { documentSnapShot->
                 if (documentSnapShot!=null && documentSnapShot.exists()){
-                    onComplete(documentSnapShot)
+                    onComplete(documentSnapShot, null)
                 }else{
-                    onComplete(null)
+                    onComplete(null, null)
                 }
             }
             .addOnFailureListener {
-                onComplete(null)
+                onComplete(null, it)
             }
+    }
+
+    fun getLiveDataAsync(collection:String, document: String, onComplete:
+        (data:DocumentSnapshot?)->Unit){
+
     }
 
 }

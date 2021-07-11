@@ -1,22 +1,18 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.Utils.*
-import com.bookshelfhub.bookshelfhub.adapters.search.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Singleton
 
 @Module

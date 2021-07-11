@@ -22,6 +22,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -70,12 +71,12 @@ class UserInfoFragment : Fragment() {
         }
 
         if (!isNewUser) {
-            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userId) {
+            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userId) { docSnapShot, _ ->
 
-                it?.let {
+                docSnapShot?.let {
                     try {
-                        val jsonObj = it.get(DbFields.BOOK_INTEREST.KEY).toString()
-                        val bookInterest = json.fromJson(jsonObj, BookInterest::class.java)
+                        val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                        val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
                         bookInterest.uploaded = true
                         lifecycleScope.launch(IO) {
                             database.addBookInterest(bookInterest)
@@ -84,8 +85,8 @@ class UserInfoFragment : Fragment() {
                     }
 
                     try {
-                        val userJsonString = it.get(DbFields.USER.KEY).toString()
-                        val userData = json.fromJson(userJsonString, User::class.java)
+                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                        val userData = json.fromAny(userJsonString!!, User::class.java)
                         layout.nameEditTxt.setText(userData.name)
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)

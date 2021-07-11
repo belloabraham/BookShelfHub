@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.adapters.main
+package com.bookshelfhub.bookshelfhub.adapters.viewpager
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

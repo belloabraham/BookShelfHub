@@ -30,6 +30,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.view.tooltip.ToolTip
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
@@ -158,11 +159,12 @@ class LoginFragment:Fragment() {
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }else{
-                    cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
-                        if(it!=null){
+                    cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){ docSnapShot, _ ->
+
+                        if(docSnapShot!=null){
                             try {
-                                val jsonObj = it.get(DbFields.BOOK_INTEREST.KEY).toString()
-                                val bookInterest = json.fromJson(jsonObj, BookInterest::class.java)
+                                val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
                                 bookInterest.uploaded=true
                                 lifecycleScope.launch(IO){
                                     database.addBookInterest(bookInterest)
@@ -171,8 +173,8 @@ class LoginFragment:Fragment() {
                             }
 
                             try {
-                                val userJsonString = it.get(DbFields.USER.KEY).toString()
-                                val user = json.fromJson(userJsonString, User::class.java)
+                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                val user = json.fromAny(userJsonString!!, User::class.java)
                                 if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){
                                     user.device = deviceUtil.getDeviceBrandAndModel()
@@ -182,6 +184,7 @@ class LoginFragment:Fragment() {
                                 }
                                 userAuthViewModel.setIsAddingUser(false, user)
                             }catch (ex:Exception){
+                                //Toast(requireActivity()).showToast(ex.message.toString())
                                 userAuthViewModel.setIsExistingUser(false)
                             }
                         }else{

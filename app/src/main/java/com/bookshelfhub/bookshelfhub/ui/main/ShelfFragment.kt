@@ -4,28 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.room.FtsOptions
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
-import com.bookshelfhub.bookshelfhub.adapters.search.OrderedBooksAdapter
+import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 

@@ -66,4 +66,16 @@
 
     <style name="Theme.BookShelfHub.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Theme.BookShelfHub.Fullscreen" parent="Theme.BookShelfHub">
+        <item name="android:actionBarStyle">@style/Widget.Theme.BookShelfHub.ActionBar.Fullscreen
+        </item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
+
 </resources>

@@ -1,23 +1,19 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.adapters.main.CartMorePagerAdapter
-import com.bookshelfhub.bookshelfhub.adapters.main.ShelfStorePagerAdapter
+import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
+import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
@@ -224,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }, {
-                                val intent = Intent(this@MainActivity, ContentActivity::class.java)
+                                val intent = Intent(this@MainActivity, BookActivity::class.java)
                                 intent.putExtra(Settings.LAST_BOOK_RED_ISBN.KEY, lastBookRedISBN)
                                 startActivity(intent)
                             }

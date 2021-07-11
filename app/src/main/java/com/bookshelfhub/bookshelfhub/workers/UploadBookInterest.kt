@@ -20,9 +20,8 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
         val userAuth=UserAuth(StringUtil())
 
         if (!userAuth.getIsUserAuthenticated()){
-            Result.retry()
+            return Result.retry()
         }
-
         val userId = userAuth.getUserId()
 
         val localDb = LocalDb(context)

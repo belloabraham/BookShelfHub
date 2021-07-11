@@ -28,6 +28,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -147,11 +148,12 @@ class VerificationFragment:Fragment(){
                             findNavController().navigate(actionUserInfo)
                         }else{
 
-                            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){
-                                if(it!=null){
+                            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userAuth.getUserId()){ docSnapShot, _ ->
+
+                                if(docSnapShot!=null){
                                     try {
-                                        val jsonString = it.get(DbFields.BOOK_INTEREST.KEY).toString()
-                                        val bookInterest = json.fromJson(jsonString, BookInterest::class.java)
+                                        val jsonString = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                        val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
 
                                         bookInterest.uploaded=true
                                         lifecycleScope.launch(IO){
@@ -161,8 +163,8 @@ class VerificationFragment:Fragment(){
                                     }
 
                                     try {
-                                        val userJsonString = it.get(DbFields.USER.KEY).toString()
-                                        val user = json.fromJson(userJsonString, User::class.java)
+                                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                        val user = json.fromAny(userJsonString!!, User::class.java)
                                         if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
                                                 Build.VERSION.SDK_INT)){
                                             user.device = deviceUtil.getDeviceBrandAndModel()
