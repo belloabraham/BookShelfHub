@@ -9,10 +9,13 @@ import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.StoreFragmentViewModel
+import com.bookshelfhub.bookshelfhub.adapters.store.RecommendBooksAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
 
@@ -28,6 +31,7 @@ class StoreFragment : Fragment() {
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
 
+        val recommendBooksAdapter = RecommendBooksAdapter(requireActivity()).getRecommendedPagingAdapter()
 
         layout.materialSearchView.apply {
             setItemAnimator(null)
@@ -60,6 +64,10 @@ class StoreFragment : Fragment() {
             }
         }
 
+        storeFragmentViewModel.getAllBooks().observe(viewLifecycleOwner, Observer { books ->
+            val trendingList = books.filter { it.trending }
+        })
+
         layout.booksSwipeToRefLayout.setColorSchemeColors(
             ContextCompat.getColor(requireContext(), R.color.purple_700),
             ContextCompat.getColor(requireContext(), R.color.orange),
@@ -72,6 +80,8 @@ class StoreFragment : Fragment() {
         }
 
         setRecyclerViewLayout()
+
+
 
 
         return layout.root

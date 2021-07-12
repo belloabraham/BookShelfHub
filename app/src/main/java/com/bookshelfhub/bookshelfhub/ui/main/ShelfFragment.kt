@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
@@ -24,6 +25,11 @@ import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -284,12 +290,13 @@ class ShelfFragment : Fragment() {
         layout.booksSwipeToRefLayout.setColorSchemeColors(
             ContextCompat.getColor(requireContext(),R.color.purple_700),
             ContextCompat.getColor(requireContext(),R.color.orange),
-            ContextCompat.getColor(requireContext(),R.color.light_blue_900)
+            ContextCompat.getColor(requireContext(),R.color.light_blue_A400)
         )
 
         layout.booksSwipeToRefLayout.setOnRefreshListener {
-           //TODO set booklist empty and Booklist new list
-            //layout.booksSwipeToRefLayout.isRefreshing =false
+            orderedBooksAdapter.submitList(emptyList())
+            orderedBooksAdapter.submitList(mainActivityViewModel.getOrderedBooks().value)
+            layout.booksSwipeToRefLayout.isRefreshing = false
         }
 
         return layout.root

@@ -143,6 +143,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
         return isUpdateAvailable
     }
 
+
     private fun checkForUpdate(){
         remoteConfig.fetchConfigAsync(){
             //it=error msg

@@ -22,17 +22,20 @@
               android:contentDescription="@null"
               android:layout_gravity="center_horizontal"
               android:scaleType="fitXY"
+              android:src="@drawable/ic_store_item_place_holder"
               android:id="@+id/itemImageView"/>
 
       </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="15dp"
                 android:id="@+id/title"
                 android:layout_marginTop="@dimen/size_4"
-                android:paddingHorizontal="2dp"
-                android:layout_gravity="center"
+                android:layout_marginHorizontal="2dp"
+                android:layout_gravity="start"
+                android:background="@null"
+                android:text=""
                 android:textSize="12sp"
                 style="@style/SearchItemAuthor"/>
 

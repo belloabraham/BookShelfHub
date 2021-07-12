@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
 
@@ -77,6 +78,10 @@ open class RoomDb(private val context:Context) {
     //TODO Published Books
     open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
+    }
+
+    open fun getAllPubBooksPageSource(): PagingSource<Int, PublishedBooks> {
+       return RoomInstance.getDatabase(context).userDao().getAllPubBooksPageSource()
     }
 }
 
