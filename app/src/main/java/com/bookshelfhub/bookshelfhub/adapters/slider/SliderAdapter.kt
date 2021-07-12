@@ -3,7 +3,8 @@ package com.bookshelfhub.bookshelfhub.adapters.slider
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.wrapper.imageloader.load
+import com.bookshelfhub.bookshelfhub.wrapper.image.load
+import com.bookshelfhub.bookshelfhub.wrapper.image.loadUnCompressed
 import com.smarteist.autoimageslider.SliderViewAdapter
 import java.util.*
 
@@ -29,7 +30,7 @@ class SliderAdapter: SliderViewAdapter<SliderAdapterVH>(){
             viewHolder.firstTitle.text = sliderItem.firstTitle
             viewHolder.secondTitle.text = sliderItem.secondTitle
             viewHolder.textViewDescription.text = sliderItem.description
-            viewHolder.imageView.load(sliderItem.resource)
+            viewHolder.imageView.loadUnCompressed(sliderItem.resource)
         }
     }
 

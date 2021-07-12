@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.local.room
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -67,4 +68,11 @@ interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
+
+    //Todo PublishedBooks
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)
+
+    @Query("SELECT * FROM PublishedBooks ORDER BY datePublished DESC")
+    fun getAllPubBooksPageSource(): PagingSource<Int, PublishedBooks>
 }

@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.StoreFragmentViewModel
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
@@ -58,6 +60,16 @@ class StoreFragment : Fragment() {
             }
         }
 
+        layout.booksSwipeToRefLayout.setColorSchemeColors(
+            ContextCompat.getColor(requireContext(), R.color.purple_700),
+            ContextCompat.getColor(requireContext(), R.color.orange),
+            ContextCompat.getColor(requireContext(), R.color.light_blue_900)
+        )
+
+        layout.booksSwipeToRefLayout.setOnRefreshListener {
+            //TODO set booklist empty and Booklist new list
+            //layout.booksSwipeToRefLayout.isRefreshing =false
+        }
 
         setRecyclerViewLayout()
 

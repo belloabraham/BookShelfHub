@@ -73,4 +73,10 @@ open class RoomDb(private val context:Context) {
     open suspend fun addPubReferrer(pubReferrers: PubReferrers){
         RoomInstance.getDatabase(context).userDao().addPubReferrer(pubReferrers)
     }
+
+    //TODO Published Books
+    open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
+        RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
+    }
 }
+

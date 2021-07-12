@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrapper.imageloader
+package com.bookshelfhub.bookshelfhub.wrapper.image
 
 import android.widget.ImageView
 import coil.load

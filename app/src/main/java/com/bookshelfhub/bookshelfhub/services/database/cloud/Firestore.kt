@@ -8,9 +8,16 @@ import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import java.util.ArrayList
 
-open class Firestore (private val json: Json) {
+open class Firestore {
     private val db:FirebaseFirestore = Firebase.firestore
     private val lastUpdated="last_uploaded"
+
+    private var json:Json?=null
+    constructor( json: Json){
+        this.json = json
+    }
+
+    constructor()
 
     open fun addDataAsync(data: Any, collection:String, document:String, field:String, lastUpdated:FieldValue = FieldValue.serverTimestamp(), onSuccess:()->Unit ){
         val newData = hashMapOf(
@@ -47,7 +54,7 @@ open class Firestore (private val json: Json) {
             }
     }
 
-   open fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, shouldCache:Boolean=false, type:Class<T>, onComplete: (dataList:List<T>?)->Unit){
+   open fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean=false, onComplete: (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
             db.collection(collection)
             .addSnapshotListener { querySnapShot, e ->
@@ -57,7 +64,7 @@ open class Firestore (private val json: Json) {
                     try {
                         for (doc in it) {
                             val data =  doc.get(field)
-                            dataList = dataList.plus(json.fromAny(data!!, type))
+                            dataList = dataList.plus(json!!.fromAny(data!!, type))
                         }
                     }catch(e:Exception){
                     }

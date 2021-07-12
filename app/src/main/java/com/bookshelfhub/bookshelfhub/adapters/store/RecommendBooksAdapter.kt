@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
-import com.bookshelfhub.bookshelfhub.wrapper.imageloader.load
+import com.bookshelfhub.bookshelfhub.wrapper.image.load
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import me.ibrahimyilmaz.kiel.pagingDataAdapterOf
 

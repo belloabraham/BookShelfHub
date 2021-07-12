@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
@@ -201,8 +203,8 @@ class ShelfFragment : Fragment() {
                     "", "", null)
             )
 
-            if (orderedBooks.isNotEmpty()){
-                layout.orderedBooksRecView.visibility = View.VISIBLE
+            if (books.isNotEmpty()){
+                layout.booksSwipeToRefLayout.visibility = View.VISIBLE
                 layout.emptyShelf.visibility = View.GONE
                 layout.materialSearchView.search_search_edit_text.isEnabled = true
                 layout.materialSearchView.search_image_view_navigation.isEnabled = true
@@ -210,7 +212,7 @@ class ShelfFragment : Fragment() {
                 orderedBookList = books
             }else{
                 layout.emptyShelf.visibility = View.VISIBLE
-                layout.orderedBooksRecView.visibility = View.INVISIBLE
+                layout.booksSwipeToRefLayout.visibility = View.INVISIBLE
                 layout.materialSearchView.search_search_edit_text.isEnabled = false
                 layout.materialSearchView.search_image_view_navigation.isEnabled = false
             }
@@ -278,8 +280,22 @@ class ShelfFragment : Fragment() {
             mainActivityViewModel.setSelectedIndex(1)
         }
 
+
+        layout.booksSwipeToRefLayout.setColorSchemeColors(
+            ContextCompat.getColor(requireContext(),R.color.purple_700),
+            ContextCompat.getColor(requireContext(),R.color.orange),
+            ContextCompat.getColor(requireContext(),R.color.light_blue_900)
+        )
+
+        layout.booksSwipeToRefLayout.setOnRefreshListener {
+           //TODO set booklist empty and Booklist new list
+            //layout.booksSwipeToRefLayout.isRefreshing =false
+        }
+
         return layout.root
     }
+
+
 
     companion object {
         @JvmStatic
