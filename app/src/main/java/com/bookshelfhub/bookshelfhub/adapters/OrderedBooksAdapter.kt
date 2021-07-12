@@ -1,19 +1,17 @@
 package com.bookshelfhub.bookshelfhub.adapters
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
-import coil.load
-import coil.transform.RoundedCornersTransformation
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.wrapper.imageloader.load
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -33,11 +31,7 @@ class OrderedBooksAdapter (private val activity: Activity) {
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
                     vh.title.text = model.title
-                    vh.imageView.load(model.bookCoverUrl) {
-                        placeholder(R.drawable.ic_book_sample)
-                        transformations(RoundedCornersTransformation())
-                        error(R.drawable.ic_book_sample)
-                    }
+                    vh.imageView.load(model.bookCoverUrl, R.drawable.ic_book_sample, true)
 
                     vh.itemCardView.setOnClickListener {
                         val intent = Intent(activity, BookActivity::class.java)

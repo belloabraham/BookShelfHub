@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
@@ -37,6 +38,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
+    private var publishedBooks: LiveData<PublishedBooks> = MutableLiveData()
 
 
     init {

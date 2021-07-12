@@ -24,9 +24,4 @@ object ActivityModule {
         return NotificationHelper(context, notifChannelId,intentUtil, R.color.notf_color,R.drawable.ic_stat_bookshelfhub,R.drawable.notification_large_icon)
     }
 
-    @ActivityScoped
-    @Provides
-    fun getJson():Json{
-        return Json(Gson())
-    }
 }

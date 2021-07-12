@@ -7,7 +7,9 @@ import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,8 +53,14 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getCloudDb(): CloudDb {
-        return CloudDb()
+    fun getJson():Json{
+        return Json(Gson())
+    }
+
+    @Singleton
+    @Provides
+    fun getCloudDb(json:Json): CloudDb {
+        return CloudDb(json)
     }
 
     @Singleton

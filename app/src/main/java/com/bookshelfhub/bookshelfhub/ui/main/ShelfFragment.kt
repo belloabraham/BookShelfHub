@@ -12,10 +12,12 @@ import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
+import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -30,6 +32,8 @@ class ShelfFragment : Fragment() {
     lateinit var localDb: LocalDb
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
     private var orderedBookList:List<OrderedBooks> = emptyList()
+    @Inject
+    lateinit var cloudDb: CloudDb
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val recGridColumn = 3
@@ -197,7 +201,7 @@ class ShelfFragment : Fragment() {
                     "", "", null)
             )
 
-            if (books.isNotEmpty()){
+            if (orderedBooks.isNotEmpty()){
                 layout.orderedBooksRecView.visibility = View.VISIBLE
                 layout.emptyShelf.visibility = View.GONE
                 layout.materialSearchView.search_search_edit_text.isEnabled = true

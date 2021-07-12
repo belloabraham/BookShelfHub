@@ -1,6 +1,6 @@
-package com.bookshelfhub.bookshelfhub.models
+package com.bookshelfhub.bookshelfhub.services.database.local.room.entities
 
-class BookModel {
+class PublishedBooks {
     val isbn: String = ""
     val pubId: String = ""
     val name: String = ""
@@ -12,6 +12,7 @@ class BookModel {
     val price: Double = 0.0
     val totalRatings: Double = 0.0
     val category: String = ""
+    val language:String=""
     val copyrightLawUrl: String = ""
     val authorEmail: String = ""
     val tags: String = ""

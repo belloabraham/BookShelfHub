@@ -43,7 +43,7 @@ class OnBoardingFragment:Fragment() {
 
         layout.terms.setMovementMethod(LinkMovementMethod.getInstance())
 
-        sliderAdapter = SliderAdapter(ImageLoader())
+        sliderAdapter = SliderAdapter()
 
         //Setting up Slider view for Onboarding
         layout.sliderView.setSliderAdapter(sliderAdapter)
