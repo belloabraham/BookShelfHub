@@ -5,7 +5,7 @@ import com.bookshelfhub.bookshelfhub.wrapper.imageloaders.CoilWrapper
 import com.bookshelfhub.bookshelfhub.wrapper.imageloaders.PicassoWrapper
 
 @JvmSynthetic
-fun ImageView.load(url:String, placeHolder:Int, shouldCache:Boolean=false, errorImg:Int=placeHolder){
+fun ImageView.load(url:String, placeHolder:Int, shouldCache:Boolean=true, errorImg:Int=placeHolder){
     ImageLoader(this).loadImageWithRoundCorners(url, placeHolder, errorImg, shouldCache)
 }
 

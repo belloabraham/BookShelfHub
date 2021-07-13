@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.StoreFragmentViewModel
+import com.bookshelfhub.bookshelfhub.adapters.store.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.store.RecommendBooksAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
@@ -35,7 +36,7 @@ class StoreFragment : Fragment() {
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
 
-        val recommendBooksAdapter = RecommendBooksAdapter(requireActivity()).getRecommendedPagingAdapter()
+        val recommendBooksAdapter = RecommendBooksAdapter(requireActivity(), DiffUtilItemCallback())
 
         layout.materialSearchView.apply {
             setItemAnimator(null)
@@ -73,10 +74,7 @@ class StoreFragment : Fragment() {
 
         storeFragmentViewModel.getAllBooks().observe(viewLifecycleOwner, Observer { books ->
 
-            books?.let{
                 recommendBooksAdapter.submitData(lifecycle, books)
-
-            }
 
             //val trendingList = books.filter { it.trending }
         })

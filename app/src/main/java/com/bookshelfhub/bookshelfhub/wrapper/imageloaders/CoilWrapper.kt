@@ -13,23 +13,9 @@ open class CoilWrapper(private val imageView: ImageView) {
            error(errorImg)
            if (!shouldCache){
                memoryCachePolicy(CachePolicy.DISABLED)
+               diskCachePolicy(CachePolicy.DISABLED)
            }
            transformations(RoundedCornersTransformation())
        }
-    }
-
-    fun loadImageWithRoundCorners(resId:Int, placeHolder:Int?=null, errorImg:Int?=null, shouldCache:Boolean, cornerRadius:Int=10){
-        imageView.load(resId){
-            placeHolder?.let {
-                placeholder(it)
-            }
-            errorImg?.let {
-                error(errorImg)
-            }
-            if (!shouldCache){
-                memoryCachePolicy(CachePolicy.DISABLED)
-            }
-            transformations(RoundedCornersTransformation())
-        }
     }
 }

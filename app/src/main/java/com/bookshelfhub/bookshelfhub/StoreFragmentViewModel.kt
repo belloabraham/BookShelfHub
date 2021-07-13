@@ -25,9 +25,9 @@ class StoreFragmentViewModel @Inject constructor(cloudDb: CloudDb, private val l
     private val allPubBooks : LiveData<PagingData<PublishedBooks>> = Pager(
 
         config = PagingConfig(
-            pageSize = 5,
+            pageSize = 10,
             enablePlaceholders = true,
-            initialLoadSize = 10
+            initialLoadSize = 20
         )
 
     ){

@@ -12,8 +12,8 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.idevellopapps.redapt.adapterOf
-import com.bookshelfhub.readapt.core.RecyclerViewHolder
+import me.ibrahimyilmaz.kiel.adapterOf
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class OrderedBooksAdapter (private val activity: Activity) {
 
