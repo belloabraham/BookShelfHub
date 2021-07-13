@@ -3,8 +3,7 @@ package com.bookshelfhub.bookshelfhub.adapters.slider
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.wrapper.image.load
-import com.bookshelfhub.bookshelfhub.wrapper.image.loadUnCompressed
+import com.bookshelfhub.bookshelfhub.extensions.loadUnCompressed
 import com.smarteist.autoimageslider.SliderViewAdapter
 import java.util.*
 

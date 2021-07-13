@@ -18,7 +18,11 @@ import com.bookshelfhub.bookshelfhub.StoreFragmentViewModel
 import com.bookshelfhub.bookshelfhub.adapters.store.RecommendBooksAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.WithFragmentBindings
 
+@AndroidEntryPoint
+@WithFragmentBindings
 class StoreFragment : Fragment() {
 
     private lateinit var layout: FragmentStoreBinding
@@ -55,7 +59,7 @@ class StoreFragment : Fragment() {
             })
         }
 
-
+        setRecyclerViewLayout()
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
@@ -64,23 +68,29 @@ class StoreFragment : Fragment() {
             }
         }
 
+        layout.recommendedLayout.visibility=View.VISIBLE
+        layout.recommendedRecView.adapter=recommendBooksAdapter
+
         storeFragmentViewModel.getAllBooks().observe(viewLifecycleOwner, Observer { books ->
-            val trendingList = books.filter { it.trending }
+
+            books?.let{
+                recommendBooksAdapter.submitData(lifecycle, books)
+
+            }
+
+            //val trendingList = books.filter { it.trending }
         })
 
         layout.booksSwipeToRefLayout.setColorSchemeColors(
             ContextCompat.getColor(requireContext(), R.color.purple_700),
             ContextCompat.getColor(requireContext(), R.color.orange),
-            ContextCompat.getColor(requireContext(), R.color.light_blue_900)
+            ContextCompat.getColor(requireContext(), R.color.light_blue_A400)
         )
 
         layout.booksSwipeToRefLayout.setOnRefreshListener {
             //TODO set booklist empty and Booklist new list
             //layout.booksSwipeToRefLayout.isRefreshing =false
         }
-
-        setRecyclerViewLayout()
-
 
 
 

@@ -14,8 +14,8 @@ import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
-import me.ibrahimyilmaz.kiel.adapterOf
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
+import com.bookshelfhub.readapt.core.RecyclerViewHolder
+import com.idevellopapps.redapt.adapterOf
 
 class StoreSearchResultAdapter (private val context:Context) {
 

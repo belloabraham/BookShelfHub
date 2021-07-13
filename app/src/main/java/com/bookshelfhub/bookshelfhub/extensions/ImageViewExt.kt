@@ -1,15 +1,12 @@
-package com.bookshelfhub.bookshelfhub.wrapper.image
+package com.bookshelfhub.bookshelfhub.extensions
 
 import android.widget.ImageView
+import com.bookshelfhub.bookshelfhub.wrapper.imageloaders.CoilWrapper
+import com.bookshelfhub.bookshelfhub.wrapper.imageloaders.PicassoWrapper
 
 @JvmSynthetic
 fun ImageView.load(url:String, placeHolder:Int, shouldCache:Boolean=false, errorImg:Int=placeHolder){
     ImageLoader(this).loadImageWithRoundCorners(url, placeHolder, errorImg, shouldCache)
-}
-
-@JvmSynthetic
-fun ImageView.load(resId:Int, placeHolder:Int?=null, shouldCache:Boolean=false, errorImg:Int?=placeHolder){
-    ImageLoader(this).loadImageWithRoundCorners(resId, placeHolder, errorImg, shouldCache)
 }
 
 @JvmSynthetic

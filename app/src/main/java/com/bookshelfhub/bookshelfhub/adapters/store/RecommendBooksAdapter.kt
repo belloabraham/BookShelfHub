@@ -6,14 +6,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
-import com.bookshelfhub.bookshelfhub.wrapper.image.load
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-import me.ibrahimyilmaz.kiel.pagingDataAdapterOf
+import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.readapt.core.RecyclerViewHolder
+import com.idevellopapps.redapt.pagingDataAdapterOf
 
 class RecommendBooksAdapter(private val activity: Activity){
 

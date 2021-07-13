@@ -34,7 +34,7 @@
                 android:layout_marginTop="@dimen/size_4"
                 android:layout_marginHorizontal="2dp"
                 android:layout_gravity="start"
-                android:background="@null"
+                android:background="@drawable/ic_store_item_place_holder"
                 android:text=""
                 android:textSize="12sp"
                 style="@style/SearchItemAuthor"/>

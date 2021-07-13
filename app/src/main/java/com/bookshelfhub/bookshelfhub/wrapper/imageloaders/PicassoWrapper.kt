@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrapper.image
+package com.bookshelfhub.bookshelfhub.wrapper.imageloaders
 
 import android.widget.ImageView
 import com.squareup.picasso.MemoryPolicy
