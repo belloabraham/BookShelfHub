@@ -64,6 +64,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
     }
 
+    private var mImageViewMenu: ImageButton? = null
     private var mImageViewMic: ImageButton? = null
     protected var mRecyclerView: RecyclerView? = null
     private var mMaterialCardView: MaterialCardView? = null
@@ -80,6 +81,7 @@ abstract class SearchLayout @JvmOverloads constructor(
     private var mOnNavigationClickListener: OnNavigationClickListener? = null
     private var mOnMicClickListener: OnMicClickListener? = null
     private var mOnClearClickListener: OnClearClickListener? = null
+    private var mOnMenuClickListener: OnMenuClickListener? = null
 
     @NavigationIconSupport
     @get:NavigationIconSupport
@@ -182,6 +184,10 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewClear?.visibility = View.GONE
         mImageViewClear?.setOnClickListener(this)
 
+        mImageViewMenu = findViewById(R.id.search_image_view_menu)
+        mImageViewMenu?.visibility = View.GONE
+        mImageViewMenu?.setOnClickListener(this)
+
         mSearchEditText = findViewById(R.id.search_search_edit_text)
         mSearchEditText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
@@ -240,6 +246,40 @@ abstract class SearchLayout @JvmOverloads constructor(
         isFocusableInTouchMode = true
     }
 
+    fun setMenuIconVisibility(visibility: Int) {
+        mImageViewMenu?.visibility = visibility
+    }
+
+    fun setMenuIconImageResource(@DrawableRes resId: Int) {
+        mImageViewMenu?.setImageResource(resId)
+    }
+
+    fun setMenuIconImageDrawable(@Nullable drawable: Drawable?) {
+        mImageViewMenu?.setImageDrawable(drawable)
+    }
+
+    fun setMenuIconColorFilter(color: Int) {
+        mImageViewMenu?.setColorFilter(color)
+    }
+
+    fun setMenuIconColorFilter(color: Int, mode: PorterDuff.Mode) {
+        mImageViewMenu?.setColorFilter(color, mode)
+    }
+
+    fun setMenuIconColorFilter(cf: ColorFilter?) {
+        mImageViewMenu?.colorFilter = cf
+    }
+
+    fun clearMenuIconColorFilter() {
+        mImageViewMenu?.clearColorFilter()
+    }
+
+    fun setMenuIconContentDescription(contentDescription: CharSequence) {
+        mImageViewMenu?.contentDescription = contentDescription
+    }
+
+    // *********************************************************************************************
+
     fun setNavigationIconVisibility(visibility: Int) {
         mImageViewNavigation?.visibility = visibility
     }
@@ -273,6 +313,11 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     // *********************************************************************************************
+
+    fun setMicIconVisibility(visibility: Int) {
+        mImageViewMic?.visibility = visibility
+    }
+
     fun setMicIconImageResource(@DrawableRes resId: Int) {
         mImageViewMic?.setImageResource(resId)
     }
@@ -522,6 +567,10 @@ abstract class SearchLayout @JvmOverloads constructor(
         mOnClearClickListener = listener
     }
 
+    fun setOnMenuClickListener(listener: OnMenuClickListener) {
+        mOnMenuClickListener = listener
+    }
+
     fun showKeyboard() {
         if (!isInEditMode) {
             val inputMethodManager =
@@ -632,6 +681,10 @@ abstract class SearchLayout @JvmOverloads constructor(
             if (mOnClearClickListener != null) {
                 mOnClearClickListener?.onClearClick()
             }
+        }else if (view === mImageViewMenu) {
+            if (mOnMenuClickListener != null) {
+                mOnMenuClickListener?.onMenuClick()
+            }
         }
     }
 
@@ -657,8 +710,11 @@ abstract class SearchLayout @JvmOverloads constructor(
         fun onMicClick()
     }
 
-    interface OnClearClickListener {
+    interface OnMenuClickListener {
+        fun onMenuClick()
+    }
 
+    interface OnClearClickListener {
         fun onClearClick()
     }
 

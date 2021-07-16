@@ -88,6 +88,10 @@ open class RoomDb(private val context:Context) {
         return RoomInstance.getDatabase(context).userDao().getPublishedBooks()
     }
 
+    open fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>> {
+        return RoomInstance.getDatabase(context).userDao().getLiveBooksByCategory(category)
+    }
+
     open fun getLivePublishedBooks(): LiveData<List<PublishedBooks>> {
         return RoomInstance.getDatabase(context).userDao().getLivePublishedBooks()
     }

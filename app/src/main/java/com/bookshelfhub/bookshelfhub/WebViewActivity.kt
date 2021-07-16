@@ -35,7 +35,7 @@ class WebViewActivity : AppCompatActivity() {
         layout = ActivityWebViewBinding.inflate(layoutInflater)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        val title =   stringUtil.capitalize(intent.getStringExtra(WebView.TITLE.KEY)!!)
+         val title =   stringUtil.capitalize(intent.getStringExtra(WebView.TITLE.KEY)!!)
          val url = intent.getStringExtra(WebView.URL.KEY)
         setContentView(layout.root)
 

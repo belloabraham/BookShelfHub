@@ -2,3 +2,4 @@ include ':app'
 rootProject.name = "BookShelfHub"
 include ':app:redapt'
 include ':readapt'
+include ':materialsearchview'

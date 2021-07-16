@@ -44,7 +44,6 @@ class ShelfFragment : Fragment() {
     lateinit var cloudDb: CloudDb
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
-    private val recGridColumn = 3
     private lateinit var layout: FragmentShelfBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -225,7 +224,7 @@ class ShelfFragment : Fragment() {
         })
 
 
-        layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), recGridColumn)
+        layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
 
 
@@ -242,6 +241,7 @@ class ShelfFragment : Fragment() {
                     }
                 }
             })
+
 
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {

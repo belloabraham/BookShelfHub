@@ -70,8 +70,6 @@ interface UserDao {
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
     //Todo PublishedBooks
-
-
     @Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
     fun deletePublishedBookRecords(isbnList: List<String>)
 
@@ -83,6 +81,9 @@ interface UserDao {
 
     @Query("SELECT * FROM PublishedBooks ORDER BY dateTimePublished DESC")
     fun getPublishedBooks(): List<PublishedBooks>
+
+    @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
+    fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>>
 
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
     fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks>

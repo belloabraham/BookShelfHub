@@ -107,9 +107,9 @@ class MaterialSearchView @JvmOverloads constructor(
             a.getInt(R.styleable.MaterialSearchView_search_radius, defaultRadius).toFloat()
         )
 
+
         val defaultElevation = context.resources.getDimensionPixelSize(R.dimen.search_elevation)
-        elevation =
-            a.getInt(R.styleable.MaterialSearchView_android_elevation, defaultElevation).toFloat()
+        elevation = a.getInt(R.styleable.MaterialSearchView_search_elevation, defaultElevation).toFloat()
 
         val imeOptions = a.getInt(R.styleable.MaterialSearchView_android_imeOptions, -1)
         if (imeOptions != -1) {

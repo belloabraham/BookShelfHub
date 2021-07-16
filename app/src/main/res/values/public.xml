@@ -12,6 +12,6 @@
     <public name="search_shadowColor" type="attr" />
     <public name="search_transitionDuration" type="attr" />
     <public name="search_radius" type="attr" />
-
+    <public name="search_elevation" type="attr" />
 
 </resources>

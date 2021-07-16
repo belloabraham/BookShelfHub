@@ -67,6 +67,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent">
 
+                    <ImageButton
+                        android:id="@+id/search_image_view_mic"
+                        android:layout_width="@dimen/search_icon_48"
+                        android:layout_height="match_parent"
+                        android:visibility="gone"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside" />
 
                     <ImageButton
                         android:id="@+id/search_image_view_clear"
@@ -78,6 +86,16 @@
                         android:scaleType="centerInside" />
 
                 </FrameLayout>
+
+                <ImageButton
+                   android:id="@+id/search_image_view_menu"
+                   android:layout_width="@dimen/search_icon_48"
+                   android:layout_height="match_parent"
+                    android:visibility="gone"
+                   android:layout_marginEnd="@dimen/search_dp_4"
+                   android:background="?attr/selectableItemBackgroundBorderless"
+                   android:contentDescription="@null"
+                   android:scaleType="center" />
 
             </LinearLayout>
 

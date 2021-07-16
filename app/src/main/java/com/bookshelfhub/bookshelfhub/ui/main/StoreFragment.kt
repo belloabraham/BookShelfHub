@@ -225,54 +225,54 @@ class StoreFragment : Fragment() {
         })
 
         layout.recommendedCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.recommended_for))
+            startBookCategoryActivity( getString(R.string.recommended_for))
         }
         layout.trendingCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.trending))
+            startBookCategoryActivity( getString(R.string.trending))
         }
         layout.artAndCraftCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.art_craft))
+            startBookCategoryActivity( getString(R.string.art_craft))
         }
         layout.religionCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.religion))
+            startBookCategoryActivity( getString(R.string.religion))
         }
         layout.businessAndFinanceCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.business_finance))
+            startBookCategoryActivity( getString(R.string.business_finance))
         }
         layout.loveAndPoetryCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.poetry))
+            startBookCategoryActivity( getString(R.string.poetry))
         }
         layout.comicCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.comic))
+            startBookCategoryActivity( getString(R.string.comic))
         }
         layout.cookBooksCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.cook_books))
+            startBookCategoryActivity( getString(R.string.cook_books))
         }
         layout.historyCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.history))
+            startBookCategoryActivity( getString(R.string.history))
         }
         layout.lanAndRefCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.languages_reference))
+            startBookCategoryActivity( getString(R.string.languages_reference))
         }
         layout.newsCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.news))
+            startBookCategoryActivity( getString(R.string.news))
         }
         layout.politicsCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.politics))
+            startBookCategoryActivity( getString(R.string.politics))
         }
 
         layout.sciAndTechCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.science_technology))
+            startBookCategoryActivity( getString(R.string.science_technology))
         }
         layout.sportCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.sport))
+            startBookCategoryActivity( getString(R.string.sport))
         }
 
         layout.lawCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.law))
+            startBookCategoryActivity( getString(R.string.law))
         }
         layout.howToCard.setOnClickListener {
-            startBookCategoryActivity(it, getString(R.string.manuals))
+            startBookCategoryActivity( getString(R.string.manuals))
         }
 
         return layout.root
@@ -313,7 +313,7 @@ class StoreFragment : Fragment() {
 
     }
 
-    private fun startBookCategoryActivity( view:View, category: String,){
+    private fun startBookCategoryActivity(category: String,){
         val intent = Intent(requireActivity(), BookCategoryActivity::class.java)
         intent.putExtra(Category.TITLE.KEY,category)
         startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(requireActivity()).toBundle())

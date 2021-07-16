@@ -141,6 +141,8 @@ dependencies {
     implementation 'com.klinkerapps:link_builder:2.0.5'
     //--Toast Message
     implementation 'com.github.GrenderG:Toasty:1.5.0'
+    //--Search View
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
 
 
 
@@ -155,7 +157,7 @@ dependencies {
     //--Remote config
     implementation 'com.google.firebase:firebase-config-ktx'
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta01'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta02'
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
 
