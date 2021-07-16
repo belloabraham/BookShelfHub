@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
@@ -11,7 +12,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.notification.CloudMessaging
 import kotlinx.coroutines.runBlocking
 
-class UploadNotificationToken ( val context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadNotificationToken ( val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
     workerParams
 ) {
     private lateinit var userAuth: UserAuth
@@ -21,7 +22,7 @@ class UploadNotificationToken ( val context: Context, workerParams: WorkerParame
     private lateinit var stringUtil: StringUtil
     private val  NOTIFICATION_TOKEN="notification_token"
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         stringUtil = StringUtil()
         userAuth=UserAuth(stringUtil)
 
@@ -34,10 +35,7 @@ class UploadNotificationToken ( val context: Context, workerParams: WorkerParame
         settingsUtil= SettingsUtil(context)
 
 
-        val appToken:String?
-        runBlocking {
-            appToken = settingsUtil.getString(NOTIFICATION_TOKEN)
-        }
+        val appToken = settingsUtil.getString(NOTIFICATION_TOKEN)
 
         cloudMessaging.getNotificationTokenAsync {
             val newToken=it

@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
@@ -12,11 +13,11 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookI
 import com.google.common.base.Optional
 import kotlinx.coroutines.runBlocking
 
-class UploadBookInterest (val context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadBookInterest (val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
     workerParams
 ) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val userAuth=UserAuth(StringUtil())
 
         if (!userAuth.getIsUserAuthenticated()){
@@ -25,10 +26,7 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
         val userId = userAuth.getUserId()
 
         val localDb = LocalDb(context)
-         val  bookInterest: Optional<BookInterest>
-             runBlocking {
-                 bookInterest = localDb.getBookInterest(userId)
-             }
+         val bookInterest = localDb.getBookInterest(userId)
 
         if (bookInterest.isPresent && !bookInterest.get().uploaded){
             val bookInterestData = bookInterest.get()

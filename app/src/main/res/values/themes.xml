@@ -29,15 +29,15 @@
 
         <item name="android:windowActivityTransitions">true</item>
 
-        <item name="android:windowEnterTransition">@transition/slide</item>
+        <item name="android:windowEnterTransition">@transition/fade</item>
         <item name="android:windowExitTransition">@transition/slide</item>
 
         <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
-            @transition/slide
+            @transition/expand_view
         </item>
         <item name="android:windowSharedElementExitTransition">
-            @transition/slide
+            @transition/expand_view
         </item>
 
     </style>

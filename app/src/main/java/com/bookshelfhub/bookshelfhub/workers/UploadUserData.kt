@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
@@ -12,18 +13,16 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.google.common.base.Optional
 import kotlinx.coroutines.runBlocking
 
-class UploadUserData(val context: Context, workerParams: WorkerParameters): Worker(context,
+class UploadUserData(val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
     workerParams
 ) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         val userAuth=UserAuth(StringUtil())
         val userId = userAuth.getUserId()
         val localDb = LocalDb(context)
-        val user: Optional<User>
-        runBlocking {
-           user = localDb.getUser(userId)
-        }
+        val user = localDb.getUser(userId)
+
         val userData = user.get()
             if (user.isPresent && !userData.uploaded){
                CloudDb().addDataAsync(userData, DbFields.USERS_COLL.KEY, userId, DbFields.USER.KEY){

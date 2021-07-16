@@ -2,7 +2,9 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
+import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
+import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
@@ -11,6 +13,7 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
+import java.util.concurrent.TimeUnit
 
 
 @HiltAndroidApp
@@ -43,12 +46,18 @@ class Application: android.app.Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
+        val unPublishedBooks =
+            PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
+                .setConstraints(connected)
+                .build()
+
         val oneTimeNotificationTokenUpload: WorkRequest =
             OneTimeWorkRequestBuilder<UploadBookInterest>()
                 .setConstraints(connected)
                 .build()
 
         WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
+        WorkManager.getInstance(applicationContext).enqueue(unPublishedBooks)
     }
 
     private fun setupFirebaseRemoteConfig(){

@@ -38,7 +38,6 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
-    private var publishedBooks: LiveData<PublishedBooks> = MutableLiveData()
 
 
     init {
@@ -90,7 +89,6 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:RemoteC
     fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
         return storeSearchHistory
     }
-
 
 
     fun getTotalProfileNotifNumber(): Int {

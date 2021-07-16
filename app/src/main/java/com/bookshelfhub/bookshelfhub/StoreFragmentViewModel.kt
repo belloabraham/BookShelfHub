@@ -1,40 +1,59 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.liveData
+import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreFragmentViewModel @Inject constructor(cloudDb: CloudDb, private val localDb: LocalDb): ViewModel() {
+class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Context, cloudDb: CloudDb, private val localDb: LocalDb): ViewModel() {
 
-    private val allPubBooks : LiveData<PagingData<PublishedBooks>> = Pager(
+    private var recommendedBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var cookBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var religionBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var trendingBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var politicsBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var businessBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var comicBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var lawBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var historyBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var newsBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var loveAndPoetryBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var sportBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var howToBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var artAndCraftBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var langAndRefBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var scienceAndTechBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
+    private var allPublishedBooks : LiveData<List<PublishedBooks>> = MutableLiveData()
 
-        config = PagingConfig(
-            pageSize = 10,
-            enablePlaceholders = true,
-            initialLoadSize = 20
-        )
 
-    ){
-        localDb.getAllPubBooksPageSource()
-    }.liveData
+    private val config  = PagingConfig(
+        pageSize = 5,
+        enablePlaceholders = true,
+        initialLoadSize = 10
+    )
 
     init {
+        loadAllBooks(context)
+        allPublishedBooks = localDb.getLivePublishedBooks()
 
      val books = listOf(
              PublishedBooks("1", name="A Quite place", coverUrl =  "https://i.ibb.co/QDHKYV8/peace-where-love.png",
@@ -1767,21 +1786,180 @@ class StoreFragmentViewModel @Inject constructor(cloudDb: CloudDb, private val l
                 category = "Cook Books", tags = ""),
         )
 
-        cloudDb.getLiveListOfDataAsync(
-            DbFields.PUBLISHED_BOOKS.KEY,
-            DbFields.PUBLISHED_BOOK.KEY,
-            PublishedBooks::class.java
-        ){
-           // if (it.isNotEmpty()){
-                viewModelScope.launch(IO){
-                    localDb.addAllPubBooks(books)
+
+        viewModelScope.launch(IO) {
+            val publishedBooks = localDb.getPublishedBooks()
+            withContext(Main){
+                if(publishedBooks.isEmpty()){
+                    cloudDb.getLiveListOfDataAsync(
+                        DbFields.PUBLISHED_BOOKS.KEY,
+                        DbFields.PUBLISHED_BOOK.KEY,
+                        PublishedBooks::class.java
+                    ){
+                        addAllBooks(books)
+                    }
+                }else{
+                    cloudDb.getLiveListOfDataAsyncFrom(
+                        DbFields.PUBLISHED_BOOKS.KEY,
+                        DbFields.PUBLISHED_BOOK.KEY,
+                        PublishedBooks::class.java,
+                        publishedBooks[0].dateTimePublished
+                    ){
+                        viewModelScope.launch(IO){
+                            localDb.addAllPubBooks(books)
+                        }
+                    }
                 }
-           // }
+            }
+
         }
     }
 
-    fun getAllBooks(): LiveData<PagingData<PublishedBooks>> {
-        return allPubBooks
+
+    private fun addAllBooks(books:List<PublishedBooks>){
+         if (books.isNotEmpty()){
+            viewModelScope.launch(IO){
+                localDb.addAllPubBooks(books)
+            }
+        }else{
+            //TODO unable to get books error
+         }
     }
+
+    private fun loadAllBooks(context:Context){
+        recommendedBooks  = Pager(config){
+            localDb.getRecommendedBooksPageSource()
+        }.liveData
+
+        trendingBooks = Pager(config){
+            localDb.getTrendingBooksPageSource()
+        }.liveData
+
+        cookBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.cook_books))
+        }.liveData
+
+        religionBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.religion))
+        }.liveData
+
+        lawBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.law))
+        }.liveData
+
+        loveAndPoetryBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.poetry))
+        }.liveData
+
+        sportBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.sport))
+        }.liveData
+
+        newsBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.news))
+        }.liveData
+
+        historyBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.history))
+        }.liveData
+
+        artAndCraftBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.art_craft))
+        }.liveData
+
+        scienceAndTechBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.science_technology))
+        }.liveData
+
+        langAndRefBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.languages_reference))
+        }.liveData
+
+        businessBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.business_finance))
+        }.liveData
+
+        comicBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.comic))
+        }.liveData
+
+        howToBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.manuals))
+        }.liveData
+
+        politicsBooks = Pager(config){
+            localDb.getBooksByCategoryPageSource(context.getString(R.string.politics))
+        }.liveData
+    }
+
+
+    fun getAlPublishedBooks():LiveData<List<PublishedBooks>> {
+        return allPublishedBooks
+    }
+
+    fun getRecommendedBooks(): LiveData<PagingData<PublishedBooks>> {
+        return recommendedBooks
+    }
+
+    fun getTrendingBooks(): LiveData<PagingData<PublishedBooks>> {
+        return trendingBooks
+    }
+
+    fun getReligionBooks(): LiveData<PagingData<PublishedBooks>> {
+        return religionBooks
+    }
+
+    fun getCooksBooks(): LiveData<PagingData<PublishedBooks>> {
+        return cookBooks
+    }
+
+    fun getArtAndCraftBooks(): LiveData<PagingData<PublishedBooks>> {
+        return artAndCraftBooks
+    }
+
+    fun getLawBooks(): LiveData<PagingData<PublishedBooks>> {
+        return lawBooks
+    }
+
+    fun getComicBooks(): LiveData<PagingData<PublishedBooks>> {
+        return comicBooks
+    }
+
+    fun getScienceAndTechBooks(): LiveData<PagingData<PublishedBooks>> {
+        return scienceAndTechBooks
+    }
+
+    fun getHistoryBooks(): LiveData<PagingData<PublishedBooks>> {
+        return historyBooks
+    }
+
+    fun getLangAndRefBooks(): LiveData<PagingData<PublishedBooks>> {
+        return langAndRefBooks
+    }
+
+    fun getHowToBooks(): LiveData<PagingData<PublishedBooks>> {
+        return howToBooks
+    }
+
+    fun getLoveAndPoetryBooks(): LiveData<PagingData<PublishedBooks>> {
+        return loveAndPoetryBooks
+    }
+
+    fun getNewsBooks(): LiveData<PagingData<PublishedBooks>> {
+        return newsBooks
+    }
+
+    fun getSportBooks(): LiveData<PagingData<PublishedBooks>> {
+        return sportBooks
+    }
+
+    fun getPoliticBooks(): LiveData<PagingData<PublishedBooks>> {
+        return politicsBooks
+    }
+
+    fun getBusinessBooks(): LiveData<PagingData<PublishedBooks>> {
+        return businessBooks
+    }
+
 
 }

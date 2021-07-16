@@ -9,10 +9,13 @@ import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class BookItemActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookItemBinding

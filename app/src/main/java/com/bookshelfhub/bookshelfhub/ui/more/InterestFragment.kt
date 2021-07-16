@@ -6,7 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
@@ -33,6 +37,7 @@ class InterestFragment : Fragment() {
     private lateinit var bookInterestObservable:BookInterestObservable
     @Inject
     lateinit var database: Database
+    private val interestFragmentViewModel: InterestFragmentViewModel by viewModels()
     @Inject
     lateinit var localDb: LocalDb
     @Inject
@@ -47,21 +52,16 @@ class InterestFragment : Fragment() {
     ): View {
         layout= FragmentInterestBinding.inflate(inflater, container, false)
 
-        lifecycleScope.launch(IO){
-            val userId = userAuth.getUserId()
-            val  bkInterestRecord = localDb.getBookInterest(userId)
-
-            bookInterestObservable = if (localDb.getBookInterest(userId).isPresent){
-                BookInterestObservable(bkInterestRecord.get())
+        interestFragmentViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
+            bookInterestObservable = if(bookInterest.isPresent && bookInterest.get().added){
+                BookInterestObservable(bookInterest.get())
             }else{
-                BookInterestObservable(BookInterest(userId))
+                BookInterestObservable(BookInterest(userAuth.getUserId()))
             }
-            withContext(Main){
-                oldBookInterest = bookInterestObservable.getBookInterestRecord().copy()
-                layout.bookInterest = bookInterestObservable
-                layout.lifecycleOwner = viewLifecycleOwner
-            }
-        }
+            oldBookInterest = bookInterestObservable.getBookInterestRecord().copy()
+            layout.bookInterest = bookInterestObservable
+            layout.lifecycleOwner = viewLifecycleOwner
+        })
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if(oldBookInterest!=bookInterestObservable.getBookInterestRecord()){

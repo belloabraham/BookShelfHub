@@ -38,6 +38,9 @@
     <string name="dlink_deeplink_domain" translatable="false">https://bookshelfhub.com?id=%s</string>
 
 
+    <!-- Todo Transition Names -->
+    <string name="trans_book" translatable="false">book</string>
+
     <!-- Todo Profile -->
     <string name="dob_template" translatable="false">DD/MM/YY</string>
 

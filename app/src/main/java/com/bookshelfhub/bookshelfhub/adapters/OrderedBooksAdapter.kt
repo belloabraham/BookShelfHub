@@ -1,6 +1,8 @@
 package com.bookshelfhub.bookshelfhub.adapters
 
 import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
@@ -30,26 +32,29 @@ class OrderedBooksAdapter (private val activity: Activity) {
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.title.text = model.title
-                    vh.imageView.load(model.bookCoverUrl, R.drawable.ic_book_sample, true)
-
-                    vh.itemCardView.setOnClickListener {
-                        val intent = Intent(activity, BookActivity::class.java)
-                        with(intent){
-                            putExtra(Book.TITLE.KEY, model.title)
-                            putExtra(Book.ISBN.KEY, model.isbn)
-                        }
-                        activity.startActivity(intent)
-                    }
+                   vh.bindToView(model, activity)
                 }
             )
         }
     }
 
     private class OrderedBookViewHolder(view: View):RecyclerViewHolder<OrderedBooks>(view){
-        val title: TextView = view.findViewById(R.id.title)
-        val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        val imageView: ImageView = view.findViewById(R.id.itemImageView)
+       private val title: TextView = view.findViewById(R.id.title)
+       private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
+       private val imageView: ImageView = view.findViewById(R.id.itemImageView)
+        fun bindToView(model:OrderedBooks, activity: Activity){
+            title.text = model.title
+            imageView.load(model.bookCoverUrl, R.drawable.ic_book_sample)
+            itemCardView.setOnClickListener {
+                val intent = Intent(activity, BookActivity::class.java)
+                with(intent){
+                    putExtra(Book.TITLE.KEY, model.title)
+                    putExtra(Book.ISBN.KEY, model.isbn)
+                }
+                val options = ActivityOptions.makeSceneTransitionAnimation(activity, itemCardView, activity.getString(R.string.trans_book))
+                activity.startActivity(intent, options.toBundle())
+            }
+        }
     }
 
 }

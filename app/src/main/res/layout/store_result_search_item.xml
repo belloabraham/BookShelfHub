@@ -8,6 +8,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/size_4"
         android:paddingHorizontal="@dimen/size_16"
         android:orientation="horizontal">
 
@@ -16,12 +17,13 @@
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/size_16"
             android:contentDescription="@null"
-            android:src="@drawable/ic_history"
-            android:id="@+id/recentImg"/>
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_search_normal_24"/>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/size_16"
             android:orientation="vertical">
 
@@ -29,6 +31,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
+                android:singleLine="true"
+                android:maxLines="1"
                 style="@style/SearchItemTitle"/>
 
             <TextView
@@ -36,8 +40,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/author"
                 android:singleLine="true"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/size_16"
                 android:maxLines="1"/>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

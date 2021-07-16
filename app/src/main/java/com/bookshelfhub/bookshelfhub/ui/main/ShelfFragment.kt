@@ -210,7 +210,7 @@ class ShelfFragment : Fragment() {
             )
 
             if (books.isNotEmpty()){
-                layout.booksSwipeToRefLayout.visibility = View.VISIBLE
+                layout.orderedBooksRecView.visibility = View.VISIBLE
                 layout.emptyShelf.visibility = View.GONE
                 layout.materialSearchView.search_search_edit_text.isEnabled = true
                 layout.materialSearchView.search_image_view_navigation.isEnabled = true
@@ -218,7 +218,7 @@ class ShelfFragment : Fragment() {
                 orderedBookList = books
             }else{
                 layout.emptyShelf.visibility = View.VISIBLE
-                layout.booksSwipeToRefLayout.visibility = View.INVISIBLE
+                layout.orderedBooksRecView.visibility = View.INVISIBLE
                 layout.materialSearchView.search_search_edit_text.isEnabled = false
                 layout.materialSearchView.search_image_view_navigation.isEnabled = false
             }
@@ -284,19 +284,6 @@ class ShelfFragment : Fragment() {
 
         layout.gotoStoreBtn.setOnClickListener {
             mainActivityViewModel.setSelectedIndex(1)
-        }
-
-
-        layout.booksSwipeToRefLayout.setColorSchemeColors(
-            ContextCompat.getColor(requireContext(),R.color.purple_700),
-            ContextCompat.getColor(requireContext(),R.color.orange),
-            ContextCompat.getColor(requireContext(),R.color.light_blue_A400)
-        )
-
-        layout.booksSwipeToRefLayout.setOnRefreshListener {
-            orderedBooksAdapter.submitList(emptyList())
-            orderedBooksAdapter.submitList(mainActivityViewModel.getOrderedBooks().value)
-            layout.booksSwipeToRefLayout.isRefreshing = false
         }
 
         return layout.root

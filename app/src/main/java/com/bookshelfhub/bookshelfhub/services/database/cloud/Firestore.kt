@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import androidx.paging.PagingSource
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -54,28 +55,71 @@ open class Firestore {
             }
     }
 
-   open fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean=false, onComplete: (dataList:List<T>)->Unit){
+    open fun <T: Any> getListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean=false,  onComplete: (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
-            db.collection(collection)
-            .addSnapshotListener { querySnapShot, e ->
+        db.collection(collection)
+            .get()
+            .addOnSuccessListener { querySnapShot ->
                 var dataList = emptyList<T>()
-
                 querySnapShot?.let {
-                    try {
+                    if (!it.isEmpty){
                         for (doc in it) {
                             val data =  doc.get(field)
                             dataList = dataList.plus(json!!.fromAny(data!!, type))
                         }
-                    }catch(e:Exception){
                     }
                 }
                 onComplete(dataList)
             }
     }
 
+
+   open fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, orderBy:String = DbFields.DATE_TIME_PUBLISHED.KEY, shouldCache:Boolean=false, onComplete: (dataList:List<T>)->Unit){
+        db.firestoreSettings=getCacheSettings(shouldCache)
+            db.collection(collection)
+                .orderBy(orderBy)
+            .addSnapshotListener { querySnapShot, e ->
+
+                var dataList = emptyList<T>()
+                querySnapShot?.let {
+
+                    if (!it.isEmpty){
+                            for (doc in it) {
+                                val data =  doc.get(field)
+                                dataList = dataList.plus(json!!.fromAny(data!!, type))
+                            }
+                    }
+                }
+                onComplete(dataList)
+            }
+    }
+
+    open fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String = DbFields.DATE_TIME_PUBLISHED.KEY,  shouldCache:Boolean=false, onComplete: (dataList:List<T>)->Unit){
+
+        db.firestoreSettings=getCacheSettings(shouldCache)
+        db.collection(collection)
+            .orderBy(orderBy)
+            .startAfter(startAt)
+            .addSnapshotListener { querySnapShot, e ->
+
+                var dataList = emptyList<T>()
+                querySnapShot?.let {
+                    if (!it.isEmpty){
+                        for (doc in it) {
+                            val data =  doc.get(field)
+                            dataList = dataList.plus(json!!.fromAny(data!!, type))
+                        }
+                    }
+                }
+                onComplete(dataList)
+            }
+    }
+
+
+
     private fun getCacheSettings(shouldCache: Boolean):FirebaseFirestoreSettings{
      return firestoreSettings {
-            isPersistenceEnabled=false
+            isPersistenceEnabled=shouldCache
         }
     }
 

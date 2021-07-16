@@ -70,7 +70,7 @@ class StoreSearchResultAdapter (private val context:Context) {
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(model:StoreSearchHistory,context: Context){
             title.text = model.title
-            author.text = model.title
+            author.text = model.author
             itemCardView.setOnClickListener {
                startBookItemActivity(model.title, model.isbn, model.author, context)
             }
@@ -88,7 +88,6 @@ class StoreSearchResultAdapter (private val context:Context) {
                 startBookItemActivity(model.name, model.isbn, model.author, context)
             }
         }
-
     }
 
     private class FindABookViewHolder(view: View) : RecyclerViewHolder<BookRequest>(view) {

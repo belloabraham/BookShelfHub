@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.DateUtil
@@ -39,8 +41,9 @@ class ProfileFragment : Fragment() {
     lateinit var database: Database
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
-    var gender:String?=null
-    var dateOfBirth:String?=null
+    private var gender:String?=null
+    private var dateOfBirth:String?=null
+    private val profileFragmentViewModel:ProfileFragmentViewModel by viewModels()
     private lateinit var layout: FragmentProfileBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,28 +53,26 @@ class ProfileFragment : Fragment() {
 
         var user:User? = null
 
-        lifecycleScope.launch(IO){
-             user = localDb.getUser(userAuth.getUserId()).get()
-            withContext(Main){
-                layout.nameEditTxt.setText(user!!.name)
-                if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
-                    layout.phoneEditTxtLayout.visibility=View.VISIBLE
-                }else{
-                    layout.emailEditTxtLayout.visibility=View.VISIBLE
-                }
-                layout.phoneEditTxt.setText(user!!.phone)
-                layout.emailEditTxt.setText(user!!.email)
-
-                user!!.dateOfBirth?.let {
-                    dateOfBirth=it
-                    layout.dobDatePicker.date = DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue )
-                }
-               user!!.gender?.let {
-                   gender =it
-                   layout.genderLayout.hint = it
-                }
+        profileFragmentViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
+            user = liveUser
+            layout.nameEditTxt.setText(liveUser!!.name)
+            if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
+                layout.phoneEditTxtLayout.visibility=View.VISIBLE
+            }else{
+                layout.emailEditTxtLayout.visibility=View.VISIBLE
             }
-        }
+            layout.phoneEditTxt.setText(liveUser.phone)
+            layout.emailEditTxt.setText(liveUser.email)
+
+            liveUser.dateOfBirth?.let {
+                dateOfBirth=it
+                layout.dobDatePicker.date = DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue )
+            }
+            liveUser.gender?.let {
+                gender =it
+                layout.genderLayout.hint = it
+            }
+        })
 
         layout.dobDatePicker.setOnDatePickListener {
             dateOfBirth = DateUtil.dateToString(it, DateFormat.MM_DD_YYYY.completeFormatValue)

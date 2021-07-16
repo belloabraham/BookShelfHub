@@ -70,9 +70,26 @@ interface UserDao {
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
     //Todo PublishedBooks
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+
+
+    @Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
+    fun deletePublishedBookRecords(isbnList: List<String>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)
 
-    @Query("SELECT * FROM PublishedBooks ORDER BY datePublished DESC")
-    fun getAllPubBooksPageSource(): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBooks ORDER BY dateTimePublished DESC")
+    fun getLivePublishedBooks(): LiveData<List<PublishedBooks>>
+
+    @Query("SELECT * FROM PublishedBooks ORDER BY dateTimePublished DESC")
+    fun getPublishedBooks(): List<PublishedBooks>
+
+    @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
+    fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks>
+
+    @Query("SELECT * FROM PublishedBooks WHERE trending = :trending ORDER BY dateTimePublished DESC")
+    fun getTrendingBooksPageSource(trending:Boolean=true): PagingSource<Int, PublishedBooks>
+
+    @Query("SELECT * FROM PublishedBooks WHERE recommended =:recommended ORDER BY dateTimePublished DESC")
+    fun getRecommendedBooksPageSource(recommended:Boolean =true): PagingSource<Int, PublishedBooks>
 }

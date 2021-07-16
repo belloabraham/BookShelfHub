@@ -10,6 +10,6 @@ class DiffUtilItemCallback: DiffUtil.ItemCallback<PublishedBooks>() {
     }
 
     override fun areContentsTheSame(oldItem: PublishedBooks, newItem: PublishedBooks): Boolean {
-       return oldItem.isbn == newItem.isbn
+       return (oldItem.name == newItem.name) && (oldItem.coverUrl == newItem.coverUrl)
     }
 }

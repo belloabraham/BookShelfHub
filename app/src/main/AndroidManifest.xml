@@ -26,8 +26,14 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub"
         tools:replace="android:supportsRtl,android:allowBackup">
-        <activity
-            android:name=".BookActivity"/>
+
+        <activity android:name=".BookCategoryActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity android:name=".BookActivity" />
+
         <activity
             android:name=".BookItemActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
