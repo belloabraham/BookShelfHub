@@ -12,6 +12,10 @@ class LocalDateTimeUtil {
         fun getYear():Int{
             return LocalDateTime.now().year
         }
+
+        fun getDayOfMoth():Int{
+            return LocalDateTime.now().dayOfMonth
+        }
     }
 
 }

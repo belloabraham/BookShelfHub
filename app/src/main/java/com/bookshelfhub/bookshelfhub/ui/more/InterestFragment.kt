@@ -35,8 +35,6 @@ import javax.inject.Inject
 class InterestFragment : Fragment() {
 
     private lateinit var bookInterestObservable:BookInterestObservable
-    @Inject
-    lateinit var database: Database
     private val interestFragmentViewModel: InterestFragmentViewModel by viewModels()
     @Inject
     lateinit var localDb: LocalDb
@@ -92,7 +90,7 @@ class InterestFragment : Fragment() {
                 val bookInterest = bookInterestObservable.getBookInterestRecord()
                  bookInterest.uploaded = false
                  bookInterest.added=true
-                database.addBookInterest(bookInterest)
+                localDb.addBookInterest(bookInterest)
                 withContext(Main){
                     activity?.let {
                         Toast(it).showToast(R.string.interest_Saved)

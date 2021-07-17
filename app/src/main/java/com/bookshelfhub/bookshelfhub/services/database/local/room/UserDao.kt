@@ -68,16 +68,13 @@ interface UserDao {
 
     //Todo PublishedBooks
     @Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
-    fun deletePublishedBookRecords(isbnList: List<String>)
+    fun deleteUnPublishedBookRecords(isbnList: List<String>)
 
-    @Query("UPDATE PublishedBooks SET trending = 1 WHERE EXISTS (SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100)")
-    suspend fun updateTrendingBooksRecords()
+    @Query("UPDATE PublishedBooks SET recommended = :recommend WHERE category =:category")
+    suspend fun updateRecommendedBooksByCategory(category: String, recommend:Boolean)
 
-    @Query("UPDATE PublishedBooks SET recommended = 1 WHERE EXISTS (SELECT * FROM PublishedBooks WHERE category =:category)")
-    suspend fun updateRecommendedBooksByCategory(category: String)
-
-    @Query("UPDATE PublishedBooks SET recommended = 1 WHERE EXISTS (SELECT * FROM PublishedBooks WHERE tag LIKE  :tag)")
-    suspend fun updateRecommendedBooksByTag(tag: String)
+    @Query("UPDATE PublishedBooks SET recommended = :recommend  WHERE tag = :tag")
+    suspend fun updateRecommendedBooksByTag(tag: String, recommend:Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)
@@ -91,18 +88,18 @@ interface UserDao {
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
     fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>>
 
-    @Query("SELECT * FROM PublishedBooks WHERE recommended = 1 ORDER BY dateTimePublished DESC")
-    fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>>
+    @Query("SELECT * FROM PublishedBooks WHERE recommended = :recommend ORDER BY dateTimePublished DESC")
+    fun getLiveRecommendedBooks(recommend:Boolean=true): LiveData<List<PublishedBooks>>
 
-    @Query("SELECT * FROM PublishedBooks WHERE trending = 1 ORDER BY noOfDownloads DESC LIMIT 100")
+    @Query("SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100")
     fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>>
 
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
     fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks>
 
-    @Query("SELECT * FROM PublishedBooks WHERE trending = 1 ORDER BY noOfDownloads DESC LIMIT 100")
+    @Query("SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100")
     fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks>
 
-    @Query("SELECT * FROM PublishedBooks WHERE recommended = 1 ORDER BY dateTimePublished DESC")
-    fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBooks WHERE recommended = :recommend   ORDER BY noOfDownloads DESC")
+    fun getRecommendedBooksPageSource(recommend:Boolean=true): PagingSource<Int, PublishedBooks>
 }

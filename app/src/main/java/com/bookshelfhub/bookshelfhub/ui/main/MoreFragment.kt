@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
@@ -217,6 +220,7 @@ class MoreFragment : Fragment() {
         mainActivityViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
             if(bookInterest.isPresent && bookInterest.get().added){
                 layout.interestNotifCard.visibility = View.GONE
+
             }else{
                 layout.interestNotifCard.visibility = View.VISIBLE
             }

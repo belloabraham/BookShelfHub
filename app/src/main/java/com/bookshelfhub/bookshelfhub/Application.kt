@@ -2,9 +2,8 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
-import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
-import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
-import com.bookshelfhub.bookshelfhub.workers.UploadUserData
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
+import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
@@ -46,17 +45,24 @@ class Application: android.app.Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val unPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
+        val removeUnPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
+                .setInitialDelay(1, TimeUnit.HOURS)
                 .setConstraints(connected)
                 .build()
 
+        val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(23, TimeUnit.HOURS)
+            .setInitialDelay(1, TimeUnit.HOURS)
+            .setConstraints(connected)
+            .build()
+
         val oneTimeNotificationTokenUpload =
-            OneTimeWorkRequestBuilder<UploadBookInterest>()
+            OneTimeWorkRequestBuilder<UploadNotificationToken>()
                 .setConstraints(connected)
                 .build()
 
         WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
-        WorkManager.getInstance(applicationContext).enqueue(unPublishedBooks)
+        WorkManager.getInstance(applicationContext).enqueue(removeUnPublishedBooks)
+        WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }
 
     private fun setupFirebaseRemoteConfig(){

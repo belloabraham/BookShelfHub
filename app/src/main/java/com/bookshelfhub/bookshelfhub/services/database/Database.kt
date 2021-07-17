@@ -32,11 +32,6 @@ class Database @Inject constructor(private var context: Context, private val loc
 
     suspend fun addBookInterest(bookInterest: BookInterest){
         localDb.addBookInterest(bookInterest)
-        val oneTimeUserDataUpload: WorkRequest =
-            OneTimeWorkRequestBuilder<UploadBookInterest>()
-                .setConstraints(getConnectedConstraint())
-                .build()
-        WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
     }
 
      fun getLiveUser(userId:String): LiveData<User> {

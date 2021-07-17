@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
@@ -28,6 +29,8 @@ import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
+import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,6 +112,22 @@ class MainActivity : AppCompatActivity() {
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
             if(bookInterest.isPresent && bookInterest.get().added){
                 mainActivityViewModel.setBookInterestNotifNo(0)
+
+               val connected = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+
+                val recommendedBooksWorker: WorkRequest =
+                    OneTimeWorkRequestBuilder<RecommendedBooks>()
+                        .build()
+                WorkManager.getInstance(this).enqueue(recommendedBooksWorker)
+
+                val oneTimeBookInterestUpload: WorkRequest =
+                    OneTimeWorkRequestBuilder<UploadBookInterest>()
+                        .setConstraints(connected)
+                        .build()
+
+                WorkManager.getInstance(this).enqueue(oneTimeBookInterestUpload)
             }else{
                 mainActivityViewModel.setBookInterestNotifNo(1)
             }

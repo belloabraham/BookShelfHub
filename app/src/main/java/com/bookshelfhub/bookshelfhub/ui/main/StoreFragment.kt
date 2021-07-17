@@ -156,13 +156,13 @@ class StoreFragment : Fragment() {
 
 
         lifecycleScope.launch {
-            storeFragmentViewModel.getTrendingBooks().collectLatest { books ->
+            storeFragmentViewModel.getTrendingBooksPageSource().collectLatest { books ->
                 loadBooks(books, trendingBooksAdapter, layout.trendingLayout)
             }
         }
 
         lifecycleScope.launch {
-            storeFragmentViewModel.getRecommendedBooks().collectLatest { books ->
+            storeFragmentViewModel.getRecommendedBooksPageSource().collectLatest { books ->
                 loadBooks(books, recommendBooksAdapter, layout.recommendedLayout)
             }
         }

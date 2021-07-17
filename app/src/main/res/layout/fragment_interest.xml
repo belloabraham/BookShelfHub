@@ -69,6 +69,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
+                    android:checked="@={bookInterest.isSport}"
+                    android:layout_margin="@dimen/size_8"
+                    android:text="@string/sport" />
+
+                <com.google.android.material.chip.Chip
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checkable="true"
                     android:checked="@={bookInterest.isTravel}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/travel" />
@@ -80,14 +88,6 @@
                     android:checked="@={bookInterest.isScienceAndTechnology}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/science_technology" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isSport}"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/sport" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -109,17 +109,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isChristianity}"
+                    android:checked="@={bookInterest.isIslam}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/christianity" />
+                    android:text="@string/islam" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isIslam}"
+                    android:checked="@={bookInterest.isChristianity}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/islam" />
+                    android:text="@string/christianity" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"

@@ -7,5 +7,6 @@ enum class DbFields(val KEY:String) {
     PUBLISHED_BOOKS("published_books"),
     PUBLISHED_BOOK("published_book"),
     DATE_TIME_PUBLISHED("dateTimePublished"),
-    UNPUBLISHED_BOOKS("unpublished_books")
+    UNPUBLISHED_BOOKS("unpublished_books"),
+    UNPUBLISHED_BOOK("unpublished_book")
 }

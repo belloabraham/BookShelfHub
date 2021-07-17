@@ -12,7 +12,6 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Publi
 import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.workers.TrendingBooks
 import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -1776,10 +1775,10 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
                         category = "Cook Books", tag = ""),
                 )
 
-        loadBooksFromCloud(context, books)
+        loadBooksFromCloud(books)
     }
 
-    private fun loadBooksFromCloud(context: Context, books:List<PublishedBooks>){
+    private fun loadBooksFromCloud(books:List<PublishedBooks>){
         viewModelScope.launch(IO) {
             val publishedBooks = localDb.getPublishedBooks()
             withContext(Default){
@@ -1789,7 +1788,7 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
                         DbFields.PUBLISHED_BOOK.KEY,
                         PublishedBooks::class.java
                     ){
-                        addBooksToLocalDb(books, context)
+                        addBooksToLocalDb(books)
                     }
                 }else{
                     cloudDb.getLiveListOfDataAsyncFrom(
@@ -1798,7 +1797,7 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
                         PublishedBooks::class.java,
                         publishedBooks[0].dateTimePublished
                     ){
-                        addBooksToLocalDb(it,context, false)
+                        addBooksToLocalDb(it, false)
                     }
                 }
             }
@@ -1806,15 +1805,10 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
         }
     }
 
-    private fun addBooksToLocalDb(books:List<PublishedBooks>, context: Context, reportError:Boolean=true){
+    private fun addBooksToLocalDb(books:List<PublishedBooks>, reportError:Boolean=true){
          if (books.isNotEmpty()){
             viewModelScope.launch(IO){
                 localDb.addAllPubBooks(books)
-                withContext(Default){
-                    val trendingBooks = OneTimeWorkRequestBuilder<TrendingBooks>()
-                            .build()
-                    WorkManager.getInstance(context).enqueue(trendingBooks)
-                }
             }
         }
         if(reportError && books.isEmpty()){
@@ -1827,13 +1821,7 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
         return allPublishedBooks
     }
 
-    fun getRecommendedBooks(): Flow<PagingData<PublishedBooks>> {
-        return Pager(config){
-            localDb.getRecommendedBooksPageSource()
-        }.flow
-    }
-
-    fun getTrendingBooks(): Flow<PagingData<PublishedBooks>> {
+    fun getTrendingBooksPageSource(): Flow<PagingData<PublishedBooks>> {
         return Pager(config){
             localDb.getTrendingBooksPageSource()
         }.flow
@@ -1842,6 +1830,12 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
     fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBooks>> {
         return Pager(config){
             localDb.getBooksByCategoryPageSource(category)
+        }.flow
+    }
+
+    fun getRecommendedBooksPageSource(): Flow<PagingData<PublishedBooks>> {
+        return Pager(config){
+            localDb.getRecommendedBooksPageSource()
         }.flow
     }
 

@@ -77,24 +77,21 @@ open class RoomDb(private val context:Context) {
 
     //TODO Published Books
 
-    open suspend fun updateTrendingBooksRecords(){
-        RoomInstance.getDatabase(context).userDao().updateTrendingBooksRecords()
+
+    open suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean = true){
+        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByCategory(category, isRecommended)
     }
 
-    open suspend fun updateRecommendedBooksByCategory(category: String){
-        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByCategory(category)
-    }
-
-    open suspend fun updateRecommendedBooksByTag(tag: String){
-        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByTag(tag)
+    open suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean = true){
+        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByTag(tag,isRecommended)
     }
 
     open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
     }
 
-    open suspend fun deletePublishedBookRecords(isbnList:List<String>){
-        RoomInstance.getDatabase(context).userDao().deletePublishedBookRecords(isbnList)
+    open suspend fun deleteUnPublishedBookRecords(isbnList:List<String>){
+        RoomInstance.getDatabase(context).userDao().deleteUnPublishedBookRecords(isbnList)
     }
 
     open suspend fun getPublishedBooks(): List<PublishedBooks> {

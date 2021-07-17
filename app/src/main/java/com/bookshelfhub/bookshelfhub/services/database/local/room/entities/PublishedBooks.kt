@@ -17,10 +17,9 @@ data class PublishedBooks(
     val price: Double=0.0,
     val totalRatings: Double=0.0,
     val category: String,
-    val recommended:Boolean=false,
+    val recommended:Boolean = false,
     val language:String="",
     val copyrightLawUrl: String="",
     val authorEmail: String="",
-    val tag: String,
-    val trending: Boolean = false
+    val tag: String
 )

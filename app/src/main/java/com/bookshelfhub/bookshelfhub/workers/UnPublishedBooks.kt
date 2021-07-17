@@ -30,11 +30,11 @@ class UnPublishedBooks(val context: Context, workerParams: WorkerParameters) : C
         }
 
         CloudDb(Json(Gson())).getListOfDataAsync(
-            DbFields.PUBLISHED_BOOKS.KEY,
-            DbFields.PUBLISHED_BOOK.KEY,
+            DbFields.UNPUBLISHED_BOOKS.KEY,
+            DbFields.UNPUBLISHED_BOOK.KEY,
             PublishedBooks::class.java,
         ) {
-            //if(it.isNotEmpty()){
+            if(it.isNotEmpty()){
                 var listOfUnPublishedBooksIsbn= emptyList<String>()
                 for (publishBooks in it){
                     listOfUnPublishedBooksIsbn  = listOfUnPublishedBooksIsbn.plus(publishBooks.isbn)
@@ -42,10 +42,10 @@ class UnPublishedBooks(val context: Context, workerParams: WorkerParameters) : C
                 val localDb = LocalDb(context)
 
                 coroutineScope {
-                    localDb.deletePublishedBookRecords(listOfUnPublishedBooksIsbn)
+                    localDb.deleteUnPublishedBookRecords(listOfUnPublishedBooksIsbn)
                 }
 
-           // }
+            }
          }
         return Result.success()
     }
