@@ -21,6 +21,6 @@ data class PublishedBooks(
     val language:String="",
     val copyrightLawUrl: String="",
     val authorEmail: String="",
-    val tags: String,
+    val tag: String,
     val trending: Boolean = false
 )

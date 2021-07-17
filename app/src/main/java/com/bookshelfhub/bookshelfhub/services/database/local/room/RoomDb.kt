@@ -81,6 +81,14 @@ open class RoomDb(private val context:Context) {
         RoomInstance.getDatabase(context).userDao().updateTrendingBooksRecords()
     }
 
+    open suspend fun updateRecommendedBooksByCategory(category: String){
+        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByCategory(category)
+    }
+
+    open suspend fun updateRecommendedBooksByTag(tag: String){
+        RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByTag(tag)
+    }
+
     open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
     }

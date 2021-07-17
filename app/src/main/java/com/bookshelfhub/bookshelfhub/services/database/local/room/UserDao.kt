@@ -71,7 +71,13 @@ interface UserDao {
     fun deletePublishedBookRecords(isbnList: List<String>)
 
     @Query("UPDATE PublishedBooks SET trending = 1 WHERE EXISTS (SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100)")
-    fun updateTrendingBooksRecords()
+    suspend fun updateTrendingBooksRecords()
+
+    @Query("UPDATE PublishedBooks SET recommended = 1 WHERE EXISTS (SELECT * FROM PublishedBooks WHERE category =:category)")
+    suspend fun updateRecommendedBooksByCategory(category: String)
+
+    @Query("UPDATE PublishedBooks SET recommended = 1 WHERE EXISTS (SELECT * FROM PublishedBooks WHERE tag LIKE  :tag)")
+    suspend fun updateRecommendedBooksByTag(tag: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)

@@ -36,12 +36,12 @@ class BookInterestObservable (private val bkInts:BookInterest): BaseObservable()
 
     @Bindable
     fun getIsBusinessAndFinance():Boolean{
-        return bkInts.biographyChecked
+        return bkInts.businessAndFinanceChecked
     }
 
     fun setIsBusinessAndFinance(value:Boolean){
         if(bkInts.businessAndFinanceChecked!=value){
-            bkInts.biographyChecked=value
+            bkInts.businessAndFinanceChecked=value
             notifyPropertyChanged(BR.isBusinessAndFinance)
         }
     }
@@ -203,18 +203,6 @@ class BookInterestObservable (private val bkInts:BookInterest): BaseObservable()
     }
 
     @Bindable
-    fun getIsPhotography():Boolean{
-        return bkInts.photographyChecked
-    }
-
-    fun setIsPhotography(value:Boolean){
-        if(bkInts.photographyChecked!=value){
-            bkInts.photographyChecked=value
-            notifyPropertyChanged(BR.isPhotography)
-        }
-    }
-
-    @Bindable
     fun getIsNovel():Boolean{
         return bkInts.novelChecked
     }
@@ -323,18 +311,6 @@ class BookInterestObservable (private val bkInts:BookInterest): BaseObservable()
     }
 
     @Bindable
-    fun getIsMagazine():Boolean{
-        return bkInts.magazineChecked
-    }
-
-    fun setIsMagazine(value:Boolean){
-        if(bkInts.magazineChecked!=value){
-            bkInts.magazineChecked=value
-             notifyPropertyChanged(BR.isMagazine)
-        }
-    }
-
-    @Bindable
     fun getIsNews():Boolean{
         return bkInts.newsChecked
     }
@@ -343,6 +319,18 @@ class BookInterestObservable (private val bkInts:BookInterest): BaseObservable()
         if(bkInts.newsChecked!=value){
             bkInts.newsChecked=value
              notifyPropertyChanged(BR.isNews)
+        }
+    }
+
+    @Bindable
+    fun getIsEntertainment():Boolean{
+        return bkInts.entertainmentChecked
+    }
+
+    fun setIsEntertainment(value:Boolean){
+        if(bkInts.entertainmentChecked!=value){
+            bkInts.entertainmentChecked=value
+            notifyPropertyChanged(BR.isEntertainment)
         }
     }
 

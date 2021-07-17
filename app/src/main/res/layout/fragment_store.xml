@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/recommendedLayout"
             android:layout_marginTop="@dimen/size_16"
-            android:orientation="vertical">
+            android:orientation="vertical" android:visibility="gone">
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -84,7 +84,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/trendingLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
+
     <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -124,7 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/artCraftLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
 
     <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -164,7 +165,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/businessFinanceLayout"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
     <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -204,7 +206,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/comicLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
     <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -244,7 +246,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/cookBookLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -281,12 +283,139 @@
             android:layout_height="wrap_content"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:id="@+id/educationLayout"
+            android:orientation="vertical" android:visibility="gone">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="@style/StoreItemsTitleCard"
+                android:id="@+id/educationCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/size_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/cook_books"
+                        style="@style/StoreItemsTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/educationRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:id="@+id/entertainmentLayout"
+            android:orientation="vertical" android:visibility="gone">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="@style/StoreItemsTitleCard"
+                android:id="@+id/entertainmentCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/size_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/entertainment"
+                        style="@style/StoreItemsTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/entertainmentRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:id="@+id/fictionLayout"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="@style/StoreItemsTitleCard"
+                android:id="@+id/fictionCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/size_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/fiction"
+                        style="@style/StoreItemsTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fictionRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/historyLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -327,7 +456,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/howToLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -367,7 +496,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/langRefLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -406,7 +535,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/lawLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -447,7 +576,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/loveLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -489,7 +618,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/newsLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -530,7 +659,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/politicsLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -571,7 +700,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/religionLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -612,7 +741,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/scienceTecLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -651,7 +780,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_16"
         android:id="@+id/sportLayout"
-        android:orientation="vertical">
+        android:orientation="vertical" android:visibility="gone">
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -684,6 +813,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:id="@+id/travelLayout"
+            android:orientation="vertical" android:visibility="gone">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="@style/StoreItemsTitleCard"
+                android:id="@+id/travelCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/size_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/travel"
+                        style="@style/StoreItemsTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/travelRecView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

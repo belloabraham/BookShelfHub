@@ -48,7 +48,6 @@ class StoreFragment : Fragment() {
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
 
-
         val searchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
 
         val recommendBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
@@ -67,6 +66,10 @@ class StoreFragment : Fragment() {
         val sportBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
         val businessBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
         val cooksBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val educationBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val travelBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val fictionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val entertainmentBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
 
         setRecyclerViewLayoutManager()
 
@@ -261,6 +264,33 @@ class StoreFragment : Fragment() {
                 }
         }
 
+        lifecycleScope.launch {
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.education))
+                .collectLatest { books ->
+                    loadBooks(books, educationBooksAdapter, layout.educationLayout)
+                }
+        }
+
+        lifecycleScope.launch {
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.entertainment))
+                .collectLatest { books ->
+                    loadBooks(books, entertainmentBooksAdapter, layout.entertainmentLayout)
+                }
+        }
+
+        lifecycleScope.launch {
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.fiction))
+                .collectLatest { books ->
+                    loadBooks(books, fictionBooksAdapter, layout.fictionLayout)
+                }
+        }
+
+        lifecycleScope.launch {
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.travel))
+                .collectLatest { books ->
+                    loadBooks(books, travelBooksAdapter, layout.travelLayout)
+                }
+        }
 
 
         layout.recommendedCard.setOnClickListener {
@@ -314,9 +344,23 @@ class StoreFragment : Fragment() {
             startBookCategoryActivity( getString(R.string.manuals))
         }
 
+        layout.travelCard.setOnClickListener {
+            startBookCategoryActivity( getString(R.string.travel))
+        }
+        layout.educationCard.setOnClickListener {
+            startBookCategoryActivity( getString(R.string.education))
+        }
+
+        layout.entertainmentCard.setOnClickListener {
+            startBookCategoryActivity(getString(R.string.entertainment))
+        }
+        layout.fictionCard.setOnClickListener {
+            startBookCategoryActivity( getString(R.string.fiction))
+        }
+
+
         return layout.root
     }
-
 
     private fun setRecyclerViewLayoutManager(){
         layout.recommendedRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -335,6 +379,10 @@ class StoreFragment : Fragment() {
         layout.religionRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         layout.sciAndTechRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         layout.sportRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        layout.educationRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        layout.fictionRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        layout.entertainmentRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        layout.travelRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private  fun loadBooks(list:PagingData<PublishedBooks>, adapter: StoreListAdapter, layout:LinearLayoutCompat){

@@ -263,17 +263,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isNovel}"
+                    android:checked="@={bookInterest.isEntertainment}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/novel" />
+                    android:text="@string/entertainment" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isPhotography}"
+                    android:checked="@={bookInterest.isNovel}"
                     android:layout_margin="@dimen/size_8"
-                    android:text="@string/photography" />
+                    android:text="@string/novel" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -314,15 +314,6 @@
                     android:checked="@={bookInterest.isHumour}"
                     android:layout_margin="@dimen/size_8"
                     android:text="@string/humour" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isMagazine}"
-                    android:layout_margin="@dimen/size_8"
-                    android:text="@string/magazine" />
-
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
