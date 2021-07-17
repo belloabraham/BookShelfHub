@@ -26,13 +26,9 @@
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="p">@color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
-
         <item name="android:windowActivityTransitions">true</item>
-
         <item name="android:windowEnterTransition">@transition/fade</item>
         <item name="android:windowExitTransition">@transition/slide</item>
-
-        <!-- specify shared element transitions -->
         <item name="android:windowSharedElementEnterTransition">
             @transition/expand_view
         </item>
@@ -50,6 +46,8 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="p">
             @android:color/transparent

@@ -17,7 +17,7 @@
         <item name="backgroundColor">@color/night</item>
         <item name="android:colorBackground">?backgroundColor</item>
         <item name="android:windowBackground">?backgroundColor</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?backgroundColor</item>
         <!-- Customize your theme here. -->
@@ -25,8 +25,17 @@
         <item name="android:navigationBarDividerColor" tools:targetApi="p">
             @android:color/transparent
         </item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
 
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowEnterTransition">@transition/fade</item>
+        <item name="android:windowExitTransition">@transition/slide</item>
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/expand_view
+        </item>
+        <item name="android:windowSharedElementExitTransition">
+            @transition/expand_view
+        </item>
 
     </style>
 
@@ -35,14 +44,16 @@
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="backgroundColor">@color/night</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
+        <item name="android:fitsSystemWindows">true</item>
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
         <item name="android:navigationBarDividerColor" tools:targetApi="p">
             @android:color/transparent
         </item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="p">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="p">false</item>
     </style>
 
     <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">

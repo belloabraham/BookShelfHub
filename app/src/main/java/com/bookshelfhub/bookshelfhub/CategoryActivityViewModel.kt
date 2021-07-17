@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,13 +25,29 @@ class CategoryActivityViewModel @Inject constructor(private val localDb: LocalDb
         initialLoadSize = 20
     )
 
-    fun loadLiveBooksByCategory(category: String){
-       liveBooksByCategory = localDb.getLiveBooksByCategory(category)
+    fun loadLiveBooksByCategory(category: String, context: Context){
+        liveBooksByCategory = if (category==context.getString(R.string.trending)){
+            localDb.getLiveTrendingBooks()
+        }else if (category == context.getString(R.string.recommended_for)){
+            localDb.getLiveRecommendedBooks()
+        }else{
+            localDb.getLiveBooksByCategory(category)
+        }
     }
-    fun loadBooksByCategory(category:String){
-        bookByCategory = Pager(config){
-            localDb.getBooksByCategoryPageSource(category)
-        }.liveData
+    fun loadBooksByCategory(category:String, context: Context){
+        if (category==context.getString(R.string.trending)){
+            bookByCategory = Pager(config){
+                localDb.getTrendingBooksPageSource()
+            }.liveData
+        }else if (category == context.getString(R.string.recommended_for)){
+            bookByCategory = Pager(config){
+                localDb.getRecommendedBooksPageSource()
+            }.liveData
+        }else{
+            bookByCategory = Pager(config){
+                localDb.getBooksByCategoryPageSource(category)
+            }.liveData
+        }
     }
 
     fun getBookByCategory(): LiveData<PagingData<PublishedBooks>> {

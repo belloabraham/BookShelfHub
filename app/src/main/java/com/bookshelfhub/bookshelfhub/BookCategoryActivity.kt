@@ -45,8 +45,8 @@ class BookCategoryActivity : AppCompatActivity() {
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
-        categoryActivityViewModel.loadBooksByCategory(category)
-        categoryActivityViewModel.loadLiveBooksByCategory(category)
+        categoryActivityViewModel.loadBooksByCategory(category, this)
+        categoryActivityViewModel.loadLiveBooksByCategory(category, this)
 
         layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
         layout.categoryBookRecView.adapter = bookListAdapter
@@ -54,6 +54,7 @@ class BookCategoryActivity : AppCompatActivity() {
         val bookReqMsg = getString(R.string.cant_find_book)
 
         layout.materialSearchView.apply {
+            val params =  layout.toolbarLayout.layoutParams as AppBarLayout.LayoutParams
             setAdapter(searchListAdapter)
             setItemAnimator(null)
             setOnNavigationClickListener(object : SearchLayout.OnNavigationClickListener {
@@ -65,10 +66,14 @@ class BookCategoryActivity : AppCompatActivity() {
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     layout.materialSearchView.navigationIconSupport = if (hasFocus) {
+                        params.scrollFlags=0
                         SearchLayout.NavigationIconSupport.ARROW
                     } else {
+                        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
+                                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
+                    layout.toolbarLayout.layoutParams = params
                 }
             })
 

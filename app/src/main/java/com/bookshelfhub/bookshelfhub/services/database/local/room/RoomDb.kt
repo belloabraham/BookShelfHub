@@ -76,6 +76,11 @@ open class RoomDb(private val context:Context) {
     }
 
     //TODO Published Books
+
+    open suspend fun updateTrendingBooksRecords(){
+        RoomInstance.getDatabase(context).userDao().updateTrendingBooksRecords()
+    }
+
     open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
     }
@@ -86,6 +91,14 @@ open class RoomDb(private val context:Context) {
 
     open suspend fun getPublishedBooks(): List<PublishedBooks> {
         return RoomInstance.getDatabase(context).userDao().getPublishedBooks()
+    }
+
+    open fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>> {
+        return RoomInstance.getDatabase(context).userDao().getLiveTrendingBooks()
+    }
+
+    open fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>> {
+        return RoomInstance.getDatabase(context).userDao().getLiveRecommendedBooks()
     }
 
     open fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>> {
@@ -100,12 +113,12 @@ open class RoomDb(private val context:Context) {
         return RoomInstance.getDatabase(context).userDao().getBooksByCategoryPageSource(category)
     }
 
-    open fun getTrendingBooksPageSource(trending:Boolean=true): PagingSource<Int, PublishedBooks> {
-        return RoomInstance.getDatabase(context).userDao().getTrendingBooksPageSource(trending)
+    open fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks> {
+        return RoomInstance.getDatabase(context).userDao().getTrendingBooksPageSource()
     }
 
-    open fun getRecommendedBooksPageSource(recommended:Boolean=true): PagingSource<Int, PublishedBooks> {
-       return RoomInstance.getDatabase(context).userDao().getRecommendedBooksPageSource(recommended)
+    open fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks> {
+       return RoomInstance.getDatabase(context).userDao().getRecommendedBooksPageSource()
     }
 }
 

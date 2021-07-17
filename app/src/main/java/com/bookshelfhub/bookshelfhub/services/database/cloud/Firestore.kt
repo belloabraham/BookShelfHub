@@ -7,6 +7,8 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import java.util.ArrayList
 
 open class Firestore {
@@ -20,7 +22,7 @@ open class Firestore {
 
     constructor()
 
-    open fun addDataAsync(data: Any, collection:String, document:String, field:String, lastUpdated:FieldValue = FieldValue.serverTimestamp(), onSuccess:()->Unit ){
+    open fun addDataAsync(data: Any, collection:String, document:String, field:String, lastUpdated:FieldValue = FieldValue.serverTimestamp(), onSuccess: suspend ()->Unit ){
         val newData = hashMapOf(
             field to data,
             this.lastUpdated to lastUpdated
@@ -29,7 +31,9 @@ open class Firestore {
             .document(document)
             .set(newData, SetOptions.merge())
             .addOnSuccessListener {
-                onSuccess()
+                runBlocking {
+                    onSuccess()
+                }
             }
             .addOnFailureListener { e ->
             }
@@ -45,17 +49,19 @@ open class Firestore {
             .get()
             .addOnSuccessListener { documentSnapShot->
                 if (documentSnapShot!=null && documentSnapShot.exists()){
-                    onComplete(documentSnapShot, null)
+
+                        onComplete(documentSnapShot, null)
                 }else{
-                    onComplete(null, null)
+
+                        onComplete(null, null)
                 }
             }
             .addOnFailureListener {
-                onComplete(null, it)
+                    onComplete(null, null)
             }
     }
 
-    open fun <T: Any> getListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean=false,  onComplete: (dataList:List<T>)->Unit){
+    open fun <T: Any> getListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean=false,   onComplete: suspend (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
         db.collection(collection)
             .get()
@@ -69,7 +75,10 @@ open class Firestore {
                         }
                     }
                 }
-                onComplete(dataList)
+
+                runBlocking {
+                    onComplete(dataList)
+                }
             }
     }
 
@@ -94,7 +103,7 @@ open class Firestore {
             }
     }
 
-    open fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String = DbFields.DATE_TIME_PUBLISHED.KEY,  shouldCache:Boolean=false, onComplete: (dataList:List<T>)->Unit){
+    open fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String = DbFields.DATE_TIME_PUBLISHED.KEY,  shouldCache:Boolean=false, onComplete:  (dataList:List<T>)->Unit){
 
         db.firestoreSettings=getCacheSettings(shouldCache)
         db.collection(collection)

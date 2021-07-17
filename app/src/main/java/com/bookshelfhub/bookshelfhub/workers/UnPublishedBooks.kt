@@ -23,7 +23,7 @@ class UnPublishedBooks(val context: Context, workerParams: WorkerParameters) : C
 
     override suspend fun doWork(): Result {
 
-        val userAuth = UserAuth(StringUtil())
+        val userAuth = UserAuth()
 
         if (!userAuth.getIsUserAuthenticated()){
             return Result.retry()
@@ -34,16 +34,19 @@ class UnPublishedBooks(val context: Context, workerParams: WorkerParameters) : C
             DbFields.PUBLISHED_BOOK.KEY,
             PublishedBooks::class.java,
         ) {
-            var listOfUnPublishedBooksIsbn= emptyList<String>()
-            for (publishBooks in it){
-                listOfUnPublishedBooksIsbn  = listOfUnPublishedBooksIsbn.plus(publishBooks.isbn)
-            }
-            val localDb = LocalDb(context)
+            //if(it.isNotEmpty()){
+                var listOfUnPublishedBooksIsbn= emptyList<String>()
+                for (publishBooks in it){
+                    listOfUnPublishedBooksIsbn  = listOfUnPublishedBooksIsbn.plus(publishBooks.isbn)
+                }
+                val localDb = LocalDb(context)
 
-            runBlocking {
-                localDb.deletePublishedBookRecords(listOfUnPublishedBooksIsbn)
-            }
+                coroutineScope {
+                    localDb.deletePublishedBookRecords(listOfUnPublishedBooksIsbn)
+                }
+
+           // }
          }
-      return Result.success()
+        return Result.success()
     }
 }

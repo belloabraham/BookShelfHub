@@ -46,12 +46,11 @@ class Application: android.app.Application() {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        val unPublishedBooks =
-            PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
+        val unPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
                 .setConstraints(connected)
                 .build()
 
-        val oneTimeNotificationTokenUpload: WorkRequest =
+        val oneTimeNotificationTokenUpload =
             OneTimeWorkRequestBuilder<UploadBookInterest>()
                 .setConstraints(connected)
                 .build()

@@ -395,6 +395,10 @@ abstract class SearchLayout @JvmOverloads constructor(
         mRecyclerView?.adapter = adapter
     }
 
+    fun setNestedScrollEnable(enabled: Boolean) {
+        mRecyclerView?.isNestedScrollingEnabled = enabled
+    }
+
     fun setItemAnimator(@Nullable animator: DefaultItemAnimator?) {
         mRecyclerView?.itemAnimator = animator
     }

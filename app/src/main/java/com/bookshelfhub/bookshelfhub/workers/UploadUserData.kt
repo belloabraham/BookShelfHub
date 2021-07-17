@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.google.common.base.Optional
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
 class UploadUserData(val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
@@ -18,7 +19,7 @@ class UploadUserData(val context: Context, workerParams: WorkerParameters): Coro
 ) {
 
     override suspend fun doWork(): Result {
-        val userAuth=UserAuth(StringUtil())
+        val userAuth=UserAuth()
         val userId = userAuth.getUserId()
         val localDb = LocalDb(context)
         val user = localDb.getUser(userId)
@@ -27,7 +28,7 @@ class UploadUserData(val context: Context, workerParams: WorkerParameters): Coro
             if (user.isPresent && !userData.uploaded){
                CloudDb().addDataAsync(userData, DbFields.USERS_COLL.KEY, userId, DbFields.USER.KEY){
                    userData.uploaded = true
-                        runBlocking {
+                        coroutineScope {
                             localDb.addUser(userData)
                         }
                     }

@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.google.common.base.Optional
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 
 class UploadBookInterest (val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
@@ -18,7 +19,7 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
 ) {
 
     override suspend fun doWork(): Result {
-        val userAuth=UserAuth(StringUtil())
+        val userAuth=UserAuth()
 
         if (!userAuth.getIsUserAuthenticated()){
             return Result.retry()
@@ -32,7 +33,7 @@ class UploadBookInterest (val context: Context, workerParams: WorkerParameters):
             val bookInterestData = bookInterest.get()
                CloudDb().addDataAsync(bookInterestData, DbFields.USERS_COLL.KEY, userId, DbFields.BOOK_INTEREST.KEY){
                    bookInterestData.uploaded=true
-                runBlocking {
+                coroutineScope {
                     localDb.addBookInterest(bookInterestData)
                 }
             }

@@ -14,7 +14,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-open class User(private val stringUtils: StringUtil) {
+open class User {
+
+    private var stringUtils:StringUtil? = null
+
+    constructor(stringUtils: StringUtil){
+        this.stringUtils = stringUtils
+    }
+
+    constructor()
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -40,7 +48,7 @@ open class User(private val stringUtils: StringUtil) {
 
     open fun getName(): String? {
         auth.currentUser?.displayName?.let {
-            return stringUtils.capitalize(it)
+            return stringUtils?.capitalize(it)
         }
         return null
     }

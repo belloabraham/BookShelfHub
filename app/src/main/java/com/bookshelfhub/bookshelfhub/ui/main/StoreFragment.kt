@@ -155,74 +155,79 @@ class StoreFragment : Fragment() {
             }
         }
 
-        storeFragmentViewModel.getAlPublishedBooks().observe(viewLifecycleOwner, Observer { allBooks ->
+        storeFragmentViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { allBooks ->
             allBooksLive = allBooks
         })
 
 
-        storeFragmentViewModel.getReligionBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, religionBooksAdapter, layout.religionLayout)
-        })
+        lifecycleScope.launch {
 
-        storeFragmentViewModel.getCooksBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, cooksBooksAdapter, layout.cookBookLayout)
-        })
+            storeFragmentViewModel.getTrendingBooks().collectLatest { books ->
+                loadData(books, trendingBooksAdapter, layout.trendingLayout)
+            }
 
-         storeFragmentViewModel.getTrendingBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, trendingBooksAdapter, layout.trendingLayout)
-        })
+            storeFragmentViewModel.getRecommendedBooks().collectLatest { books ->
+                loadData(books, recommendBooksAdapter, layout.recommendedLayout)
+            }
 
-        storeFragmentViewModel.getPoliticBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, politicsBooksAdapter, layout.politicsLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.religion)).collectLatest { books ->
+                loadData(books, religionBooksAdapter, layout.religionLayout)
+            }
 
-         storeFragmentViewModel.getHowToBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, howToBooksAdapter, layout.howToLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.cook_books)).collectLatest { books ->
+                loadData(books, cooksBooksAdapter, layout.cookBookLayout)
+            }
 
-        storeFragmentViewModel.getLoveAndPoetryBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, loveAndPoetryBooksAdapter, layout.loveLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.science_technology)).collectLatest { books ->
+                loadData(books, scienceAndTechBooksAdapter, layout.scienceTecLayout)
+            }
 
-         storeFragmentViewModel.getBusinessBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, businessBooksAdapter, layout.businessFinanceLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.art_craft)).collectLatest { books ->
+                loadData(books, artAndCraftBooksAdapter, layout.artCraftLayout)
+            }
 
-        storeFragmentViewModel.getHistoryBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, historyBooksAdapter, layout.historyLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.news)).collectLatest { books ->
+                loadData(books, newsBooksAdapter, layout.newsLayout)
+            }
 
-         storeFragmentViewModel.getRecommendedBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, recommendBooksAdapter, layout.recommendedLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.history)).collectLatest { books ->
+                loadData(books, historyBooksAdapter, layout.historyLayout)
+            }
 
-        storeFragmentViewModel.getArtAndCraftBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, artAndCraftBooksAdapter, layout.artCraftLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.business_finance)).collectLatest { books ->
+                loadData(books, businessBooksAdapter, layout.businessFinanceLayout)
+            }
 
-         storeFragmentViewModel.getScienceAndTechBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, scienceAndTechBooksAdapter, layout.scienceTecLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.poetry)).collectLatest { books ->
+                loadData(books, loveAndPoetryBooksAdapter, layout.loveLayout)
+            }
 
-        storeFragmentViewModel.getNewsBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, newsBooksAdapter, layout.newsLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.manuals)).collectLatest { books ->
+                loadData(books, howToBooksAdapter, layout.howToLayout)
+            }
 
-         storeFragmentViewModel.getLawBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, lawBooksAdapter, layout.lawLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.politics)).collectLatest { books ->
+                loadData(books, politicsBooksAdapter, layout.politicsLayout)
+            }
 
-        storeFragmentViewModel.getComicBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, comicBooksAdapter, layout.comicLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.comic)).collectLatest { books ->
+                loadData(books, comicBooksAdapter, layout.comicLayout)
+            }
 
-         storeFragmentViewModel.getSportBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, sportBooksAdapter, layout.sportLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.sport)).collectLatest { books ->
+                loadData(books, sportBooksAdapter, layout.sportLayout)
+            }
 
-        storeFragmentViewModel.getLangAndRefBooks().observe(viewLifecycleOwner, Observer { books ->
-            loadData(books, languageAndRefBooksAdapter, layout.langRefLayout)
-        })
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.law)).collectLatest { books ->
+                loadData(books, lawBooksAdapter, layout.lawLayout)
+            }
+
+            storeFragmentViewModel.getBooksByCategoryPageSource(getString(R.string.languages_reference)).collectLatest { books ->
+                loadData(books, languageAndRefBooksAdapter, layout.langRefLayout)
+            }
+
+        }
+
 
         layout.recommendedCard.setOnClickListener {
             startBookCategoryActivity( getString(R.string.recommended_for))
@@ -309,7 +314,9 @@ class StoreFragment : Fragment() {
             }
         }
 
-        adapter.submitData(lifecycle, list)
+        lifecycleScope.launch {
+            adapter.submitData(list)
+        }
 
     }
 

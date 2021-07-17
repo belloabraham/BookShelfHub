@@ -2,10 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
 
@@ -73,6 +70,9 @@ interface UserDao {
     @Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
     fun deletePublishedBookRecords(isbnList: List<String>)
 
+    @Query("UPDATE PublishedBooks SET trending = 1 WHERE EXISTS (SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100)")
+    fun updateTrendingBooksRecords()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)
 
@@ -85,12 +85,18 @@ interface UserDao {
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
     fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>>
 
+    @Query("SELECT * FROM PublishedBooks WHERE recommended = 1 ORDER BY dateTimePublished DESC")
+    fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>>
+
+    @Query("SELECT * FROM PublishedBooks WHERE trending = 1 ORDER BY noOfDownloads DESC LIMIT 100")
+    fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>>
+
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
     fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks>
 
-    @Query("SELECT * FROM PublishedBooks WHERE trending = :trending ORDER BY dateTimePublished DESC")
-    fun getTrendingBooksPageSource(trending:Boolean=true): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBooks WHERE trending = 1 ORDER BY noOfDownloads DESC LIMIT 100")
+    fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks>
 
-    @Query("SELECT * FROM PublishedBooks WHERE recommended =:recommended ORDER BY dateTimePublished DESC")
-    fun getRecommendedBooksPageSource(recommended:Boolean =true): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBooks WHERE recommended = 1 ORDER BY dateTimePublished DESC")
+    fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks>
 }
