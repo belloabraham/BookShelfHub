@@ -155,9 +155,6 @@ class StoreFragment : Fragment() {
         })
 
 
-
-
-
         lifecycleScope.launch {
             storeFragmentViewModel.getTrendingBooks().collectLatest { books ->
                 loadBooks(books, trendingBooksAdapter, layout.trendingLayout)
@@ -392,7 +389,6 @@ class StoreFragment : Fragment() {
                 !(loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && adapter.itemCount < 1)
         }
 
-
         lifecycleScope.launch {
             adapter.submitData(list)
         }
@@ -401,7 +397,7 @@ class StoreFragment : Fragment() {
     private fun startBookCategoryActivity(category: String,){
         val intent = Intent(requireActivity(), BookCategoryActivity::class.java)
         intent.putExtra(Category.TITLE.KEY,category)
-        startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(requireActivity()).toBundle())
+        startActivity(intent)
     }
 
     companion object {

@@ -11,16 +11,17 @@ import androidx.paging.liveData
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoryActivityViewModel @Inject constructor(private val localDb: LocalDb) : ViewModel(){
 
-    private var bookByCategory: LiveData<PagingData<PublishedBooks>> = MutableLiveData()
     private var liveBooksByCategory: LiveData<List<PublishedBooks>> = MutableLiveData()
 
     private val config  = PagingConfig(
         pageSize = 10,
+        prefetchDistance=5,
         enablePlaceholders = true,
         initialLoadSize = 20
     )
@@ -34,24 +35,23 @@ class CategoryActivityViewModel @Inject constructor(private val localDb: LocalDb
             localDb.getLiveBooksByCategory(category)
         }
     }
-    fun loadBooksByCategory(category:String, context: Context){
-        if (category==context.getString(R.string.trending)){
-            bookByCategory = Pager(config){
-                localDb.getTrendingBooksPageSource()
-            }.liveData
-        }else if (category == context.getString(R.string.recommended_for)){
-            bookByCategory = Pager(config){
-                localDb.getRecommendedBooksPageSource()
-            }.liveData
-        }else{
-            bookByCategory = Pager(config){
-                localDb.getBooksByCategoryPageSource(category)
-            }.liveData
-        }
+
+    fun getTrendingBooks(): Flow<PagingData<PublishedBooks>> {
+        return  Pager(config){
+            localDb.getTrendingBooksPageSource()
+        }.flow
     }
 
-    fun getBookByCategory(): LiveData<PagingData<PublishedBooks>> {
-        return bookByCategory
+    fun getRecommendedBooks(): Flow<PagingData<PublishedBooks>> {
+        return  Pager(config){
+            localDb.getRecommendedBooksPageSource()
+        }.flow
+    }
+
+    fun getBooksByCategory(category: String): Flow<PagingData<PublishedBooks>> {
+        return  Pager(config){
+            localDb.getBooksByCategoryPageSource(category)
+        }.flow
     }
 
     fun getLiveBooksByCategory(): LiveData<List<PublishedBooks>> {

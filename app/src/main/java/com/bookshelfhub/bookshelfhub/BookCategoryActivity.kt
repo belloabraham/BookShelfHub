@@ -8,6 +8,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.adapters.search.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.store.CategoryListAdapter
@@ -22,6 +23,8 @@ import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -45,8 +48,25 @@ class BookCategoryActivity : AppCompatActivity() {
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
-        categoryActivityViewModel.loadBooksByCategory(category, this)
         categoryActivityViewModel.loadLiveBooksByCategory(category, this)
+
+
+        lifecycleScope.launch {
+            if (category==getString(R.string.recommended_for)){
+                categoryActivityViewModel.getRecommendedBooks().collectLatest { books->
+                    bookListAdapter.submitData(books)
+                }
+            }else if(category==getString(R.string.trending)){
+                categoryActivityViewModel.getTrendingBooks().collectLatest { books->
+                    bookListAdapter.submitData(books)
+                }
+            }else{
+                categoryActivityViewModel.getBooksByCategory(category).collectLatest { books->
+                    bookListAdapter.submitData(books)
+                }
+            }
+        }
+
 
         layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
         layout.categoryBookRecView.adapter = bookListAdapter
@@ -93,14 +113,9 @@ class BookCategoryActivity : AppCompatActivity() {
             })
         }
 
-        categoryActivityViewModel.getBookByCategory().observe(this, Observer { books ->
-            bookListAdapter.submitData(lifecycle, books)
-        })
-
         categoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
             listOfBooks = books
         })
-
 
     }
 
