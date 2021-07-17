@@ -32,23 +32,6 @@ import javax.inject.Inject
 @HiltViewModel
 class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Context, private val cloudDb: CloudDb, private val localDb: LocalDb): ViewModel() {
 
-
-    /*private var recommendedBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var cookBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var religionBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var trendingBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var politicsBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var businessBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var comicBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var lawBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var historyBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var newsBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var loveAndPoetryBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var sportBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var howToBooks:LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var artAndCraftBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var langAndRefBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()
-    private var scienceAndTechBooks : LiveData<PagingData<PublishedBooks>> = MutableLiveData()*/
     private var allPublishedBooks : LiveData<List<PublishedBooks>> = MutableLiveData()
 
 
