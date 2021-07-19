@@ -106,7 +106,7 @@ class UserInfoFragment : Fragment() {
 
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
-            layout.nameEditTxt.setText(stringUtil.capitalize(userAuth.getName()))
+            layout.nameEditTxt.setText(userAuth.getName())
             layout.emailEditTxt.setText(userAuth.getEmail())
         }else{
             layout.emailEditTxtLayout.visibility=View.VISIBLE
@@ -147,7 +147,7 @@ class UserInfoFragment : Fragment() {
                     val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
-                    user.device = getDeviceBrandAndModel()
+                    user.device = deviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone= phone
                     user.referrerId = referrerId
@@ -162,10 +162,6 @@ class UserInfoFragment : Fragment() {
         }
 
         return layout.root
-    }
-
-    private fun getDeviceBrandAndModel(): String {
-        return stringUtil.capitalize(deviceUtil.getDeviceBrandAndModel())
     }
 
 }

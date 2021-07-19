@@ -16,9 +16,4 @@ class StringUtil{
         fun isValidPhoneNumber(phone:String):Boolean{
             return Patterns.PHONE.matcher(phone).matches()
         }
-
-        fun capitalize(value:String?):String{
-          return WordUtils.capitalize(value)
-        }
-
 }

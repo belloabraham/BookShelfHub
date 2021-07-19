@@ -1,13 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
-import android.app.Activity
-import android.net.Uri
-import androidx.fragment.app.FragmentActivity
-import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
-import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.ktx.auth
@@ -40,7 +33,7 @@ open class User() {
 
     open fun getName(): String? {
         auth.currentUser?.displayName?.let {
-            return it
+            return it.capitalize()
         }
         return null
     }

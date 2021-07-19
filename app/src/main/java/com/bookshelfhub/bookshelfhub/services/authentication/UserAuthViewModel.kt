@@ -40,7 +40,7 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
         viewModelScope.launch {
             val localDateTime= LocalDateTimeUtil.getDateTimeAsString()
             user.appVersion=appUtil.getAppVersionName()
-            user.device = getDeviceBrandAndModel()
+            user.device = deviceUtil.getDeviceBrandAndModel()
             user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
                 Build.VERSION.SDK_INT)
             user.lastUpdated= localDateTime
@@ -54,8 +54,5 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
         return isAddingUser
     }
 
-    private fun getDeviceBrandAndModel(): String {
-        return stringUtil.capitalize(deviceUtil.getDeviceBrandAndModel())
-    }
 
 }

@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.Utils
 
 import android.os.Build
+import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import javax.inject.Inject
 
 class DeviceUtil @Inject constructor () {
@@ -9,9 +10,9 @@ class DeviceUtil @Inject constructor () {
         val manufacturer= Build.MANUFACTURER
         val model = Build.MODEL
         if (model.startsWith(manufacturer)){
-            return manufacturer
+            return manufacturer.capitalize()!!
         }
-        return "$manufacturer $model"
+        return "$manufacturer $model".capitalize()!!
 
     }
 

@@ -174,9 +174,9 @@ class LoginFragment:Fragment() {
                             try {
                                 val userJsonString = docSnapShot.get(DbFields.USER.KEY)
                                 val user = json.fromAny(userJsonString!!, User::class.java)
-                                if (user.device != getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
+                                if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){
-                                    user.device = getDeviceBrandAndModel()
+                                    user.device = deviceUtil.getDeviceBrandAndModel()
                                     user.deviceOs=deviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
                                 }else {
                                     user.uploaded = true
@@ -224,10 +224,6 @@ class LoginFragment:Fragment() {
             settingsUtil.setString(PHONE, number)
             settingsUtil.setString(DIALING_CODE, layout.ccp.selectedCountryCodeWithPlus)
         }
-    }
-
-    private fun getDeviceBrandAndModel(): String {
-        return stringUtil.capitalize(deviceUtil.getDeviceBrandAndModel())
     }
 
 }
