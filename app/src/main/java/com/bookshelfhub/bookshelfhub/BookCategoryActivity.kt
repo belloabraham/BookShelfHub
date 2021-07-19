@@ -6,21 +6,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.adapters.search.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.store.CategoryListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.store.DiffUtilItemCallback
-import com.bookshelfhub.bookshelfhub.adapters.store.StoreListAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
 import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
-import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -125,7 +121,6 @@ class BookCategoryActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        layout.materialSearchView.visibility = View.GONE
         super.onBackPressed()
         return true
     }

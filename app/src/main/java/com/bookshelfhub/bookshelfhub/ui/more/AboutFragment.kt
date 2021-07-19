@@ -13,7 +13,7 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
-import com.bookshelfhub.bookshelfhub.helpers.builders.AboutPageBuilder
+import com.bookshelfhub.bookshelfhub.view.about.builder.AboutPageBuilder
 import com.bookshelfhub.bookshelfhub.view.about.AutoFitGridLayout
 import com.bookshelfhub.bookshelfhub.view.about.Item
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +59,7 @@ class AboutFragment : Fragment() {
         return layout.root
     }
 
-    private fun getAboutPageSocialBuilder():AboutPageBuilder{
+    private fun getAboutPageSocialBuilder(): AboutPageBuilder {
        return AboutPageBuilder.with(requireContext())
             .addFacebookLink(R.string.bsh_social_handle)
             .addInstagramLink(R.string.bsh_social_handle)
@@ -68,7 +68,7 @@ class AboutFragment : Fragment() {
     }
 
 
-    private fun getAboutPageContactBuilder(email:String, phoneNumber:String):AboutPageBuilder{
+    private fun getAboutPageContactBuilder(email:String, phoneNumber:String): AboutPageBuilder {
         return AboutPageBuilder.with(requireContext())
             .addPhoneLink(phoneNumber)
             .addEmailLink(email)

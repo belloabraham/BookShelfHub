@@ -1,10 +1,9 @@
-package com.bookshelfhub.bookshelfhub.view.search.internal
+package com.bookshelfhub.bookshelfhub.view.materialsearch.internal
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
 import androidx.annotation.AttrRes
-import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.AppCompatEditText
 /*
 /**

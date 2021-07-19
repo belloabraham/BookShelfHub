@@ -15,7 +15,7 @@
         android:id="@+id/appbarLayout"
         android:background="?backgroundColor"
         android:layout_gravity="top">
-        <com.bookshelfhub.bookshelfhub.view.search.widget.MaterialSearchView
+        <com.bookshelfhub.bookshelfhub.view.materialsearch.widget.MaterialSearchView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/material_search_view"

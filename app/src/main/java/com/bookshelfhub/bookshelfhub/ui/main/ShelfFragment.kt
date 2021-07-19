@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
-import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
@@ -19,17 +16,11 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
-import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 

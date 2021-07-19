@@ -12,11 +12,11 @@ open class FirebaseRemoteConfig {
     }
 
     open fun getBoolean(key:String):Boolean{
-        return true
+        return remoteConfig[key].asBoolean()
     }
 
     open fun getLong(key:String):Long{
-        return 0L
+        return remoteConfig[key].asLong()
     }
 
     open fun fetchConfigAsync(onComplete:(error:String?)->Unit){

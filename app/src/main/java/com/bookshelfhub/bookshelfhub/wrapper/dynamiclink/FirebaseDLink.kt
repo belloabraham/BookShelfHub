@@ -14,12 +14,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.dynamiclinks.ktx.component1
 import com.google.firebase.dynamiclinks.ktx.component2
 
-open class FirebaseDLink (private val domainPrefix:String, private val context:Context, private val userAuth: UserAuth, private val appUtil: AppUtil) {
+open class FirebaseDLink (private val domainPrefix:String, private val context:Context, private val appUtil: AppUtil) {
 
     open fun getLinkAsync(socialTitle:String,
                      socialDescription:String,
                      imageLink:String,
-                     uniqueId:String = userAuth.getUserId(),
+                     uniqueId: String,
                      minimumVCode:Int=appUtil.getAppVersionCode().toInt(), onComplete:(Uri?)->Unit){
 
         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {

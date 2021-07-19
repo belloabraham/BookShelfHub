@@ -21,7 +21,6 @@
               android:layout_height="125dp"
               android:contentDescription="@null"
               android:layout_gravity="center_horizontal"
-              android:src="@drawable/ic_book_sample"
               android:scaleType="fitXY"
               android:id="@+id/itemImageView"/>
 

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.builders
+package com.bookshelfhub.bookshelfhub.view.about.builder
 
 import android.content.Context
 import android.content.Intent

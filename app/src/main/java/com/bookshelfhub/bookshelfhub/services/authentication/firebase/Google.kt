@@ -14,7 +14,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-open class Google(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?) {
+open class Google(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?, private val gcpWebClient:Int) {
 
 
     private val firebaseAuth = Firebase.auth
@@ -22,7 +22,7 @@ open class Google(private val activity: Activity, private val googleAuthViewMode
 
     init {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken( activity.getString(R.string.gcp_web_client))
+            .requestIdToken(activity.getString(gcpWebClient))
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(activity, gso)

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.view.search.widget
+package com.bookshelfhub.bookshelfhub.view.materialsearch.widget
 
 
 import android.animation.ObjectAnimator

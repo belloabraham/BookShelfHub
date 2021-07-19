@@ -32,8 +32,8 @@ object FragmentModule {
 
     @FragmentScoped
     @Provides
-    fun getDeviceUtil(stringUtil:StringUtil):DeviceUtil{
-        return DeviceUtil(stringUtil)
+    fun getDeviceUtil():DeviceUtil{
+        return DeviceUtil()
     }
 
     @FragmentScoped

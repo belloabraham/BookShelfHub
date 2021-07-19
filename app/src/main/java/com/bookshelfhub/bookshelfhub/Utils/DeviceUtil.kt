@@ -3,15 +3,15 @@ package com.bookshelfhub.bookshelfhub.Utils
 import android.os.Build
 import javax.inject.Inject
 
-class DeviceUtil @Inject constructor (private val stringUtil: StringUtil) {
+class DeviceUtil @Inject constructor () {
 
     fun getDeviceBrandAndModel():String{
         val manufacturer= Build.MANUFACTURER
         val model = Build.MODEL
         if (model.startsWith(manufacturer)){
-            return stringUtil.capitalize(manufacturer)
+            return manufacturer
         }
-        return stringUtil.capitalize("$manufacturer $model" )
+        return "$manufacturer $model"
 
     }
 

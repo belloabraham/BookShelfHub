@@ -1,10 +1,10 @@
-package com.bookshelfhub.bookshelfhub.view.search.widget
+package com.bookshelfhub.bookshelfhub.view.materialsearch.widget
 
 import android.view.View
 import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
-import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

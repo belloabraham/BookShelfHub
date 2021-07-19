@@ -60,8 +60,8 @@ class WelcomeActivity : AppCompatActivity() {
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        phoneAuth= PhoneAuth(this, phoneAuthViewModel)
-        googleAuth = GoogleAuth(this, googleAuthViewModel)
+        phoneAuth= PhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+        googleAuth = GoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -202,7 +202,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     fun verifyPhoneNumberWithCode(code:String){
-        phoneAuth.verifyPhoneNumberWithCode(code)
+        phoneAuth.verifyPhoneNumberWithCode(code, R.string.otp_error_msg)
     }
 
     override fun onBackPressed() {

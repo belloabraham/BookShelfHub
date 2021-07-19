@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.adapters.slider
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.bookshelfhub.bookshelfhub.R
@@ -18,6 +19,7 @@ class SliderAdapter: SliderViewAdapter<SliderAdapterVH>(){
         notifyDataSetChanged()
     }
 
+    @SuppressLint("InflateParams")
     override fun onCreateViewHolder(parent: ViewGroup): SliderAdapterVH {
         val inflate = LayoutInflater.from(parent.context).inflate(R.layout.slider_item, null)
         return SliderAdapterVH(inflate)

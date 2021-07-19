@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -25,7 +24,7 @@ import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
-import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

@@ -22,7 +22,6 @@
               android:contentDescription="@null"
               android:layout_gravity="center_horizontal"
               android:scaleType="fitXY"
-              android:src="@drawable/ic_store_item_place_holder"
               android:id="@+id/itemImageView"/>
 
       </com.google.android.material.card.MaterialCardView>

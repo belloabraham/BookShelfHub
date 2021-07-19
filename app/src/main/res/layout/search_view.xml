@@ -41,7 +41,7 @@
                     android:contentDescription="@null"
                     android:scaleType="centerInside" />
 
-                <com.bookshelfhub.bookshelfhub.view.search.internal.SearchEditText
+                <com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchEditText
                     android:id="@+id/search_search_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

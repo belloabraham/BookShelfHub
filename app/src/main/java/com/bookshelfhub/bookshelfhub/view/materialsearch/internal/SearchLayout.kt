@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.view.search.internal
+package com.bookshelfhub.bookshelfhub.view.materialsearch.internal
 
 
 import android.content.Context

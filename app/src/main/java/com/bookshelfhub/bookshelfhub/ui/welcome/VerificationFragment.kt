@@ -17,6 +17,7 @@ import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
@@ -63,6 +64,8 @@ class VerificationFragment:Fragment(){
     lateinit var deviceUtil: DeviceUtil
     @Inject
     lateinit var appUtil: AppUtil
+    @Inject
+    lateinit var stringUtil: StringUtil
 
             override fun onCreateView(
         inflater: LayoutInflater,
@@ -165,9 +168,9 @@ class VerificationFragment:Fragment(){
                                     try {
                                         val userJsonString = docSnapShot.get(DbFields.USER.KEY)
                                         val user = json.fromAny(userJsonString!!, User::class.java)
-                                        if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
+                                        if (user.device != getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
                                                 Build.VERSION.SDK_INT)){
-                                            user.device = deviceUtil.getDeviceBrandAndModel()
+                                            user.device =   getDeviceBrandAndModel()
                                             user.deviceOs=deviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
                                         }else {
                                             user.uploaded = true
@@ -201,4 +204,7 @@ class VerificationFragment:Fragment(){
         super.onSaveInstanceState(outState)
     }
 
+    private fun getDeviceBrandAndModel(): String {
+       return stringUtil.capitalize(deviceUtil.getDeviceBrandAndModel())
+    }
 }

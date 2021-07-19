@@ -35,8 +35,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getDynamicLink(@ApplicationContext context: Context, userAuth: UserAuth, appUtil: AppUtil): DynamicLink {
-        return DynamicLink(context.getString(R.string.dlink_domain_prefix), context, userAuth, appUtil)
+    fun getDynamicLink(@ApplicationContext context: Context, appUtil: AppUtil): DynamicLink {
+        return DynamicLink(context.getString(R.string.dlink_domain_prefix), context, appUtil)
     }
 
     @Singleton
@@ -71,8 +71,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getUserAuthentication(stringUtil: StringUtil): UserAuth {
-        return UserAuth(stringUtil)
+    fun getUserAuthentication(): UserAuth {
+        return UserAuth()
     }
 
     @Singleton
@@ -83,7 +83,7 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getStringUtils(): StringUtil {
+    fun getStringUtil(): StringUtil {
         return StringUtil()
     }
 

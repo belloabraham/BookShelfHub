@@ -14,15 +14,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-open class User {
-
-    private var stringUtils:StringUtil? = null
-
-    constructor(stringUtils: StringUtil){
-        this.stringUtils = stringUtils
-    }
-
-    constructor()
+open class User() {
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -48,7 +40,7 @@ open class User {
 
     open fun getName(): String? {
         auth.currentUser?.displayName?.let {
-            return stringUtils?.capitalize(it)
+            return it
         }
         return null
     }
@@ -59,7 +51,7 @@ open class User {
 
     open fun signOut(signOutCompleted: () -> Unit) {
         val authStateListener =
-            AuthStateListener { firebaseAuth ->
+            AuthStateListener { _ ->
                 signOutCompleted()
             }
         auth.addAuthStateListener(authStateListener)

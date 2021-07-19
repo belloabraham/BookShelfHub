@@ -127,7 +127,7 @@ class MoreFragment : Fragment() {
                 if (authType==AuthType.GOOGLE.ID){
                     userAuth.signOut {
                         activity?.let {
-                            GoogleAuth(it, null).signOut {
+                            GoogleAuth(it, null, R.string.gcp_web_client).signOut {
                                 it.finish()
                                 startActivity(Intent(it, SplashActivity::class.java))
                             }
@@ -181,7 +181,8 @@ class MoreFragment : Fragment() {
                             dynamicLink.getLinkAsync(
                                 remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
                                 remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
-                                remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)
+                                remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
+                                userAuth.getUserId()
                             ){
                                 if (it!=null){
                                     showReferralLinkDialog(it.toString(), activity)

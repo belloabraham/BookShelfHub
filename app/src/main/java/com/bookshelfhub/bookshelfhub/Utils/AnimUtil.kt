@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.Utils
 import android.app.Activity
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -13,12 +14,11 @@ class AnimUtil (private val activity:Activity) {
 
 
      fun animate(v: View, animationDelay:Long, animRes:Int) {
-        v.setVisibility(INVISIBLE)
+         v.visibility = INVISIBLE
         val animDelay = animationDelay + 20
-        Handler().postDelayed(Runnable {
-            v.setVisibility(VISIBLE)
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            v.visibility = VISIBLE
             v.startAnimation(AnimationUtils.loadAnimation(activity, animRes))
         }, animDelay)
     }
-
 }

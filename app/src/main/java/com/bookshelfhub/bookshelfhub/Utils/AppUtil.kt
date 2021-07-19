@@ -10,7 +10,7 @@ class AppUtil @Inject constructor (private val context: Context) {
 
     fun getAppVersionCode():Long{
          try {
-             val packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0)
+             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
              return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 packageInfo.longVersionCode
             }else{
@@ -23,7 +23,7 @@ class AppUtil @Inject constructor (private val context: Context) {
 
     fun getAppVersionName():String{
         try {
-            val packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0)
+            val packageInfo = context.getPackageManager().getPackageInfo(context.packageName, 0)
              return  packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             return ""

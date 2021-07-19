@@ -10,7 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
-open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel)
+open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int)
 {
 
     private val auth: FirebaseAuth = Firebase.auth
@@ -20,34 +20,7 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
 
     init {
 
-        callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                phoneAuthViewModel.setOTPCode("000000")
-                signInWithPhoneAuthCredential(credential, phoneAuthViewModel)
-            }
-
-            override fun onVerificationFailed(e: FirebaseException) {
-
-                if (e is FirebaseAuthInvalidCredentialsException) {
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
-                } else if (e is FirebaseTooManyRequestsException) {
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.too_many_request_error))
-                }else{
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.phone_sign_in_error))
-                    //TODO Log error to Crashlytics
-                }
-            }
-
-            override fun onCodeSent(
-                verificationId: String,
-                token: PhoneAuthProvider.ForceResendingToken
-            ) {
-                // Save verification ID and resending token so we can use them later
-                storedVerificationId = verificationId
-                resendToken = token
-                phoneAuthViewModel.setIsCodeSent(true)
-            }
-        }
+        callbacks = getAuthCallBack(wrongOTPErrorMsg, tooManyReqErrorMsg, otherAuthErrorMsg)
 
     }
 
@@ -61,13 +34,13 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    open fun verifyPhoneNumberWithCode(code: String) {
+    open fun verifyPhoneNumberWithCode(code: String, wrongOTPErrorMsg:Int) {
             val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, code)
-            signInWithPhoneAuthCredential(credential, phoneAuthViewModel)
+            signInWithPhoneAuthCredential(credential, phoneAuthViewModel, wrongOTPErrorMsg)
     }
 
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, phoneAuthViewModel: PhoneAuthViewModel) {
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential, phoneAuthViewModel: PhoneAuthViewModel,wrongOTPErrorMsg:Int) {
         phoneAuthViewModel.setSignInStarted(true)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
@@ -79,7 +52,7 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         //TODO wrong verification code
                         //phoneAuthViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
-                        phoneAuthViewModel.setSignedInFailedError(activity.getString(R.string.otp_error_msg))
+                        phoneAuthViewModel.setSignedInFailedError(activity.getString(wrongOTPErrorMsg))
                     }
                 }
                 phoneAuthViewModel.setSignInCompleted(true)
@@ -97,5 +70,36 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
     }
 
+
+    private fun getAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
+        return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                phoneAuthViewModel.setOTPCode("000000")
+                signInWithPhoneAuthCredential(credential, phoneAuthViewModel, wrongOTPErrorMsg)
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(wrongOTPErrorMsg))
+                } else if (e is FirebaseTooManyRequestsException) {
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(tooManyReqErrorMsg))
+                }else{
+                    phoneAuthViewModel.setSignedInFailedError(activity.getString(otherAuthErrorMsg))
+                    //TODO Log error to Crashlytics
+                }
+            }
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                // Save verification ID and resending token so we can use them later
+                storedVerificationId = verificationId
+                resendToken = token
+                phoneAuthViewModel.setIsCodeSent(true)
+            }
+        }
+    }
 
 }

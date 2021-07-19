@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.view.search.widget
+package com.bookshelfhub.bookshelfhub.view.materialsearch.widget
 
 
 import android.animation.LayoutTransition
@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.view.search.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 
 
 class MaterialSearchView @JvmOverloads constructor(

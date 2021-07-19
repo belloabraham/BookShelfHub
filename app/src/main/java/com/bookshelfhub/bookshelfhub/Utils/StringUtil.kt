@@ -17,7 +17,7 @@ class StringUtil{
             return Patterns.PHONE.matcher(phone).matches()
         }
 
-        fun capitalize(value:String):String{
+        fun capitalize(value:String?):String{
           return WordUtils.capitalize(value)
         }
 

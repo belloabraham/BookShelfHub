@@ -1,10 +1,9 @@
-package com.bookshelfhub.bookshelfhub.view.search.internal
+package com.bookshelfhub.bookshelfhub.view.materialsearch.internal
 
 import android.os.Parcel
 import android.os.Parcelable
 import android.text.TextUtils
 import android.view.View
-import androidx.annotation.RestrictTo
 
 
 class SearchViewSavedState(superState: Parcelable) : View.BaseSavedState(superState) {

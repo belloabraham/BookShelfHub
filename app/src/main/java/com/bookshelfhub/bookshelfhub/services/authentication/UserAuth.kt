@@ -7,10 +7,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import javax.inject.Inject
 
-class UserAuth:User {
-
-    @Inject constructor(stringUtils:StringUtil):super(stringUtils)
-
-    constructor()
+class UserAuth:User() {
 
 }
