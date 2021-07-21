@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.android.synthetic.main.fragment_shelf.view.*
 import kotlinx.android.synthetic.main.search_view.view.*
 import javax.inject.Inject
 
@@ -276,6 +277,7 @@ class ShelfFragment : Fragment() {
         layout.gotoStoreBtn.setOnClickListener {
             mainActivityViewModel.setSelectedIndex(1)
         }
+
 
         return layout.root
     }

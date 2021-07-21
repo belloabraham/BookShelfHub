@@ -29,6 +29,7 @@ class Application: android.app.Application() {
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
             SafetyNetAppCheckProviderFactory.getInstance())
+
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()

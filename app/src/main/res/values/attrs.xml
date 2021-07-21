@@ -21,7 +21,6 @@
         <attr name="android:inputType" />
     </declare-styleable>
 
-
     <declare-styleable name="FullscreenAttrs">
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />

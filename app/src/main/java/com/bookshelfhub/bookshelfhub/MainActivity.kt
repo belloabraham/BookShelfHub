@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -184,10 +185,15 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(mode)
         })
 
+
         showProgressPopupDialog()
 
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        layout.shelfStoreViewPager.currentItem=0
+        AppCompatDelegate.setDefaultNightMode(newConfig.uiMode)
+    }
 
     private fun showNewUpdateAlertAndNotification(){
         val title:String
