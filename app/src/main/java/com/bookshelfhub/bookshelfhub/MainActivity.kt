@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             val notifNumber = mainActivityViewModel.getTotalProfileNotifNumber()
 
             if (notifNumber>0){
-                layout.bottomBar.setBadgeAtTabIndex(profileTabIndex, AnimatedBottomBar.Badge("${notifNumber}"))
+                layout.bottomBar.setBadgeAtTabIndex(profileTabIndex, AnimatedBottomBar.Badge("$notifNumber"))
             }else{
                 layout.bottomBar.clearBadgeAtTabIndex(profileTabIndex)
             }
@@ -174,6 +174,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        showProgressPopupDialog()
+
+    }
+
+
+    override fun onResume() {
 
         mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
             layout.shelfStoreViewPager.currentItem=0
@@ -185,15 +191,9 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(mode)
         })
 
-
-        showProgressPopupDialog()
-
+        super.onResume()
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        layout.shelfStoreViewPager.currentItem=0
-        AppCompatDelegate.setDefaultNightMode(newConfig.uiMode)
-    }
 
     private fun showNewUpdateAlertAndNotification(){
         val title:String

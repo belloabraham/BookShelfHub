@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.viewpager.widget.ViewPager
 
-class MainViewPager: ViewPager {
+class UnslidableViewPager: ViewPager {
 
     constructor(context:Context) : super(context)
     constructor(context:Context, attrs:AttributeSet?) : super(context, attrs)

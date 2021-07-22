@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -9,13 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
@@ -177,19 +172,21 @@ class MoreFragment : Fragment() {
                 if (link==null){
                     lifecycleScope.launch(IO){
                       link =  settingsUtil.getString(PubReferrer.USER_REF_LINK.KEY)
-                        if (link==null){
-                            dynamicLink.getLinkAsync(
-                                remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
-                                remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
-                                remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
-                                userAuth.getUserId()
-                            ){
-                                if (it!=null){
-                                    showReferralLinkDialog(it.toString(), activity)
+                        withContext(Main){
+                            if (link==null){
+                                dynamicLink.getLinkAsync(
+                                    remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
+                                    remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
+                                    remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
+                                    userAuth.getUserId()
+                                ){
+                                    if (it!=null){
+                                        showReferralLinkDialog(it.toString(), activity)
+                                    }
                                 }
+                            }else{
+                                showReferralLinkDialog(link!!, activity)
                             }
-                        }else{
-                            showReferralLinkDialog(link!!, activity)
                         }
                     }
                 }else{
@@ -261,7 +258,7 @@ class MoreFragment : Fragment() {
     }
 
     private fun startProfileActivity(title:Int, fragmentID:Int){
-        val intent = Intent(activity, ProfileActivity::class.java)
+        val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
             putExtra(Profile.TITLE.KEY,title)
             putExtra(Profile.FRAGMENT_ID.KEY, fragmentID)

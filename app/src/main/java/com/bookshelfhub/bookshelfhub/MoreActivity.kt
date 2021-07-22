@@ -15,7 +15,7 @@ import com.bookshelfhub.bookshelfhub.enums.Profile
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProfileActivity : AppCompatActivity() {
+class MoreActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityProfileBinding
     private lateinit var navController: NavController

@@ -8,7 +8,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.firebase.crashlytics'
+//apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 30
@@ -71,7 +71,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
 
     //--Testing
@@ -160,6 +159,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta02'
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
+    //--Crashlytics
+   // implementation 'com.google.firebase:firebase-crashlytics-ktx'
+
 
 
     //Google Play

@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -25,6 +26,7 @@ import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -109,6 +111,17 @@ class StoreFragment : Fragment() {
                     }
                 }
             })
+
+            setMenuIconImageResource(R.drawable.ic_cart)
+            setMenuIconVisibility(View.VISIBLE)
+            setOnMenuClickListener(object:SearchLayout.OnMenuClickListener{
+                override fun onMenuClick() {
+                    val intent = Intent(activity, CartActivity::class.java)
+                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
+                }
+            })
+
+
             setOnFocusChangeListener(object : SearchLayout.OnFocusChangeListener {
                 override fun onFocusChange(hasFocus: Boolean) {
                     layout.materialSearchView.navigationIconSupport = if (hasFocus) {

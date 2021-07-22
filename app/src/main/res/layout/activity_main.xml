@@ -9,13 +9,13 @@
     tools:context=".MainActivity">
 
 
-    <com.bookshelfhub.bookshelfhub.view.MainViewPager
+    <com.bookshelfhub.bookshelfhub.view.UnslidableViewPager
         android:id="@+id/shelf_store_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <com.bookshelfhub.bookshelfhub.view.MainViewPager
+    <com.bookshelfhub.bookshelfhub.view.UnslidableViewPager
         android:id="@+id/cart_more_view_pager"
         android:layout_width="match_parent"
         android:visibility="invisible"
