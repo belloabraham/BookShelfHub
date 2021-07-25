@@ -5,16 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
+import com.bookshelfhub.bookshelfhub.databinding.FragmentBookmarkBinding
 
-class CartFragment : Fragment() {
+class BookmarkFragment : Fragment() {
 
-    private lateinit var layout: FragmentCartBinding
+    private lateinit var layout: FragmentBookmarkBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentCartBinding.inflate(inflater, container, false)
+        layout= FragmentBookmarkBinding.inflate(inflater, container, false)
 
 
 
@@ -23,8 +23,8 @@ class CartFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(): CartFragment {
-            return CartFragment()
+        fun newInstance(): BookmarkFragment {
+            return BookmarkFragment()
         }
     }
 

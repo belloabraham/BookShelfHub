@@ -3,126 +3,128 @@ package com.bookshelfhub.bookshelfhub.services.database.local.room
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
+import javax.inject.Inject
 
-open class RoomDb(private val context:Context) {
+open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
     //Todo User
-    open suspend fun getUser(userId:String): Optional<User> {
+    override suspend fun getUser(userId:String): Optional<User> {
       return  RoomInstance.getDatabase(context).userDao().getUser(userId)
     }
 
-    open fun getLiveUser(userId:String): LiveData<User> {
+    override fun getLiveUser(userId:String): LiveData<User> {
         return  RoomInstance.getDatabase(context).userDao().getLiveUser(userId)
     }
 
-    open suspend fun addUser(user:User){
+    override suspend fun addUser(user:User){
         RoomInstance.getDatabase(context).userDao().addUser(user)
     }
 
     //Todo Book Interest
-    open suspend fun getBookInterest(userId:String): Optional<BookInterest> {
+    override suspend fun getBookInterest(userId:String): Optional<BookInterest> {
         return  RoomInstance.getDatabase(context).userDao().getBookInterest(userId)
     }
 
-    open fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {
+    override fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {
         return  RoomInstance.getDatabase(context).userDao().getLiveBookInterest(userId)
     }
 
-    suspend fun addBookInterest(bookInterest: BookInterest){
+    override suspend fun addBookInterest(bookInterest: BookInterest){
         RoomInstance.getDatabase(context).userDao().addBookInterest(bookInterest)
     }
 
     //Todo Ordered Books
-    open suspend fun addOrderedBook(orderedBooks: OrderedBooks){
+    override suspend fun addOrderedBook(orderedBooks: OrderedBooks){
         RoomInstance.getDatabase(context).userDao().addBookOrdered(orderedBooks)
     }
-    open fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>> {
+    override fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>> {
        return  RoomInstance.getDatabase(context).userDao().getLiveBooksOrdered(userId)
     }
 
 
     //TODO Payment Info
-    open suspend fun addPaymentInfo(paymentInfo: PaymentInfo){
+    override suspend fun addPaymentInfo(paymentInfo: PaymentInfo){
         RoomInstance.getDatabase(context).userDao().addPaymentInfo(paymentInfo)
     }
 
     //TODO Search History
-    open suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
+    override suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
         RoomInstance.getDatabase(context).userDao().addStoreSearchHistory(searchHistory)
     }
 
-    open suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
+    override suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
         RoomInstance.getDatabase(context).userDao().addShelfSearchHistory(shelfSearchHistory)
     }
 
-    open fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
+    override fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
       return  RoomInstance.getDatabase(context).userDao().getLiveShelfSearchHistory(userId)
     }
 
-    open fun getLiveStoreSearchHistory(userId:String):LiveData<List<StoreSearchHistory>>{
+    override fun getLiveStoreSearchHistory(userId:String):LiveData<List<StoreSearchHistory>>{
        return RoomInstance.getDatabase(context).userDao().getLiveStoreSearchHistory(userId)
     }
 
     //TODO Referrer
-    open suspend fun getPubReferrer(isbn:String): Optional<PubReferrers> {
+    override suspend fun getPubReferrer(isbn:String): Optional<PubReferrers> {
         return  RoomInstance.getDatabase(context).userDao().getPubReferrer(isbn)
     }
 
-    open suspend fun addPubReferrer(pubReferrers: PubReferrers){
+    override suspend fun addPubReferrer(pubReferrers: PubReferrers){
         RoomInstance.getDatabase(context).userDao().addPubReferrer(pubReferrers)
     }
 
     //TODO Published Books
 
 
-    open suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean = true){
+    override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
         RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByCategory(category, isRecommended)
     }
 
-    open suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean = true){
+    override suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean){
         RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByTag(tag,isRecommended)
     }
 
-    open suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
+    override suspend fun addAllPubBooks(pubBooks:List<PublishedBooks>){
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
     }
 
-    open suspend fun deleteUnPublishedBookRecords(isbnList:List<String>){
+    override suspend fun deleteUnPublishedBookRecords(isbnList:List<String>){
         RoomInstance.getDatabase(context).userDao().deleteUnPublishedBookRecords(isbnList)
     }
 
-    open suspend fun getPublishedBooks(): List<PublishedBooks> {
+    override suspend fun getPublishedBooks(): List<PublishedBooks> {
         return RoomInstance.getDatabase(context).userDao().getPublishedBooks()
     }
 
-    open fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>> {
+    override fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>> {
         return RoomInstance.getDatabase(context).userDao().getLiveTrendingBooks()
     }
 
-    open fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>> {
+    override fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>> {
         return RoomInstance.getDatabase(context).userDao().getLiveRecommendedBooks()
     }
 
-    open fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>> {
+    override fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>> {
         return RoomInstance.getDatabase(context).userDao().getLiveBooksByCategory(category)
     }
 
-    open fun getLivePublishedBooks(): LiveData<List<PublishedBooks>> {
+    override fun getLivePublishedBooks(): LiveData<List<PublishedBooks>> {
         return RoomInstance.getDatabase(context).userDao().getLivePublishedBooks()
     }
 
-    open fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks> {
+    override fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks> {
         return RoomInstance.getDatabase(context).userDao().getBooksByCategoryPageSource(category)
     }
 
-    open fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks> {
+    override fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks> {
         return RoomInstance.getDatabase(context).userDao().getTrendingBooksPageSource()
     }
 
-    open fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks> {
+    override fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks> {
        return RoomInstance.getDatabase(context).userDao().getRecommendedBooksPageSource()
     }
 }

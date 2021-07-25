@@ -28,6 +28,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="64dp"
+    android:visibility="invisible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:id="@+id/booksNestedScroll">
 
@@ -863,8 +864,41 @@
         android:layout_height="match_parent"
         android:background="@color/white_overlay"
         android:fitsSystemWindows="true"
-        android:visibility="gone"
         android:id="@+id/loadingContainer">
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:paddingHorizontal="@dimen/size_16"
+            android:paddingBottom="100dp"
+            android:visibility="gone"
+            android:gravity="center_horizontal"
+            android:id="@+id/errorLayout">
+
+          <ImageView
+              android:layout_width="150dp"
+              android:layout_height="150dp"
+              android:contentDescription="@null"
+              android:src="@drawable/ic_network_alert"
+              android:id="@+id/errorImg"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/errorMsgText"
+                android:layout_marginVertical="@dimen/size_32"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/retryBtn"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/retry"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loadingAnimView"

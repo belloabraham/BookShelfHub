@@ -26,6 +26,19 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub"
         tools:replace="android:supportsRtl,android:allowBackup">
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="com.bookshelfhub.bookshelfhub.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+        <!-- If you are using androidx.startup to initialize other components -->
+        <meta-data
+            android:name="androidx.work.impl.WorkManagerInitializer"
+            android:value="androidx.startup"
+            tools:node="remove" />
+    </provider>
+
         <activity
             android:name=".CartActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -16,7 +15,7 @@ import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
-import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
@@ -25,14 +24,14 @@ import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.ui.main.CartFragment
+import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMainBinding
     private val mainActivityViewModel:MainActivityViewModel by viewModels()
     @Inject
-    lateinit var remoteConfig: RemoteConfig
+    lateinit var remoteConfig: IRemoteConfig
     @Inject
     lateinit var notificationHelper: NotificationHelper
     @Inject
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
-    lateinit var dynamicLink: DynamicLink
+    lateinit var dynamicLink: IDynamicLink
 
     private lateinit var userId:String
     private val ENFORCE_UPDATE="enforce_update"
@@ -297,7 +296,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpCartMoreViewPager(){
-        val  fragmentList = listOf(CartFragment.newInstance(), MoreFragment.newInstance())
+        val  fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
         val titles = arrayOf(getString(R.string.cart), getString(R.string.more))
         val cartMoreAdapter = CartMorePagerAdapter( supportFragmentManager, fragmentList, titles)
         layout.cartMoreViewPager.adapter = cartMoreAdapter

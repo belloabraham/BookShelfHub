@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -18,6 +19,8 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.*
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.Utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.search.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.store.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
@@ -32,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -48,6 +52,19 @@ class StoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
+
+
+        storeFragmentViewModel.getIsNoConnection().observe(viewLifecycleOwner, Observer { isNoConnection ->
+           if (isNoConnection){
+               showErrorMsg(R.string.no_connection_err_msg)
+           }
+        })
+
+        storeFragmentViewModel.getIsNetworkError().observe(viewLifecycleOwner, Observer { isNetworkError ->
+            if (isNetworkError){
+                showErrorMsg(R.string.bad_connection_err_msg)
+            }
+        })
 
         val searchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
 
@@ -162,8 +179,19 @@ class StoreFragment : Fragment() {
             }
         }
 
+        layout.retryBtn.setOnClickListener {
+            layout.errorLayout.visibility = View.GONE
+            layout.loadingAnimView.visibility = View.VISIBLE
+            storeFragmentViewModel.loadBooksFromCloud(emptyList())
+        }
+
         storeFragmentViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { allBooks ->
             allBooksLive = allBooks
+
+            if (allBooks.isNotEmpty()){
+                layout.loadingContainer.visibility = View.GONE
+                layout.booksNestedScroll.visibility = View.VISIBLE
+            }
         })
 
 
@@ -417,6 +445,13 @@ class StoreFragment : Fragment() {
         fun newInstance(): StoreFragment {
             return StoreFragment()
         }
+    }
+
+    private fun showErrorMsg(errorMsg:Int){
+        layout.loadingAnimView.visibility=View.GONE
+        layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireContext(), R.drawable.ic_network_alert))
+        layout.errorMsgText.text = getString(errorMsg)
+        layout.errorLayout.visibility=View.VISIBLE
     }
 
 

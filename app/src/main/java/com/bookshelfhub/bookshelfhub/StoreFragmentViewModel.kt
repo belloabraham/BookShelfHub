@@ -6,32 +6,26 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import androidx.work.*
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
-import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Context, private val cloudDb: CloudDb, private val localDb: LocalDb): ViewModel() {
+class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Context, private val cloudDb: ICloudDb, private val localDb: ILocalDb, val connectionUtil: ConnectionUtil): ViewModel() {
 
     private var allPublishedBooks : LiveData<List<PublishedBooks>> = MutableLiveData()
+    private var isNoConnection : MutableLiveData<Boolean> = MutableLiveData()
+    private var isNetworkError : MutableLiveData<Boolean> = MutableLiveData()
 
 
     private val config  = PagingConfig(
@@ -41,8 +35,6 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
     )
 
     init {
-
-         allPublishedBooks = localDb.getLivePublishedBooks()
 
              val books = listOf(
                      PublishedBooks("1", name="A Quite place", coverUrl =  "https://i.ibb.co/gMpTyLY/bookfair2.png",
@@ -1775,11 +1767,16 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
                         category = "Cook Books", tag = ""),
                 )
 
+
         loadBooksFromCloud(books)
+
     }
 
-    private fun loadBooksFromCloud(books:List<PublishedBooks>){
-        viewModelScope.launch(IO) {
+     fun loadBooksFromCloud(books:List<PublishedBooks>){
+
+         if (connectionUtil.isConnected()){
+             allPublishedBooks = localDb.getLivePublishedBooks()
+             viewModelScope.launch(IO) {
             val publishedBooks = localDb.getPublishedBooks()
             withContext(Default){
                 if(publishedBooks.isEmpty()){
@@ -1803,6 +1800,10 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
             }
 
         }
+         }else{
+             isNoConnection.value = true
+         }
+
     }
 
     private fun addBooksToLocalDb(books:List<PublishedBooks>, reportError:Boolean=true){
@@ -1812,10 +1813,18 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
             }
         }
         if(reportError && books.isEmpty()){
-            //TODO unable to get books error
+            isNetworkError.value = true
         }
     }
 
+
+    fun getIsNetworkError():LiveData<Boolean> {
+        return isNetworkError
+    }
+
+    fun getIsNoConnection():LiveData<Boolean> {
+        return isNoConnection
+    }
 
     fun getAllPublishedBooks():LiveData<List<PublishedBooks>> {
         return allPublishedBooks

@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
-        tools:context=".ui.main.CartFragment">
+        tools:context=".ui.main.BookmarkFragment">
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

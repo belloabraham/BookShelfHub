@@ -9,10 +9,10 @@ import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -25,11 +25,11 @@ import javax.inject.Inject
 class SplashActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var localDb: LocalDb
+    lateinit var localDb: ILocalDb
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var dynamicLink: DynamicLink
+    lateinit var dynamicLink: IDynamicLink
 
     override fun onStart() {
         super.onStart()

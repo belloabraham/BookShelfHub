@@ -19,15 +19,11 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.view.tooltip.ToolTip
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,9 +56,9 @@ class LoginFragment:Fragment() {
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
-    lateinit var cloudDb: CloudDb
+    lateinit var cloudDb: ICloudDb
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
     lateinit var database: Database
     @Inject

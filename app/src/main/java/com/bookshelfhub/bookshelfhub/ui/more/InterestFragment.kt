@@ -6,18 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -37,9 +34,9 @@ class InterestFragment : Fragment() {
     private lateinit var bookInterestObservable:BookInterestObservable
     private val interestFragmentViewModel: InterestFragmentViewModel by viewModels()
     @Inject
-    lateinit var localDb: LocalDb
+    lateinit var localDb: ILocalDb
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     private lateinit var oldBookInterest:BookInterest
     private lateinit var layout: FragmentInterestBinding
 

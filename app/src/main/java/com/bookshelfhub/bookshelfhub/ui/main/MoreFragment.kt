@@ -16,16 +16,17 @@ import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.StringUtil
-import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
-import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -45,17 +46,17 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
-    lateinit var remoteConfig: RemoteConfig
+    lateinit var remoteConfig: IRemoteConfig
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var clipboardHelper: ClipboardHelper
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
     lateinit var stringUtil: StringUtil
     @Inject
-    lateinit var dynamicLink: DynamicLink
+    lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
 
@@ -69,6 +70,7 @@ class MoreFragment : Fragment() {
         val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
         val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
+        val googleAuth:IGoogleAuth =  FBGoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
         authType= userAuth.getAuthType()
 
@@ -122,7 +124,7 @@ class MoreFragment : Fragment() {
                 if (authType==AuthType.GOOGLE.ID){
                     userAuth.signOut {
                         activity?.let {
-                            GoogleAuth(it, null, R.string.gcp_web_client).signOut {
+                            googleAuth.signOut {
                                 it.finish()
                                 startActivity(Intent(it, SplashActivity::class.java))
                             }

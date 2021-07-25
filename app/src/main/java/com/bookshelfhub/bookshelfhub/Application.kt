@@ -1,8 +1,8 @@
 package com.bookshelfhub.bookshelfhub
 
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
@@ -13,12 +13,20 @@ import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 @HiltAndroidApp
-class Application: android.app.Application() {
+class Application: android.app.Application(), Configuration.Provider {
     private lateinit var notificationChannelBuilder: NotificationChannelBuilder
     private val rmcFetchIntervalInSeconds = 1800L
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    override fun getWorkManagerConfiguration() =
+        Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()

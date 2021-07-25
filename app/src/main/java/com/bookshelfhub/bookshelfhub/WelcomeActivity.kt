@@ -15,6 +15,9 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
+import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -33,8 +36,8 @@ class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var signInErrorMsg: String
     private lateinit var layout: ActivityWelcomeBinding
-    private lateinit var phoneAuth:PhoneAuth
-    private lateinit var googleAuth:GoogleAuth
+    private lateinit var phoneAuth:IPhoneAuth
+    private lateinit var googleAuth: IGoogleAuth
     private val phoneAuthViewModel: PhoneAuthViewModel by viewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by viewModels()
     private val userAuthViewModel: UserAuthViewModel by viewModels()
@@ -44,7 +47,7 @@ class WelcomeActivity : AppCompatActivity() {
     @Inject
      lateinit var connectionUtil: ConnectionUtil
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +63,8 @@ class WelcomeActivity : AppCompatActivity() {
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        phoneAuth= PhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
-        googleAuth = GoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
+        phoneAuth= FBPhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+        googleAuth = FBGoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

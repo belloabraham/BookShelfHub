@@ -2,19 +2,18 @@ package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.authentication.GoogleAuthViewModel
+import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-open class Google(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?, private val gcpWebClient:Int) {
+open class FBGoogleAuth(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?, private val gcpWebClient:Int) :
+    IGoogleAuth {
 
 
     private val firebaseAuth = Firebase.auth
@@ -29,7 +28,7 @@ open class Google(private val activity: Activity, private val googleAuthViewMode
 
     }
 
-    open fun authWithGoogle(idToken: String, authErrorMsg:String) {
+    override fun authWithGoogle(idToken: String, authErrorMsg:String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(activity) { task ->
@@ -43,12 +42,12 @@ open class Google(private val activity: Activity, private val googleAuthViewMode
             }
     }
 
-    open fun signInOrSignUpWithGoogle(resultLauncher: ActivityResultLauncher<Intent>){
+    override fun signInOrSignUpWithGoogle(resultLauncher: ActivityResultLauncher<Intent>){
         val signInIntent = googleSignInClient.signInIntent
         resultLauncher.launch(signInIntent)
     }
 
-    open fun signOut(signOutCompleted: () -> Unit){
+    override fun signOut(signOutCompleted: () -> Unit){
         googleSignInClient.signOut().addOnCompleteListener {
             if (it.isSuccessful){
                 signOutCompleted()

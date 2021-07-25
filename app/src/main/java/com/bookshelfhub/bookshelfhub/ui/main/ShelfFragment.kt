@@ -12,15 +12,14 @@ import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.android.synthetic.main.fragment_shelf.view.*
 import kotlinx.android.synthetic.main.search_view.view.*
 import javax.inject.Inject
 
@@ -29,11 +28,11 @@ import javax.inject.Inject
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
     @Inject
-    lateinit var localDb: LocalDb
+    lateinit var localDb: ILocalDb
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
     private var orderedBookList:List<OrderedBooks> = emptyList()
     @Inject
-    lateinit var cloudDb: CloudDb
+    lateinit var firestore: Firestore
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private lateinit var layout: FragmentShelfBinding

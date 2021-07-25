@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
-import com.bookshelfhub.bookshelfhub.config.RemoteConfig
+import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
 import com.bookshelfhub.bookshelfhub.view.about.builder.AboutPageBuilder
 import com.bookshelfhub.bookshelfhub.view.about.AutoFitGridLayout
@@ -30,7 +30,7 @@ class AboutFragment : Fragment() {
     @Inject
     lateinit var appUtil: AppUtil
     @Inject
-    lateinit var remoteConfig: RemoteConfig
+    lateinit var remoteConfig: IRemoteConfig
     private val EMAIL="email"
     private val PHONE="phone"
     private lateinit var layout: FragmentAboutBinding

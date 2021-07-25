@@ -1,29 +1,30 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuth.AuthStateListener
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-open class User() {
+open class FBUserAuth() : IUserAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
 
-    open fun getIsUserAuthenticated(): Boolean {
+    override fun getIsUserAuthenticated(): Boolean {
         return auth.currentUser != null
     }
 
-    open fun getUserId(): String {
+    override fun getUserId(): String {
         return auth.currentUser!!.uid
     }
 
-    open fun getEmail(): String? {
+    override fun getEmail(): String? {
         return auth.currentUser?.email
     }
 
-    open fun getAuthType(): String {
+    override fun getAuthType(): String {
         var id=""
         for (i in auth.currentUser?.providerData!!){
             id = i.providerId
@@ -31,18 +32,18 @@ open class User() {
         return id
     }
 
-    open fun getName(): String? {
+    override fun getName(): String? {
         auth.currentUser?.displayName?.let {
             return it.capitalize()
         }
         return null
     }
 
-    open fun getPhone(): String? {
+    override fun getPhone(): String? {
         return auth.currentUser?.phoneNumber
     }
 
-    open fun signOut(signOutCompleted: () -> Unit) {
+    override fun signOut(signOutCompleted: () -> Unit) {
         val authStateListener =
             AuthStateListener { _ ->
                 signOutCompleted()

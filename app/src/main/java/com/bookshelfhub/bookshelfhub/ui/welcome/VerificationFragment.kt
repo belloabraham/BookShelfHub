@@ -22,14 +22,13 @@ import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.enums.VeriFragSavedState
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,9 +50,9 @@ class VerificationFragment:Fragment(){
     private var inProgress:Boolean=true
     private val timerDurationinMilliSec = 180000L
     @Inject
-    lateinit var cloudDb: CloudDb
+    lateinit var cloudDb: ICloudDb
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
     lateinit var database: Database
     @Inject

@@ -2,13 +2,20 @@ package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.*
-import com.bookshelfhub.bookshelfhub.config.RemoteConfig
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.config.FirebaseRemoteConfig
+import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
+import com.bookshelfhub.bookshelfhub.services.notification.firebase.FirebaseCM
+import com.bookshelfhub.bookshelfhub.services.notification.firebase.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.wrapper.Json
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.DynamicLink
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.FirebaseDLink
+import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -29,14 +36,15 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getRemoteConfig(): RemoteConfig {
-        return RemoteConfig()
+    fun getRemoteConfig(): IRemoteConfig {
+        return FirebaseRemoteConfig()
     }
+
 
     @Singleton
     @Provides
-    fun getDynamicLink(@ApplicationContext context: Context, appUtil: AppUtil): DynamicLink {
-        return DynamicLink(context.getString(R.string.dlink_domain_prefix), context, appUtil)
+    fun getDynamicLink(@ApplicationContext context: Context, appUtil: AppUtil): IDynamicLink {
+        return FirebaseDLink(context.getString(R.string.dlink_domain_prefix), context, appUtil)
     }
 
     @Singleton
@@ -47,8 +55,14 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getLocalDb(@ApplicationContext context: Context): LocalDb {
-        return LocalDb(context)
+    fun getLocalDb(@ApplicationContext context: Context): ILocalDb {
+        return RoomDb(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getCloudMessaging():ICloudMessaging{
+        return FirebaseCM()
     }
 
     @Singleton
@@ -59,20 +73,20 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getCloudDb(json:Json): CloudDb {
-        return CloudDb(json)
+    fun getCloudDb(json:Json): ICloudDb {
+        return Firestore(json)
     }
 
     @Singleton
     @Provides
-    fun getDatabase(@ApplicationContext context: Context, localDb: LocalDb): Database {
+    fun getDatabase(@ApplicationContext context: Context, localDb: ILocalDb): Database {
         return Database(context,localDb )
     }
 
     @Singleton
     @Provides
-    fun getUserAuthentication(): UserAuth {
-        return UserAuth()
+    fun getUserAuthentication(): IUserAuth {
+        return FBUserAuth()
     }
 
     @Singleton

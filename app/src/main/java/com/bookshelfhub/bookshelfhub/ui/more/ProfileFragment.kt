@@ -16,9 +16,9 @@ import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DateFormat
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,9 +34,9 @@ import javax.inject.Inject
 class ProfileFragment : Fragment() {
 
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var localDb: LocalDb
+    lateinit var localDb: ILocalDb
     @Inject
     lateinit var database: Database
     @Inject

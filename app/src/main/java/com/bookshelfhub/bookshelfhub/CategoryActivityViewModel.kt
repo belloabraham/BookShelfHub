@@ -8,14 +8,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoryActivityViewModel @Inject constructor(private val localDb: LocalDb) : ViewModel(){
+class CategoryActivityViewModel @Inject constructor(private val localDb: ILocalDb) : ViewModel(){
 
     private var liveBooksByCategory: LiveData<List<PublishedBooks>> = MutableLiveData()
 

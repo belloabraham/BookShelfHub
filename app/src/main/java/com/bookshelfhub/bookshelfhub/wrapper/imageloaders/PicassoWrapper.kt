@@ -7,9 +7,9 @@ import com.squareup.picasso.NetworkPolicy
 import com.squareup.picasso.Picasso
 import java.lang.Exception
 
-open class PicassoWrapper(private val imageView: ImageView) {
+open class PicassoWrapper(private val imageView: ImageView)  {
 
-    fun loadUnCompressed(resId:Int, shouldCache:Boolean){
+     fun loadUnCompressed(resId:Int, shouldCache:Boolean){
       val picasso = Picasso.get()
             .load(resId)
               if (!shouldCache){
@@ -19,7 +19,7 @@ open class PicassoWrapper(private val imageView: ImageView) {
             picasso.into(imageView)
     }
 
-    fun loadImageWithRoundCorners(url:String, placeHolder:Int, errorImg:Int, shouldCache:Boolean, onSuccess:()->Unit){
+     fun loadImageWithRoundCorners(url:String, placeHolder:Int, errorImg:Int, shouldCache:Boolean, onSuccess:()->Unit){
 
       val callback = object :Callback{
           override fun onSuccess() {

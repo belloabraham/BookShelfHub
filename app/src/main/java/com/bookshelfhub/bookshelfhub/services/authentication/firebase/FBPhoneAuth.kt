@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
 import android.app.Activity
-import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.services.authentication.IPhoneAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -10,8 +10,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
-open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int)
-{
+open class FBPhoneAuth(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int) :
+    IPhoneAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
     private lateinit var resendToken: PhoneAuthProvider.ForceResendingToken
@@ -24,7 +24,7 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
 
     }
 
-     open fun startPhoneNumberVerification(phoneNumber: String) {
+     override fun startPhoneNumberVerification(phoneNumber: String) {
          val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
             .setTimeout(60L, TimeUnit.SECONDS)
@@ -34,7 +34,7 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    open fun verifyPhoneNumberWithCode(code: String, wrongOTPErrorMsg:Int) {
+    override fun verifyPhoneNumberWithCode(code: String, wrongOTPErrorMsg:Int) {
             val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, code)
             signInWithPhoneAuthCredential(credential, phoneAuthViewModel, wrongOTPErrorMsg)
     }
@@ -60,7 +60,7 @@ open class Phone(private  val activity: Activity, val phoneAuthViewModel: PhoneA
     }
 
 
-    open fun resendVerificationCode(phoneNumber: String) {
+    override fun resendVerificationCode(phoneNumber: String) {
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)       // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit

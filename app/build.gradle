@@ -94,7 +94,7 @@ dependencies {
     //---Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
     //--Work Manager
-    def work_version = "2.6.0-beta01"
+    def work_version = "2.6.0-beta02"
     implementation("androidx.work:work-runtime-ktx:$work_version")
     //---Test helpers
     androidTestImplementation("androidx.work:work-testing:$work_version")
@@ -104,6 +104,10 @@ dependencies {
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
     //Google Gson
     implementation 'com.google.code.gson:gson:2.8.7'
+    def hilt_work_version = "1.0.0"
+    implementation("androidx.hilt:hilt-work:$hilt_work_version")
+    // When using Kotlin.
+    kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
 
 
 

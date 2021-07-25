@@ -6,9 +6,9 @@
     app:startDestination="@+id/cart_fragment">
     <fragment
         android:id="@+id/cart_fragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.main.CartFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment"
         android:label="@string/cart"
-        tools:layout="@layout/fragment_cart" />
+        tools:layout="@layout/fragment_bookmark" />
 
     <fragment
         android:id="@+id/profile_fragment"

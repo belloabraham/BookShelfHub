@@ -1,24 +1,31 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.LocalDb
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-class RecommendedBooks (val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context,
+@HiltWorker
+class RecommendedBooks @AssistedInject constructor (
+    @Assisted val context: Context,
+    @Assisted workerParams: WorkerParameters,
+    val userAuth:IUserAuth,
+    val localDb:ILocalDb) : CoroutineWorker(context,
     workerParams
     ) {
     override suspend fun doWork(): Result {
-
-        val userAuth = UserAuth()
 
         if (!userAuth.getIsUserAuthenticated()){
             return Result.retry()
         }
 
-        val localDb = LocalDb(context)
         val optionalBookInterest = localDb.getBookInterest(userAuth.getUserId())
 
        if (optionalBookInterest.isPresent && optionalBookInterest.get().added){

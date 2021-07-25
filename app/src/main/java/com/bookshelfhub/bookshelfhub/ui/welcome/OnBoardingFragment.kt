@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
 import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController.ClickListener
 import com.smarteist.autoimageslider.SliderAnimations
@@ -28,7 +28,7 @@ class OnBoardingFragment:Fragment() {
     private lateinit var layout: FragmentOnboardingBinding;
     lateinit var sliderAdapter:SliderAdapter
     @Inject
-    lateinit var userAuth:UserAuth
+    lateinit var userAuth: IUserAuth
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View {
 

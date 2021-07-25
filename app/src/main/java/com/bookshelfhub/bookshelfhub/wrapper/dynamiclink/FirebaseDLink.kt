@@ -6,21 +6,22 @@ import android.content.Intent
 import android.net.Uri
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.*
 import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.dynamiclinks.ktx.component1
 import com.google.firebase.dynamiclinks.ktx.component2
+import javax.inject.Inject
 
-open class FirebaseDLink (private val domainPrefix:String, private val context:Context, private val appUtil: AppUtil) {
+open class FirebaseDLink @Inject constructor(private val domainPrefix:String, private val context:Context, private val appUtil: AppUtil) :
+    IDynamicLink {
 
-    open fun getLinkAsync(socialTitle:String,
-                     socialDescription:String,
-                     imageLink:String,
-                     uniqueId: String,
-                     minimumVCode:Int=appUtil.getAppVersionCode().toInt(), onComplete:(Uri?)->Unit){
+    override fun getLinkAsync(socialTitle:String,
+                              socialDescription:String,
+                              imageLink:String,
+                              uniqueId: String,
+                              minimumVCode:Int, onComplete:(Uri?)->Unit){
 
         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
             link = Uri.parse(String.format(context.getString(R.string.dlink_deeplink_domain), uniqueId))
@@ -45,7 +46,7 @@ open class FirebaseDLink (private val domainPrefix:String, private val context:C
         }
     }
 
-    open fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
+    override fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
         Firebase.dynamicLinks
             .getDynamicLink(activity.intent)
             .addOnSuccessListener(activity) {

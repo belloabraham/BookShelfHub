@@ -1,44 +1,44 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
-import com.bookshelfhub.bookshelfhub.services.notification.CloudMessaging
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.services.notification.firebase.FirebaseCM
+import com.bookshelfhub.bookshelfhub.services.notification.firebase.ICloudMessaging
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
 
-class UploadNotificationToken ( val context: Context, workerParams: WorkerParameters): CoroutineWorker(context,
+@HiltWorker
+class UploadNotificationToken @AssistedInject constructor (
+    @Assisted val context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val userAuth:IUserAuth, private val cloudDb:ICloudDb,
+    val settingsUtil: SettingsUtil,
+    private val cloudMessaging:ICloudMessaging): CoroutineWorker(context,
     workerParams
 ) {
-    private lateinit var userAuth: UserAuth
-    private lateinit var cloudDb: CloudDb
-    private lateinit var cloudMessaging: CloudMessaging
-    private lateinit var settingsUtil: SettingsUtil
     private val  NOTIFICATION_TOKEN="notification_token"
 
     override suspend fun doWork(): Result {
 
-        userAuth=UserAuth()
 
         if (!userAuth.getIsUserAuthenticated()){
             return Result.retry()
         }
 
-        cloudDb= CloudDb()
-        cloudMessaging= CloudMessaging()
-        settingsUtil= SettingsUtil(context)
-
 
         val appToken = settingsUtil.getString(NOTIFICATION_TOKEN)
 
         cloudMessaging.getNotificationTokenAsync {
-            val newToken=it
+            val newToken= it
            if (appToken!=newToken){
                cloudDb.addDataAsync(newToken,DbFields.USERS_COLL.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN) {
                    coroutineScope {

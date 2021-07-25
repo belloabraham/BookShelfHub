@@ -16,13 +16,12 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.CloudDb
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -38,11 +37,11 @@ import javax.inject.Inject
 class UserInfoFragment : Fragment() {
     private lateinit var layout:FragmentUserInfoBinding
     @Inject
-    lateinit var userAuth: UserAuth
+    lateinit var userAuth: IUserAuth
     @Inject
     lateinit var database: Database
     @Inject
-    lateinit var cloudDb: CloudDb
+    lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var deviceUtil: DeviceUtil
     @Inject
