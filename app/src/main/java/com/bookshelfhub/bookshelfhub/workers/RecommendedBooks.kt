@@ -16,10 +16,12 @@ import dagger.assisted.AssistedInject
 class RecommendedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    val userAuth:IUserAuth,
-    val localDb:ILocalDb) : CoroutineWorker(context,
+    private val userAuth:IUserAuth,
+    private val localDb:ILocalDb) : CoroutineWorker(context,
     workerParams
     ) {
+
+
     override suspend fun doWork(): Result {
 
         if (!userAuth.getIsUserAuthenticated()){

@@ -11,16 +11,23 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityCartBinding
 
 class CartActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityCartBinding
+    private lateinit var layout: ActivityCartBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        layout = ActivityCartBinding.inflate(layoutInflater)
+        setContentView(layout.root)
+        setSupportActionBar(layout.toolbar)
 
-        binding = ActivityCartBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        layout.makePaymentFab.setOnClickListener {
 
-        setSupportActionBar(binding.toolbar)
+        }
 
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
 }

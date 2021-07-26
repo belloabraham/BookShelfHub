@@ -21,7 +21,7 @@ import javax.inject.Inject
 class UploadBookInterest @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    val localDb: ILocalDb, val cloudDb: ICloudDb, val userAuth:IUserAuth):
+    private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth:IUserAuth):
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {

@@ -21,7 +21,7 @@ class UploadNotificationToken @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth, private val cloudDb:ICloudDb,
-    val settingsUtil: SettingsUtil,
+    private val settingsUtil: SettingsUtil,
     private val cloudMessaging:ICloudMessaging): CoroutineWorker(context,
     workerParams
 ) {

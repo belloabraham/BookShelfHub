@@ -26,6 +26,7 @@ import com.bookshelfhub.bookshelfhub.adapters.store.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.models.BookRequest
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
@@ -53,6 +54,10 @@ class StoreFragment : Fragment() {
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
 
+
+        storeFragmentViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
+            layout.materialSearchView.setMenuNotifCount(cartItemsCount)
+        })
 
         storeFragmentViewModel.getIsNoConnection().observe(viewLifecycleOwner, Observer { isNoConnection ->
            if (isNoConnection){
@@ -108,12 +113,14 @@ class StoreFragment : Fragment() {
         layout.newsRecView.adapter = newsBooksAdapter
         layout.langAndRefRecView.adapter=languageAndRefBooksAdapter
 
+
         val bookReqMsg = getString(R.string.cant_find_book)
 
         mainActivityViewModel.getStoreSearchHistory().observe(viewLifecycleOwner, Observer { searchHistory ->
             searchListAdapter.submitList(searchHistory)
             storeSearchHistory = searchHistory
         })
+
 
         layout.materialSearchView.apply {
             val params =  layout.materialSearchView.layoutParams as AppBarLayout.LayoutParams
@@ -129,6 +136,7 @@ class StoreFragment : Fragment() {
                 }
             })
 
+            setMenuNotifIconVisibility(View.VISIBLE)
             setMenuIconImageResource(R.drawable.ic_cart)
             setMenuIconVisibility(View.VISIBLE)
             setOnMenuClickListener(object:SearchLayout.OnMenuClickListener{

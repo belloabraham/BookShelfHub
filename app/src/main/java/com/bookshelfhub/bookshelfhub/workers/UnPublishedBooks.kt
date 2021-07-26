@@ -22,8 +22,8 @@ import kotlinx.coroutines.coroutineScope
 class UnPublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    val userAuth:IUserAuth,
-    val cloudDb:ICloudDb) : CoroutineWorker(context,
+    private val userAuth:IUserAuth,
+    private val cloudDb:ICloudDb) : CoroutineWorker(context,
     workerParams
 ) {
 

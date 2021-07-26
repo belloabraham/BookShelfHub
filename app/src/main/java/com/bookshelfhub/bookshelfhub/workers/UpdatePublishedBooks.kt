@@ -19,7 +19,7 @@ import kotlinx.coroutines.coroutineScope
 class UpdatePublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    val userAuth:IUserAuth, val cloudDb:ICloudDb, val localDb: ILocalDb) : CoroutineWorker(context,
+    private val userAuth:IUserAuth, private val cloudDb:ICloudDb, private val localDb: ILocalDb) : CoroutineWorker(context,
     workerParams
 ) {
     override suspend fun doWork(): Result {

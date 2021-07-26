@@ -9,6 +9,10 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //Todo Cart
+    @Query("SELECT COUNT(*) FROM Cart")
+    fun getLiveTotalCartItemsNo(): LiveData<Int>
+
 
     //Todo Payment Info
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -13,15 +13,19 @@
         android:layout_gravity="top"
         android:id="@+id/appbarLayout"
         android:background="?backgroundColor" >
-    <com.bookshelfhub.bookshelfhub.view.materialsearch.widget.MaterialSearchView
-        android:id="@+id/material_search_view"
-        android:layout_width="match_parent"
-        app:search_textHint="@string/store_search_hint"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:search_navigationIconSupport="search"
-        app:search_transitionDuration="0"
-        android:layout_height="wrap_content" />
+
+            <com.bookshelfhub.bookshelfhub.view.materialsearch.widget.MaterialSearchView
+                android:id="@+id/material_search_view"
+                android:layout_width="match_parent"
+                app:search_textHint="@string/store_search_hint"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:search_navigationIconSupport="search"
+                app:search_transitionDuration="0"
+                android:layout_height="wrap_content" />
+
     </com.google.android.material.appbar.AppBarLayout>
+
+
 
 
 <androidx.core.widget.NestedScrollView
@@ -37,8 +41,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/recommendedLayout"

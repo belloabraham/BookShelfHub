@@ -12,7 +12,7 @@ import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.search.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
@@ -27,12 +27,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
-    @Inject
-    lateinit var localDb: ILocalDb
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
     private var orderedBookList:List<OrderedBooks> = emptyList()
-    @Inject
-    lateinit var firestore: Firestore
 
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private lateinit var layout: FragmentShelfBinding

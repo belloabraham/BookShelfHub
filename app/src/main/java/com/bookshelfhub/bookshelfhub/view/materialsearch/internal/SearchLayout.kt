@@ -19,7 +19,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.annotation.*
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -65,6 +67,9 @@ abstract class SearchLayout @JvmOverloads constructor(
     }
 
     private var mImageViewMenu: ImageButton? = null
+    private var mFrameLayoutMenu: FrameLayout? =null
+    private var mMenuNotifTextView: TextView? = null
+    private var mNotifCardViewMenu: MaterialCardView? =null
     private var mImageViewMic: ImageButton? = null
     protected var mRecyclerView: RecyclerView? = null
     private var mMaterialCardView: MaterialCardView? = null
@@ -177,7 +182,8 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewNavigation = findViewById(R.id.search_image_view_navigation)
         mImageViewNavigation?.setOnClickListener(this)
 
-       // mImageViewMic = findViewById(R.id.search_image_view_mic)
+        mImageViewMic = findViewById(R.id.search_image_view_mic)
+        mImageViewMic?.visibility = View.GONE
         mImageViewMic?.setOnClickListener(this)
 
         mImageViewClear = findViewById(R.id.search_image_view_clear)
@@ -185,8 +191,14 @@ abstract class SearchLayout @JvmOverloads constructor(
         mImageViewClear?.setOnClickListener(this)
 
         mImageViewMenu = findViewById(R.id.search_image_view_menu)
-        mImageViewMenu?.visibility = View.GONE
         mImageViewMenu?.setOnClickListener(this)
+
+        mFrameLayoutMenu = findViewById(R.id.searchMenuIconContainer)
+        mFrameLayoutMenu?.visibility = View.GONE
+        mNotifCardViewMenu = findViewById(R.id.searchMenuIconNotifCard)
+
+        mMenuNotifTextView = findViewById(R.id.searchMenuIconNotifText)
+
 
         mSearchEditText = findViewById(R.id.search_search_edit_text)
         mSearchEditText?.addTextChangedListener(object : TextWatcher {
@@ -246,8 +258,17 @@ abstract class SearchLayout @JvmOverloads constructor(
         isFocusableInTouchMode = true
     }
 
+
+    fun setMenuNotifCount(count: Int) {
+        mMenuNotifTextView?.text = "$count"
+    }
+
     fun setMenuIconVisibility(visibility: Int) {
-        mImageViewMenu?.visibility = visibility
+        mFrameLayoutMenu?.visibility = visibility
+    }
+
+    fun setMenuNotifIconVisibility(visibility: Int) {
+        mNotifCardViewMenu?.visibility = visibility
     }
 
     fun setMenuIconImageResource(@DrawableRes resId: Int) {

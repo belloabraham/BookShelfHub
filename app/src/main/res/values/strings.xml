@@ -212,6 +212,10 @@
     <string name="bookmarks">Bookmarks</string>
 
 
+    <!-- TODO: Cart Activity -->
+    <string name="make_payment">Make payment</string>
+
+
     <!-- TODO: Store Fragment -->
     <string name="request_a_book">Request for a book</string>
     <string name="recommended_for">Recommended for you</string>

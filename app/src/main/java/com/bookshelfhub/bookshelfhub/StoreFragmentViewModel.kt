@@ -1818,6 +1818,10 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
     }
 
 
+    fun getLiveTotalCartItemsNo(): LiveData<Int> {
+        return localDb.getLiveTotalCartItemsNo()
+    }
+
     fun getIsNetworkError():LiveData<Boolean> {
         return isNetworkError
     }

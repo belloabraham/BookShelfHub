@@ -11,6 +11,11 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
+    //Todo Cart
+    override fun getLiveTotalCartItemsNo(): LiveData<Int> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveTotalCartItemsNo()
+    }
+
     //Todo User
     override suspend fun getUser(userId:String): Optional<User> {
       return  RoomInstance.getDatabase(context).userDao().getUser(userId)

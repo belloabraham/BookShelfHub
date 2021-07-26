@@ -74,6 +74,7 @@ class Application: android.app.Application(), Configuration.Provider {
         WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }
 
+
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
