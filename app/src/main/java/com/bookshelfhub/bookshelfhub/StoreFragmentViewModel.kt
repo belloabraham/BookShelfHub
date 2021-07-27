@@ -1818,7 +1818,7 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
     }
 
 
-    fun getLiveTotalCartItemsNo(): LiveData<Int> {
+    fun getLiveTotalCartItemsNo():LiveData<Int> {
         return localDb.getLiveTotalCartItemsNo()
     }
 

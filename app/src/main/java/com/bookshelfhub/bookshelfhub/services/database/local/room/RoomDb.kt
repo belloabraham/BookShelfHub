@@ -11,6 +11,19 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
+    //Todo Bookmarks
+    override fun getLiveBookmarks(): LiveData<List<Bookmarks>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks()
+    }
+
+    override suspend fun updateLocalBookmarks(uploaded:Boolean, idList:List<Long>) {
+        return  RoomInstance.getDatabase(context).userDao().updateLocalBookmarks(uploaded,idList)
+    }
+
+    override suspend fun getLocalBookmarks(uploaded:Boolean): List<Bookmarks> {
+        return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(uploaded)
+    }
+
     //Todo Cart
     override fun getLiveTotalCartItemsNo(): LiveData<Int> {
         return  RoomInstance.getDatabase(context).userDao().getLiveTotalCartItemsNo()

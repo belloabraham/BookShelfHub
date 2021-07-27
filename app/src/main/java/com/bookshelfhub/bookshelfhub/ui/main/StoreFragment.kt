@@ -136,7 +136,7 @@ class StoreFragment : Fragment() {
                 }
             })
 
-            setMenuNotifIconVisibility(View.VISIBLE)
+           // setMenuNotifIconVisibility(View.VISIBLE)
             setMenuIconImageResource(R.drawable.ic_cart)
             setMenuIconVisibility(View.VISIBLE)
             setOnMenuClickListener(object:SearchLayout.OnMenuClickListener{

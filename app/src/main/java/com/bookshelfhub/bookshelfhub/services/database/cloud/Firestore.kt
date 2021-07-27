@@ -116,6 +116,11 @@ open class Firestore @Inject constructor(val json: Json): ICloudDb {
     }
 
 
+    fun addListOfDataAsync(list: List<Any>){
+
+    }
+
+
 
     override fun getCacheSettings(shouldCache: Boolean):FirebaseFirestoreSettings{
      return firestoreSettings {

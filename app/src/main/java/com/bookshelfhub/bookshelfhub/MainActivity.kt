@@ -177,11 +177,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+   private var isFirstStart = true
     override fun onResume() {
 
+            if(isFirstStart){
+              layout.shelfStoreViewPager.currentItem =0
+              isFirstStart=false
+            }
+
         mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
-            layout.shelfStoreViewPager.currentItem=0
+
             val mode = if (isNightMode){
                 AppCompatDelegate.MODE_NIGHT_YES
             }else{

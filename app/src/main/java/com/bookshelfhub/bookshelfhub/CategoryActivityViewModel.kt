@@ -36,6 +36,10 @@ class CategoryActivityViewModel @Inject constructor(private val localDb: ILocalD
         }
     }
 
+    fun getLiveTotalCartItemsNo(): LiveData<Int> {
+        return localDb.getLiveTotalCartItemsNo()
+    }
+
     fun getTrendingBooks(): Flow<PagingData<PublishedBooks>> {
         return  Pager(config){
             localDb.getTrendingBooksPageSource()

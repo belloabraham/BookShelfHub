@@ -1,5 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.app.ActivityOptions
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -109,9 +111,25 @@ class BookCategoryActivity : AppCompatActivity() {
             })
         }
 
+        layout.cartBtn.setOnClickListener {
+            val intent = Intent(this, CartActivity::class.java)
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+        }
+
+        categoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
+            if(cartItemsCount>0){
+                layout.cartNotifText.text = "$cartItemsCount"
+               // layout.cartBtnContainer.visibility = View.VISIBLE
+            }else{
+               // layout.cartBtnContainer.visibility = View.GONE
+            }
+
+        })
+
         categoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
             listOfBooks = books
         })
+
 
     }
 

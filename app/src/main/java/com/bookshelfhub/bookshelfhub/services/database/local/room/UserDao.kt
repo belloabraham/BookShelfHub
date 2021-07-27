@@ -9,10 +9,26 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //Todo Bookmarks
+    @Query("SELECT * FROM Bookmarks")
+    fun getLiveBookmarks():LiveData<List<Bookmarks>>
+
+    @Query("SELECT * FROM Bookmarks WHERE uploaded = :uploaded")
+    suspend fun getLocalBookmarks(uploaded:Boolean):List<Bookmarks>
+
+    @Query("UPDATE Bookmarks SET uploaded =:uploaded WHERE id in (:idList)")
+    suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList: List<Long>)
+
+
     //Todo Cart
     @Query("SELECT COUNT(*) FROM Cart")
     fun getLiveTotalCartItemsNo(): LiveData<Int>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addToCart(cart:Cart)
+
+    @Query("SELECT * FROM Cart")
+    fun getLiveCartItems():LiveData<List<Cart>>
 
     //Todo Payment Info
     @Insert(onConflict = OnConflictStrategy.REPLACE)

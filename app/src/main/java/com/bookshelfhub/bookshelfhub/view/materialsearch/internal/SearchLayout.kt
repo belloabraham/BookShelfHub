@@ -196,6 +196,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         mFrameLayoutMenu = findViewById(R.id.searchMenuIconContainer)
         mFrameLayoutMenu?.visibility = View.GONE
         mNotifCardViewMenu = findViewById(R.id.searchMenuIconNotifCard)
+        mNotifCardViewMenu?.visibility = View.GONE
 
         mMenuNotifTextView = findViewById(R.id.searchMenuIconNotifText)
 
@@ -260,7 +261,10 @@ abstract class SearchLayout @JvmOverloads constructor(
 
 
     fun setMenuNotifCount(count: Int) {
-        mMenuNotifTextView?.text = "$count"
+        if(count>0){
+            mMenuNotifTextView?.text = "$count"
+            mNotifCardViewMenu?.visibility = View.VISIBLE
+        }
     }
 
     fun setMenuIconVisibility(visibility: Int) {

@@ -46,6 +46,54 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cartBtnContainer"
+            android:visibility="gone"
+            android:layout_margin="@dimen/size_16"
+            android:layout_gravity="bottom|end">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cartBtn"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:clickable="true"
+                    app:cardBackgroundColor="?colorPrimaryVariant"
+                    app:cardCornerRadius="30dp"
+                    android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_cart"
+                            app:tint="@android:color/white" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cartNotifCard"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="end|top"
+                    app:cardBackgroundColor="?colorError"
+                    app:cardCornerRadius="@dimen/notif_circle_size">
+
+                        <TextView
+                            android:id="@+id/cartNotifText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="?colorOnError"
+                            android:textSize="10sp"
+                            tools:ignore="HardcodedText,SmallSp" />
+                </com.google.android.material.card.MaterialCardView>
+
+        </FrameLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

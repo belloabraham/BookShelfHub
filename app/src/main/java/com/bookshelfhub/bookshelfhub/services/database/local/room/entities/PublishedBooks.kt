@@ -6,20 +6,20 @@ import androidx.room.PrimaryKey
 @Entity(tableName= "PublishedBooks")
 data class PublishedBooks(
     @PrimaryKey
-     val isbn: String,
-    val pubId: String="",
-    val name: String,
-    val author: String="Bello Abraham",
-    val coverUrl: String,
-    val description: String="",
-    val dateTimePublished: String="",
-    val noOfDownloads: Long=5,
-    val price: Double=0.0,
-    val totalRatings: Double=0.0,
-    val category: String,
-    val recommended:Boolean = false,
-    val language:String="",
-    val copyrightLawUrl: String="",
-    val authorEmail: String="",
-    val tag: String
-)
+    override val isbn: String,
+    override val pubId: String="",
+    override val name: String,
+    override val author: String="",
+    override val coverUrl: String,
+    override val description: String="",
+    override val dateTimePublished: String="",
+    override val noOfDownloads: Long=5,
+    override val price: Double=0.0,
+    override val totalRatings: Double=0.0,
+    override val category: String,
+    override val recommended:Boolean = false,
+    override val language:String="",
+    override val copyrightLawUrl: String="",
+    override val authorEmail: String="",
+    override val tag: String
+) : IPublishedBooks
