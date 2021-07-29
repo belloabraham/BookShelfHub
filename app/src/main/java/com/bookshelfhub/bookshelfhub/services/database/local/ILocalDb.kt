@@ -7,12 +7,14 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
-     suspend fun getLocalBookmarks(uploaded:Boolean=false): List<Bookmarks>
-     fun getLiveBookmarks(): LiveData<List<Bookmarks>>
+    suspend fun addBookmark(bookmark: Bookmark)
+     suspend fun deleteBookmark(bookmark: Bookmark)
+     suspend fun getLocalBookmarks(uploaded:Boolean=false): List<Bookmark>
+     fun getLiveBookmarks(): LiveData<List<Bookmark>>
      suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList:List<Long>)
      fun getLiveTotalCartItemsNo(): LiveData<Int>
      suspend fun getUser(userId: String): Optional<User>
-
+     fun getLiveCartItems(): LiveData<List<Cart>>
      fun getLiveUser(userId: String): LiveData<User>
 
      suspend fun addUser(user: User)

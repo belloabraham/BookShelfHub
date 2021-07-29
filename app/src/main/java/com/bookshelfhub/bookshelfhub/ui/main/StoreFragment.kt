@@ -32,6 +32,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Store
 import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
@@ -136,7 +137,6 @@ class StoreFragment : Fragment() {
                 }
             })
 
-           // setMenuNotifIconVisibility(View.VISIBLE)
             setMenuIconImageResource(R.drawable.ic_cart)
             setMenuIconVisibility(View.VISIBLE)
             setOnMenuClickListener(object:SearchLayout.OnMenuClickListener{
@@ -189,7 +189,7 @@ class StoreFragment : Fragment() {
 
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = View.GONE
-            layout.loadingAnimView.visibility = View.VISIBLE
+            layout.loadingContainer.visibility = View.VISIBLE
             storeFragmentViewModel.loadBooksFromCloud(emptyList())
         }
 
@@ -198,6 +198,7 @@ class StoreFragment : Fragment() {
 
             if (allBooks.isNotEmpty()){
                 layout.loadingContainer.visibility = View.GONE
+                layout.errorLayout.visibility = View.GONE
                 layout.booksNestedScroll.visibility = View.VISIBLE
             }
         })

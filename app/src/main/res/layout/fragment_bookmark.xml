@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent"
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
-    android:orientation="vertical"
+    android:id="@+id/rootCoordinateLayout"
+    android:paddingTop="@dimen/size_25"
     tools:context=".ui.main.BookmarkFragment"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeRecyclerView
-        android:id="@+id/bookmarkListRecView"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        app:item_layout="@layout/bookmarks_page_item"/>
+        android:layout_height="wrap_content"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:id="@+id/bookmarkListRecView"/>
 
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -40,4 +40,4 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

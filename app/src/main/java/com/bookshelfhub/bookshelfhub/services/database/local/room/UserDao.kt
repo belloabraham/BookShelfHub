@@ -10,15 +10,20 @@ import com.google.common.base.Optional
 interface UserDao {
 
     //Todo Bookmarks
-    @Query("SELECT * FROM Bookmarks")
-    fun getLiveBookmarks():LiveData<List<Bookmarks>>
+    @Query("SELECT * FROM Bookmark")
+    fun getLiveBookmarks():LiveData<List<Bookmark>>
 
-    @Query("SELECT * FROM Bookmarks WHERE uploaded = :uploaded")
-    suspend fun getLocalBookmarks(uploaded:Boolean):List<Bookmarks>
+    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded")
+    suspend fun getLocalBookmarks(uploaded:Boolean):List<Bookmark>
 
-    @Query("UPDATE Bookmarks SET uploaded =:uploaded WHERE id in (:idList)")
+    @Query("UPDATE Bookmark SET uploaded =:uploaded WHERE id in (:idList)")
     suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList: List<Long>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addBookmark(bookmark: Bookmark)
+
+    @Delete
+    suspend fun deleteBookmark(bookmark: Bookmark)
 
     //Todo Cart
     @Query("SELECT COUNT(*) FROM Cart")

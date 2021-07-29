@@ -210,11 +210,13 @@
 
     <!-- TODO: Bookmark Fragment -->
     <string name="bookmarks">Bookmarks</string>
-    <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab and bookmark a page.</string>
+    <string name="remove_bookmark_msg">Slide left to remove a bookmark</string>
+    <string name="pageNum">Page %d</string>
+    <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab below and bookmark a page.</string>
 
     <!-- TODO: Cart Activity -->
     <string name="make_payment">Make payment</string>
-
+    <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
 
     <!-- TODO: Store Fragment -->
     <string name="request_a_book">Request for a book</string>

@@ -12,7 +12,7 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
     //Todo Bookmarks
-    override fun getLiveBookmarks(): LiveData<List<Bookmarks>> {
+    override fun getLiveBookmarks(): LiveData<List<Bookmark>> {
         return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks()
     }
 
@@ -20,11 +20,22 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         return  RoomInstance.getDatabase(context).userDao().updateLocalBookmarks(uploaded,idList)
     }
 
-    override suspend fun getLocalBookmarks(uploaded:Boolean): List<Bookmarks> {
+    override suspend fun addBookmark(bookmark: Bookmark) {
+        RoomInstance.getDatabase(context).userDao().addBookmark(bookmark)
+    }
+
+    override suspend fun deleteBookmark(bookmark: Bookmark) {
+        RoomInstance.getDatabase(context).userDao().deleteBookmark(bookmark)
+    }
+
+    override suspend fun getLocalBookmarks(uploaded:Boolean): List<Bookmark> {
         return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(uploaded)
     }
 
     //Todo Cart
+    override fun getLiveCartItems(): LiveData<List<Cart>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveCartItems()
+    }
     override fun getLiveTotalCartItemsNo(): LiveData<Int> {
         return  RoomInstance.getDatabase(context).userDao().getLiveTotalCartItemsNo()
     }

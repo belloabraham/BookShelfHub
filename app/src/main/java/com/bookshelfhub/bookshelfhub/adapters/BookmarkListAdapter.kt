@@ -1,43 +1,51 @@
 package com.bookshelfhub.bookshelfhub.adapters
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.ListAdapter
+import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmarks
-import com.ernestoyaquello.dragdropswiperecyclerview.DragDropSwipeAdapter
-import com.ernestoyaquello.dragdropswiperecyclerview.util.DragDropSwipeDiffCallback
+import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import me.ibrahimyilmaz.kiel.adapterOf
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-class BookmarkListAdapter(data: List<Bookmarks> = emptyList()) : DragDropSwipeAdapter<Bookmarks, BookmarkListAdapter.ViewHolder>(data) {
+class BookmarkListAdapter( private val context: Context) {
 
-    override fun getViewHolder(itemView: View) = ViewHolder(itemView)
 
-    override fun onBindViewHolder(item: Bookmarks, viewHolder: ViewHolder, position: Int) {
-        // Here we update the contents of the view holder's views to reflect the item's data
-        viewHolder.bindToView(item)
+     fun getBookmarkListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>> {
+        return adapterOf {
+            register(
+                layoutResource = R.layout.bookmarks_page_item,
+                viewHolder = ::BookmarkListViewHolder,
+                onBindViewHolder = { vh, _, model ->
+                    vh.bindToView(model, context, onItemLongClickListener)
+                }
+            )
+
+        }
     }
 
-    override fun createDiffUtil(
-        oldList: List<Bookmarks>,
-        newList: List<Bookmarks>
-    ): DragDropSwipeDiffCallback<Bookmarks> {
-        return BookmarkDiffCallBack(oldList, newList)
+
+    private class BookmarkListViewHolder (view: View): RecyclerViewHolder<Bookmark>(view) {
+        private val title: TextView = view.findViewById(R.id.title)
+        private val pageNum: TextView = view.findViewById(R.id.pageNumb)
+        private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
+        fun bindToView(model:Bookmark, context: Context, onLongClickListener:()->Boolean) {
+            title.text =  model.title
+            pageNum.text =  String.format(context.getString(R.string.pageNum), model.pageNumb)
+            itemCardView.setOnClickListener {
+            }
+           itemCardView.setOnLongClickListener {
+               onLongClickListener()
+           }
+        }
     }
 
-    override fun getViewToTouchToStartDraggingItem(
-        item: Bookmarks,
-        viewHolder: ViewHolder,
-        position: Int
-    ): View? {
-        return null
-    }
-
-  class ViewHolder(itemView: View):DragDropSwipeAdapter.ViewHolder(itemView) {
-     private val title: TextView = itemView.findViewById(R.id.title)
-     private val pageNumb: TextView = itemView.findViewById(R.id.pageNumb)
-
-      fun bindToView(item: Bookmarks){
-          title.text = item.title
-          pageNumb.text = "${item.pageNumb}"
-      }
-  }
 }
