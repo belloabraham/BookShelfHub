@@ -215,8 +215,13 @@
     <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab below and bookmark a page.</string>
 
     <!-- TODO: Cart Activity -->
-    <string name="make_payment">Make payment</string>
+    <string name="check_out">Checkout</string>
     <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
+    <string name="price">Price: $%,.2f</string>
+    <string name="by">By: %s</string>
+    <string name="undo">UNDO</string>
+    <string name="item_in_cart_removed_msg">Book removed from cart</string>
+    <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
 
     <!-- TODO: Store Fragment -->
     <string name="request_a_book">Request for a book</string>

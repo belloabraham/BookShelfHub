@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
 import com.google.common.base.Optional
 import javax.inject.Inject
 
@@ -12,8 +13,8 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
     //Todo Bookmarks
-    override fun getLiveBookmarks(): LiveData<List<Bookmark>> {
-        return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks()
+    override fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks(deleted)
     }
 
     override suspend fun updateLocalBookmarks(uploaded:Boolean, idList:List<Long>) {
@@ -24,12 +25,24 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addBookmark(bookmark)
     }
 
-    override suspend fun deleteBookmark(bookmark: Bookmark) {
-        RoomInstance.getDatabase(context).userDao().deleteBookmark(bookmark)
+    override suspend fun addToCarts(carts: List<Cart>) {
+        RoomInstance.getDatabase(context).userDao().addToCarts(carts)
     }
 
-    override suspend fun getLocalBookmarks(uploaded:Boolean): List<Bookmark> {
-        return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(uploaded)
+    override suspend fun getDeletedBookmarks(deleted: Boolean): List<Bookmark> {
+       return RoomInstance.getDatabase(context).userDao().getDeletedBookmarks(deleted)
+    }
+
+    override suspend fun addBookmarkList(bookmarks: List<Bookmark>) {
+        RoomInstance.getDatabase(context).userDao().addBookmarkList(bookmarks)
+    }
+
+    override suspend fun deleteBookmarks(bookmarks: List<Bookmark>) {
+        RoomInstance.getDatabase(context).userDao().deleteBookmarks(bookmarks)
+    }
+
+    override suspend fun getLocalBookmarks(uploaded:Boolean, deleted: Boolean): List<Bookmark> {
+        return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(uploaded, deleted)
     }
 
     //Todo Cart
@@ -39,6 +52,15 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     override fun getLiveTotalCartItemsNo(): LiveData<Int> {
         return  RoomInstance.getDatabase(context).userDao().getLiveTotalCartItemsNo()
     }
+
+    override suspend fun addToCart(cart: Cart) {
+        RoomInstance.getDatabase(context).userDao().addToCart(cart)
+    }
+
+    override suspend fun deleteFromCart(cart: Cart) {
+        RoomInstance.getDatabase(context).userDao().deleteFromCart(cart)
+    }
+
 
     //Todo User
     override suspend fun getUser(userId:String): Optional<User> {
@@ -121,8 +143,8 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addAllPubBooks(pubBooks)
     }
 
-    override suspend fun deleteUnPublishedBookRecords(isbnList:List<String>){
-        RoomInstance.getDatabase(context).userDao().deleteUnPublishedBookRecords(isbnList)
+    override suspend fun deleteUnPublishedBookRecords(unPublishedBooks : List<PublishedBooks>){
+        RoomInstance.getDatabase(context).userDao().deleteUnPublishedBookRecords(unPublishedBooks)
     }
 
     override suspend fun getPublishedBooks(): List<PublishedBooks> {

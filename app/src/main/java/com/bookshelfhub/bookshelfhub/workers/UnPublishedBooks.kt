@@ -40,16 +40,10 @@ class UnPublishedBooks @AssistedInject constructor (
             PublishedBooks::class.java,
         ) {
             if(it.isNotEmpty()){
-                var listOfUnPublishedBooksIsbn= emptyList<String>()
-                for (publishBooks in it){
-                    listOfUnPublishedBooksIsbn  = listOfUnPublishedBooksIsbn.plus(publishBooks.isbn)
-                }
                 val localDb:ILocalDb = RoomDb(context)
-
                 coroutineScope {
-                    localDb.deleteUnPublishedBookRecords(listOfUnPublishedBooksIsbn)
+                    localDb.deleteUnPublishedBookRecords(it)
                 }
-
             }
          }
         return Result.success()

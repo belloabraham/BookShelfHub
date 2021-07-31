@@ -70,7 +70,7 @@ class UserInfoFragment : Fragment() {
         }
 
         if (!isNewUser) {
-            cloudDb.getDataAsync(DbFields.USERS_COLL.KEY, userId) { docSnapShot, _ ->
+            cloudDb.getDataAsync(DbFields.USERS.KEY, userId) { docSnapShot, _ ->
 
                 docSnapShot?.let {
                     try {

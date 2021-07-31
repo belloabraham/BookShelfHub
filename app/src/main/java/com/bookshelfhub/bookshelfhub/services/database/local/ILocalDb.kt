@@ -3,20 +3,25 @@ package com.bookshelfhub.bookshelfhub.services.database.local
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
 import com.google.common.base.Optional
 
 interface ILocalDb {
 
-    suspend fun addBookmark(bookmark: Bookmark)
-     suspend fun deleteBookmark(bookmark: Bookmark)
-     suspend fun getLocalBookmarks(uploaded:Boolean=false): List<Bookmark>
-     fun getLiveBookmarks(): LiveData<List<Bookmark>>
+     suspend fun addToCarts(carts:List<Cart>)
+     suspend fun getDeletedBookmarks(deleted: Boolean=true):List<Bookmark>
+     suspend fun addBookmarkList(bookmarks: List<Bookmark>)
+     suspend fun addToCart(cart:Cart)
+     suspend fun deleteFromCart(cart: Cart)
+     suspend fun addBookmark(bookmark: Bookmark)
+     suspend fun deleteBookmarks(bookmarks: List<Bookmark>)
+     suspend fun getLocalBookmarks(uploaded:Boolean=false, deleted: Boolean=false): List<Bookmark>
+     fun getLiveBookmarks(deleted: Boolean=false): LiveData<List<Bookmark>>
      suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList:List<Long>)
      fun getLiveTotalCartItemsNo(): LiveData<Int>
      suspend fun getUser(userId: String): Optional<User>
      fun getLiveCartItems(): LiveData<List<Cart>>
      fun getLiveUser(userId: String): LiveData<User>
-
      suspend fun addUser(user: User)
 
      suspend fun getBookInterest(userId: String): Optional<BookInterest>
@@ -37,7 +42,7 @@ interface ILocalDb {
     )
      suspend fun updateRecommendedBooksByTag(tag: String, isRecommended: Boolean = true)
      suspend fun addAllPubBooks(pubBooks: List<PublishedBooks>)
-     suspend fun deleteUnPublishedBookRecords(isbnList: List<String>)
+     suspend fun deleteUnPublishedBookRecords(unPublishedBooks: List<PublishedBooks>)
      suspend fun getPublishedBooks(): List<PublishedBooks>
 
      fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>>

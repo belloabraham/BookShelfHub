@@ -10,6 +10,7 @@ data class Bookmark(
     val pageNumb:Int,
     val title:String,
     @PrimaryKey(autoGenerate = true)
-    val id:Long=0,
-    val uploaded:Boolean=false
-)
+    override val id:Long=0,
+    var deleted:Boolean=false,
+    var uploaded:Boolean=false
+):IEntityId

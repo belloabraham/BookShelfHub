@@ -6,11 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -30,7 +27,7 @@ class UploadUserData  @AssistedInject constructor (
 
         val userData = user.get()
             if (user.isPresent && !userData.uploaded){
-               cloudDb.addDataAsync(userData, DbFields.USERS_COLL.KEY, userId, DbFields.USER.KEY){
+               cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY){
                    userData.uploaded = true
                         coroutineScope {
                             localDb.addUser(userData)

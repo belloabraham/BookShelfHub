@@ -1,10 +1,7 @@
 package com.bookshelfhub.bookshelfhub.wrapper.imageloaders
 
 import android.widget.ImageView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.MemoryPolicy
-import com.squareup.picasso.NetworkPolicy
-import com.squareup.picasso.Picasso
+import com.squareup.picasso.*
 import java.lang.Exception
 
 open class PicassoWrapper(private val imageView: ImageView)  {
@@ -28,11 +25,11 @@ open class PicassoWrapper(private val imageView: ImageView)  {
           override fun onError(e: Exception?) {
           }
       }
+
         val picasso = Picasso.get()
             .load(url)
             .error(errorImg)
             .placeholder(placeHolder)
-            .noFade()
             .fit()
             .centerCrop()
         if (!shouldCache){
@@ -48,7 +45,6 @@ open class PicassoWrapper(private val imageView: ImageView)  {
                 override fun onError(e: Exception?) {
                     Picasso.get()
                         .load(url)
-                        .noFade()
                         .error(errorImg)
                         .placeholder(placeHolder)
                         .fit()

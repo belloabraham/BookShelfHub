@@ -8,12 +8,13 @@ import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
 
 @HiltWorker
-class UploadBookmarks @AssistedInject constructor(
+class DownloadBookmarks @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
     private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth: IUserAuth
 ): CoroutineWorker(context,
@@ -21,24 +22,18 @@ workerParams
 ){
     override suspend fun doWork(): Result {
 
-        if (!userAuth.getIsUserAuthenticated()){
-            return Result.retry()
-        }
-
-        val listOfBookmarks = localDb.getLocalBookmarks(false)
         val userId = userAuth.getUserId()
 
-        cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY){
+        cloudDb.getListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY, Bookmark::class.java){ bookmarks->
 
-                for (i in 1..listOfBookmarks.size){
-                    listOfBookmarks[i].uploaded = true
-                }
+            for (i in 1..bookmarks.size){
+                bookmarks[i].uploaded = true
+            }
 
-                coroutineScope {
-                    localDb.addBookmarkList(listOfBookmarks)
-                }
+            coroutineScope {
+                localDb.addBookmarkList(bookmarks)
+            }
         }
-
         return Result.success()
     }
 

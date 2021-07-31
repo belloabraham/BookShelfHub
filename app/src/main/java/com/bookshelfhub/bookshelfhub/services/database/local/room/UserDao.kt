@@ -10,27 +10,39 @@ import com.google.common.base.Optional
 interface UserDao {
 
     //Todo Bookmarks
-    @Query("SELECT * FROM Bookmark")
-    fun getLiveBookmarks():LiveData<List<Bookmark>>
+    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
+    fun getLiveBookmarks(deleted: Boolean):LiveData<List<Bookmark>>
 
-    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded")
-    suspend fun getLocalBookmarks(uploaded:Boolean):List<Bookmark>
+    @Query("SELECT * FROM Bookmark WHERE deleted =:deleted")
+    suspend fun getDeletedBookmarks(deleted: Boolean):List<Bookmark>
+
+    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded AND deleted =:deleted")
+    suspend fun getLocalBookmarks(uploaded:Boolean, deleted: Boolean):List<Bookmark>
 
     @Query("UPDATE Bookmark SET uploaded =:uploaded WHERE id in (:idList)")
     suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList: List<Long>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addBookmarkList(bookmarks: List<Bookmark>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookmark(bookmark: Bookmark)
 
     @Delete
-    suspend fun deleteBookmark(bookmark: Bookmark)
+    suspend fun deleteBookmarks(bookmarks: List<Bookmark>)
 
     //Todo Cart
     @Query("SELECT COUNT(*) FROM Cart")
     fun getLiveTotalCartItemsNo(): LiveData<Int>
 
+    @Delete
+    suspend fun deleteFromCart(cart: Cart)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToCart(cart:Cart)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addToCarts(carts:List<Cart>)
 
     @Query("SELECT * FROM Cart")
     fun getLiveCartItems():LiveData<List<Cart>>
@@ -92,8 +104,11 @@ interface UserDao {
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
     //Todo PublishedBooks
-    @Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
-    fun deleteUnPublishedBookRecords(isbnList: List<String>)
+    //@Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
+    //fun deleteUnPublishedBookRecords(isbnList: List<String>)
+
+    @Delete
+    fun deleteUnPublishedBookRecords(publishedBooks: List<PublishedBooks>)
 
     @Query("UPDATE PublishedBooks SET recommended = :recommend WHERE category =:category")
     suspend fun updateRecommendedBooksByCategory(category: String, recommend:Boolean)

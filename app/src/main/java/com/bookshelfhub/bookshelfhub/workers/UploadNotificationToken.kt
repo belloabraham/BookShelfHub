@@ -7,10 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.notification.firebase.FirebaseCM
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.ICloudMessaging
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -40,7 +37,7 @@ class UploadNotificationToken @AssistedInject constructor (
         cloudMessaging.getNotificationTokenAsync {
             val newToken= it
            if (appToken!=newToken){
-               cloudDb.addDataAsync(newToken,DbFields.USERS_COLL.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN) {
+               cloudDb.addDataAsync(newToken,DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN) {
                    coroutineScope {
                        settingsUtil.setString(NOTIFICATION_TOKEN, newToken)
                    }

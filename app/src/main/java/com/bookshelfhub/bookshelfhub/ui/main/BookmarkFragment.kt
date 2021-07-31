@@ -79,12 +79,9 @@ class BookmarkFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
                 val position: Int = viewHolder.bindingAdapterPosition
                 val bookmark: Bookmark = adapter.currentList[position]
-
+                bookmark.deleted=true
                 lifecycleScope.launch(IO) {
-                    localDb.deleteBookmark(bookmark)
-                    withContext(Main){
-                        adapter.notifyItemRemoved(position)
-                    }
+                    localDb.addBookmark(bookmark)
                 }
 
             }

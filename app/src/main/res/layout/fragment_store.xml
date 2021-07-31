@@ -894,15 +894,6 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white_overlay"
-        android:fitsSystemWindows="true"
-        android:visibility="gone"
-        android:id="@+id/loadingContainer">
-
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/loadingAnimView"
             android:layout_width="match_parent"
@@ -913,7 +904,5 @@
             app:lottie_loop="true"
             app:lottie_cacheComposition="false"
             app:lottie_autoPlay="true" />
-
-    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

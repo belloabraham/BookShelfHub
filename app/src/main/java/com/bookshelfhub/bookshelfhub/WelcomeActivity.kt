@@ -10,6 +10,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
@@ -18,6 +22,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
+import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -87,6 +93,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         phoneAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
             hideAnimation()
+            restoreBookmarks(isNewUser)
         })
 
         phoneAuthViewModel.getIsCodeSent().observe(this, Observer { isCodeSent ->
@@ -107,6 +114,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         googleAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
             hideAnimation()
+            restoreBookmarks(isNewUser)
         })
 
 
@@ -237,4 +245,19 @@ class WelcomeActivity : AppCompatActivity() {
                 }, null)
     }
 
+
+    private fun restoreBookmarks(isNewUser:Boolean){
+        if(!isNewUser){
+            val connected = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val downLoadBookmarksWorker =
+                OneTimeWorkRequestBuilder<DownloadBookmarks>()
+                    .setConstraints(connected)
+                    .build()
+
+            WorkManager.getInstance(applicationContext).enqueue(downLoadBookmarksWorker)
+        }
+    }
 }

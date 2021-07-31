@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -19,20 +18,21 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.*
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.search.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.store.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.enums.Category
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.view.materialsearch.internal.SearchLayout
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
@@ -45,9 +45,13 @@ class StoreFragment : Fragment() {
 
     private lateinit var layout: FragmentStoreBinding
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
-    private val storeFragmentViewModel:StoreFragmentViewModel by viewModels()
+    private val storeFragmentViewModel: StoreFragmentViewModel by viewModels()
     private var allBooksLive = emptyList<PublishedBooks>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
+    @Inject
+    lateinit var cloudDb: ICloudDb
+    @Inject
+    lateinit var userAuth: IUserAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -189,17 +193,21 @@ class StoreFragment : Fragment() {
 
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = View.GONE
-            layout.loadingContainer.visibility = View.VISIBLE
+            layout.loadingAnimView.visibility = View.VISIBLE
             storeFragmentViewModel.loadBooksFromCloud(emptyList())
         }
 
         storeFragmentViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { allBooks ->
             allBooksLive = allBooks
 
+            layout.loadingAnimView.visibility = View.GONE
+
             if (allBooks.isNotEmpty()){
-                layout.loadingContainer.visibility = View.GONE
                 layout.errorLayout.visibility = View.GONE
                 layout.booksNestedScroll.visibility = View.VISIBLE
+            }else{
+                layout.booksNestedScroll.visibility = View.GONE
+                layout.errorLayout.visibility = View.VISIBLE
             }
         })
 

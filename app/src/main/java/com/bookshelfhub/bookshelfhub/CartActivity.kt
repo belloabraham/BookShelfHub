@@ -3,24 +3,34 @@ package com.bookshelfhub.bookshelfhub
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.bookshelfhub.bookshelfhub.adapters.CartItemsListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.ActivityCartBinding
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityCartBinding
     private val cartActivityViewModel:CartActivityViewModel by viewModels()
+    @Inject
+    lateinit var localDb: ILocalDb
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +39,21 @@ class CartActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
 
 
+        val adapter = CartItemsListAdapter(this).getCartListAdapter{
+           removeCartItemMsg()
+        }
+
+        layout.cartItemsRecView.adapter = adapter
+
+
         layout.makePaymentFab.setOnClickListener {
+
         }
 
 
         cartActivityViewModel.getLiveCartItems().observe(this, Observer { cartItems ->
-           if (cartItems.isNotEmpty()){
+
+            if (cartItems.isNotEmpty()){
                layout.makePaymentFab.isEnabled = true
                layout.emptyCartLayout.visibility = View.GONE
                layout.cartItemsRecView.visibility = View.VISIBLE
@@ -44,9 +63,12 @@ class CartActivity : AppCompatActivity() {
                layout.makePaymentFab.isEnabled = false
                layout.emptyCartLayout.visibility = View.VISIBLE
                layout.cartItemsRecView.visibility = View.GONE
-
            }
+
+            adapter.submitList(cartItems)
+
         })
+
 
 
         layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
@@ -60,7 +82,36 @@ class CartActivity : AppCompatActivity() {
             }
         })
 
+        val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(this, R.color.errorColor, R.drawable.ic_cart_minus_white) {
 
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
+                val position: Int = viewHolder.bindingAdapterPosition
+                val cart: Cart = adapter.currentList[position]
+
+                lifecycleScope.launch(IO) {
+                    localDb.deleteFromCart(cart)
+                    withContext(Main){
+                        val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
+                        snackBar.setAction(R.string.undo) {
+                            lifecycleScope.launch(IO){
+                                localDb.addToCart(cart)
+                            }
+                        }.show()
+                    }
+                }
+
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
+
+    }
+
+
+    private fun removeCartItemMsg():Boolean{
+     Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)
+            .show()
+      return  true
     }
 
     override fun onSupportNavigateUp(): Boolean {

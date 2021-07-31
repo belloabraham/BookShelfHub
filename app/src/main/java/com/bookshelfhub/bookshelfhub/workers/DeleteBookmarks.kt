@@ -13,7 +13,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
 
 @HiltWorker
-class UploadBookmarks @AssistedInject constructor(
+class DeleteBookmarks @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
     private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth: IUserAuth
 ): CoroutineWorker(context,
@@ -21,21 +21,14 @@ workerParams
 ){
     override suspend fun doWork(): Result {
 
-        if (!userAuth.getIsUserAuthenticated()){
-            return Result.retry()
-        }
+       val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(true)
 
-        val listOfBookmarks = localDb.getLocalBookmarks(false)
         val userId = userAuth.getUserId()
 
-        cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY){
-
-                for (i in 1..listOfBookmarks.size){
-                    listOfBookmarks[i].uploaded = true
-                }
+        cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
 
                 coroutineScope {
-                    localDb.addBookmarkList(listOfBookmarks)
+                    localDb.deleteBookmarks(listOfDeletedBookmarks)
                 }
         }
 

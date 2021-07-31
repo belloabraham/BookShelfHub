@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.wrapper.Json
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -8,7 +9,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-open class Firestore @Inject constructor(val json: Json): ICloudDb {
+
+ class Firestore @Inject constructor(val json: Json): ICloudDb {
     private val db:FirebaseFirestore = Firebase.firestore
     private val lastUpdated="last_uploaded"
 
@@ -26,9 +28,28 @@ open class Firestore @Inject constructor(val json: Json): ICloudDb {
                     onSuccess()
                 }
             }
-            .addOnFailureListener { e ->
-            }
     }
+
+
+     override fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, orderBy:String, shouldCache:Boolean, onComplete: (dataList:List<T>)->Unit){
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection)
+             .orderBy(orderBy)
+             .addSnapshotListener { querySnapShot, e ->
+
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             val data =  doc.get(field)
+                             dataList = dataList.plus(json.fromAny(data!!, type))
+                         }
+                     }
+                 }
+                 onComplete(dataList)
+             }
+     }
 
 
    // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
@@ -52,9 +73,54 @@ open class Firestore @Inject constructor(val json: Json): ICloudDb {
             }
     }
 
-    override fun <T: Any> getListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String, shouldCache:Boolean, onComplete:  (dataList:List<T>)->Unit){
+
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection)
+             .orderBy(orderBy)
+             .startAfter(startAt)
+             .addSnapshotListener { querySnapShot, e ->
+
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             val data =  doc.get(field)
+                             dataList = dataList.plus(json.fromAny(data!!, type))
+                         }
+                     }
+                 }
+                 onComplete(dataList)
+             }
+     }
+
+
+     override fun <T: Any> getListOfDataAsync(collection:String, field: String, type:Class<T>, shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection)
+             .get()
+             .addOnSuccessListener { querySnapShot ->
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             val data =  doc.get(field)
+                             dataList = dataList.plus(json.fromAny(data!!, type))
+                         }
+                     }
+                 }
+
+                 runBlocking {
+                     onComplete(dataList)
+                 }
+             }
+     }
+
+
+     //TODO Sub Collections
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, type:Class<T>,         shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
-        db.collection(collection)
+        db.collection(collection).document(document).collection(subCollection)
             .get()
             .addOnSuccessListener { querySnapShot ->
                 var dataList = emptyList<T>()
@@ -62,7 +128,7 @@ open class Firestore @Inject constructor(val json: Json): ICloudDb {
                     if (!it.isEmpty){
                         for (doc in it) {
                             val data =  doc.get(field)
-                            dataList = dataList.plus(json!!.fromAny(data!!, type))
+                            dataList = dataList.plus(json.fromAny(data!!, type))
                         }
                     }
                 }
@@ -73,52 +139,37 @@ open class Firestore @Inject constructor(val json: Json): ICloudDb {
             }
     }
 
+     override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String, field:String,         lastUpdated: FieldValue, onSuccess: suspend ()->Unit){
 
-   override fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, orderBy:String, shouldCache:Boolean, onComplete: (dataList:List<T>)->Unit){
-        db.firestoreSettings=getCacheSettings(shouldCache)
-            db.collection(collection)
-                .orderBy(orderBy)
-            .addSnapshotListener { querySnapShot, e ->
+        val batch = db.batch()
+        for (item in list){
+            val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
 
-                var dataList = emptyList<T>()
-                querySnapShot?.let {
-
-                    if (!it.isEmpty){
-                            for (doc in it) {
-                                val data =  doc.get(field)
-                                dataList = dataList.plus(json.fromAny(data!!, type))
-                            }
-                    }
-                }
-                onComplete(dataList)
+            val data = hashMapOf(
+                field to item,
+                this.lastUpdated to lastUpdated
+            )
+            batch.set(docRef, data)
+        }
+        batch.commit().addOnSuccessListener {
+            runBlocking {
+                onSuccess()
             }
+        }
     }
 
-    override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String, shouldCache:Boolean, onComplete:  (dataList:List<T>)->Unit){
-
-        db.firestoreSettings=getCacheSettings(shouldCache)
-        db.collection(collection)
-            .orderBy(orderBy)
-            .startAfter(startAt)
-            .addSnapshotListener { querySnapShot, e ->
-
-                var dataList = emptyList<T>()
-                querySnapShot?.let {
-                    if (!it.isEmpty){
-                        for (doc in it) {
-                            val data =  doc.get(field)
-                            dataList = dataList.plus(json.fromAny(data!!, type))
-                        }
-                    }
-                }
-                onComplete(dataList)
-            }
-    }
-
-
-    fun addListOfDataAsync(list: List<Any>){
-
-    }
+     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String, onSuccess:         suspend ()->Unit){
+         val batch = db.batch()
+         for (item in list){
+             val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
+             batch.delete(docRef)
+         }
+         batch.commit().addOnSuccessListener {
+             runBlocking {
+                 onSuccess()
+             }
+         }
+     }
 
 
 

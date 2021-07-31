@@ -18,9 +18,16 @@
         <item name="cardBackgroundColor">?backgroundColor</item>
     </style>
 
+    <style name="CartItemTextStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">?colorOnBackground</item>
+    </style>
+
 
     <style name="SearchItemTitle" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:layout_marginHorizontal">@dimen/size_16</item>
+        <item name="android:layout_marginStart">@dimen/size_16</item>
+        <item name="android:layout_marginEnd">@dimen/size_16</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">@dimen/size_16sp</item>
