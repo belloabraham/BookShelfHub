@@ -25,8 +25,9 @@ workerParams
         val userId = userAuth.getUserId()
 
         cloudDb.getListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY, Bookmark::class.java){ bookmarks->
+            val length = bookmarks.size-1
 
-            for (i in 1..bookmarks.size){
+            for (i in 0..length){
                 bookmarks[i].uploaded = true
             }
 

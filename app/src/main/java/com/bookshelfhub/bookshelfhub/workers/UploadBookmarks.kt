@@ -25,12 +25,15 @@ workerParams
             return Result.retry()
         }
 
-        val listOfBookmarks = localDb.getLocalBookmarks(false)
         val userId = userAuth.getUserId()
+
+        val listOfBookmarks = localDb.getLocalBookmarks(userId,false)
 
         cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY){
 
-                for (i in 1..listOfBookmarks.size){
+            val length = listOfBookmarks.size-1
+
+                for (i in 0..length){
                     listOfBookmarks[i].uploaded = true
                 }
 

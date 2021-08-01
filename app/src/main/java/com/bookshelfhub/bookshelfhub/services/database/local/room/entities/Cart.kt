@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName= "Cart")
 data class Cart(
+    val userId:String,
     @PrimaryKey
     override val isbn: String,
     override val pubId: String="",

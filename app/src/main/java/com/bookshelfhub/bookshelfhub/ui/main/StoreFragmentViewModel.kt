@@ -1818,8 +1818,8 @@ class StoreFragmentViewModel @Inject constructor(@ApplicationContext context: Co
     }
 
 
-    fun getLiveTotalCartItemsNo():LiveData<Int> {
-        return localDb.getLiveTotalCartItemsNo()
+    fun getLiveTotalCartItemsNo(userId:String):LiveData<Int> {
+        return localDb.getLiveTotalCartItemsNo(userId)
     }
 
     fun getIsNetworkError():LiveData<Boolean> {

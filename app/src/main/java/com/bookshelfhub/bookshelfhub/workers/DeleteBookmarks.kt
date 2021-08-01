@@ -21,9 +21,9 @@ workerParams
 ){
     override suspend fun doWork(): Result {
 
-       val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(true)
-
         val userId = userAuth.getUserId()
+
+        val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(userId, true)
 
         cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
 

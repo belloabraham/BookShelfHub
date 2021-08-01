@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,9 +16,11 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class CategoryActivityViewModel @Inject constructor(private val localDb: ILocalDb) : ViewModel(){
+class CategoryActivityViewModel @Inject constructor(private val localDb: ILocalDb, val userAuth: IUserAuth) : ViewModel(){
 
     private var liveBooksByCategory: LiveData<List<PublishedBooks>> = MutableLiveData()
+
+    private val userId = userAuth.getUserId()
 
     private val config  = PagingConfig(
         pageSize = 10,
@@ -37,7 +40,7 @@ class CategoryActivityViewModel @Inject constructor(private val localDb: ILocalD
     }
 
     fun getLiveTotalCartItemsNo(): LiveData<Int> {
-        return localDb.getLiveTotalCartItemsNo()
+        return localDb.getLiveTotalCartItemsNo(userId)
     }
 
     fun getTrendingBooks(): Flow<PagingData<PublishedBooks>> {

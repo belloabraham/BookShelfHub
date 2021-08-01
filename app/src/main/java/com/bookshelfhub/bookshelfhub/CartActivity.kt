@@ -7,11 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.adapters.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.ActivityCartBinding
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -21,16 +24,18 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityCartBinding
-    private val cartActivityViewModel:CartActivityViewModel by viewModels()
+    private val cartActivityViewModel: CartActivityViewModel by viewModels()
     @Inject
     lateinit var localDb: ILocalDb
-
+    @Inject
+    lateinit var userAuth:IUserAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +43,7 @@ class CartActivity : AppCompatActivity() {
         setContentView(layout.root)
         setSupportActionBar(layout.toolbar)
 
-
+        val userId = userAuth.getUserId()
         val adapter = CartItemsListAdapter(this).getCartListAdapter{
            removeCartItemMsg()
         }
@@ -51,25 +56,29 @@ class CartActivity : AppCompatActivity() {
         }
 
 
-        cartActivityViewModel.getLiveCartItems().observe(this, Observer { cartItems ->
-
-            if (cartItems.isNotEmpty()){
-               layout.makePaymentFab.isEnabled = true
-               layout.emptyCartLayout.visibility = View.GONE
-               layout.cartItemsRecView.visibility = View.VISIBLE
-               layout.makePaymentFab.extend()
-           }else{
-               layout.makePaymentFab.shrink()
-               layout.makePaymentFab.isEnabled = false
-               layout.emptyCartLayout.visibility = View.VISIBLE
-               layout.cartItemsRecView.visibility = View.GONE
-           }
-
-            adapter.submitList(cartItems)
-
+        cartActivityViewModel.getListOfCartItems(userId).observe(this, Observer {  cartList ->
+            if (cartList.isNotEmpty()){
+                layout.makePaymentFab.isEnabled = true
+                layout.emptyCartLayout.visibility = View.GONE
+                layout.cartItemsRecView.visibility = View.VISIBLE
+                layout.makePaymentFab.extend()
+            }else{
+                layout.makePaymentFab.shrink()
+                layout.makePaymentFab.isEnabled = false
+                layout.emptyCartLayout.visibility = View.VISIBLE
+                layout.cartItemsRecView.visibility = View.GONE
+            }
         })
 
 
+        var listOfCartItems: ArrayList<Cart> =  ArrayList()
+
+        lifecycleScope.launch(IO) {
+            listOfCartItems = localDb.getListOfCartItems(userId) as ArrayList<Cart>
+            withContext(Main){
+                adapter.submitList(listOfCartItems)
+            }
+        }
 
         layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -88,11 +97,16 @@ class CartActivity : AppCompatActivity() {
                 val position: Int = viewHolder.bindingAdapterPosition
                 val cart: Cart = adapter.currentList[position]
 
+                listOfCartItems.removeAt(position)
+                adapter.notifyItemRemoved(position)
+
                 lifecycleScope.launch(IO) {
                     localDb.deleteFromCart(cart)
                     withContext(Main){
                         val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
                         snackBar.setAction(R.string.undo) {
+                            listOfCartItems.add(position, cart)
+                            adapter.notifyItemInserted(position)
                             lifecycleScope.launch(IO){
                                 localDb.addToCart(cart)
                             }
@@ -106,7 +120,6 @@ class CartActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
 
     }
-
 
     private fun removeCartItemMsg():Boolean{
      Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)

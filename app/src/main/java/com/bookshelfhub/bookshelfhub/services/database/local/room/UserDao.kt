@@ -10,17 +10,17 @@ import com.google.common.base.Optional
 interface UserDao {
 
     //Todo Bookmarks
-    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
-    fun getLiveBookmarks(deleted: Boolean):LiveData<List<Bookmark>>
+    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted AND userId =:userId")
+    suspend fun getBookmarks(userId: String, deleted: Boolean):List<Bookmark>
 
-    @Query("SELECT * FROM Bookmark WHERE deleted =:deleted")
-    suspend fun getDeletedBookmarks(deleted: Boolean):List<Bookmark>
+    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted AND userId =:userId")
+    fun getLiveBookmarks(userId: String, deleted: Boolean): LiveData<List<Bookmark>>
 
-    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded AND deleted =:deleted")
-    suspend fun getLocalBookmarks(uploaded:Boolean, deleted: Boolean):List<Bookmark>
+    @Query("SELECT * FROM Bookmark WHERE deleted =:deleted AND userId =:userId")
+    suspend fun getDeletedBookmarks(userId: String, deleted: Boolean):List<Bookmark>
 
-    @Query("UPDATE Bookmark SET uploaded =:uploaded WHERE id in (:idList)")
-    suspend fun updateLocalBookmarks(uploaded:Boolean=true, idList: List<Long>)
+    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded AND deleted =:deleted AND userId =:userId")
+    suspend fun getLocalBookmarks(userId: String, uploaded:Boolean, deleted: Boolean):List<Bookmark>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookmarkList(bookmarks: List<Bookmark>)
@@ -32,8 +32,8 @@ interface UserDao {
     suspend fun deleteBookmarks(bookmarks: List<Bookmark>)
 
     //Todo Cart
-    @Query("SELECT COUNT(*) FROM Cart")
-    fun getLiveTotalCartItemsNo(): LiveData<Int>
+    @Query("SELECT COUNT(*) FROM Cart WHERE userId =:userId")
+    fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
     @Delete
     suspend fun deleteFromCart(cart: Cart)
@@ -44,8 +44,11 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToCarts(carts:List<Cart>)
 
-    @Query("SELECT * FROM Cart")
-    fun getLiveCartItems():LiveData<List<Cart>>
+    @Query("SELECT * FROM Cart WHERE userId =:userId")
+    fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
+
+    @Query("SELECT * FROM Cart WHERE userId =:userId")
+    suspend fun getListOfCartItems(userId: String):List<Cart>
 
     //Todo Payment Info
     @Insert(onConflict = OnConflictStrategy.REPLACE)

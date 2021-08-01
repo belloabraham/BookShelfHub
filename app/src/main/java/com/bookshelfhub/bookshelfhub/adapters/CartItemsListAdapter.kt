@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.adapters
 
 import android.content.Context
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView

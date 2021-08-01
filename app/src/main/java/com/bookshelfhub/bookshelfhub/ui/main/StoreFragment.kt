@@ -59,8 +59,9 @@ class StoreFragment : Fragment() {
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
 
+        val userId = userAuth.getUserId()
 
-        storeFragmentViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
+        storeFragmentViewModel.getLiveTotalCartItemsNo(userId).observe(viewLifecycleOwner, Observer { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
 

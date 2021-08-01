@@ -18,6 +18,7 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentBookmarkBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,34 +46,33 @@ class BookmarkFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentBookmarkBinding.inflate(inflater, container, false)
+
         val userId = userAuth.getUserId()
 
         val adapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter(){
             removeBookmarkHint()
         }
 
-        layout.bookmarkListRecView.adapter = adapter
-
-
-        bookmarkFragmentViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer {  bookmarks ->
-
-            val bookmark = listOf(
-                Bookmark( userId, "1234", 4,"Hello its me"),
-                Bookmark( userId, "12345", 4,"Hello PPO"),
-                Bookmark( userId, "12346", 4,"Hello Hi"),
-                Bookmark( userId, "12347", 4,"Hello Howdy"),
-            )
-
-            if (bookmark.isEmpty()){
+        bookmarkFragmentViewModel.getLiveBookmarks(userId).observe(viewLifecycleOwner, Observer {  bookmarks ->
+            if (bookmarks.isEmpty()){
                 layout.emptyBookmarksLayout.visibility = View.VISIBLE
                 layout.bookmarkListRecView.visibility = View.GONE
             }else{
                 layout.emptyBookmarksLayout.visibility = View.GONE
                 layout.bookmarkListRecView.visibility = View.VISIBLE
             }
-            adapter.submitList(bookmark)
         })
 
+        layout.bookmarkListRecView.adapter = adapter
+
+        var bookmarkList: ArrayList<Bookmark> =  ArrayList()
+
+        lifecycleScope.launch(IO){
+            bookmarkList = localDb.getBookmarks(userId) as ArrayList<Bookmark>
+            withContext(Main){
+                adapter.submitList(bookmarkList)
+            }
+        }
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_bookmark_minus_white) {
 
@@ -80,10 +80,12 @@ class BookmarkFragment : Fragment() {
                 val position: Int = viewHolder.bindingAdapterPosition
                 val bookmark: Bookmark = adapter.currentList[position]
                 bookmark.deleted=true
+                bookmarkList.removeAt(position)
+                adapter.notifyItemRemoved(position)
+
                 lifecycleScope.launch(IO) {
                     localDb.addBookmark(bookmark)
                 }
-
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
