@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BookmarkFragmentViewModel @Inject constructor(private val localDb: ILocalDb, val userAuth:IUserAuth): ViewModel(){
+class BookmarkFragmentViewModel @Inject constructor(private val localDb: ILocalDb, val userAuth:IUserAuth ): ViewModel(){
 
     val userId = userAuth.getUserId()
 

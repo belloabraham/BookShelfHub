@@ -21,10 +21,6 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addBookmark(bookmark)
     }
 
-    override suspend fun addToCarts(carts: List<Cart>) {
-        RoomInstance.getDatabase(context).userDao().addToCarts(carts)
-    }
-
     override suspend fun getDeletedBookmarks(userId: String, deleted: Boolean): List<Bookmark> {
        return RoomInstance.getDatabase(context).userDao().getDeletedBookmarks(userId, deleted)
     }
@@ -103,12 +99,6 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     }
     override fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>> {
        return  RoomInstance.getDatabase(context).userDao().getLiveBooksOrdered(userId)
-    }
-
-
-    //TODO Payment Info
-    override suspend fun addPaymentInfo(paymentInfo: PaymentInfo){
-        RoomInstance.getDatabase(context).userDao().addPaymentInfo(paymentInfo)
     }
 
     //TODO Search History

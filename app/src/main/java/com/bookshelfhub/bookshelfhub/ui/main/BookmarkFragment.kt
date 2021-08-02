@@ -85,9 +85,21 @@ class BookmarkFragment : Fragment() {
 
                 lifecycleScope.launch(IO) {
                     localDb.addBookmark(bookmark)
+                    withContext(Main){
+                        bookmark.deleted = false
+                        val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.bookmark_removed_msg, Snackbar.LENGTH_LONG)
+                        snackBar.setAction(R.string.undo) {
+                            bookmarkList.add(position, bookmark)
+                            adapter.notifyItemInserted(position)
+                            lifecycleScope.launch(IO){
+                                localDb.addBookmark(bookmark)
+                            }
+                        }.show()
+                    }
                 }
             }
         }
+
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(layout.bookmarkListRecView)
 
@@ -96,7 +108,8 @@ class BookmarkFragment : Fragment() {
 
 
     private fun removeBookmarkHint():Boolean{
-        Toast(requireActivity()).showToast(getString(R.string.remove_bookmark_msg))
+        Snackbar.make(layout.rootCoordinateLayout, R.string.remove_bookmark_msg, Snackbar.LENGTH_LONG)
+            .show()
         return true
     }
 

@@ -41,21 +41,11 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToCart(cart:Cart)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addToCarts(carts:List<Cart>)
-
     @Query("SELECT * FROM Cart WHERE userId =:userId")
     fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
 
     @Query("SELECT * FROM Cart WHERE userId =:userId")
     suspend fun getListOfCartItems(userId: String):List<Cart>
-
-    //Todo Payment Info
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addPaymentInfo(paymentInfo:PaymentInfo)
-
-    @Query("SELECT * FROM PaymentInfo WHERE userId = :userId")
-    fun getLivePaymentInfo(userId:String): LiveData<PaymentInfo>
 
     //Todo User Record
     @Query("SELECT * FROM User WHERE userId = :userId")

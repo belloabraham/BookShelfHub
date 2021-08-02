@@ -26,11 +26,10 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
-
 <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="64dp"
+    android:paddingBottom="@dimen/size_16"
     android:visibility="invisible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:id="@+id/booksNestedScroll">
@@ -866,7 +865,7 @@
         android:orientation="vertical"
         android:layout_gravity="bottom"
         android:paddingHorizontal="@dimen/size_16"
-        android:paddingBottom="100dp"
+        android:paddingBottom="50dp"
         android:visibility="gone"
         android:gravity="center_horizontal"
         android:id="@+id/errorLayout">

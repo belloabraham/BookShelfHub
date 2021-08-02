@@ -17,13 +17,12 @@ import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
-import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
-import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
@@ -235,14 +234,14 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun signUpCompleted(intent:Intent){
-        MaterialDialogHelper(this, this){
-            finish()
-            startActivity(intent)
-        }
-            .showDialog(R.layout.sign_up_completed,
-                R.dimen.signup_completed_dialog_max_width,
-                R.id.getStartedBtn, {
-                }, null)
+        MaterialAlertDialogHelper(this)
+            .setPositiveBtnId(R.id.getStartedBtn){
+                finish()
+                startActivity(intent)
+            }
+            .build(this)
+            .showDialog(R.layout.sign_up_completed, R.dimen.signup_completed_dialog_max_width )
+
     }
 
 

@@ -1,58 +1,92 @@
 package com.bookshelfhub.bookshelfhub.helpers
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.DialogInterface
-import android.text.Spanned
-import com.bookshelfhub.bookshelfhub.R
+import android.os.Build
+import android.text.Html
 
+class AlertDialogHelper private constructor(private val activity: Activity, private val message: String){
 
-class AlertDialogHelper(private val activity:Activity?, private val positiveAction:()->Unit={}, private val negativeAction:()->Unit={}, private val cancelable:Boolean=false) {
+    private lateinit var positiveActionText:String
+    private var positiveAction: (() -> Unit)? = null
 
+    private lateinit var negativeActionText:String
+    private var negativeAction: (() -> Unit)? = null
 
-    fun showAlertDialog(title:Int, msg:Int, positiveActionText:Int = R.string.ok, negativeActionText:Int?=null){
+    private var cancelable:Boolean = false
 
-        activity?.let {
-            showAlertDialog(it.getString(title),
-                it.getString(msg),
-                it.getString(positiveActionText),
-                if(negativeActionText!=null){
-                    it.getString(negativeActionText)
-                }else{
-                    null
-                }
-            )
+    companion object{
+        fun with(activity:Activity, message: String): AlertDialogHelper {
+            return AlertDialogHelper(activity, message)
+        }
+        fun with(activity:Activity, message: Int): AlertDialogHelper {
+            return AlertDialogHelper(activity, activity.getString(message))
         }
     }
-
-    fun showAlertDialog(title:Int, msg:String, positiveActionText:Int = R.string.ok, negativeActionText:Int?=null){
-        activity?.let {
-            showAlertDialog(it.getString(title),
-                msg,
-                it.getString(positiveActionText),
-                if(negativeActionText!=null){
-                    it.getString(negativeActionText)
-                }else{
-                    null
-                }
-            )
-        }
+    fun setCancelable(value:Boolean): AlertDialogHelper {
+        cancelable = value
+        return this
     }
 
-    fun showAlertDialog(title:String, msg:String, positiveActionText:String, negativeActionText:String?){
-            val builder = AlertDialog.Builder(activity)
-            builder.setMessage(msg)
+    fun setPositiveAction(actionText:Int, action:()->Unit): AlertDialogHelper {
+        setPositiveAction(getString(actionText), action)
+        return this
+    }
+
+    fun setPositiveAction(actionText:String, action:()->Unit): AlertDialogHelper {
+        this.positiveActionText = actionText
+        this.positiveAction = action
+        return this
+    }
+
+    fun setNegativeAction(actionText:Int, action:()->Unit): AlertDialogHelper {
+        setNegativeAction(getString(actionText), action)
+        return this
+    }
+
+    fun setNegativeAction(actionText:String, action:()->Unit): AlertDialogHelper {
+        this.negativeActionText = actionText
+        this.negativeAction = action
+        return this
+    }
+
+
+    private fun getString(value:Int): String {
+        return activity.getString(value)
+    }
+
+    fun build(): Builder {
+        return Builder(this, activity)
+    }
+
+   class Builder(private val alertDialogHelper: AlertDialogHelper, val activity: Activity){
+
+
+        fun showDialog(title:Int){
+            showDialog(activity.getString(title))
+        }
+
+        fun showDialog(title: String){
+            val builder = android.app.AlertDialog.Builder(activity)
+            builder.setMessage( Html.fromHtml(alertDialogHelper.message))
                 .setTitle(title)
-                .setCancelable(cancelable)
-                .setPositiveButton(positiveActionText, DialogInterface.OnClickListener{
-                        dialog, id -> positiveAction()
-                });
-            negativeActionText?.let{
-                builder.setNegativeButton(negativeActionText, DialogInterface.OnClickListener{
-                        dialog, id -> negativeAction()
+                .setCancelable(alertDialogHelper.cancelable)
+
+                   alertDialogHelper.positiveAction?.let {
+                       builder.setPositiveButton(alertDialogHelper.positiveActionText, DialogInterface.OnClickListener{
+                               _, _ -> it()
+                   })
+                   }
+
+            alertDialogHelper.negativeAction?.let {
+                builder.setNegativeButton(alertDialogHelper.negativeActionText, DialogInterface.OnClickListener{
+                        _, _ -> it()
                 } )
             }
             builder.create().show()
+        }
+
+
     }
 
 }

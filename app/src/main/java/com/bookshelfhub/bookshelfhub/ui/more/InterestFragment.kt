@@ -60,12 +60,15 @@ class InterestFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if(oldBookInterest!=bookInterestObservable.getBookInterestRecord()){
-                AlertDialogHelper(requireActivity(),{
-                    saveBookInterest(layout.saveBtn)
-                },{
-                    requireActivity().finish()
-                }, cancelable = true)
-                    .showAlertDialog(R.string.unsaved_interest_title, R.string.unsaved_interest_msg, R.string.save, R.string.cancel)
+                AlertDialogHelper.with(requireActivity(),  R.string.unsaved_interest_msg)
+                    .setCancelable(true)
+                    .setPositiveAction(R.string.save){
+                        saveBookInterest(layout.saveBtn)
+                    }
+                    .setNegativeAction(R.string.cancel){
+                        requireActivity().finish()
+                    }.build()
+                    .showDialog(R.string.unsaved_interest_title)
             }else{
                 requireActivity().finish()
             }

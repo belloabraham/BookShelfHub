@@ -126,7 +126,7 @@
     <string name="sign_out_message">Are you sure you want to sign out?</string>
     <string name="copy_link">Copy link</string>
     <string name="link_copied">Link copied</string>
-    <string name="your_referral_link">Your referral link is %s</string>
+    <string name="your_referral_link"><![CDATA[ Your referral link is <a href="%1$s">%2$s</a> ]]></string>
     <string name="earnings">Earnings</string>
 
 
@@ -212,6 +212,7 @@
     <string name="bookmarks">Bookmarks</string>
     <string name="remove_bookmark_msg">Slide left to remove a bookmark</string>
     <string name="pageNum">Page %d</string>
+    <string name="bookmark_removed_msg">Removed from bookmarks</string>
     <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab below and bookmark a page.</string>
 
     <!-- TODO: Cart Activity -->

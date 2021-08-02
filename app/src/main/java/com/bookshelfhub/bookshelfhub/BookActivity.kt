@@ -86,12 +86,13 @@ class BookActivity : AppCompatActivity() {
         layout = ActivityBookBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        val title = intent.getStringExtra(Book.TITLE.KEY)
-        val isbn = intent.getStringExtra(Book.ISBN.KEY)
+        val title = intent.getStringExtra(Book.TITLE.KEY)!!
+        val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
+
         if (isSearchItem){
             lifecycleScope.launch(IO){
-                localDb.addShelfSearchHistory(ShelfSearchHistory(isbn!!, title!!, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
+                localDb.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
             }
         }
 

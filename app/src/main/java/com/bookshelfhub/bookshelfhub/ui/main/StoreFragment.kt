@@ -49,8 +49,6 @@ class StoreFragment : Fragment() {
     private var allBooksLive = emptyList<PublishedBooks>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
     @Inject
-    lateinit var cloudDb: ICloudDb
-    @Inject
     lateinit var userAuth: IUserAuth
 
     override fun onCreateView(

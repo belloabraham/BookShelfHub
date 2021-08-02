@@ -11,7 +11,6 @@ interface ILocalDb {
      fun getLiveBookmarks(userId: String, deleted: Boolean = false): LiveData<List<Bookmark>>
      suspend fun getListOfCartItems(userId: String):List<Cart>
      fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
-     suspend fun addToCarts(carts:List<Cart>)
      suspend fun getDeletedBookmarks(userId: String, deleted: Boolean=true):List<Bookmark>
      suspend fun addBookmarkList(bookmarks: List<Bookmark>)
      suspend fun addToCart(cart:Cart)
@@ -30,7 +29,6 @@ interface ILocalDb {
      suspend fun addBookInterest(bookInterest: BookInterest)
      suspend fun addOrderedBook(orderedBooks: OrderedBooks)
      fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>>
-     suspend fun addPaymentInfo(paymentInfo: PaymentInfo)
      suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory)
      suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory)
      fun getLiveShelfSearchHistory(userId: String): LiveData<List<ShelfSearchHistory>>

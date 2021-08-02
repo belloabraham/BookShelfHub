@@ -21,7 +21,6 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
-import com.bookshelfhub.bookshelfhub.helpers.MaterialDialogHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
@@ -120,24 +119,31 @@ class MoreFragment : Fragment() {
         }
 
         signOutBtn.setOnClickListener {
-            AlertDialogHelper(activity,{
-                if (authType==AuthType.GOOGLE.ID){
-                    userAuth.signOut {
-                        activity?.let {
-                            googleAuth.signOut {
-                                it.finish()
-                                startActivity(Intent(it, SplashActivity::class.java))
-                            }
-                        }
-                    }
-                }else{
-                    userAuth.signOut {
-                        activity?.finish()
-                        startActivity(Intent(activity, SplashActivity::class.java))
-                    }
-                }
-            }, cancelable = true
-            ).showAlertDialog(R.string.sign_out,R.string.sign_out_message,R.string.sign_out, R.string.cancel)
+
+             AlertDialogHelper.with(requireActivity(), R.string.sign_out_message)
+                 .setCancelable(true)
+                 .setNegativeAction(R.string.cancel){}
+                 .setPositiveAction(R.string.sign_out){
+                     if (authType==AuthType.GOOGLE.ID){
+                         userAuth.signOut {
+                             activity?.let {
+                                 googleAuth.signOut {
+                                     it.finish()
+                                     startActivity(Intent(it, SplashActivity::class.java))
+                                 }
+                             }
+                         }
+                     }else{
+                         userAuth.signOut {
+                             activity?.finish()
+                             startActivity(Intent(activity, SplashActivity::class.java))
+                         }
+                     }
+
+                 }
+                 .build()
+                 .showDialog(R.string.sign_out)
+
         }
 
         layout.privacyPolicyCard.setOnClickListener {
@@ -199,15 +205,17 @@ class MoreFragment : Fragment() {
 
         layout.publishBookCard.setOnClickListener {
             val link = getString(R.string.publishers_link)
-            MaterialDialogHelper(viewLifecycleOwner, requireContext(),{
-                clipboardHelper.copyToClipBoard(link)
-                activity?.let {
-                    Toast(it).showToast(R.string.link_copied)
+
+            AlertDialogHelper.with(requireActivity(), R.string.publish_book_msg)
+                .setPositiveAction(R.string.copy_link){
+                    clipboardHelper.copyToClipBoard(link)
+                    activity?.let {
+                        Toast(it).showToast(R.string.link_copied)
+                    }
                 }
-            })
-                .showAlertDialog(R.string.publish_book, R.string.publish_book_msg, R.string.copy_link, R.string.ok){
-                   startActivity(intentUtil.intent(link))
-                }
+                .setNegativeAction(R.string.ok){}
+                .build()
+                .showDialog(R.string.publish_book)
         }
 
 
@@ -241,12 +249,17 @@ class MoreFragment : Fragment() {
 
 
     private fun showReferralLinkDialog(link:String, activity:Activity){
-        val msg = String.format(getString(R.string.your_referral_link), link )
-        AlertDialogHelper(activity, {
-            clipboardHelper.copyToClipBoard(link)
+        val msg = String.format(getString(R.string.your_referral_link), link, link)
+        AlertDialogHelper.with(activity, msg)
+            .setCancelable(true)
+            .setPositiveAction(R.string.copy_link){
+                clipboardHelper.copyToClipBoard(link)
                 Toast(activity).showToast(R.string.link_copied)
-        }, cancelable = true)
-            .showAlertDialog(R.string.referral_link, msg, R.string.copy_link, R.string.ok)
+            }
+            .setNegativeAction(R.string.ok){
+
+            }.build()
+            .showDialog(R.string.referral_link)
     }
 
     private fun startWebActivity(title:Int, rmcUrlKey:String){
