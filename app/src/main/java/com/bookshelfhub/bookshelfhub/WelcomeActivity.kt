@@ -17,13 +17,13 @@ import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
-import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
-import com.bookshelfhub.bookshelfhub.wrapper.GooglePlayServices
+import com.bookshelfhub.bookshelfhub.wrappers.GooglePlayServices
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
@@ -234,7 +234,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun signUpCompleted(intent:Intent){
-        MaterialAlertDialogHelper(this)
+        MaterialAlertDialogBuilder(this)
             .setPositiveBtnId(R.id.getStartedBtn){
                 finish()
                 startActivity(intent)

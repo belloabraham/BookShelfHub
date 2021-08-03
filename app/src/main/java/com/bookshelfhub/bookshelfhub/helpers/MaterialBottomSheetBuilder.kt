@@ -11,7 +11,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
-class MaterialBottomSheetHelper(private val context:Context, private val lifecycleOwner: LifecycleOwner) {
+class MaterialBottomSheetBuilder(private val context:Context, private val lifecycleOwner: LifecycleOwner) {
 
     private var positiveActionText:Int =0
     private var positiveAction: (() -> Unit)? = null
@@ -21,18 +21,18 @@ class MaterialBottomSheetHelper(private val context:Context, private val lifecyc
 
     private var onDismissListener: (() -> Unit)? = null
 
-    fun setOnDismissListener(onDismissListener:()->Unit): MaterialBottomSheetHelper {
+    fun setOnDismissListener(onDismissListener:()->Unit): MaterialBottomSheetBuilder {
         this.onDismissListener = onDismissListener
         return this
     }
 
-    fun setPositiveAction(actionText:Int, action:()->Unit): MaterialBottomSheetHelper {
+    fun setPositiveAction(actionText:Int, action:()->Unit): MaterialBottomSheetBuilder {
         this.positiveActionText = actionText
         this.positiveAction = action
         return this
     }
 
-    fun setNegativeAction(actionText:Int, action:()->Unit): MaterialBottomSheetHelper {
+    fun setNegativeAction(actionText:Int, action:()->Unit): MaterialBottomSheetBuilder {
         this.negativeActionText = actionText
         this.negativeAction = action
         return this

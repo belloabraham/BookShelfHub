@@ -19,13 +19,13 @@ import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.*
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -120,7 +120,7 @@ class MoreFragment : Fragment() {
 
         signOutBtn.setOnClickListener {
 
-             AlertDialogHelper.with(requireActivity(), R.string.sign_out_message)
+             AlertDialogBuilder.with(requireActivity(), R.string.sign_out_message)
                  .setCancelable(true)
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
@@ -206,7 +206,7 @@ class MoreFragment : Fragment() {
         layout.publishBookCard.setOnClickListener {
             val link = getString(R.string.publishers_link)
 
-            AlertDialogHelper.with(requireActivity(), R.string.publish_book_msg)
+            AlertDialogBuilder.with(requireActivity(), R.string.publish_book_msg)
                 .setPositiveAction(R.string.copy_link){
                     clipboardHelper.copyToClipBoard(link)
                     activity?.let {
@@ -250,7 +250,7 @@ class MoreFragment : Fragment() {
 
     private fun showReferralLinkDialog(link:String, activity:Activity){
         val msg = String.format(getString(R.string.your_referral_link), link, link)
-        AlertDialogHelper.with(activity, msg)
+        AlertDialogBuilder.with(activity, msg)
             .setCancelable(true)
             .setPositiveAction(R.string.copy_link){
                 clipboardHelper.copyToClipBoard(link)

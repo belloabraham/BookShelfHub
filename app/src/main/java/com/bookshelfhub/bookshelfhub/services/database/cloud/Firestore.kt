@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
-import com.bookshelfhub.bookshelfhub.wrapper.Json
+import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings

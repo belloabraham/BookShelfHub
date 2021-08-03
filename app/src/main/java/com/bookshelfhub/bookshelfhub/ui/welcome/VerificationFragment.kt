@@ -29,8 +29,8 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.wrapper.Json
-import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO

@@ -3,9 +3,8 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
-import com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.view.tooltip.ToolTip
 import dagger.Module
 import dagger.Provides

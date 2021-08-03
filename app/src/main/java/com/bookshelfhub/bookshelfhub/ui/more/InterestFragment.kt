@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -60,7 +60,7 @@ class InterestFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if(oldBookInterest!=bookInterestObservable.getBookInterestRecord()){
-                AlertDialogHelper.with(requireActivity(),  R.string.unsaved_interest_msg)
+                AlertDialogBuilder.with(requireActivity(),  R.string.unsaved_interest_msg)
                     .setCancelable(true)
                     .setPositiveAction(R.string.save){
                         saveBookInterest(layout.saveBtn)

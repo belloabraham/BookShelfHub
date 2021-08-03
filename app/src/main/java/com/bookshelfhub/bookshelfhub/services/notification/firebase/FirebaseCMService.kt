@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
+import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -14,7 +14,7 @@ class FirebaseCMService : FirebaseMessagingService() {
     private val URL="url"
     private val ACTION="action"
     @Inject
-    lateinit var notificationHelper: NotificationHelper
+    lateinit var notificationBuilder: NotificationBuilder
     @Inject
     lateinit var settingsUtil: SettingsUtil
 

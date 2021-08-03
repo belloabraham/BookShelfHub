@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrapper.dynamiclink
+package com.bookshelfhub.bookshelfhub.wrappers.dynamiclink
 
 import android.app.Activity
 import android.net.Uri

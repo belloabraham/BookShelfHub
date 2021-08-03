@@ -1,12 +1,12 @@
-package com.bookshelfhub.bookshelfhub.wrapper.imageloaders
+package com.bookshelfhub.bookshelfhub.wrappers.imageloaders
 
 import android.widget.ImageView
 import com.squareup.picasso.*
 import java.lang.Exception
 
-open class PicassoWrapper(private val imageView: ImageView)  {
+open class PicassoWrapper(private val imageView: ImageView) : IImageLoader {
 
-     fun loadUnCompressed(resId:Int, shouldCache:Boolean){
+     override fun loadUnCompressed(resId:Int, shouldCache:Boolean){
       val picasso = Picasso.get()
             .load(resId)
               if (!shouldCache){
@@ -16,7 +16,7 @@ open class PicassoWrapper(private val imageView: ImageView)  {
             picasso.into(imageView)
     }
 
-     fun loadImageWithRoundCorners(url:String, placeHolder:Int, errorImg:Int, shouldCache:Boolean, onSuccess:()->Unit){
+     override fun load(url:String, placeHolder:Int, errorImg:Int, shouldCache:Boolean, onSuccess:()->Unit){
 
       val callback = object :Callback{
           override fun onSuccess() {

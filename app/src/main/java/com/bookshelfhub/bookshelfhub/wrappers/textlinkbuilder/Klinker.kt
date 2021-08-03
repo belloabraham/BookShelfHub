@@ -1,9 +1,7 @@
-package com.bookshelfhub.bookshelfhub.wrapper.textlinkbuilder
+package com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder
 
 import android.graphics.Color
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import com.bookshelfhub.bookshelfhub.R
 import com.klinker.android.link_builder.Link
 import com.klinker.android.link_builder.LinkBuilder
 

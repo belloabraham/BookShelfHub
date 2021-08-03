@@ -13,9 +13,9 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.FirebaseCM
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.ICloudMessaging
-import com.bookshelfhub.bookshelfhub.wrapper.Json
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.FirebaseDLink
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.FirebaseDLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides

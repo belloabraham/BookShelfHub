@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrapper
+package com.bookshelfhub.bookshelfhub.wrappers
 
 import com.google.gson.Gson
 

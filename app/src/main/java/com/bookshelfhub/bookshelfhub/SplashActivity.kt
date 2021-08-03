@@ -1,9 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main

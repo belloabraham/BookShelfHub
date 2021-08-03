@@ -20,9 +20,9 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.enums.UserReferrer
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogHelper
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetHelper
-import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationHelper
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
+import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
@@ -31,7 +31,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
-import com.bookshelfhub.bookshelfhub.wrapper.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
@@ -213,7 +213,7 @@ class MainActivity : AppCompatActivity() {
             negActionText=getString(R.string.later)
         }
         val positiveActionText=getString(R.string.update)
-        NotificationHelper(this)
+        NotificationBuilder(this)
             .setTitle(title)
             .setUrl(packageName)
             .setMessage(msg)
@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity() {
                 intentUtil.openAppStoreIntent(this)
             }
 
-        AlertDialogHelper.with(this, msg).setPositiveAction(positiveActionText){
+        AlertDialogBuilder.with(this, msg).setPositiveAction(positiveActionText){
             startActivity(intentUtil.openAppStoreIntent(packageName))
         }.setNegativeAction(negActionText){
             if(enforceUpdate){
@@ -232,32 +232,37 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showProgressPopupDialog(){
+    private fun showProgressPopupDialog() {
         lifecycleScope.launch(IO) {
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
             val lastBookRedTile = settingsUtil.getString(Settings.LAST_BOOK_RED_TITLE.KEY)
             val lastBookRedISBN = settingsUtil.getString(Settings.LAST_BOOK_RED_ISBN.KEY)
             val lastBookPercentage = settingsUtil.getInt(Settings.LAST_BOOK_PERCENTAGE.KEY, 0)
             val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
-            withContext(Main){
-                if (showPopup){
+            withContext(Main) {
+                if (showPopup) {
                     lastBookRedTile?.let {
                         val view = View.inflate(this@MainActivity, R.layout.continue_reading, null)
                         view.findViewById<TextView>(R.id.bookName).text = it
-                        view.findViewById<TextView>(R.id.percentageText).text = String.format(getString(R.string.percent), lastBookPercentage)
-                        view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress = lastBookPercentage
+                        view.findViewById<TextView>(R.id.percentageText).text =
+                            String.format(getString(R.string.percent), lastBookPercentage)
+                        view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =
+                            lastBookPercentage
 
-                        MaterialBottomSheetHelper(this@MainActivity, this@MainActivity)
+                        MaterialBottomSheetBuilder(this@MainActivity, this@MainActivity)
                             .setOnDismissListener {
-                                if (noOfDismiss<2){
+                                if (noOfDismiss < 2) {
                                     Toast(this@MainActivity).showToast(R.string.dismiss_msg)
                                     runBlocking {
-                                        settingsUtil.setInt(Settings.NO_OF_TIME_DISMISSED.KEY, noOfDismiss+1)
+                                        settingsUtil.setInt(
+                                            Settings.NO_OF_TIME_DISMISSED.KEY,
+                                            noOfDismiss + 1
+                                        )
                                     }
                                 }
                             }
-                            .setPositiveAction(R.string.dismiss){}
-                            .setNegativeAction(R.string.continue_reading){
+                            .setPositiveAction(R.string.dismiss) {}
+                            .setNegativeAction(R.string.continue_reading) {
                                 val intent = Intent(this@MainActivity, BookActivity::class.java)
                                 intent.putExtra(Settings.LAST_BOOK_RED_ISBN.KEY, lastBookRedISBN)
                                 startActivity(intent)
@@ -268,7 +273,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun getReferrer(referrer:String?, userId:String){
         referrer?.let {
