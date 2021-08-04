@@ -129,6 +129,9 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
     //TODO Published Books
 
+    override suspend fun getPublishedBook(isbn: String): PublishedBooks {
+       return RoomInstance.getDatabase(context).userDao().getPublishedBook(isbn)
+    }
 
     override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
         RoomInstance.getDatabase(context).userDao().updateRecommendedBooksByCategory(category, isRecommended)

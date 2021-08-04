@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:app="http://schemas.android.com/apk/res-auto"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/size_16"
+          android:layout_marginEnd="0dp"
+          android:id="@+id/itemCardView"
+          app:cardUseCompatPadding="true"
+          style="@style/ProfileItemCardView">
+
+          <ImageView
+              android:layout_width="75dp"
+              android:layout_height="100dp"
+              android:contentDescription="@null"
+              android:layout_gravity="center_horizontal"
+              android:scaleType="fitXY"
+              android:id="@+id/itemImageView"/>
+
+</com.google.android.material.card.MaterialCardView>
+
+

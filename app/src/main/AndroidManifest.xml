@@ -26,12 +26,12 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub"
         tools:replace="android:supportsRtl,android:allowBackup">
+        <activity android:name=".BookInfoActivity"></activity>
 
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
-            tools:node="remove">
-        </provider>
+            tools:node="remove"></provider>
 
         <activity
             android:name=".CartActivity"

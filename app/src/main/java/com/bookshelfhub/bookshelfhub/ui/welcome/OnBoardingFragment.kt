@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.adapters.slider.SliderAdapter
-import com.bookshelfhub.bookshelfhub.adapters.slider.SliderItem
+import com.bookshelfhub.bookshelfhub.adapters.viewpager.slider.SliderAdapter
+import com.bookshelfhub.bookshelfhub.adapters.viewpager.slider.SliderItem
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType

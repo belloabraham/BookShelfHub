@@ -43,7 +43,7 @@ class ProfileFragment : Fragment() {
     lateinit var keyboardUtil: KeyboardUtil
     private var gender:String?=null
     private var dateOfBirth:String?=null
-    private val profileFragmentViewModel:ProfileFragmentViewModel by viewModels()
+    private val profileViewModel:ProfileViewModel by viewModels()
     private lateinit var layout: FragmentProfileBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +53,7 @@ class ProfileFragment : Fragment() {
 
         var user:User? = null
 
-        profileFragmentViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
+        profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
             user = liveUser
             layout.nameEditTxt.setText(liveUser!!.name)
             if (userAuth.getAuthType()==AuthType.GOOGLE.ID){

@@ -10,14 +10,11 @@ import android.view.WindowManager
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWebViewBinding
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_profile.*
 import javax.inject.Inject
 
 
@@ -39,7 +36,7 @@ class WebViewActivity : AppCompatActivity() {
         setContentView(layout.root)
 
         setSupportActionBar(layout.toolbar)
-        supportActionBar?.setTitle(title)
+        supportActionBar?.title = title
 
 
 

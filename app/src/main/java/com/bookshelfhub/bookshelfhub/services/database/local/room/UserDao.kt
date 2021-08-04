@@ -100,6 +100,9 @@ interface UserDao {
     //@Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
     //fun deleteUnPublishedBookRecords(isbnList: List<String>)
 
+    @Query("SELECT * FROM PublishedBooks WHERE isbn = :isbn")
+    suspend fun getPublishedBook(isbn: String): PublishedBooks
+
     @Delete
     fun deleteUnPublishedBookRecords(publishedBooks: List<PublishedBooks>)
 

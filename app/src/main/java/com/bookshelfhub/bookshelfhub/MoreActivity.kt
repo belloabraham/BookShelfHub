@@ -1,31 +1,26 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.bookshelfhub.bookshelfhub.databinding.ActivityProfileBinding
-import com.bookshelfhub.bookshelfhub.enums.Profile
+import com.bookshelfhub.bookshelfhub.databinding.ActivityMoreBinding
+import com.bookshelfhub.bookshelfhub.enums.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MoreActivity : AppCompatActivity() {
 
-    private lateinit var layout: ActivityProfileBinding
+    private lateinit var layout: ActivityMoreBinding
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        layout = ActivityProfileBinding.inflate(layoutInflater)
+        layout = ActivityMoreBinding.inflate(layoutInflater)
         setContentView(layout.root)
-        val title = intent.getIntExtra(Profile.TITLE.KEY, 0)
-        val fragmentId = intent.getIntExtra(Profile.FRAGMENT_ID.KEY,0)
+        val title = intent.getIntExtra(Fragment.TITLE.KEY, 0)
+        val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
 
         setSupportActionBar(layout.toolbar)
         supportActionBar?.setTitle(title)
@@ -37,7 +32,7 @@ class MoreActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        super.onBackPressed()
+        onBackPressed()
         return true
     }
 

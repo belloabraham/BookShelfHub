@@ -11,9 +11,9 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bookshelfhub.bookshelfhub.adapters.search.StoreSearchResultAdapter
-import com.bookshelfhub.bookshelfhub.adapters.store.CategoryListAdapter
-import com.bookshelfhub.bookshelfhub.adapters.store.DiffUtilItemCallback
+import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
+import com.bookshelfhub.bookshelfhub.adapters.paging.CategoryListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
 import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.models.BookRequest
@@ -30,7 +30,7 @@ class BookCategoryActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookCategoryBinding
     private var listOfBooks = emptyList<PublishedBooks>()
-    private val categoryActivityViewModel:CategoryActivityViewModel by viewModels()
+    private val bookCategoryViewModel:BookCategoryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,20 +46,20 @@ class BookCategoryActivity : AppCompatActivity() {
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
-        categoryActivityViewModel.loadLiveBooksByCategory(category, this)
+        bookCategoryViewModel.loadLiveBooksByCategory(category, this)
 
 
         lifecycleScope.launch {
             if (category==getString(R.string.recommended_for)){
-                categoryActivityViewModel.getRecommendedBooks().collectLatest { books->
+                bookCategoryViewModel.getRecommendedBooks().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }else if(category==getString(R.string.trending)){
-                categoryActivityViewModel.getTrendingBooks().collectLatest { books->
+                bookCategoryViewModel.getTrendingBooks().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }else{
-                categoryActivityViewModel.getBooksByCategory(category).collectLatest { books->
+                bookCategoryViewModel.getBooksByCategory(category).collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }
@@ -111,22 +111,22 @@ class BookCategoryActivity : AppCompatActivity() {
             })
         }
 
-        layout.cartBtn.setOnClickListener {
+        layout.checkOutBtn.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        categoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
+        bookCategoryViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
             if(cartItemsCount>0){
                 layout.cartNotifText.text = "$cartItemsCount"
-               // layout.cartBtnContainer.visibility = View.VISIBLE
+                layout.cartBtnContainer.visibility = View.VISIBLE
             }else{
-               // layout.cartBtnContainer.visibility = View.GONE
+                layout.cartBtnContainer.visibility = View.GONE
             }
 
         })
 
-        categoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
+        bookCategoryViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
             listOfBooks = books
         })
 

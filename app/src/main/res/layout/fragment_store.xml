@@ -45,6 +45,7 @@
             android:id="@+id/recommendedLayout"
             android:layout_marginTop="@dimen/size_16"
             android:orientation="vertical" android:visibility="gone">
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -73,6 +74,7 @@
 
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recommendedRecView"
                 android:layout_width="match_parent"

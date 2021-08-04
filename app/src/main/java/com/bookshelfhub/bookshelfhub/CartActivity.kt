@@ -7,24 +7,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bookshelfhub.bookshelfhub.adapters.CartItemsListAdapter
-import com.bookshelfhub.bookshelfhub.adapters.SwipeToDeleteCallBack
+import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.ActivityCartBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 @AndroidEntryPoint

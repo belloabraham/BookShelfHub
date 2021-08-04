@@ -10,11 +10,7 @@ interface IPublishedBooks {
     val dateTimePublished: String
     val noOfDownloads: Long
     val price: Double
-    val totalRatings: Double
     val category: String
-    val recommended: Boolean
     val language: String
-    val copyrightLawUrl: String
-    val authorEmail: String
     val tag: String
 }

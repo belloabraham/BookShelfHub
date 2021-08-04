@@ -275,8 +275,8 @@ class MoreFragment : Fragment() {
     private fun startProfileActivity(title:Int, fragmentID:Int){
         val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
-            putExtra(Profile.TITLE.KEY,title)
-            putExtra(Profile.FRAGMENT_ID.KEY, fragmentID)
+            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.TITLE.KEY,title)
+            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.ID.KEY, fragmentID)
         }
         startActivity(intent)
     }

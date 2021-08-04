@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.marginStart
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,14 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.adapters.BookmarkListAdapter
-import com.bookshelfhub.bookshelfhub.adapters.SwipeToDeleteCallBack
+import com.bookshelfhub.bookshelfhub.adapters.recycler.BookmarkListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentBookmarkBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -35,7 +32,7 @@ import javax.inject.Inject
 class BookmarkFragment : Fragment() {
 
     private lateinit var layout: FragmentBookmarkBinding
-    private val bookmarkFragmentViewModel:BookmarkFragmentViewModel by viewModels()
+    private val bookmarkViewModel:BookmarkViewModel by viewModels()
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
@@ -53,7 +50,7 @@ class BookmarkFragment : Fragment() {
             removeBookmarkHint()
         }
 
-        bookmarkFragmentViewModel.getLiveBookmarks(userId).observe(viewLifecycleOwner, Observer {  bookmarks ->
+        bookmarkViewModel.getLiveBookmarks(userId).observe(viewLifecycleOwner, Observer { bookmarks ->
             if (bookmarks.isEmpty()){
                 layout.emptyBookmarksLayout.visibility = View.VISIBLE
                 layout.bookmarkListRecView.visibility = View.GONE

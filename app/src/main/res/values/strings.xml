@@ -2,12 +2,18 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
-    <string name="happy_birthday_title">Happy Birthday %s</string>
-    <string name="happy_birthday_msg">We wanted to get you something truly amazing and inspiring for your birthday. Then we remembered that you already have Bookshelf Hub.</string>
+    <!-- TODO: Book Item-->
+    <string name="options">Options</string>
+    <string name="report_book">Report book</string>
+    <string name="add_to_Cart">Add to cart</string>
+    <string name="download">Download</string>
+    <string name="downloads">Downloads</string>
+    <string name="review_no">%d reviews</string>
+    <string name="about_this_book">About this book</string>
 
-    <string name="happy_birthday_title2">Today is a special day %s</string>
-    <string name="happy_birthday_msg2">We have been calling up to a thousand times to tell you "Happy birthday!"</string>
-
+    <string name="ratings_reviews">Ratings and reviews</string>
+    <string name="see_all_reviews">See all reviews</string>
+    <string name="similar_books">Similar books</string>
 
     <!-- TODO: Onboarding Fragment-->
     <string name="login">Login</string>
