@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.extensions.load
 
@@ -45,6 +46,11 @@ class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.
 
                 itemCardView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
+                    with(intent){
+                        putExtra(Book.TITLE.KEY, model.name)
+                        putExtra(Book.AUTHOR.KEY, model.author)
+                        putExtra(Book.ISBN.KEY, model.isbn)
+                    }
                     val options = ActivityOptions.makeSceneTransitionAnimation(activity, it, activity.getString(R.string.trans_book))
                     activity.startActivity(intent, options.toBundle())
             }

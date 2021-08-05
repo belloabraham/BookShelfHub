@@ -44,7 +44,6 @@
 
     <!-- Todo Transition Names -->
     <string name="trans_book" translatable="false">book</string>
-    <string name="trans_checkout" translatable="false">checkout</string>
 
     <!-- Todo Profile -->
     <string name="dob_template" translatable="false">DD/MM/YY</string>

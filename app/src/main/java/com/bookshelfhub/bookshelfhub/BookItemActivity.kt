@@ -85,7 +85,7 @@ class BookItemActivity : AppCompatActivity() {
                layout.price.text = String.format(getString(R.string.price), book.price)
                layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), 10)
                layout.noRatingTxt.text = "4.5"
-               layout.noOfDownloadsText.text = "${book.noOfDownloads}"
+               layout.noOfDownloadsText.text = getNoOfDownloads(book.noOfDownloads)
 
 
                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
@@ -174,11 +174,41 @@ class BookItemActivity : AppCompatActivity() {
         
         layout.checkoutOutBtn.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
-            val options = ActivityOptions.makeSceneTransitionAnimation(this, it, getString(R.string.trans_checkout))
-            startActivity(intent, options.toBundle())
+            startActivity(intent)
         }
     }
 
+
+    private fun getNoOfDownloads(value:Long): String {
+        val thousand = 1000
+        val billion = 1000000000
+        val million = 1000000
+        var remainder:Int=0
+        var main:Long = 0
+
+      val unit:String =  if(value>=billion){
+            remainder = value.mod(billion)
+            main = (value-remainder)/billion
+          "B"
+        }else if (value >= million){
+            remainder = value.mod(million)
+            main = (value-remainder)/million
+          "M"
+        }else if (value >= thousand){
+            remainder = value.mod(thousand)
+            main = (value-remainder)/thousand
+           "K"
+        }else{
+            main = value
+            ""
+       }
+        val unitPlus = if (unit.isNotBlank()){
+            "$unit+"
+        }else{
+            unit
+        }
+         return "$main"+unitPlus
+    }
 
     private fun startBookInfoActivity(title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
