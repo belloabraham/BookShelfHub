@@ -150,6 +150,10 @@ class BookItemActivity : AppCompatActivity() {
 
         }
 
+        layout.shareBookBtn.setOnClickListener {
+
+        }
+
         layout.downloadBtn.setOnClickListener {
 
         }

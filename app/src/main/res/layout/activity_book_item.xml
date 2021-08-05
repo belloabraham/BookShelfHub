@@ -153,15 +153,18 @@
                     android:background="?android:attr/listDivider" />
 
 
-                    <com.google.android.material.button.MaterialButton
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAllCaps="false"
-                        android:paddingVertical="0dp"
-                        android:textColor="@android:color/secondary_text_light"
-                        style="@style/Widget.AppCompat.Button.Borderless"
-                        android:drawableTop="@drawable/ic_share_arrow"
-                        android:text="@string/share"/>
+                        android:layout_gravity="bottom"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:id="@+id/shareBookBtn"
+                        android:paddingHorizontal="@dimen/size_16"
+                        android:text="@string/share"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        app:drawableTopCompat="@drawable/ic_share_arrow" />
 
 
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -196,6 +199,7 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:elevation="@dimen/size_3"
                     android:layout_marginHorizontal="@dimen/size_16"
                     android:layout_marginVertical="@dimen/size_4">
 
@@ -222,6 +226,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/size_24"
                 android:layout_marginBottom="@dimen/size_16"
+                android:maxLines="2"
                 android:text="@string/lorep_ipsum"
                 android:id="@+id/descText"/>
 
