@@ -169,16 +169,41 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.reviewCard.setOnClickListener {
-            startBookInfoActivity(R.string.ratings_reviews, R.id.reviewsFragment)
+            startBookInfoActivity()
         }
 
         layout.allReviewsBtn.setOnClickListener {
-            startBookInfoActivity(R.string.ratings_reviews, R.id.reviewsFragment)
+            startBookInfoActivity()
         }
         
         layout.checkoutOutBtn.setOnClickListener {
             val intent = Intent(this, CartActivity::class.java)
             startActivity(intent)
+        }
+
+        layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
+            layout.ratingInfoLayout.isVisible = rating>0
+
+        }
+
+        layout.postBtn.setOnClickListener {
+
+            layout.rateBookLayout.visibility = GONE
+            layout.ratingInfoLayout.visibility = GONE
+            layout.userReviewLayout.visibility = VISIBLE
+
+            //TODO Pass review data to onetime request work manager that requires network and run only if data
+        // is no null and retry if fail
+
+        }
+
+        layout.editYourReviewBtn.setOnClickListener {
+            layout.userReviewLayout.visibility = GONE
+            layout.rateBookLayout.visibility = VISIBLE
+
+           //TODO layout.ratingBar.numStars = userRatingValue
+          //TODO  layout.userReviewEditText.text = ""
+
         }
     }
 
@@ -187,25 +212,30 @@ class BookItemActivity : AppCompatActivity() {
         val thousand = 1000
         val billion = 1000000000
         val million = 1000000
-        var remainder:Int=0
-        var main:Long = 0
+        val remainder:Int
+        val main:Long
 
-      val unit:String =  if(value>=billion){
-            remainder = value.mod(billion)
-            main = (value-remainder)/billion
-          "B"
-        }else if (value >= million){
-            remainder = value.mod(million)
-            main = (value-remainder)/million
-          "M"
-        }else if (value >= thousand){
-            remainder = value.mod(thousand)
-            main = (value-remainder)/thousand
-           "K"
-        }else{
-            main = value
-            ""
-       }
+      val unit:String = when {
+          value>=billion -> {
+              remainder = value.mod(billion)
+              main = (value-remainder)/billion
+              "B"
+          }
+          value >= million -> {
+              remainder = value.mod(million)
+              main = (value-remainder)/million
+              "M"
+          }
+          value >= thousand -> {
+              remainder = value.mod(thousand)
+              main = (value-remainder)/thousand
+              "K"
+          }
+          else -> {
+              main = value
+              ""
+          }
+      }
         val unitPlus = if (unit.isNotBlank()){
             "$unit+"
         }else{
@@ -223,7 +253,7 @@ class BookItemActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun startBookInfoActivity(title:Int, fragmentID:Int){
+    private fun startBookInfoActivity(title:Int=R.string.ratings_reviews, fragmentID:Int = R.id.reviewsFragment){
         startBookInfoActivity(getString(title), fragmentID)
     }
 

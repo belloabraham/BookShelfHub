@@ -25,106 +25,106 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
 
-    private lateinit var layout: ActivityCartBinding
-    private val cartActivityViewModel: CartActivityViewModel by viewModels()
-    @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
-    lateinit var userAuth:IUserAuth
+  private lateinit var layout: ActivityCartBinding
+  private val cartActivityViewModel: CartActivityViewModel by viewModels()
+  @Inject
+  lateinit var localDb: ILocalDb
+  @Inject
+  lateinit var userAuth:IUserAuth
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        layout = ActivityCartBinding.inflate(layoutInflater)
-        setContentView(layout.root)
-        setSupportActionBar(layout.toolbar)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    layout = ActivityCartBinding.inflate(layoutInflater)
+    setContentView(layout.root)
+    setSupportActionBar(layout.toolbar)
 
-        val userId = userAuth.getUserId()
-        val adapter = CartItemsListAdapter(this).getCartListAdapter{
-           removeCartItemMsg()
+    val userId = userAuth.getUserId()
+    val adapter = CartItemsListAdapter(this).getCartListAdapter{
+      removeCartItemMsg()
+    }
+
+    layout.cartItemsRecView.adapter = adapter
+
+
+    layout.makePaymentFab.setOnClickListener {
+
+    }
+
+
+    cartActivityViewModel.getListOfCartItems(userId).observe(this, Observer {  cartList ->
+      if (cartList.isNotEmpty()){
+        layout.makePaymentFab.isEnabled = true
+        layout.emptyCartLayout.visibility = View.GONE
+        layout.cartItemsRecView.visibility = View.VISIBLE
+        layout.makePaymentFab.extend()
+      }else{
+        layout.makePaymentFab.shrink()
+        layout.makePaymentFab.isEnabled = false
+        layout.emptyCartLayout.visibility = View.VISIBLE
+        layout.cartItemsRecView.visibility = View.GONE
+      }
+    })
+
+
+    var listOfCartItems: ArrayList<Cart> =  ArrayList()
+
+    lifecycleScope.launch(IO) {
+      listOfCartItems = localDb.getListOfCartItems(userId) as ArrayList<Cart>
+      withContext(Main){
+        adapter.submitList(listOfCartItems)
+      }
+    }
+
+    layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        if(dy>0 && layout.makePaymentFab.isExtended){
+          layout.makePaymentFab.shrink()
+        }else if(dy<0 && !layout.makePaymentFab.isExtended){
+          layout.makePaymentFab.extend()
         }
+      }
+    })
 
-        layout.cartItemsRecView.adapter = adapter
+    val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(this, R.color.errorColor, R.drawable.ic_cart_minus_white) {
 
+      override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
+        val position: Int = viewHolder.bindingAdapterPosition
+        val cart: Cart = adapter.currentList[position]
 
-        layout.makePaymentFab.setOnClickListener {
-
-        }
-
-
-        cartActivityViewModel.getListOfCartItems(userId).observe(this, Observer {  cartList ->
-            if (cartList.isNotEmpty()){
-                layout.makePaymentFab.isEnabled = true
-                layout.emptyCartLayout.visibility = View.GONE
-                layout.cartItemsRecView.visibility = View.VISIBLE
-                layout.makePaymentFab.extend()
-            }else{
-                layout.makePaymentFab.shrink()
-                layout.makePaymentFab.isEnabled = false
-                layout.emptyCartLayout.visibility = View.VISIBLE
-                layout.cartItemsRecView.visibility = View.GONE
-            }
-        })
-
-
-        var listOfCartItems: ArrayList<Cart> =  ArrayList()
+        listOfCartItems.removeAt(position)
+        adapter.notifyItemRemoved(position)
 
         lifecycleScope.launch(IO) {
-            listOfCartItems = localDb.getListOfCartItems(userId) as ArrayList<Cart>
-            withContext(Main){
-                adapter.submitList(listOfCartItems)
-            }
+          localDb.deleteFromCart(cart)
+          withContext(Main){
+            val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
+            snackBar.setAction(R.string.undo) {
+              listOfCartItems.add(position, cart)
+              adapter.notifyItemInserted(position)
+              lifecycleScope.launch(IO){
+                localDb.addToCart(cart)
+              }
+            }.show()
+          }
         }
 
-        layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if(dy>0 && layout.makePaymentFab.isExtended){
-                    layout.makePaymentFab.shrink()
-                }else if(dy<0 && !layout.makePaymentFab.isExtended){
-                    layout.makePaymentFab.extend()
-                }
-            }
-        })
-
-        val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(this, R.color.errorColor, R.drawable.ic_cart_minus_white) {
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
-                val position: Int = viewHolder.bindingAdapterPosition
-                val cart: Cart = adapter.currentList[position]
-
-                listOfCartItems.removeAt(position)
-                adapter.notifyItemRemoved(position)
-
-                lifecycleScope.launch(IO) {
-                    localDb.deleteFromCart(cart)
-                    withContext(Main){
-                        val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
-                        snackBar.setAction(R.string.undo) {
-                            listOfCartItems.add(position, cart)
-                            adapter.notifyItemInserted(position)
-                            lifecycleScope.launch(IO){
-                                localDb.addToCart(cart)
-                            }
-                        }.show()
-                    }
-                }
-
-            }
-        }
-        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-        itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
-
+      }
     }
+    val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+    itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
 
-    private fun removeCartItemMsg():Boolean{
-     Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)
-            .show()
-      return  true
-    }
+  }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
+  private fun removeCartItemMsg():Boolean{
+    Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)
+      .show()
+    return  true
+  }
+
+  override fun onSupportNavigateUp(): Boolean {
+    onBackPressed()
+    return true
+  }
 
 }

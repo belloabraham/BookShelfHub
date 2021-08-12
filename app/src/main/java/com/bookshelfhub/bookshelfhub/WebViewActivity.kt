@@ -90,7 +90,7 @@ class WebViewActivity : AppCompatActivity() {
 
     private fun goBack(){
         if (layout.webView.canGoBack()){
-            layout.webView.goBack();
+            layout.webView.goBack()
         }else{
             super.onBackPressed()
         }

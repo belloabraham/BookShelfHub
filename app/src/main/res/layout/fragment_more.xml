@@ -13,7 +13,7 @@
             android:paddingTop="@dimen/size_16"
             android:orientation="vertical">
 
-            <com.bookshelfhub.bookshelfhub.view.ExpandableCardView
+            <com.bookshelfhub.bookshelfhub.views.ExpandableCardView
                 android:id="@+id/accountBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -217,7 +217,7 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <com.bookshelfhub.bookshelfhub.view.ExpandableCardView
+            <com.bookshelfhub.bookshelfhub.views.ExpandableCardView
                 android:id="@+id/settingsBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

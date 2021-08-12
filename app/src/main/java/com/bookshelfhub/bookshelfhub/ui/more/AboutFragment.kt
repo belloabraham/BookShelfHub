@@ -13,9 +13,9 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
-import com.bookshelfhub.bookshelfhub.view.about.builder.AboutPageBuilder
-import com.bookshelfhub.bookshelfhub.view.about.AutoFitGridLayout
-import com.bookshelfhub.bookshelfhub.view.about.Item
+import com.bookshelfhub.bookshelfhub.views.about.builder.AboutPageBuilder
+import com.bookshelfhub.bookshelfhub.views.about.AutoFitGridLayout
+import com.bookshelfhub.bookshelfhub.views.about.Item
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import javax.inject.Inject

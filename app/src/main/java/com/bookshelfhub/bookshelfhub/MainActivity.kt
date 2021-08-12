@@ -28,7 +28,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
-import com.bookshelfhub.bookshelfhub.view.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.toast.Toast
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink

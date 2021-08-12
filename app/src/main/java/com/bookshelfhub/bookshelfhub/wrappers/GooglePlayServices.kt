@@ -6,7 +6,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 
 class GooglePlayServices(val activity:Activity) {
 
-    private val PLAY_SERVICES_RESOLUTION_REQUEST=9000
+    private val PLAY_SERVICES_RESOLUTION_REQUEST =9000
 
 
      fun checkForGooglePlayServices() {
@@ -17,7 +17,7 @@ class GooglePlayServices(val activity:Activity) {
                 googleAPI.getErrorDialog(
                     activity, result,
                     PLAY_SERVICES_RESOLUTION_REQUEST
-                ).show();
+                )?.show()
             }
         }
      }

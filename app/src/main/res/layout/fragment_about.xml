@@ -58,7 +58,7 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:text="@string/contact_us"/>
 
-            <com.bookshelfhub.bookshelfhub.view.about.AutoFitGridLayout
+            <com.bookshelfhub.bookshelfhub.views.about.AutoFitGridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/size_25"
@@ -76,7 +76,7 @@
                 style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:text="@string/follow_us"/>
 
-            <com.bookshelfhub.bookshelfhub.view.about.AutoFitGridLayout
+            <com.bookshelfhub.bookshelfhub.views.about.AutoFitGridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/size_25"

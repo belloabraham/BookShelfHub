@@ -51,8 +51,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
                         putExtra(Book.AUTHOR.KEY, model.author)
                         putExtra(Book.ISBN.KEY, model.isbn)
                     }
-                    val options = ActivityOptions.makeSceneTransitionAnimation(activity, it, activity.getString(R.string.trans_book))
-                    activity.startActivity(intent, options.toBundle())
+                    activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
             }
         }
     }

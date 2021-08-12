@@ -41,11 +41,11 @@ class Application: android.app.Application(), Configuration.Provider {
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()
-        
+
         notificationChannelBuilder = NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
         notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
-         enqueueWorkers()
+        enqueueWorkers()
     }
 
 
@@ -55,9 +55,9 @@ class Application: android.app.Application(), Configuration.Provider {
             .build()
 
         val removeUnPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
-                .setInitialDelay(1, TimeUnit.HOURS)
-                .setConstraints(connected)
-                .build()
+            .setInitialDelay(1, TimeUnit.HOURS)
+            .setConstraints(connected)
+            .build()
 
         val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(23, TimeUnit.HOURS)
             .setInitialDelay(1, TimeUnit.HOURS)

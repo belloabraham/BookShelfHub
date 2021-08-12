@@ -19,23 +19,23 @@ import javax.inject.Inject
 @HiltViewModel
 class BookItemViewModel @Inject constructor(private val localDb: ILocalDb, val userAuth:IUserAuth ): ViewModel(){
 
-    val userId = userAuth.getUserId()
+  val userId = userAuth.getUserId()
 
-    private val config  = PagingConfig(
-        pageSize = 5,
-        enablePlaceholders = true,
-        initialLoadSize = 10
-    )
+  private val config  = PagingConfig(
+    pageSize = 5,
+    enablePlaceholders = true,
+    initialLoadSize = 10
+  )
 
 
-    fun getLiveListOfCartItems(userId:String): LiveData<List<Cart>> {
-        return localDb.getLiveListOfCartItems(userId)
-    }
+  fun getLiveListOfCartItems(userId:String): LiveData<List<Cart>> {
+    return localDb.getLiveListOfCartItems(userId)
+  }
 
-    fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBooks>> {
-        return Pager(config){
-            localDb.getBooksByCategoryPageSource(category)
-        }.flow
-    }
+  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBooks>> {
+    return Pager(config){
+      localDb.getBooksByCategoryPageSource(category)
+    }.flow
+  }
 
 }

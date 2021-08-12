@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +32,7 @@ class BookInfoActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
         navController = navHostFragment.findNavController()
 
+        navController.popBackStack()
         navController.navigate(fragmentId)
     }
 

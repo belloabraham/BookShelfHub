@@ -10,6 +10,12 @@
     <string name="downloads">Downloads</string>
     <string name="review_no">%d reviews</string>
     <string name="about_this_book">About this book</string>
+    <string name="rate_this_book">Rate this book</string>
+    <string name="tell_others_what">Tell others what you think</string>
+    <string name="post">Post</string>
+    <string name="textLength">0/500</string>
+    <string name="your_review">Your review</string>
+    <string name="edit_your_review">Edit your review</string>
 
     <string name="ratings_reviews">Ratings and reviews</string>
     <string name="see_all_reviews">See all reviews</string>

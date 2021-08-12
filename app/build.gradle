@@ -127,6 +127,8 @@ dependencies {
     //--Bottom Sheet Dialog
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
     implementation 'com.afollestad.material-dialogs:lifecycle:3.3.0'
+    //Material Rating Bar
+    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
     //--Switch Icon
     implementation 'com.bitvale:switcher:1.1.1'
     //--Bottom Navigation

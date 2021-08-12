@@ -61,15 +61,15 @@ class SplashActivity : AppCompatActivity() {
 
     private fun getReferrer(intent:Intent){
         var referrer:String?=null
-            dynamicLink.getDeepLinkAsync(this){
-                if(it!=null){
-                    val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
-                      referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
-                    startNextActivity(intent, referrer)
-                }else{
-                    startNextActivity(intent, referrer)
-                }
+        dynamicLink.getDeepLinkAsync(this){
+            if(it!=null){
+                val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
+                referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
+                startNextActivity(intent, referrer)
+            }else{
+                startNextActivity(intent, referrer)
             }
+        }
     }
 
     private fun startNextActivity(intent:Intent, referrerId:String?){

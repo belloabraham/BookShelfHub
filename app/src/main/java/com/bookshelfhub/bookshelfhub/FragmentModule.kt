@@ -5,7 +5,7 @@ import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
-import com.bookshelfhub.bookshelfhub.view.tooltip.ToolTip
+import com.bookshelfhub.bookshelfhub.views.tooltip.ToolTip
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -142,7 +142,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
 
 
     private fun checkForUpdate(){
-        remoteConfig.fetchConfigAsync(){
+        remoteConfig.fetchConfigAsync{
             //it=error msg
             viewModelScope.launch {
                 val newVersionCode =  remoteConfig.getLong(NEW_VERSION_CODE)

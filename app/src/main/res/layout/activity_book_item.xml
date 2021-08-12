@@ -75,12 +75,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="@dimen/size_8"
+                        android:singleLine="true"
                         style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         android:id="@+id/author"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:id="@+id/price"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -91,7 +93,7 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="@dimen/size_24"
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -107,7 +109,7 @@
                         android:gravity="center_vertical"
                         style="@style/TextAppearance.MaterialComponents.Subtitle2"
                         android:layout_gravity="center_horizontal"
-                        app:drawableEndCompat="@drawable/ic_star_16" />
+                        app:drawableEndCompat="@drawable/ic_star_16dp" />
 
                    <TextView
                        android:layout_width="wrap_content"
@@ -159,6 +161,7 @@
                         android:layout_gravity="bottom"
                         android:clickable="true"
                         android:focusable="true"
+
                         android:id="@+id/shareBookBtn"
                         android:paddingHorizontal="@dimen/size_16"
                         android:text="@string/share"
@@ -230,6 +233,147 @@
                 android:text="@string/lorep_ipsum"
                 android:id="@+id/descText"/>
 
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/userReviewLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/size_24"
+                    android:layout_marginVertical="@dimen/size_24"
+                    android:text="@string/your_review"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingStart="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/userNameText"
+                    android:layout_marginHorizontal="@dimen/size_24"
+                    android:textSize="14sp"
+                    android:text="Hello its me"
+                    android:maxLines="1"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size_24"
+                    android:layout_marginBottom="@dimen/size_24">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/size_50"
+                        android:orientation="horizontal">
+                        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:rating="3"
+                            style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
+                            android:id="@+id/userRatingBar" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="2/4/2021"
+                            android:layout_marginStart="@dimen/size_8"
+                            android:id="@+id/reviewDateTxt" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/size_24"
+                    android:text="@string/lorep_ipsum"
+                    android:layout_marginBottom="@dimen/size_16"
+                    android:id="@+id/userReviewTxt"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editYourReviewBtn"
+                    android:layout_marginStart="22dp"
+                    android:text="@string/edit_your_review"
+                    android:textColor="@color/light_blue_A200"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:paddingLeft="3dp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/size_24"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="@dimen/size_24"
+                android:id="@+id/rateBookLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/rate_this_book"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingStart="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tell_others_what"/>
+
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16"
+                    android:id="@+id/ratingBar"
+                    android:minHeight="@dimen/size_32"
+                    android:minWidth="@dimen/size_32" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ratingInfoLayout"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/size_16"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:placeholderText="@string/tell_others_what">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/userReviewEditText"
+                            android:maxLength="500"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textLength"
+                        android:gravity="end"
+                        android:layout_marginVertical="@dimen/size_8"
+                        android:text="@string/textLength"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="?colorPrimaryVariant"
+                        android:id="@+id/postBtn"
+                        android:text="@string/post"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_50"
@@ -270,8 +414,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/allReviewsBtn"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="22dp"
                 android:text="@string/see_all_reviews"
+                android:paddingLeft="@dimen/size_3"
                 android:textColor="@color/light_blue_A200"
                 style="@style/Widget.AppCompat.Button.Borderless"/>
 

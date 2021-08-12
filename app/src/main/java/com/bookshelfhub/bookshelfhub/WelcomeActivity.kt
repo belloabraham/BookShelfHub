@@ -222,7 +222,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     fun signInOrSignUpWithGoogle(signInErrorMsg:String){
-        this.signInErrorMsg= signInErrorMsg;
+        this.signInErrorMsg= signInErrorMsg
         if (!layout.lottieAnimView.isAnimating) {
             if (connectionUtil.isConnected()){
                 showAnimation(R.raw.google_sign_in)

@@ -13,8 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CartActivityViewModel @Inject constructor(private val localDb: ILocalDb): ViewModel(){
 
-    fun getListOfCartItems(userId:String): LiveData<List<Cart>> {
-        return localDb.getLiveListOfCartItems(userId)
-    }
+  fun getListOfCartItems(userId:String): LiveData<List<Cart>> {
+    return localDb.getLiveListOfCartItems(userId)
+  }
 
 }
