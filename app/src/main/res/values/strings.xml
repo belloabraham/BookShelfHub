@@ -13,7 +13,7 @@
     <string name="rate_this_book">Rate this book</string>
     <string name="tell_others_what">Tell others what you think</string>
     <string name="post">Post</string>
-    <string name="textLength">0/500</string>
+    <string name="reviewtextLength">%d/500</string>
     <string name="your_review">Your review</string>
     <string name="edit_your_review">Edit your review</string>
 

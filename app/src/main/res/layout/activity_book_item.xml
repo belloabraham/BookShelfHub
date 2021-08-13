@@ -90,8 +90,8 @@
 
             </LinearLayout>
 
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/size_24"
                 android:orientation="horizontal">
@@ -99,7 +99,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_gravity="start|bottom"
                     android:orientation="vertical">
 
                     <TextView
@@ -118,6 +118,13 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|bottom"
+                    android:orientation="horizontal">
+
+
                 <View
                     android:layout_width="1dp"
                     android:layout_height="20dp"
@@ -128,7 +135,7 @@
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:layout_marginHorizontal="@dimen/size_16"
                     android:orientation="vertical">
 
                     <TextView
@@ -151,14 +158,16 @@
                     android:layout_width="1dp"
                     android:layout_height="20dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/size_24"
+                    android:layout_marginHorizontal="@dimen/size_24"
                     android:background="?android:attr/listDivider" />
 
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="bottom"
+                        android:layout_gravity="end|bottom"
                         android:clickable="true"
                         android:focusable="true"
 
@@ -169,8 +178,7 @@
                         android:scaleType="fitCenter"
                         app:drawableTopCompat="@drawable/ic_share_arrow" />
 
-
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            </FrameLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
@@ -238,7 +246,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/userReviewLayout">
+                android:visibility="gone"
+                android:id="@+id/yourReviewLayout">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -311,6 +320,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/size_24"
                 android:orientation="vertical"
+                android:visibility="gone"
                 android:layout_marginHorizontal="@dimen/size_24"
                 android:id="@+id/rateBookLayout">
 
@@ -345,6 +355,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         app:placeholderText="@string/tell_others_what">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -358,10 +369,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textLength"
+                        android:id="@+id/reviewLengthTxt"
                         android:gravity="end"
-                        android:layout_marginVertical="@dimen/size_8"
-                        android:text="@string/textLength"/>
+                        android:layout_marginVertical="@dimen/size_8"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:layout_width="match_parent"
@@ -378,7 +388,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/size_50"
                 style="@style/BookItemNavCard"
-                android:id="@+id/reviewCard">
+                android:id="@+id/ratingsAndReviewCard">
 
                 <FrameLayout
                     android:layout_width="match_parent"

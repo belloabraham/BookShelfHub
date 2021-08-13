@@ -9,6 +9,14 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //Todo User Review
+    @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
+    fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addUserReview(userReview: UserReview)
+
+
     //Todo Bookmarks
     @Query("SELECT * FROM Bookmark WHERE deleted = :deleted AND userId =:userId")
     suspend fun getBookmarks(userId: String, deleted: Boolean):List<Bookmark>

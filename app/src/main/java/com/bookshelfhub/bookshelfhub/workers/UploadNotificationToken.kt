@@ -31,7 +31,6 @@ class UploadNotificationToken @AssistedInject constructor (
             return Result.retry()
         }
 
-
         val appToken = settingsUtil.getString(NOTIFICATION_TOKEN)
 
         cloudMessaging.getNotificationTokenAsync {

@@ -4,29 +4,43 @@ import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.utils.MDUtil.textChanged
+import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
+import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.views.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.toast.Toasty
+import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collectLatest
@@ -41,6 +55,12 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var layout:ActivityBookItemBinding
     @Inject
     lateinit var localDb: ILocalDb
+    @Inject
+    lateinit var stringUtil: StringUtil
+    @Inject
+    lateinit var json: Json
+    @Inject
+    lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var userAuth: IUserAuth
     private val bookItemViewModel:BookItemViewModel by viewModels()
@@ -168,7 +188,7 @@ class BookItemActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        layout.reviewCard.setOnClickListener {
+        layout.ratingsAndReviewCard.setOnClickListener {
             startBookInfoActivity()
         }
 
@@ -188,22 +208,89 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.postBtn.setOnClickListener {
 
-            layout.rateBookLayout.visibility = GONE
-            layout.ratingInfoLayout.visibility = GONE
-            layout.userReviewLayout.visibility = VISIBLE
+            val review = layout.userReviewEditText.text.toString()
+            val rating = layout.ratingBar.rating
 
-            //TODO Pass review data to onetime request work manager that requires network and run only if data
-        // is no null and retry if fail
+            val userName = userAuth.getName()!!
+
+            val userReview = UserReview(isbn, review,"", rating, userName)
+
+            if (stringUtil.containsUrl(review)){
+                Toast(this).showToast("containsUrl")
+            }
+
+             lifecycleScope.launch {
+                   // localDb.addUserReview(userReview)
+
+                    if (!stringUtil.containsUrl(review)){
+
+                    }
+                }
 
         }
 
+        layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                s?.let {
+                    layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), it.length)
+                }
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        val animDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+
         layout.editYourReviewBtn.setOnClickListener {
-            layout.userReviewLayout.visibility = GONE
+            layout.yourReviewLayout.visibility = GONE
             layout.rateBookLayout.visibility = VISIBLE
+            AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
+        }
 
-           //TODO layout.ratingBar.numStars = userRatingValue
-          //TODO  layout.userReviewEditText.text = ""
+        bookItemViewModel.getLiveUserReview(userId).observe(this, Observer { review ->
 
+            layout.ratingInfoLayout.visibility = GONE
+
+            if (review.isPresent){
+                AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, animDuration)
+                val userReview = review.get()
+                layout.ratingBar.rating = userReview.userRating
+                layout.userNameText.text = userReview.userName
+                layout.userReviewTxt.text = userReview.review
+                layout.userRatingBar.rating = userReview.userRating
+                layout.reviewDateTxt.text = userReview.reviewDate
+                layout.userReviewEditText.setText(userReview.review)
+
+            }else{
+                getUserReviewAsync(isbn, userId, animDuration)
+            }
+
+            val reviewLength = layout.userReviewEditText.text.toString().length
+
+            layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
+        })
+
+    }
+
+  private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
+        cloudDb.getLiveDataAsync(DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
+            documentSnapshot?.let {
+                if (it.exists()){
+                    val doc = it.toObject<Any>()
+                    val userReview = json.fromAny(doc!!, UserReview::class.java)
+                    lifecycleScope.launch {
+                        localDb.addUserReview(userReview)
+                    }
+                }else{
+                    AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
+                }
+            }
+            if (documentSnapshot==null){
+                AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
+            }
         }
     }
 

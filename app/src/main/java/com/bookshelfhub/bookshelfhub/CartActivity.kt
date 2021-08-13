@@ -51,7 +51,7 @@ class CartActivity : AppCompatActivity() {
     }
 
 
-    cartActivityViewModel.getListOfCartItems(userId).observe(this, Observer {  cartList ->
+    cartActivityViewModel.getListOfCartItems().observe(this, Observer {  cartList ->
       if (cartList.isNotEmpty()){
         layout.makePaymentFab.isEnabled = true
         layout.emptyCartLayout.visibility = View.GONE

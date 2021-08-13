@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
@@ -11,10 +12,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartActivityViewModel @Inject constructor(private val localDb: ILocalDb): ViewModel(){
+class CartActivityViewModel @Inject constructor(private val localDb: ILocalDb, userAuth: IUserAuth): ViewModel(){
 
-  fun getListOfCartItems(userId:String): LiveData<List<Cart>> {
-    return localDb.getLiveListOfCartItems(userId)
+  private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
+  private val userId = userAuth.getUserId()
+
+  init {
+    liveCartItems = localDb.getLiveListOfCartItems(userId)
+  }
+
+  fun getListOfCartItems(): LiveData<List<Cart>> {
+    return liveCartItems
   }
 
 }

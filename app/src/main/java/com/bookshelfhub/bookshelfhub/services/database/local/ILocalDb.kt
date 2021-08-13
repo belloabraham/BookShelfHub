@@ -8,6 +8,8 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun addUserReview(userReview: UserReview)
+     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
      suspend fun getPublishedBook(isbn: String): PublishedBooks
      fun getLiveBookmarks(userId: String, deleted: Boolean = false): LiveData<List<Bookmark>>
      suspend fun getListOfCartItems(userId: String):List<Cart>

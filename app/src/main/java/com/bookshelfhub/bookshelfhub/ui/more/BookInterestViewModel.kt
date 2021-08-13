@@ -18,7 +18,6 @@ class BookInterestViewModel @Inject constructor(val localDb: ILocalDb, val userA
 
     init {
         bookInterest = localDb.getLiveBookInterest(userId)
-
     }
 
     fun getBookInterest(): LiveData<Optional<BookInterest>> {

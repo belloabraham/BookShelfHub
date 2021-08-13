@@ -12,6 +12,16 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
+    override suspend fun addUserReview(userReview: UserReview) {
+        RoomInstance.getDatabase(context).userDao().addUserReview(userReview)
+    }
+
+    //TODO User Review
+    override fun getLiveUserReview(userId: String): LiveData<Optional<UserReview>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveUserReview(userId)
+    }
+
+
     //Todo Bookmarks
     override suspend fun getBookmarks(userId: String, deleted: Boolean): List<Bookmark> {
         return  RoomInstance.getDatabase(context).userDao().getBookmarks(userId, deleted)

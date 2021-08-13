@@ -31,19 +31,25 @@ import javax.inject.Inject
     }
 
 
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, orderBy:String, shouldCache:Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveListOfDataAsync(collection:String, field: String, type:Class<T>, orderBy:String, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.firestoreSettings=getCacheSettings(shouldCache)
          db.collection(collection)
              .orderBy(orderBy)
              .addSnapshotListener { querySnapShot, e ->
+
+                 if (shouldRetry && e!=null){
+                     return@addSnapshotListener
+                 }
 
                  var dataList = emptyList<T>()
                  querySnapShot?.let {
 
                      if (!it.isEmpty){
                          for (doc in it) {
-                             val data =  doc.get(field)
-                             dataList = dataList.plus(json.fromAny(data!!, type))
+                             if (doc.exists()){
+                                 val data =  doc.get(field)
+                                 dataList = dataList.plus(json.fromAny(data!!, type))
+                             }
                          }
                      }
                  }
@@ -73,7 +79,20 @@ import javax.inject.Inject
             }
     }
 
-     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String, shouldCache:Boolean, onComplete:  (dataList:List<T>)->Unit){
+
+     override fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldCache:Boolean, shouldRetry:Boolean, onComplete:
+         (data:DocumentSnapshot?, error:FirebaseFirestoreException?)->Unit){
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection).document(document).collection(subCollection).document(subDocument)
+             .addSnapshotListener { documentSnapShot, error ->
+                 if (shouldRetry && error!=null){
+                     return@addSnapshotListener
+                 }
+                     onComplete(documentSnapShot, error)
+             }
+     }
+
+     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, field: String, type:Class<T>, startAt:String, orderBy:String, shouldCache:Boolean, shouldRetry: Boolean,  onComplete:  (dataList:List<T>)->Unit){
 
          db.firestoreSettings=getCacheSettings(shouldCache)
          db.collection(collection)
@@ -81,12 +100,18 @@ import javax.inject.Inject
              .startAfter(startAt)
              .addSnapshotListener { querySnapShot, e ->
 
+                 if (shouldRetry && e!=null){
+                     return@addSnapshotListener
+                 }
+
                  var dataList = emptyList<T>()
                  querySnapShot?.let {
                      if (!it.isEmpty){
                          for (doc in it) {
-                             val data =  doc.get(field)
-                             dataList = dataList.plus(json.fromAny(data!!, type))
+                             if (doc.exists()){
+                                 val data =  doc.get(field)
+                                 dataList = dataList.plus(json.fromAny(data!!, type))
+                             }
                          }
                      }
                  }
@@ -104,8 +129,10 @@ import javax.inject.Inject
                  querySnapShot?.let {
                      if (!it.isEmpty){
                          for (doc in it) {
-                             val data =  doc.get(field)
-                             dataList = dataList.plus(json.fromAny(data!!, type))
+                             if (doc.exists()){
+                                 val data =  doc.get(field)
+                                 dataList = dataList.plus(json.fromAny(data!!, type))
+                             }
                          }
                      }
                  }
@@ -127,8 +154,10 @@ import javax.inject.Inject
                 querySnapShot?.let {
                     if (!it.isEmpty){
                         for (doc in it) {
-                            val data =  doc.get(field)
-                            dataList = dataList.plus(json.fromAny(data!!, type))
+                            if (doc.exists()){
+                                val data =  doc.get(field)
+                                dataList = dataList.plus(json.fromAny(data!!, type))
+                            }
                         }
                     }
                 }
@@ -158,7 +187,7 @@ import javax.inject.Inject
         }
     }
 
-     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String, onSuccess:         suspend ()->Unit){
+     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String, onSuccess: suspend ()->Unit){
          val batch = db.batch()
          for (item in list){
              val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
@@ -170,7 +199,6 @@ import javax.inject.Inject
              }
          }
      }
-
 
 
     override fun getCacheSettings(shouldCache: Boolean):FirebaseFirestoreSettings{
