@@ -57,7 +57,7 @@ class StringUtil{
     private val WORD_BOUNDARY = "(?:\\b|$|^)"
 
     private val WEB_URL = ("("
-            + "((\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?\\s*)"
+            + "(.*)"
             + "("
             + "(?:" + PROTOCOL + "(?:" + USER_INFO + ")?" + ")?"
             + "(?:" + DOMAIN_NAME_STR + ")"
@@ -65,7 +65,7 @@ class StringUtil{
             + ")"
             + "(" + PATH_AND_QUERY + ")?"
             + WORD_BOUNDARY
-            + "(\\s*(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?)"
+            + "(.*)"
             + ")")
 
     fun isValidEmailAddress(email:String):Boolean{

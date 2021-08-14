@@ -227,7 +227,7 @@ class BookItemActivity : AppCompatActivity() {
                 Toast(this).showToast("containsUrl")
             }
 
-             lifecycleScope.launch {
+            /* lifecycleScope.launch {
                     localDb.addUserReview(userReview)
                     if (!stringUtil.containsUrl(review)){
                         val data = Data.Builder()
@@ -239,7 +239,7 @@ class BookItemActivity : AppCompatActivity() {
                                 .build()
                         WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
                     }
-                }
+                }*/
         }
 
         layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
