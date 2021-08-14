@@ -16,6 +16,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.afollestad.materialdialogs.utils.MDUtil.textChanged
 import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
@@ -37,8 +40,13 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Store
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.views.toast.Toast
 import com.bookshelfhub.bookshelfhub.views.toast.Toasty
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.PostUserReview
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firestore.v1.DocumentTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -213,20 +221,25 @@ class BookItemActivity : AppCompatActivity() {
 
             val userName = userAuth.getName()!!
 
-            val userReview = UserReview(isbn, review,"", rating, userName)
+            val userReview = UserReview(isbn, review, rating, userName)
 
             if (stringUtil.containsUrl(review)){
                 Toast(this).showToast("containsUrl")
             }
 
              lifecycleScope.launch {
-                   // localDb.addUserReview(userReview)
-
+                    localDb.addUserReview(userReview)
                     if (!stringUtil.containsUrl(review)){
-
+                        val data = Data.Builder()
+                        data.putString(Book.ISBN.KEY, isbn)
+                        val userReviewPostWorker =
+                            OneTimeWorkRequestBuilder<PostUserReview>()
+                                .setConstraints(Constraint.getConnected())
+                                .setInputData(data.build())
+                                .build()
+                        WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
                     }
                 }
-
         }
 
         layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
@@ -261,7 +274,6 @@ class BookItemActivity : AppCompatActivity() {
                 layout.userNameText.text = userReview.userName
                 layout.userReviewTxt.text = userReview.review
                 layout.userRatingBar.rating = userReview.userRating
-                layout.reviewDateTxt.text = userReview.reviewDate
                 layout.userReviewEditText.setText(userReview.review)
 
             }else{

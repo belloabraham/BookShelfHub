@@ -9,7 +9,6 @@ data class UserReview(
     @PrimaryKey
     val isbn:String,
     var review:String,
-    var reviewDate:String,
     var userRating:Float=0f,
     var userName:String
 )

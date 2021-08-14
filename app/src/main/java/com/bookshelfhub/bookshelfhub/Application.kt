@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
@@ -14,7 +15,9 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.FontRequestEmojiCompatConfig
+import androidx.core.provider.FontRequest
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -33,6 +36,8 @@ class Application: android.app.Application(), Configuration.Provider {
         //Initialize firebase (Required for App Check)
         FirebaseApp.initializeApp(this)
 
+        setupDownloadableEmojiFont()
+
         //Setup App Check
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
         firebaseAppCheck.installAppCheckProviderFactory(
@@ -50,10 +55,8 @@ class Application: android.app.Application(), Configuration.Provider {
 
 
     private fun enqueueWorkers(){
-        val connected = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
 
+        val connected = Constraint.getConnected()
         val removeUnPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
             .setInitialDelay(1, TimeUnit.HOURS)
             .setConstraints(connected)
@@ -74,6 +77,17 @@ class Application: android.app.Application(), Configuration.Provider {
         WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }
 
+
+    private  fun setupDownloadableEmojiFont(){
+        val fontRequest = FontRequest(
+            "com.google.android.gms.fonts",
+            "com.google.android.gms",
+            "Noto Color Emoji Compat",
+            R.array.com_google_android_gms_fonts_certs)
+       val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
+            .setReplaceAll(true)
+        EmojiCompat.init(config)
+    }
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig

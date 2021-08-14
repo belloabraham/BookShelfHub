@@ -57,7 +57,7 @@ class StringUtil{
     private val WORD_BOUNDARY = "(?:\\b|$|^)"
 
     private val WEB_URL = ("("
-            + "(\\W*\\w*\\d*\\s*)?"
+            + "((\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?\\s*)"
             + "("
             + "(?:" + PROTOCOL + "(?:" + USER_INFO + ")?" + ")?"
             + "(?:" + DOMAIN_NAME_STR + ")"
@@ -65,7 +65,7 @@ class StringUtil{
             + ")"
             + "(" + PATH_AND_QUERY + ")?"
             + WORD_BOUNDARY
-            + "(\\W*\\w*\\d*\\s*)?"
+            + "(\\s*(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?(\\s*)?(\\S*)?)"
             + ")")
 
     fun isValidEmailAddress(email:String):Boolean{
@@ -77,7 +77,7 @@ class StringUtil{
     }
 
     fun containsUrl(value:String):Boolean{
-        return Pattern.compile(WEB_URL).matcher(value).matches()
+        return (value.contains("facebook.com/",true) || value.contains("instagram.com/",true) || value.contains("twitter.com/",true) || value.contains("bit.ly/",true) || value.contains("amazon.com/",true) || value.contains("tinyurl.com/",true) || value.contains("goodreads.com/",true) || value.contains("books.google.com/",true)|| Pattern.compile(WEB_URL).matcher(value).matches())
     }
 
 }

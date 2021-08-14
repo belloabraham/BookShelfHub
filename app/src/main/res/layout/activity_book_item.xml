@@ -288,14 +288,13 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2/4/2021"
                             android:layout_marginStart="@dimen/size_8"
                             android:id="@+id/reviewDateTxt" />
 
                     </LinearLayout>
                 </FrameLayout>
 
-                <TextView
+                <androidx.emoji.widget.EmojiTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/size_24"
@@ -358,9 +357,11 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         app:placeholderText="@string/tell_others_what">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <androidx.emoji.widget.EmojiEditText
                             android:layout_width="match_parent"
+                            android:padding="@dimen/size_8"
                             android:layout_height="wrap_content"
+                            android:minHeight="?actionBarSize"
                             android:id="@+id/userReviewEditText"
                             android:maxLength="500"/>
 
