@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
+import androidx.work.ListenableWorker
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.google.firebase.firestore.DocumentSnapshot
@@ -8,6 +9,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 
 interface ICloudDb {
+
+    fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ): ListenableWorker.Result
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldCache:Boolean=false, shouldRetry:Boolean = true, onComplete:
         (data:DocumentSnapshot?, error: FirebaseFirestoreException?)->Unit)

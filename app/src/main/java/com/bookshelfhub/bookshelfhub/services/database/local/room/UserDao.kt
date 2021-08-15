@@ -13,6 +13,9 @@ interface UserDao {
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
 
+    @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
+    suspend fun getUserReview(isbn:String): Optional<UserReview>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUserReview(userReview: UserReview)
 

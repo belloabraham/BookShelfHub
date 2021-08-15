@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
+import androidx.work.ListenableWorker.Result
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.google.firebase.firestore.*
@@ -145,6 +146,22 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
+
+     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ):Result{
+
+         db.collection(collection).document(document).collection(subCollection).document(subDocument)
+             .set(data, SetOptions.merge())
+             .addOnFailureListener {
+                 Result.retry()
+             }
+             .addOnSuccessListener {
+                 runBlocking {
+                     onSuccess()
+                 }
+             }
+         return Result.success()
+     }
+
      override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, type:Class<T>,         shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
         db.collection(collection).document(document).collection(subCollection)
