@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
@@ -20,16 +21,12 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.afollestad.materialdialogs.utils.MDUtil.textChanged
-import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
-import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
+import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
+import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -44,6 +41,8 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
+import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firestore.v1.DocumentTransform
@@ -61,10 +60,17 @@ import javax.inject.Inject
 class BookItemActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookItemBinding
+    private val BOOK_REPORT_URL = "book_report_url"
     @Inject
     lateinit var localDb: ILocalDb
     @Inject
     lateinit var stringUtil: StringUtil
+    @Inject
+    lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var dynamicLink: IDynamicLink
+    @Inject
+    lateinit var remoteConfig: IRemoteConfig
     @Inject
     lateinit var json: Json
     @Inject
@@ -180,6 +186,25 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.shareBookBtn.setOnClickListener {
 
+            var  link:String?
+            lifecycleScope.launch {
+                  link =  settingsUtil.getString(PubReferrer.USER_REF_LINK.KEY)
+
+                    if (link==null){
+                        dynamicLink.getLinkAsync(
+                            remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
+                            remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
+                            remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
+                            userId
+                        ){
+                           it?.let {
+                              shareBook(it.toString())
+                           }
+                        }
+                    }else{
+                        shareBook(link!!)
+                    }
+            }
         }
 
         layout.downloadBtn.setOnClickListener {
@@ -187,7 +212,8 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.aboutBookCard.setOnClickListener {
-            startBookInfoActivity(bookItem!!.name, R.id.bookInfoFragment)
+
+            startBookInfoActivity(isbn,  title = bookItem!!.name, R.id.bookInfoFragment)
         }
 
         layout.similarBooksCard.setOnClickListener {
@@ -197,11 +223,11 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.ratingsAndReviewCard.setOnClickListener {
-            startBookInfoActivity()
+            startBookInfoActivity(isbn)
         }
 
         layout.allReviewsBtn.setOnClickListener {
-            startBookInfoActivity()
+            startBookInfoActivity(isbn)
         }
         
         layout.checkoutOutBtn.setOnClickListener {
@@ -223,11 +249,7 @@ class BookItemActivity : AppCompatActivity() {
 
             val userReview = UserReview(isbn, review, rating, userName)
 
-            if (stringUtil.containsUrl(review)){
-                Toast(this).showToast("containsUrl")
-            }
-
-            /* lifecycleScope.launch {
+             lifecycleScope.launch {
                     localDb.addUserReview(userReview)
                     if (!stringUtil.containsUrl(review)){
                         val data = Data.Builder()
@@ -239,7 +261,7 @@ class BookItemActivity : AppCompatActivity() {
                                 .build()
                         WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
                     }
-                }*/
+                }
         }
 
         layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
@@ -285,6 +307,10 @@ class BookItemActivity : AppCompatActivity() {
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
         })
 
+    }
+
+    private fun shareBook(text:String){
+        Share(this).shareText(text)
     }
 
   private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
@@ -343,17 +369,18 @@ class BookItemActivity : AppCompatActivity() {
          return "$main"+unitPlus
     }
 
-    private fun startBookInfoActivity(title:String, fragmentID:Int){
+    private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
             putExtra(Fragment.TITLE.KEY,title)
             putExtra(Fragment.ID.KEY, fragmentID)
+            putExtra(Book.ISBN.KEY, isbn)
         }
         startActivity(intent)
     }
 
-    private fun startBookInfoActivity(title:Int=R.string.ratings_reviews, fragmentID:Int = R.id.reviewsFragment){
-        startBookInfoActivity(getString(title), fragmentID)
+    private fun startBookInfoActivity(isbn:String, title:Int=R.string.ratings_reviews, fragmentID:Int = R.id.reviewsFragment){
+        startBookInfoActivity(isbn, getString(title), fragmentID)
     }
 
 
@@ -362,11 +389,20 @@ class BookItemActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val url = remoteConfig.getString(BOOK_REPORT_URL)
+        val intent = Intent(this, WebViewActivity::class.java)
+        with(intent){
+            putExtra(WebView.TITLE.KEY, getString(R.string.report_book))
+            putExtra(WebView.URL.KEY, url)
+        }
+        startActivity(intent)
+        return super.onOptionsItemSelected(item)
+    }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }
-
 
 }

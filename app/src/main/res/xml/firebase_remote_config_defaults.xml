@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
+
+    <!-- TODO: Book Item -->
+    <entry>
+        <key>book_report_url</key>
+        <value></value>
+    </entry>
+
     <!-- TODO: Contact Info -->
     <entry>
         <key>phone</key>

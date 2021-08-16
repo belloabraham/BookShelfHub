@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+
+    <!-- TODO: Book Item-->
+    <string name="published_date">Published date: %s</string>
+
     <!-- TODO: Book Item-->
     <string name="options">Options</string>
     <string name="report_book">Report book</string>

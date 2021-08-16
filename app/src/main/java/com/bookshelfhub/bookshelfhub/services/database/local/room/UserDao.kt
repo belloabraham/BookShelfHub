@@ -9,9 +9,20 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //TODO Transaction
+    @Transaction
+     suspend fun deleteUserData(){
+        deleteAllReviews()
+        deleteUserRecord()
+    }
+
+
     //Todo User Review
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
+
+    @Query("DELETE FROM UserReview")
+    suspend fun deleteAllReviews()
 
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     suspend fun getUserReview(isbn:String): Optional<UserReview>
@@ -59,6 +70,9 @@ interface UserDao {
     suspend fun getListOfCartItems(userId: String):List<Cart>
 
     //Todo User Record
+    @Query("DELETE FROM User")
+    suspend fun deleteUserRecord()
+
     @Query("SELECT * FROM User WHERE userId = :userId")
     suspend fun getUser(userId:String): Optional<User>
 

@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,6 +25,7 @@ class BookInfoActivity : AppCompatActivity() {
 
         val title = intent.getStringExtra(Fragment.TITLE.KEY)
         val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
+        val isbn = intent.getStringExtra(Book.ISBN.KEY)
 
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = title
@@ -33,7 +35,10 @@ class BookInfoActivity : AppCompatActivity() {
         navController = navHostFragment.findNavController()
 
         navController.popBackStack()
-        navController.navigate(fragmentId)
+
+        val args = Bundle()
+        args.putString(Book.ISBN.KEY, isbn)
+        navController.navigate(fragmentId, args)
     }
 
 
@@ -41,5 +46,7 @@ class BookInfoActivity : AppCompatActivity() {
         finish()
         return true
     }
+
+
 
 }
