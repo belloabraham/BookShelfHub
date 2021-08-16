@@ -12,7 +12,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -20,11 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.afollestad.materialdialogs.utils.MDUtil.textChanged
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.const.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.extensions.load
@@ -36,16 +35,11 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Publi
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.views.toast.Toast
-import com.bookshelfhub.bookshelfhub.views.toast.Toasty
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
-import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firestore.v1.DocumentTransform
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -120,11 +114,9 @@ class BookItemActivity : AppCompatActivity() {
                layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), 10)
                layout.noRatingTxt.text = "4.5"
                layout.noOfDownloadsText.text = getNoOfDownloads(book.noOfDownloads)
-
-
                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
 
-               bookItemViewModel.getLiveListOfCartItems(userId).observe(this@BookItemActivity, Observer { cartItems ->
+               bookItemViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
                    if(book.price > 0.0){
                        layout.addToCartBtn.visibility = VISIBLE
                    }
@@ -148,7 +140,9 @@ class BookItemActivity : AppCompatActivity() {
                })
 
                lifecycleScope.launch {
-                   bookItemViewModel.getBooksByCategoryPageSource(book.category).collectLatest { similarBooks ->
+
+                   bookItemViewModel.
+                   getBooksByCategoryPageSource(book.category).collectLatest { similarBooks ->
 
                        similarBooksAdapter.addLoadStateListener { loadState ->
                            val isVisible =
@@ -249,9 +243,10 @@ class BookItemActivity : AppCompatActivity() {
 
             val userReview = UserReview(isbn, review, rating, userName)
 
+
              lifecycleScope.launch {
                     localDb.addUserReview(userReview)
-                    if (!stringUtil.containsUrl(review)){
+                    if (!stringUtil.containsUrl(review, Regex.URL_IN_TEXT)){
                         val data = Data.Builder()
                         data.putString(Book.ISBN.KEY, isbn)
                         val userReviewPostWorker =
@@ -285,7 +280,7 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
         }
 
-        bookItemViewModel.getLiveUserReview(userId).observe(this, Observer { review ->
+        bookItemViewModel.getLiveUserReview().observe(this, Observer { review ->
 
             layout.ratingInfoLayout.visibility = GONE
 

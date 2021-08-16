@@ -3,14 +3,13 @@ package com.bookshelfhub.bookshelfhub.services.database.cloud
 import androidx.work.ListenableWorker
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.*
 
 interface ICloudDb {
 
-    fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ): ListenableWorker.Result
+    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, orderBy: String, type:Class<T>, limit:Long, direction: Query.Direction = Query.Direction.DESCENDING, shouldCache:Boolean = true, onComplete: suspend (dataList:List<T>)->Unit)
+
+    fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, field: String, onSuccess: suspend ()->Unit ): ListenableWorker.Result
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldCache:Boolean=false, shouldRetry:Boolean = true, onComplete:
         (data:DocumentSnapshot?, error: FirebaseFirestoreException?)->Unit)

@@ -55,7 +55,7 @@ class StoreFragment : Fragment() {
 
         val userId = userAuth.getUserId()
 
-        storeViewModel.getLiveTotalCartItemsNo(userId).observe(viewLifecycleOwner, Observer { cartItemsCount ->
+        storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
 
@@ -189,7 +189,7 @@ class StoreFragment : Fragment() {
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = View.GONE
             layout.loadingAnimView.visibility = View.VISIBLE
-            storeViewModel.loadBooksFromCloud(emptyList())
+            storeViewModel.loadBooksFromCloud()
         }
 
         storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { allBooks ->

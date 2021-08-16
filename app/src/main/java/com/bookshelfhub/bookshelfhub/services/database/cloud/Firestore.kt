@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import androidx.work.ListenableWorker.Result
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.google.firebase.firestore.*
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
  class Firestore @Inject constructor(val json: Json): ICloudDb {
     private val db:FirebaseFirestore = Firebase.firestore
-    private val lastUpdated="last_uploaded"
+    private val lastUpdated=DbFields.LAST_UPDATED.KEY
 
 
     override fun addDataAsync(data: Any, collection:String, document:String, field:String, lastUpdated:FieldValue, onSuccess: suspend ()->Unit ){
@@ -147,10 +148,43 @@ import javax.inject.Inject
 
      //TODO Sub Collections
 
-     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ):Result{
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String,orderBy: String, type:Class<T>, limit:Long, direction:Query.Direction, shouldCache:Boolean,  onComplete: suspend (dataList:List<T>)->Unit){
+
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection).document(document).collection(subCollection)
+             .orderBy(orderBy, direction)
+             .limit(limit)
+             .get()
+             .addOnSuccessListener { querySnapShot ->
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             if (doc.exists()){
+                                 val data =  doc.get(field)
+                                 dataList = dataList.plus(json.fromAny(data!!, type))
+                             }
+                         }
+                     }
+                 }
+
+                 runBlocking {
+                     onComplete(dataList)
+                 }
+             }
+     }
+
+
+
+     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, field: String, onSuccess: suspend ()->Unit ):Result{
+
+         val newData = hashMapOf(
+             field to data,
+             this.lastUpdated to lastUpdated
+         )
 
          db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .set(data, SetOptions.merge())
+             .set(newData, SetOptions.merge())
              .addOnFailureListener {
                  Result.retry()
              }
@@ -162,7 +196,7 @@ import javax.inject.Inject
          return Result.success()
      }
 
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, type:Class<T>,         shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, type:Class<T>,  shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
         db.firestoreSettings=getCacheSettings(shouldCache)
         db.collection(collection).document(document).collection(subCollection)
             .get()

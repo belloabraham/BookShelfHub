@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -21,11 +22,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreViewModel @Inject constructor(@ApplicationContext context: Context, private val cloudDb: ICloudDb, private val localDb: ILocalDb, val connectionUtil: ConnectionUtil): ViewModel() {
+class StoreViewModel @Inject constructor(@ApplicationContext context: Context, private val cloudDb: ICloudDb, private val localDb: ILocalDb, val connectionUtil: ConnectionUtil, val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBooks : LiveData<List<PublishedBooks>> = MutableLiveData()
     private var isNoConnection : MutableLiveData<Boolean> = MutableLiveData()
     private var isNetworkError : MutableLiveData<Boolean> = MutableLiveData()
+    private val userId = userAuth.getUserId()
+    private var totalCartItems : LiveData<Int> = MutableLiveData()
 
 
     private val config  = PagingConfig(
@@ -35,8 +38,7 @@ class StoreViewModel @Inject constructor(@ApplicationContext context: Context, p
     )
 
     init {
-
-             val books = listOf(
+        val books = listOf(
                      PublishedBooks("1", name="A Quite place", coverUrl =  "https://i.ibb.co/gMpTyLY/bookfair2.png",
                      category = "Cook Books", tag = ""),
                     PublishedBooks("2", name="A Quite place", coverUrl =  "https://i.ibb.co/gMpTyLY/bookfair2.png",
@@ -1767,12 +1769,12 @@ class StoreViewModel @Inject constructor(@ApplicationContext context: Context, p
                         category = "Cook Books", tag = ""),
                 )
 
-
         loadBooksFromCloud(books)
 
+        totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
     }
 
-     fun loadBooksFromCloud(books:List<PublishedBooks>){
+     fun loadBooksFromCloud(books:List<PublishedBooks> = emptyList()){
 
          if (connectionUtil.isConnected()){
              allPublishedBooks = localDb.getLivePublishedBooks()
@@ -1817,9 +1819,8 @@ class StoreViewModel @Inject constructor(@ApplicationContext context: Context, p
         }
     }
 
-
-    fun getLiveTotalCartItemsNo(userId:String):LiveData<Int> {
-        return localDb.getLiveTotalCartItemsNo(userId)
+    fun getLiveTotalCartItemsNo():LiveData<Int> {
+        return totalCartItems
     }
 
     fun getIsNetworkError():LiveData<Boolean> {

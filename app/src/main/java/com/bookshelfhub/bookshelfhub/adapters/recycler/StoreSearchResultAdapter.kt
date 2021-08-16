@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookItemActivity

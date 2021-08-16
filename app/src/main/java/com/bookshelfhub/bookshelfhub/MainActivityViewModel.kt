@@ -99,7 +99,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
     }
 
 
-    fun setOnBackPressed( value:Boolean){
+    fun setOnBackPressed(value:Boolean){
         onBackPressed.value = value
     }
     fun getOnBackPressed():LiveData<Boolean>{

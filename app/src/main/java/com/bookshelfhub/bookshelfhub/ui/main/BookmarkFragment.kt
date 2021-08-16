@@ -50,7 +50,7 @@ class BookmarkFragment : Fragment() {
             removeBookmarkHint()
         }
 
-        bookmarkViewModel.getLiveBookmarks(userId).observe(viewLifecycleOwner, Observer { bookmarks ->
+        bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer { bookmarks ->
             if (bookmarks.isEmpty()){
                 layout.emptyBookmarksLayout.visibility = View.VISIBLE
                 layout.bookmarkListRecView.visibility = View.GONE

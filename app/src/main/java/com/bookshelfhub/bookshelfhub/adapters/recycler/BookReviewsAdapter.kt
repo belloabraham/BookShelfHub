@@ -17,9 +17,9 @@ import com.bookshelfhub.bookshelfhub.views.toast.Toast
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-class OrderedBooksAdapter (private val activity: Activity) {
+class BookReviewsAdapter (private val activity: Activity) {
 
-    fun getOrderedBooksAdapter():ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>{
+    fun getAdapter():ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>{
 
         return adapterOf {
 
@@ -30,7 +30,7 @@ class OrderedBooksAdapter (private val activity: Activity) {
 
             register(
                 layoutResource = R.layout.ordered_books_item,
-                viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
+                viewHolder = BookReviewsAdapter::BookReviewsViewHolder,
                 onBindViewHolder = { vh, _, model ->
                    vh.bindToView(model, activity)
                 }
@@ -38,7 +38,7 @@ class OrderedBooksAdapter (private val activity: Activity) {
         }
     }
 
-    private class OrderedBookViewHolder(view: View):RecyclerViewHolder<OrderedBooks>(view){
+    private class BookReviewsViewHolder(view: View):RecyclerViewHolder<OrderedBooks>(view){
        private val title: TextView = view.findViewById(R.id.title)
        private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
        private val imageView: ImageView = view.findViewById(R.id.itemImageView)

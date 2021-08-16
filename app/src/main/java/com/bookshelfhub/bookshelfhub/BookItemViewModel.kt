@@ -1,12 +1,10 @@
 package com.bookshelfhub.bookshelfhub
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -20,12 +18,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BookItemViewModel @Inject constructor(private val localDb: ILocalDb, val cloudDb:ICloudDb, userAuth: IUserAuth): ViewModel(){
+class BookItemViewModel @Inject constructor(
+  private val localDb: ILocalDb,
+  val cloudDb:ICloudDb,
+  val savedState: SavedStateHandle,
+  userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
 
+
   val userId = userAuth.getUserId()
+  val isbn = savedState.get<String>(Book.ISBN.KEY)!!
+
   private val config  = PagingConfig(
     pageSize = 5,
     enablePlaceholders = true,
@@ -33,15 +38,21 @@ class BookItemViewModel @Inject constructor(private val localDb: ILocalDb, val c
   )
 
   init {
+
     liveCartItems = localDb.getLiveListOfCartItems(userId)
-     liveUserReview = localDb.getLiveUserReview(userId)
+
+    liveUserReview = localDb.getLiveUserReview(isbn)
+
+  /*  cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, DbFields.REVIEW.KEY, DbFields.LAST_UPDATED.KEY, UserReview::class.java, 3){
+
+    }*/
   }
 
-  fun getLiveListOfCartItems(userId:String): LiveData<List<Cart>> {
+  fun getLiveListOfCartItems(): LiveData<List<Cart>> {
     return liveCartItems
   }
 
-  fun getLiveUserReview(userId:String): LiveData<Optional<UserReview>> {
+  fun getLiveUserReview(): LiveData<Optional<UserReview>> {
     return liveUserReview
   }
 

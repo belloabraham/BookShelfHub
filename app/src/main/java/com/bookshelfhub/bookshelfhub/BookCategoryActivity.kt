@@ -46,8 +46,6 @@ class BookCategoryActivity : AppCompatActivity() {
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
-        bookCategoryViewModel.loadLiveBooksByCategory(category, this)
-
 
         lifecycleScope.launch {
             if (category==getString(R.string.recommended_for)){
@@ -59,7 +57,7 @@ class BookCategoryActivity : AppCompatActivity() {
                     bookListAdapter.submitData(books)
                 }
             }else{
-                bookCategoryViewModel.getBooksByCategory(category).collectLatest { books->
+                bookCategoryViewModel.getBooksByCategory().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }

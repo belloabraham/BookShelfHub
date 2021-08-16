@@ -5,6 +5,9 @@
 
     <!-- TODO: Book Item-->
     <string name="published_date">Published date: %s</string>
+    <string name="author">Author: %s</string>
+    <string name="category">Category: %s</string>
+    <string name="isbn">ISBN: %s</string>
 
     <!-- TODO: Book Item-->
     <string name="options">Options</string>

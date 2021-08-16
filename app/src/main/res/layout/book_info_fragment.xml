@@ -18,21 +18,47 @@
         android:textSize="@dimen/size_18sp"
         style="@style/TextAppearance.MaterialComponents.Headline6" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:textSize="16sp"
+            android:textColor="?colorOnBackground"
+            android:id="@+id/authorTxt"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16"
+            android:textColor="?colorOnBackground"
+            android:textSize="16sp"
+            android:id="@+id/isbnTxt"/>
+
+         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             android:textColor="?colorOnBackground"
+             android:layout_marginTop="@dimen/size_16"
+            android:textSize="16sp"
+            android:id="@+id/categoryTxt"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/size_16"
-        android:textSize="14sp"
+        android:layout_marginTop="@dimen/size_16"
+        android:visibility="gone"
+        android:textSize="16sp"
         android:textColor="?colorOnBackground"
         android:id="@+id/publishedDateTxt"/>
 
 
-    <androidx.emoji.widget.EmojiTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:id="@+id/descriptionTxt" />
+        <androidx.emoji.widget.EmojiTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginTop="@dimen/size_16"
+            android:id="@+id/descriptionTxt" />
+
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

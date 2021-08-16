@@ -3,24 +3,34 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.liveData
+import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class BookCategoryViewModel @Inject constructor(private val localDb: ILocalDb, val userAuth: IUserAuth) : ViewModel(){
+class BookCategoryViewModel @Inject constructor(
+  @ApplicationContext context: Context,
+  private val localDb: ILocalDb,
+  val savedState: SavedStateHandle,
+  val userAuth: IUserAuth) : ViewModel(){
 
   private var liveBooksByCategory: LiveData<List<PublishedBooks>> = MutableLiveData()
 
   private val userId = userAuth.getUserId()
+
+  private val category = savedState.get<String>(Category.TITLE.KEY)!!
 
   private val config  = PagingConfig(
     pageSize = 10,
@@ -29,7 +39,8 @@ class BookCategoryViewModel @Inject constructor(private val localDb: ILocalDb, v
     initialLoadSize = 20
   )
 
-  fun loadLiveBooksByCategory(category: String, context: Context){
+  init {
+
     liveBooksByCategory = if (category==context.getString(R.string.trending)){
       localDb.getLiveTrendingBooks()
     }else if (category == context.getString(R.string.recommended_for)){
@@ -37,6 +48,7 @@ class BookCategoryViewModel @Inject constructor(private val localDb: ILocalDb, v
     }else{
       localDb.getLiveBooksByCategory(category)
     }
+
   }
 
   fun getLiveTotalCartItemsNo(): LiveData<Int> {
@@ -55,7 +67,7 @@ class BookCategoryViewModel @Inject constructor(private val localDb: ILocalDb, v
     }.flow
   }
 
-  fun getBooksByCategory(category: String): Flow<PagingData<PublishedBooks>> {
+  fun getBooksByCategory(): Flow<PagingData<PublishedBooks>> {
     return  Pager(config){
       localDb.getBooksByCategoryPageSource(category)
     }.flow

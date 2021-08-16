@@ -25,7 +25,7 @@ class PostUserReview @AssistedInject constructor(
         val isbn = inputData.getString(Book.ISBN.KEY)!!
         val userId = userAuth.getUserId()
         val userReview =  localDb.getUserReview(isbn)
-      return  cloudDb.addDataAsync(userReview.get(), DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, userId){}
+      return  cloudDb.addDataAsync(userReview.get(), DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, userId, DbFields.REVIEW.KEY){}
 
     }
 }

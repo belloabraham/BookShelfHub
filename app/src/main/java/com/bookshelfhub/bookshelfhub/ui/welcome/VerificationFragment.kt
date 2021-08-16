@@ -31,6 +31,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookI
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
+import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -104,11 +105,11 @@ class VerificationFragment:Fragment(){
                    }
                 }
 
-                textLinkBuilder.createTextLink(layout.resendCodeTxtView, getString(R.string.resend_code_link),
-                    ContextCompat.getColor(requireContext(), R.color.purple_700)
-                ){
-                        (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.loading)
-                }
+                val links = listOf(textLinkBuilder.getTextLink(getString(R.string.resend_code_link)){
+                    (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, R.raw.loading)
+                })
+
+                layout.resendCodeTxtView.applyLinks(links)
 
 
                 if (inProgress){

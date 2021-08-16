@@ -6,7 +6,11 @@
     <style name="SplashTheme" parent="SplashActivityTheme"/>
 
 
+
+
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="linkBuilderStyle">@style/LinkBuilder</item>
 
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_700</item>

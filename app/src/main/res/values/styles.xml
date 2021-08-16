@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <style name="LinkBuilder">
+        <item name="defaultLinkColor">@color/orange</item>
+        <item name="defaultTextColorOfHighlightedLink">@color/light_blue_A400</item>
+    </style>
+
     <style name="PhoneNumberErrorBtn">
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
@@ -15,7 +21,7 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="cornerRadius">0dp</item>
-        <item name="cardBackgroundColor">?backgroundColor</item>
+        <item name="backgroundColor">?backgroundColor</item>
     </style>
 
     <style name="CartItemTextStyle">

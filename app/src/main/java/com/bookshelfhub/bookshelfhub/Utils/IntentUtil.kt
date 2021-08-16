@@ -41,6 +41,8 @@ class IntentUtil(private val context:Context) {
         }
     }
 
+
+
     fun open(uri: Uri) {
         open(intent(uri))
     }
