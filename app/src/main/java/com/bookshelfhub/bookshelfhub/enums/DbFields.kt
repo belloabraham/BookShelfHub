@@ -13,5 +13,5 @@ enum class DbFields(val KEY:String) {
     BOOKMARK("bookmark"),
     REVIEWS("reviews"),
     REVIEW("review"),
-    LAST_UPDATED("last_uploaded")
+    LAST_UPDATED("lastUpdated")
 }

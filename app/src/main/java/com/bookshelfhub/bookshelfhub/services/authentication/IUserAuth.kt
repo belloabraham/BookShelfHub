@@ -1,17 +1,20 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
 interface IUserAuth {
-    open fun getIsUserAuthenticated(): Boolean
 
-    open fun getUserId(): String
+     fun getUserPhotoUrl(): String?
 
-    open fun getEmail(): String?
+     fun getIsUserAuthenticated(): Boolean
 
-    open fun getAuthType(): String
+     fun getUserId(): String
 
-    open fun getName(): String?
+     fun getEmail(): String?
 
-    open fun getPhone(): String?
+     fun getAuthType(): String
 
-    open fun signOut(signOutCompleted: () -> Unit)
+     fun getName(): String?
+
+     fun getPhone(): String?
+
+     fun signOut(signOutCompleted: () -> Unit)
 }

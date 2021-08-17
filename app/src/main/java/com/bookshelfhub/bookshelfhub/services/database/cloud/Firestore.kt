@@ -147,8 +147,7 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String,orderBy: String, type:Class<T>, limit:Long, direction:Query.Direction, shouldCache:Boolean,  onComplete: suspend (dataList:List<T>)->Unit){
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, limit:Long, orderBy: String, direction: Query.Direction, shouldCache:Boolean, onComplete: (dataList:List<T>)->Unit){
 
          db.firestoreSettings=getCacheSettings(shouldCache)
          db.collection(collection).document(document).collection(subCollection)
@@ -161,30 +160,22 @@ import javax.inject.Inject
                      if (!it.isEmpty){
                          for (doc in it) {
                              if (doc.exists()){
-                                 val data =  doc.get(field)
-                                 dataList = dataList.plus(json.fromAny(data!!, type))
+                                 val data =  doc.data
+                                 dataList = dataList.plus(json.fromAny(data, type))
                              }
                          }
                      }
                  }
 
-                 runBlocking {
-                     onComplete(dataList)
-                 }
+                 onComplete(dataList)
              }
      }
 
 
-
-     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, field: String, onSuccess: suspend ()->Unit ):Result{
-
-         val newData = hashMapOf(
-             field to data,
-             this.lastUpdated to lastUpdated
-         )
+     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ):Result{
 
          db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .set(newData, SetOptions.merge())
+             .set(data, SetOptions.merge())
              .addOnFailureListener {
                  Result.retry()
              }

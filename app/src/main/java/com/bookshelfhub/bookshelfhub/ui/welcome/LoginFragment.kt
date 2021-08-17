@@ -67,8 +67,6 @@ class LoginFragment:Fragment() {
     lateinit var deviceUtil: DeviceUtil
     @Inject
     lateinit var appUtil: AppUtil
-    @Inject
-    lateinit var stringUtil: StringUtil
 
 
     override fun onCreateView(

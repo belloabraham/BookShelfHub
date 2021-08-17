@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
 import com.bookshelfhub.bookshelfhub.enums.UserReferrer
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
@@ -28,7 +29,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
-import com.bookshelfhub.bookshelfhub.views.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
@@ -252,7 +253,7 @@ class MainActivity : AppCompatActivity() {
                         MaterialBottomSheetBuilder(this@MainActivity, this@MainActivity)
                             .setOnDismissListener {
                                 if (noOfDismiss < 2) {
-                                    Toast(this@MainActivity).showToast(R.string.dismiss_msg)
+                                    showToast(R.string.dismiss_msg)
                                     runBlocking {
                                         settingsUtil.setInt(
                                             Settings.NO_OF_TIME_DISMISSED.KEY,

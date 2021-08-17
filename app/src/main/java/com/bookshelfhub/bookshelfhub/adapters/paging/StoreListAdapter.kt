@@ -35,7 +35,6 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
         LayoutInflater.from(parent.context).inflate(R.layout.store_book_item, parent, false)
     ){
        private val title: TextView = itemView.findViewById(R.id.title)
-       private val itemCardView: CardView = itemView.findViewById(R.id.itemCardView)
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
         fun bindToView(model:PublishedBooks, activity: Activity){
@@ -44,7 +43,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
                         title.text = model.name
                     }
 
-                itemCardView.setOnClickListener {
+            imageView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
                     with(intent){
                         putExtra(Book.TITLE.KEY, model.name)

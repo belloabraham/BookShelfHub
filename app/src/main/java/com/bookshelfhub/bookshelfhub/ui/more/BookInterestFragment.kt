@@ -11,12 +11,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.views.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.Toast
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -93,7 +94,7 @@ class BookInterestFragment : Fragment() {
                 localDb.addBookInterest(bookInterest)
                 withContext(Main){
                     activity?.let {
-                        Toast(it).showToast(R.string.interest_Saved)
+                        showToast(R.string.interest_Saved)
                         it.finish()
                     }
                 }

@@ -38,14 +38,8 @@ class BookItemViewModel @Inject constructor(
   )
 
   init {
-
     liveCartItems = localDb.getLiveListOfCartItems(userId)
-
     liveUserReview = localDb.getLiveUserReview(isbn)
-
-  /*  cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, DbFields.REVIEW.KEY, DbFields.LAST_UPDATED.KEY, UserReview::class.java, 3){
-
-    }*/
   }
 
   fun getLiveListOfCartItems(): LiveData<List<Cart>> {

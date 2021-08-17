@@ -17,7 +17,6 @@ import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.enums.DbFields
@@ -64,8 +63,6 @@ class VerificationFragment:Fragment(){
     lateinit var deviceUtil: DeviceUtil
     @Inject
     lateinit var appUtil: AppUtil
-    @Inject
-    lateinit var stringUtil: StringUtil
 
             override fun onCreateView(
         inflater: LayoutInflater,

@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
+import android.net.Uri
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.google.firebase.auth.FirebaseAuth
@@ -11,6 +12,11 @@ import com.google.firebase.ktx.Firebase
 open class FBUserAuth() : IUserAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
+
+    override fun getUserPhotoUrl(): String? {
+        val photoUrl = auth.currentUser!!.photoUrl
+      return photoUrl?.toString()?.replace("s96-c", "s492-c")
+    }
 
     override fun getIsUserAuthenticated(): Boolean {
         return auth.currentUser != null

@@ -4,6 +4,9 @@
 
     <dimen name="size_16">16dp</dimen>
 
+    <dimen name="small_user_dp">32dp</dimen>
+
+
     <dimen name="size_32">32dp</dimen>
     <dimen name="size_8">8dp</dimen>
     <dimen name="size_25">25dp</dimen>

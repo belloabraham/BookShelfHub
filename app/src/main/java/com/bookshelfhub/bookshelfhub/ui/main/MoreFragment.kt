@@ -16,17 +16,17 @@ import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.Share
-import com.bookshelfhub.bookshelfhub.Utils.StringUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.*
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.views.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,8 +56,6 @@ class MoreFragment : Fragment() {
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var localDb: ILocalDb
-    @Inject
-    lateinit var stringUtil: StringUtil
     @Inject
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
@@ -224,7 +222,7 @@ class MoreFragment : Fragment() {
                 .setPositiveAction(R.string.copy_link){
                     clipboardHelper.copyToClipBoard(link)
                     activity?.let {
-                        Toast(it).showToast(R.string.link_copied)
+                        showToast(R.string.link_copied)
                     }
                 }
                 .setNegativeAction(R.string.ok){}

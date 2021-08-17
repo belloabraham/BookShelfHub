@@ -44,16 +44,12 @@ class StoreFragment : Fragment() {
     private val storeViewModel: StoreViewModel by viewModels()
     private var allBooksLive = emptyList<PublishedBooks>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
-    @Inject
-    lateinit var userAuth: IUserAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentStoreBinding.inflate(inflater, container, false)
-
-        val userId = userAuth.getUserId()
 
         storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)

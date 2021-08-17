@@ -36,13 +36,12 @@ class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.
     class ViewHolder(parent: ViewGroup):  RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.similar_book_item, parent, false)
     ){
-       private val itemCardView: CardView = itemView.findViewById(R.id.itemCardView)
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
         fun bindToView(model:PublishedBooks, activity: Activity){
                 imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
 
-                itemCardView.setOnClickListener {
+            imageView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
                     with(intent){
                         putExtra(Book.TITLE.KEY, model.name)

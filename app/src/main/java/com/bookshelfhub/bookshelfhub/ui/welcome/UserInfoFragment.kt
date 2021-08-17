@@ -16,6 +16,8 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
+import com.bookshelfhub.bookshelfhub.extensions.isValidPhoneNumber
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
@@ -46,8 +48,6 @@ class UserInfoFragment : Fragment() {
     lateinit var deviceUtil: DeviceUtil
     @Inject
     lateinit var appUtil:AppUtil
-    @Inject
-    lateinit var stringUtil:StringUtil
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
     @Inject
@@ -121,11 +121,11 @@ class UserInfoFragment : Fragment() {
             val phone = layout.phoneEditTxt.text.toString()
             val name = layout.nameEditTxt.text.toString()
 
-            if (!stringUtil.isValidEmailAddress(email)){
+            if (!email.isValidEmailAddress()){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
-            }else if(!stringUtil.isValidPhoneNumber(phone)){
+            }else if(!phone.isValidPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)

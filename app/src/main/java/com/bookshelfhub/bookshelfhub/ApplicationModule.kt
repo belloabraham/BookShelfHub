@@ -30,21 +30,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getConnectionUtil(@ApplicationContext context: Context): ConnectionUtil {
-        return ConnectionUtil(context)
-    }
-
-    @Singleton
-    @Provides
     fun getRemoteConfig(): IRemoteConfig {
         return FirebaseRemoteConfig()
-    }
-
-
-    @Singleton
-    @Provides
-    fun getDynamicLink(@ApplicationContext context: Context, appUtil: AppUtil): IDynamicLink {
-        return FirebaseDLink(context.getString(R.string.dlink_domain_prefix), context, appUtil)
     }
 
     @Singleton
@@ -93,18 +80,6 @@ object ApplicationModule {
     @Provides
     fun getSettingsUtil(@ApplicationContext context: Context): SettingsUtil {
         return SettingsUtil(context)
-    }
-
-    @Singleton
-    @Provides
-    fun getStringUtil(): StringUtil {
-        return StringUtil()
-    }
-
-    @Singleton
-    @Provides
-    fun getIntentUtil(@ApplicationContext context: Context): IntentUtil {
-        return IntentUtil(context)
     }
 
 }

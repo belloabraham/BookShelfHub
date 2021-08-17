@@ -7,9 +7,10 @@ import com.google.firebase.firestore.*
 
 interface ICloudDb {
 
-    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, orderBy: String, type:Class<T>, limit:Long, direction: Query.Direction = Query.Direction.DESCENDING, shouldCache:Boolean = true, onComplete: suspend (dataList:List<T>)->Unit)
+    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, limit:Long, orderBy: String=DbFields.LAST_UPDATED.KEY, direction: Query.Direction = Query.Direction.DESCENDING, shouldCache:Boolean = false, onComplete: (dataList:List<T>)->Unit)
 
-    fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, field: String, onSuccess: suspend ()->Unit ): ListenableWorker.Result
+
+    fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit): ListenableWorker.Result
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldCache:Boolean=false, shouldRetry:Boolean = true, onComplete:
         (data:DocumentSnapshot?, error: FirebaseFirestoreException?)->Unit)

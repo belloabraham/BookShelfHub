@@ -16,11 +16,12 @@ import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.enums.AuthType
 import com.bookshelfhub.bookshelfhub.enums.DateFormat
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.views.toast.Toast
+import com.bookshelfhub.bookshelfhub.views.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -119,7 +120,7 @@ class ProfileFragment : Fragment() {
                         updatedUserRecord.uploaded=false
                         database.addUser(updatedUserRecord)
                         withContext(Main){
-                            Toast(requireActivity()).showToast(getString(R.string.updated))
+                            showToast(getString(R.string.updated))
                             requireActivity().finish()
                         }
                     }

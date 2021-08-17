@@ -2,6 +2,23 @@
 <resources>
 
 
+    <style name="BookItemImageView" parent="">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="shapeAppearanceOverlay">@style/CurvedEdgesImageShape</item>
+    </style>
+
+    <style name="RoundImageShape" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CurvedEdgesImageShape" parent="">
+        <item name="cornerSize">5%</item>
+    </style>
+
     <style name="LinkBuilder">
         <item name="defaultLinkColor">@color/orange</item>
         <item name="defaultTextColorOfHighlightedLink">@color/light_blue_A400</item>

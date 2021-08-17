@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,7 +25,9 @@ import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.const.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.*
+import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -34,7 +35,6 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
-import com.bookshelfhub.bookshelfhub.views.toast.Toast
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.wrappers.Json
@@ -58,8 +58,6 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var localDb: ILocalDb
     @Inject
-    lateinit var stringUtil: StringUtil
-    @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var dynamicLink: IDynamicLink
@@ -82,6 +80,7 @@ class BookItemActivity : AppCompatActivity() {
           supportActionBar?.title = null
 
         val userId = userAuth.getUserId()
+        val userPhotoUri = userAuth.getUserPhotoUrl()
 
         val title = intent.getStringExtra(Book.TITLE.KEY)!!
         val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
@@ -246,7 +245,7 @@ class BookItemActivity : AppCompatActivity() {
 
              lifecycleScope.launch {
                     localDb.addUserReview(userReview)
-                    if (!stringUtil.containsUrl(review, Regex.URL_IN_TEXT)){
+                    if (!review.containsUrl(Regex.URL_IN_TEXT)){
                         val data = Data.Builder()
                         data.putString(Book.ISBN.KEY, isbn)
                         val userReviewPostWorker =
@@ -280,6 +279,12 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
         }
 
+        cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, 3){
+
+
+        }
+
+
         bookItemViewModel.getLiveUserReview().observe(this, Observer { review ->
 
             layout.ratingInfoLayout.visibility = GONE
@@ -288,10 +293,23 @@ class BookItemActivity : AppCompatActivity() {
                 AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, animDuration)
                 val userReview = review.get()
                 layout.ratingBar.rating = userReview.userRating
+
                 layout.userNameText.text = userReview.userName
                 layout.userReviewTxt.text = userReview.review
                 layout.userRatingBar.rating = userReview.userRating
                 layout.userReviewEditText.setText(userReview.review)
+
+                layout.userReviewTxt.isVisible = userReview.review.isNotBlank()
+
+                if (userPhotoUri!=null){
+                    layout.letterIcon.visibility = GONE
+                    layout.userImage.visibility = VISIBLE
+                    layout.userImage.load(userPhotoUri){
+                        showLetterIcon(userReview.userName)
+                    }
+                }else{
+                    showLetterIcon(userReview.userName)
+                }
 
             }else{
                 getUserReviewAsync(isbn, userId, animDuration)
@@ -301,9 +319,13 @@ class BookItemActivity : AppCompatActivity() {
 
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
         })
-
     }
 
+    private fun showLetterIcon(value:String){
+        layout.letterIcon.visibility = VISIBLE
+        layout.letterIcon.letter = value
+        layout.userImage.visibility = GONE
+    }
     private fun shareBook(text:String){
         Share(this).shareText(text)
     }
@@ -399,5 +421,6 @@ class BookItemActivity : AppCompatActivity() {
         onBackPressed()
         return true
     }
+
 
 }

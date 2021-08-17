@@ -5,9 +5,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.os.Build
+import dagger.hilt.android.qualifiers.ActivityContext
+import javax.inject.Inject
 
 
-class ConnectionUtil(private val context:Context) {
+class ConnectionUtil @Inject constructor (val context:Context) {
 
         fun isConnected(): Boolean {
 

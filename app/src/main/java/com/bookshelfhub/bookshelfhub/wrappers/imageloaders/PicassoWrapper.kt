@@ -17,7 +17,6 @@ open class PicassoWrapper(private val imageView: ImageView) : IImageLoader {
     }
 
      override fun load(url:String, placeHolder:Int, errorImg:Int, shouldCache:Boolean, onSuccess:()->Unit){
-
       val callback = object :Callback{
           override fun onSuccess() {
               onSuccess()
@@ -54,4 +53,22 @@ open class PicassoWrapper(private val imageView: ImageView) : IImageLoader {
             })
         }
     }
+
+    override fun load(url:String, onError:()->Unit){
+
+        val callback = object :Callback{
+            override fun onSuccess() {
+            }
+            override fun onError(e: Exception?) {
+                onError()
+            }
+        }
+             Picasso.get()
+            .load(url)
+             .fit()
+             .centerCrop()
+            .into(imageView, callback)
+    }
+
+
 }
