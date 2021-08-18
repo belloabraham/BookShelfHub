@@ -69,40 +69,6 @@ class UserInfoFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
         }
 
-        if (!isNewUser) {
-            cloudDb.getDataAsync(DbFields.USERS.KEY, userId) { docSnapShot, _ ->
-
-                docSnapShot?.let {
-                    try {
-                        val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
-                        val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
-                        bookInterest.uploaded = true
-                        lifecycleScope.launch(IO) {
-                            database.addBookInterest(bookInterest)
-                        }
-                    } catch (e: Exception) {
-                    }
-
-                    try {
-                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
-                        val userData = json.fromAny(userJsonString!!, User::class.java)
-                        layout.nameEditTxt.setText(userData.name)
-                        layout.phoneEditTxt.setText(userData.phone)
-                        layout.emailEditTxt.setText(userData.email)
-                        userData.uploaded = true
-                        lifecycleScope.launch(IO) {
-                            withContext(Main) {
-                                userAuthViewModel.setIsAddingUser(false, userData)
-                            }
-                        }
-                    } catch (e: Exception) {
-                    }
-
-                }
-
-            }
-        }
-
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())
@@ -142,17 +108,15 @@ class UserInfoFragment : Fragment() {
                 }
 
                 lifecycleScope.launch(IO) {
-                    val localDateTime= LocalDateTimeUtil.getDateTimeAsString()
                     val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
                     user.device = deviceUtil.getDeviceBrandAndModel()
                     user.email = email
-                    user.phone= phone
+                    user.phone = phone
                     user.referrerId = referrerId
                     user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
-                    user.lastUpdated = localDateTime
                     withContext(Main){
                       userAuthViewModel.setIsAddingUser(false, user)
                     }

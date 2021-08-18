@@ -148,9 +148,9 @@ class VerificationFragment:Fragment(){
                             findNavController().navigate(actionUserInfo)
                         }else{
 
-                            cloudDb.getDataAsync(DbFields.USERS.KEY, userAuth.getUserId()){ docSnapShot, _ ->
+                            cloudDb.getDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
-                                if(docSnapShot!=null){
+                                if(docSnapShot!=null && docSnapShot.exists()){
                                     try {
                                         val jsonString = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
                                         val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)

@@ -263,6 +263,8 @@ abstract class SearchLayout @JvmOverloads constructor(
         if(count>0){
             mMenuNotifTextView?.text = "$count"
             mNotifCardViewMenu?.visibility = View.VISIBLE
+        }else{
+            mNotifCardViewMenu?.visibility = View.GONE
         }
     }
 

@@ -9,17 +9,13 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
-    //TODO Transaction
-    @Transaction
-     suspend fun deleteUserData(){
-        deleteAllReviews()
-        deleteUserRecord()
-    }
-
 
     //Todo User Review
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
+
+    @Query("UPDATE UserReview set verified =:isVerified where isbn =:isbn")
+    suspend fun updateReview(isbn: String, isVerified:Boolean)
 
     @Query("DELETE FROM UserReview")
     suspend fun deleteAllReviews()
@@ -118,7 +114,7 @@ interface UserDao {
     @Query("SELECT * FROM PubReferrers WHERE isbn = :isbn")
     suspend fun getPubReferrer(isbn:String): Optional<PubReferrers>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
     //Todo PublishedBooks

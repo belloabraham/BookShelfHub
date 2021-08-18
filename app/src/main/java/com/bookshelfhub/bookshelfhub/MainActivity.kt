@@ -71,6 +71,9 @@ class MainActivity : AppCompatActivity() {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
+        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
+        getReferrer(referrer, userId)
+
         getUserReferrerLinkAsync(userId){
             it?.let {
                 val link = it.toString()
@@ -278,7 +281,7 @@ class MainActivity : AppCompatActivity() {
     private fun getReferrer(referrer:String?, userId:String){
         referrer?.let {
             if (it.length>userId.length){
-               val pubIdAndIsbn = it.split("@")
+                val pubIdAndIsbn = it.split("@")
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
@@ -288,12 +291,6 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
-        getReferrer(referrer, userId)
     }
 
     private fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){

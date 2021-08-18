@@ -12,7 +12,7 @@ data class UserReview(
     var review:String,
     var userRating:Float=0f,
     var userName:String,
-
-    //This name is "lastUpdated" is used as a key for cloud db query @ICloudDb
-    var lastUpdated:FieldValue = FieldValue.serverTimestamp()
+    var userPhoto:String?,
+    //This name is "verified" is used as a key for cloud db query @ICloudDb
+    val verified:Boolean = true
 )

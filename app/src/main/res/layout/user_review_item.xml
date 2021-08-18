@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/size_16"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_16"
+        android:orientation="horizontal">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="@dimen/small_user_dp"
+            android:layout_height="@dimen/small_user_dp"
+            android:visibility="gone"
+            app:shapeAppearanceOverlay="@style/RoundImageShape"
+            android:contentDescription="@null"
+            android:id="@+id/userImage" />
+
+        <com.github.ivbaranov.mli.MaterialLetterIcon
+            android:layout_width="@dimen/small_user_dp"
+            android:layout_height="@dimen/small_user_dp"
+            app:mli_shape_color="?colorAccent"
+            android:id="@+id/letterIcon"
+            app:mli_shape_type="circle"
+            android:visibility="gone"
+            app:mli_letter_color="@android:color/white"
+            app:mli_letter_size="16"
+            app:mli_letters_number="1"
+            android:layout_gravity="center_vertical"
+            app:mli_initials="false"
+            app:mli_initials_number="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_16"
+            android:id="@+id/userNameText"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textColor="?colorOnBackground"
+            android:layout_gravity="center_vertical"
+            android:textSize="14sp"
+            android:maxLines="1"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <me.zhanghai.android.materialratingbar.MaterialRatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_16"
+        style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
+        android:id="@+id/userRatingBar" />
+
+    <androidx.emoji.widget.EmojiTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/size_16"
+        android:id="@+id/userReviewTxt"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

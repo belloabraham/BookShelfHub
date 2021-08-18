@@ -57,11 +57,10 @@ class BookInfoFragment : Fragment() {
                   layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
                   layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
 
-                  layout.descriptionTxt.text =  getString(R.string.lorep_ipsum) // book.description
+                  layout.descriptionTxt.text =  book.description
 
                   layout.descriptionTxt.applyLinks(links)
 
-                 // layout.publishedDateTxt.text = String.format(getString(R.string.published_date),book.description)
               }
           }
       }

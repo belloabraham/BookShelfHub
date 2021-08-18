@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.Utils
 import android.app.Activity
 import android.content.Intent
 
-class Share(private val activity:Activity) {
+class ShareUtil(private val activity:Activity) {
 
 
     fun shareText(text:String){

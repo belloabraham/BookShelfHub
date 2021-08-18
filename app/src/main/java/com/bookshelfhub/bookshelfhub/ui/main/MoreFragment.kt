@@ -15,7 +15,7 @@ import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
-import com.bookshelfhub.bookshelfhub.Utils.Share
+import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.*
@@ -26,7 +26,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
@@ -128,27 +127,17 @@ class MoreFragment : Fragment() {
                  .setPositiveAction(R.string.sign_out){
                      if (authType==AuthType.GOOGLE.ID){
                          userAuth.signOut {
-                             activity?.let {
                                  googleAuth.signOut {
-                                     it.finish()
-                                     startActivity(Intent(it, SplashActivity::class.java))
+                                     deleteUserData {
+                                         startSplashActivity()
+                                     }
                                  }
-                             }
                          }
                      }else{
                          userAuth.signOut {
-
-                             lifecycleScope.launch(IO) {
-
-                                 localDb.deleteUserData()
-
-                                 withContext(Main){
-                                     activity?.finish()
-                                     startActivity(Intent(activity, SplashActivity::class.java))
-                                 }
+                             deleteUserData {
+                                 startSplashActivity()
                              }
-
-
                          }
                      }
 
@@ -259,20 +248,22 @@ class MoreFragment : Fragment() {
         return layout.root
     }
 
+    private fun startSplashActivity(){
+        activity?.let{
+            it.finish()
+            startActivity(Intent(it, SplashActivity::class.java))
+        }
+    }
 
-   /* private fun showReferralLinkDialog(link:String, activity:Activity){
-        val msg = String.format(getString(R.string.your_referral_link), link, link)
-        AlertDialogBuilder.with(activity, msg)
-            .setCancelable(true)
-            .setPositiveAction(R.string.copy_link){
-                clipboardHelper.copyToClipBoard(link)
-                Toast(activity).showToast(R.string.link_copied)
-            }
-            .setNegativeAction(R.string.ok){
-
-            }.build()
-            .showDialog(R.string.referral_link)
-    }*/
+   private fun deleteUserData(onComplete:()->Unit){
+       lifecycleScope.launch(IO){
+           localDb.deleteAllReviews()
+           localDb.deleteUserRecord()
+           withContext(Main){
+               onComplete()
+           }
+       }
+   }
 
     private fun startWebActivity(title:Int, rmcUrlKey:String){
         val url = remoteConfig.getString(rmcUrlKey)
@@ -294,7 +285,7 @@ class MoreFragment : Fragment() {
     }
 
     private fun getReferralLink(text:String, activity: Activity){
-        Share(activity).shareText(text)
+        ShareUtil(activity).shareText(text)
     }
 
     companion object {

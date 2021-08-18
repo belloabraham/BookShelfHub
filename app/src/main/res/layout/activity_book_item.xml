@@ -170,7 +170,6 @@
                         android:layout_gravity="end|bottom"
                         android:clickable="true"
                         android:focusable="true"
-
                         android:id="@+id/shareBookBtn"
                         android:paddingHorizontal="@dimen/size_16"
                         android:text="@string/share"
@@ -400,51 +399,42 @@
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <com.google.android.material.card.MaterialCardView
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/size_50"
-                style="@style/BookItemNavCard"
-                android:id="@+id/ratingsAndReviewCard">
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingsAndReviewLayout"
+                android:visibility="gone"
+                android:orientation="vertical">
 
-                <FrameLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/ratings_reviews"
+                    android:layout_marginVertical="@dimen/size_24"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingHorizontal="@dimen/size_24" />
+
+                <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/size_16"
-                    android:layout_marginVertical="@dimen/size_4">
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:id="@+id/reviewRecView"
+                    android:layout_marginHorizontal="@dimen/size_8" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/ratings_reviews"
-                        style="@style/BookNavItemsTitle"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/size_16"
+                    android:id="@+id/allReviewsBtn"
+                    android:layout_marginStart="22dp"
+                    android:text="@string/see_all_reviews"
+                    android:paddingLeft="@dimen/size_3"
+                    android:textColor="@color/light_blue_A200"
+                    style="@style/Widget.AppCompat.Button.Borderless"/>
 
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-                    <ImageView
-                        android:layout_width="@dimen/image_btn_size"
-                        android:layout_height="@dimen/image_btn_size"
-                        android:layout_gravity="end|center_vertical"
-                        android:src="@drawable/ic_arrow_right_24"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"/>
-
-                </FrameLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/reviewRecView"
-                android:layout_marginHorizontal="@dimen/size_24" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/allReviewsBtn"
-                android:layout_marginStart="22dp"
-                android:text="@string/see_all_reviews"
-                android:paddingLeft="@dimen/size_3"
-                android:textColor="@color/light_blue_A200"
-                style="@style/Widget.AppCompat.Button.Borderless"/>
 
 
             <com.google.android.material.card.MaterialCardView
@@ -484,8 +474,6 @@
                 android:id="@+id/similarBooksRecView" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
-
-
 
     </androidx.core.widget.NestedScrollView>
 

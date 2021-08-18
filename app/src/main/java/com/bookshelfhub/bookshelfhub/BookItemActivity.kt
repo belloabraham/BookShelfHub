@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
@@ -21,13 +22,11 @@ import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
+import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.const.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.*
-import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -39,7 +38,6 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
-import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -79,6 +77,8 @@ class BookItemActivity : AppCompatActivity() {
           setSupportActionBar(layout.toolbar)
           supportActionBar?.title = null
 
+
+        val reviewsLimit = 3L
         val userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
@@ -132,6 +132,9 @@ class BookItemActivity : AppCompatActivity() {
                            layout.addToCartBtn.visibility = GONE
                        }
 
+                       lifecycleScope.launch(IO){
+
+                       }
 
                    }else{
                        layout.checkoutBtnContainer.visibility = GONE
@@ -215,10 +218,6 @@ class BookItemActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        layout.ratingsAndReviewCard.setOnClickListener {
-            startBookInfoActivity(isbn)
-        }
-
         layout.allReviewsBtn.setOnClickListener {
             startBookInfoActivity(isbn)
         }
@@ -240,12 +239,10 @@ class BookItemActivity : AppCompatActivity() {
 
             val userName = userAuth.getName()!!
 
-            val userReview = UserReview(isbn, review, rating, userName)
+            val userReview = UserReview(isbn, review, rating, userName, userPhotoUri)
 
-
-             lifecycleScope.launch {
+            lifecycleScope.launch(IO) {
                     localDb.addUserReview(userReview)
-                    if (!review.containsUrl(Regex.URL_IN_TEXT)){
                         val data = Data.Builder()
                         data.putString(Book.ISBN.KEY, isbn)
                         val userReviewPostWorker =
@@ -254,7 +251,7 @@ class BookItemActivity : AppCompatActivity() {
                                 .setInputData(data.build())
                                 .build()
                         WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
-                    }
+
                 }
         }
 
@@ -279,9 +276,15 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
         }
 
-        cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, 3){
 
+        cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, reviewsLimit){ reviews, e->
 
+            if (reviews.isNotEmpty()){
+                layout.ratingsAndReviewLayout.visibility = VISIBLE
+                val reviewsAdapter = ReviewListAdapter().getAdapter()
+                layout.reviewRecView.adapter = reviewsAdapter
+                reviewsAdapter.submitList(reviews)
+            }
         }
 
 
@@ -327,14 +330,14 @@ class BookItemActivity : AppCompatActivity() {
         layout.userImage.visibility = GONE
     }
     private fun shareBook(text:String){
-        Share(this).shareText(text)
+        ShareUtil(this).shareText(text)
     }
 
-  private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
+    private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
         cloudDb.getLiveDataAsync(DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
             documentSnapshot?.let {
                 if (it.exists()){
-                    val doc = it.toObject<Any>()
+                    val doc = it.data
                     val userReview = json.fromAny(doc!!, UserReview::class.java)
                     lifecycleScope.launch {
                         localDb.addUserReview(userReview)
@@ -348,7 +351,6 @@ class BookItemActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun getNoOfDownloads(value:Long): String {
         val thousand = 1000
@@ -386,6 +388,8 @@ class BookItemActivity : AppCompatActivity() {
          return "$main"+unitPlus
     }
 
+
+
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
@@ -407,13 +411,17 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val url = remoteConfig.getString(BOOK_REPORT_URL)
-        val intent = Intent(this, WebViewActivity::class.java)
-        with(intent){
-            putExtra(WebView.TITLE.KEY, getString(R.string.report_book))
-            putExtra(WebView.URL.KEY, url)
+
+        if(item.itemId == R.id.reportBook){
+            val url = remoteConfig.getString(BOOK_REPORT_URL)
+            val intent = Intent(this, WebViewActivity::class.java)
+            with(intent){
+                putExtra(WebView.TITLE.KEY, getString(R.string.report_book))
+                putExtra(WebView.URL.KEY, url)
+            }
+            startActivity(intent)
         }
-        startActivity(intent)
+
         return super.onOptionsItemSelected(item)
     }
 

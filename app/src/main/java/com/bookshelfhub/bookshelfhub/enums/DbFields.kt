@@ -13,5 +13,6 @@ enum class DbFields(val KEY:String) {
     BOOKMARK("bookmark"),
     REVIEWS("reviews"),
     REVIEW("review"),
+    VERIFIED("verified"),
     LAST_UPDATED("lastUpdated")
 }

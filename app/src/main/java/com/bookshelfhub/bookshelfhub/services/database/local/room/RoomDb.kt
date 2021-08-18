@@ -11,9 +11,9 @@ import javax.inject.Inject
 
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
-    //Todo Transaction
-    override suspend fun deleteUserData() {
-        return  RoomInstance.getDatabase(context).userDao().deleteUserData()
+
+    override suspend fun deleteUserRecord() {
+        return  RoomInstance.getDatabase(context).userDao().deleteUserRecord()
     }
 
     //TODO User Review
@@ -21,7 +21,9 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         return  RoomInstance.getDatabase(context).userDao().getLiveUserReview(isbn)
     }
 
-
+    override suspend fun updateReview(isbn: String, isVerified: Boolean) {
+        return  RoomInstance.getDatabase(context).userDao().updateReview(isbn, isVerified)
+    }
 
     override suspend fun deleteAllReviews() {
         return  RoomInstance.getDatabase(context).userDao().deleteAllReviews()

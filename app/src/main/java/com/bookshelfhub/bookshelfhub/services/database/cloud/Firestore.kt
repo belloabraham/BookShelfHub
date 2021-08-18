@@ -61,23 +61,18 @@ import javax.inject.Inject
 
 
    // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
-   override fun getDataAsync(collection:String, document: String, shouldCache:Boolean, onComplete:
+   override fun getDataAsync(collection:String, document: String, shouldCache:Boolean, retry:Boolean, onComplete:
      (data:DocumentSnapshot?, e:Exception?)->Unit){
        db.firestoreSettings=getCacheSettings(shouldCache)
         db.collection(collection)
             .document(document)
-            .get()
-            .addOnSuccessListener { documentSnapShot->
-                if (documentSnapShot!=null && documentSnapShot.exists()){
-
-                        onComplete(documentSnapShot, null)
-                }else{
-
-                        onComplete(null, null)
+            .addSnapshotListener { documentSnapShot, error ->
+                if (retry && error!=null){
+                    return@addSnapshotListener
                 }
-            }
-            .addOnFailureListener {
-                    onComplete(null, null)
+
+                onComplete(documentSnapShot, error)
+
             }
     }
 
@@ -147,44 +142,51 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, limit:Long, orderBy: String, direction: Query.Direction, shouldCache:Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction, shouldCache:Boolean, onComplete: (dataList:List<T>, Exception?)->Unit){
 
          db.firestoreSettings=getCacheSettings(shouldCache)
+         var dataList = emptyList<T>()
          db.collection(collection).document(document).collection(subCollection)
+             .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
              .limit(limit)
              .get()
              .addOnSuccessListener { querySnapShot ->
-                 var dataList = emptyList<T>()
+
                  querySnapShot?.let {
                      if (!it.isEmpty){
                          for (doc in it) {
                              if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
+                                 if (doc.id!=excludeDocId){
+                                     val data =  doc.data
+                                     dataList = dataList.plus(json.fromAny(data, type))
+                                 }
                              }
                          }
                      }
                  }
-
-                 onComplete(dataList)
+                 onComplete(dataList, null)
+             }
+             .addOnFailureListener {
+                 onComplete(dataList, it)
              }
      }
 
 
-     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, onSuccess: suspend ()->Unit ):Result{
+     override fun addDataAsync(data: Any, collection:String, document:String, subCollection:String, subDocument:String, lastUpdated: FieldValue, onSuccess: suspend (Exception?)->Unit ){
 
          db.collection(collection).document(document).collection(subCollection).document(subDocument)
              .set(data, SetOptions.merge())
-             .addOnFailureListener {
-                 Result.retry()
-             }
              .addOnSuccessListener {
                  runBlocking {
-                     onSuccess()
+                     onSuccess(null)
                  }
              }
-         return Result.success()
+             .addOnFailureListener {
+                 runBlocking {
+                     onSuccess(it)
+                 }
+             }
      }
 
      override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, field: String, type:Class<T>,  shouldCache:Boolean, onComplete: suspend (dataList:List<T>)->Unit){
