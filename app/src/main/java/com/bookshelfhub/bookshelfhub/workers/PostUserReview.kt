@@ -12,6 +12,7 @@ import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -30,10 +31,34 @@ class PostUserReview @AssistedInject constructor(
         val userReview =  localDb.getUserReview(isbn).get()
 
         if(userReview.verified && !userReview.review.containsUrl(Regex.URL_IN_TEXT)){
+            val ratingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
             val userId = userAuth.getUserId()
-            cloudDb.addDataAsync(userReview, DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, userId){
 
+            val noOfReview:Long =  if (userReview.postedBefore){
+                0
+            }else{
+                1
             }
+
+          val dynamicBookAttr =  if (noOfReview>0){
+                 hashMapOf(
+                     DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(noOfReview),
+                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(ratingDiff)
+                )
+            }else{
+              hashMapOf(
+                  DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(ratingDiff)
+              )
+            }
+
+            cloudDb.updateUserReview(
+                dynamicBookAttr, userReview,
+                DbFields.PUBLISHED_BOOKS.KEY, isbn,
+                DbFields.REVIEWS.KEY, userId){
+                userReview.postedBefore = true
+                localDb.addUserReview(userReview)
+            }
+
 
         }
 

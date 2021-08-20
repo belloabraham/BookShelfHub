@@ -3,13 +3,14 @@
     <string name="app_name" translatable="false">&appname;</string>
 
 
-    <!-- TODO: Book Item-->
+    <!-- TODO: Book Info-->
     <string name="published_date">Published date: %s</string>
     <string name="author">Author: %s</string>
     <string name="category">Category: %s</string>
     <string name="isbn">ISBN: %s</string>
 
     <!-- TODO: Book Item-->
+    <string name="open">Open</string>
     <string name="options">Options</string>
     <string name="report_book">Report book</string>
     <string name="add_to_Cart">Add to cart</string>

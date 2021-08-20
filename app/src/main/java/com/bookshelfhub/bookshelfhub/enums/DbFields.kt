@@ -5,14 +5,14 @@ enum class DbFields(val KEY:String) {
     USER("user"),
     BOOK_INTEREST("book_interest"),
     PUBLISHED_BOOKS("published_books"),
-    PUBLISHED_BOOK("published_book"),
+    PUBLISHED("published"),
     DATE_TIME_PUBLISHED("dateTimePublished"),
-    UNPUBLISHED_BOOKS("unpublished_books"),
-    UNPUBLISHED_BOOK("unpublished_book"),
     BOOKMARKS("bookmarks"),
-    BOOKMARK("bookmark"),
     REVIEWS("reviews"),
-    REVIEW("review"),
     VERIFIED("verified"),
-    LAST_UPDATED("lastUpdated")
+    TOTAL_REVIEWS("totalReviews"),
+    TOTAL_RATINGS("totalRatings"),
+    SHELF("shelf"),
+    REVIEW_DATE("reviewDate")
+
 }

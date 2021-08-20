@@ -8,15 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.liveData
 import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +24,7 @@ class BookCategoryViewModel @Inject constructor(
   val savedState: SavedStateHandle,
   val userAuth: IUserAuth) : ViewModel(){
 
-  private var liveBooksByCategory: LiveData<List<PublishedBooks>> = MutableLiveData()
+  private var liveBookByCategory: LiveData<List<PublishedBook>> = MutableLiveData()
 
   private val userId = userAuth.getUserId()
 
@@ -41,7 +39,7 @@ class BookCategoryViewModel @Inject constructor(
 
   init {
 
-    liveBooksByCategory = if (category==context.getString(R.string.trending)){
+    liveBookByCategory = if (category==context.getString(R.string.trending)){
       localDb.getLiveTrendingBooks()
     }else if (category == context.getString(R.string.recommended_for)){
       localDb.getLiveRecommendedBooks()
@@ -55,26 +53,26 @@ class BookCategoryViewModel @Inject constructor(
     return localDb.getLiveTotalCartItemsNo(userId)
   }
 
-  fun getTrendingBooks(): Flow<PagingData<PublishedBooks>> {
+  fun getTrendingBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getTrendingBooksPageSource()
     }.flow
   }
 
-  fun getRecommendedBooks(): Flow<PagingData<PublishedBooks>> {
+  fun getRecommendedBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getRecommendedBooksPageSource()
     }.flow
   }
 
-  fun getBooksByCategory(): Flow<PagingData<PublishedBooks>> {
+  fun getBooksByCategory(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getBooksByCategoryPageSource(category)
     }.flow
   }
 
-  fun getLiveBooksByCategory(): LiveData<List<PublishedBooks>> {
-    return liveBooksByCategory
+  fun getLiveBooksByCategory(): LiveData<List<PublishedBook>> {
+    return liveBookByCategory
   }
 
 }

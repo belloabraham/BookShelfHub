@@ -57,10 +57,4 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <View
-        android:layout_width="match_parent"
-        android:background="@color/icon_color"
-        android:layout_gravity="bottom"
-        android:layout_height="1px"/>
-
 </com.google.android.material.card.MaterialCardView>

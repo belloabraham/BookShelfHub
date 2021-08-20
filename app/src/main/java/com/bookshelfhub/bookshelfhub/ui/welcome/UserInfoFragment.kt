@@ -69,6 +69,41 @@ class UserInfoFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
         }
 
+        if (!isNewUser) {
+            cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot, _ ->
+
+                docSnapShot?.let {
+                    try {
+                        val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                        val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
+                        bookInterest.uploaded = true
+                        lifecycleScope.launch(IO) {
+                            database.addBookInterest(bookInterest)
+                        }
+                    } catch (e: Exception) {
+                    }
+
+                    try {
+                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                        val userData = json.fromAny(userJsonString!!, User::class.java)
+                        layout.nameEditTxt.setText(userData.name)
+                        layout.phoneEditTxt.setText(userData.phone)
+                        layout.emailEditTxt.setText(userData.email)
+                        userData.uploaded = true
+                        lifecycleScope.launch(IO) {
+                            withContext(Main) {
+                                userAuthViewModel.setIsAddingUser(false, userData)
+                            }
+                        }
+                    } catch (e: Exception) {
+                    }
+
+                }
+
+            }
+        }
+
+
         if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())

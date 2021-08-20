@@ -7,16 +7,9 @@ import androidx.room.PrimaryKey
 data class Cart(
     var userId:String,
     @PrimaryKey
-    override val isbn: String,
-    override val pubId: String="",
-    override val name: String,
-    override val author: String="",
-    override val coverUrl: String,
-    override val description: String="",
-    override val dateTimePublished: String="",
-    override val noOfDownloads: Long=5,
-    override val price: Double=0.0,
-    override val category: String,
-    override val language:String="",
-    override val tag: String
-): IPublishedBooks
+     val isbn: String,
+     val name: String,
+     val author:String,
+     val coverUrl: String,
+     val price: Float=0.0f,
+)

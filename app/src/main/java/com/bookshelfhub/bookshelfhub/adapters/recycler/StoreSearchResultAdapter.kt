@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookItemActivity
@@ -13,7 +12,7 @@ import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
@@ -77,11 +76,11 @@ class StoreSearchResultAdapter (private val context:Context) {
         }
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<PublishedBooks>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<PublishedBook>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val author: TextView = view.findViewById(R.id.author)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:PublishedBooks, context: Context){
+        fun bindToView(model:PublishedBook, context: Context){
             title.text = model.name
             author.text = model.author
             itemCardView.setOnClickListener {

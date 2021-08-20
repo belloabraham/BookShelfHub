@@ -30,10 +30,6 @@
                 android:layout_marginHorizontal="@dimen/size_16"
                 android:layout_marginBottom="@dimen/size_16"
                 android:maxLines="1"/>
-        <View
-            android:layout_width="match_parent"
-            android:background="@color/icon_color"
-            android:layout_height="1px"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </com.google.android.material.card.MaterialCardView>

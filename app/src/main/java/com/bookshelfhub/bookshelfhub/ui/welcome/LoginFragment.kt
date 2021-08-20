@@ -152,7 +152,7 @@ class LoginFragment:Fragment() {
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }else{
-                    cloudDb.getDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+                    cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                         if(docSnapShot!=null && docSnapShot.exists()){
                             try {

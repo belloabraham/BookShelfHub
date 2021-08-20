@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
@@ -50,6 +51,13 @@ class CartActivity : AppCompatActivity() {
 
     }
 
+
+    layout.cartItemsRecView.addItemDecoration(
+      DividerItemDecoration(
+        this,
+        DividerItemDecoration.VERTICAL
+      )
+    )
 
     cartActivityViewModel.getListOfCartItems().observe(this, Observer {  cartList ->
       if (cartList.isNotEmpty()){

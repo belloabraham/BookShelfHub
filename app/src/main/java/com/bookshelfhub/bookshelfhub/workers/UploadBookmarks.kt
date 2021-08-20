@@ -29,7 +29,7 @@ workerParams
 
         val listOfBookmarks = localDb.getLocalBookmarks(userId,false)
 
-        cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY, DbFields.BOOKMARK.KEY){
+        cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY){
 
             val length = listOfBookmarks.size-1
 

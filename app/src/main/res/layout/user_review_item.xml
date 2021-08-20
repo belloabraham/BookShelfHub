@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/size_16"
@@ -47,12 +48,27 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <me.zhanghai.android.materialratingbar.MaterialRatingBar
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/size_16"
-        style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
-        android:id="@+id/userRatingBar" />
+        android:orientation="horizontal">
+
+        <me.zhanghai.android.materialratingbar.MaterialRatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
+            android:id="@+id/userRatingBar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/size_8"
+            android:id="@+id/date"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
     <androidx.emoji.widget.EmojiTextView
         android:layout_width="match_parent"

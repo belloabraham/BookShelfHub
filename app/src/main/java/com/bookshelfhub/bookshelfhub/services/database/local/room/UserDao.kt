@@ -93,8 +93,17 @@ interface UserDao {
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     fun getLiveBooksOrdered(userId:String): LiveData<List<OrderedBooks>>
 
+    @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
+    suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
+
+    @Query("SELECT * FROM OrderedBooks WHERE userId = :userId AND isbn =:isbn")
+    fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
+
+    @Query("DELETE FROM OrderedBooks")
+    fun deleteAllOrderedBooks()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBookOrdered(paymentInfo:OrderedBooks)
+    suspend fun addOrderedBooks(OrderedBooks: List<OrderedBooks>)
 
 
     //Todo Search History
@@ -117,46 +126,45 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
-    //Todo PublishedBooks
-    //@Query("DELETE FROM PublishedBooks WHERE isbn in (:isbnList)")
-    //fun deleteUnPublishedBookRecords(isbnList: List<String>)
 
-    @Query("SELECT * FROM PublishedBooks WHERE isbn = :isbn")
-    suspend fun getPublishedBook(isbn: String): PublishedBooks
+    //Todo PublishedBook
+    @Query("SELECT * FROM PublishedBook WHERE isbn = :isbn")
+    suspend fun getPublishedBook(isbn: String): PublishedBook
 
     @Delete
-    fun deleteUnPublishedBookRecords(publishedBooks: List<PublishedBooks>)
+    suspend fun deleteUnPublishedBookRecords(publishedBooks: List<PublishedBook>)
 
-    @Query("UPDATE PublishedBooks SET recommended = :recommend WHERE category =:category")
+
+    @Query("UPDATE PublishedBook SET recommended = :recommend WHERE category =:category")
     suspend fun updateRecommendedBooksByCategory(category: String, recommend:Boolean)
 
-    @Query("UPDATE PublishedBooks SET recommended = :recommend  WHERE tag = :tag")
+    @Query("UPDATE PublishedBook SET recommended = :recommend  WHERE tag = :tag")
     suspend fun updateRecommendedBooksByTag(tag: String, recommend:Boolean)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllPubBooks(publishedBooks: List<PublishedBooks>)
+    suspend fun addAllPubBooks(publishedBooks: List<PublishedBook>)
 
-    @Query("SELECT * FROM PublishedBooks ORDER BY dateTimePublished DESC")
-    fun getLivePublishedBooks(): LiveData<List<PublishedBooks>>
+    @Query("SELECT * FROM PublishedBook ORDER BY dateTimePublished DESC")
+    fun getLivePublishedBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBooks ORDER BY dateTimePublished DESC")
-    fun getPublishedBooks(): List<PublishedBooks>
+    @Query("SELECT * FROM PublishedBook ORDER BY dateTimePublished DESC")
+    fun getPublishedBooks(): List<PublishedBook>
 
-    @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
-    fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBooks>>
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTimePublished DESC")
+    fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBooks WHERE recommended = :recommend ORDER BY dateTimePublished DESC")
-    fun getLiveRecommendedBooks(recommend:Boolean=true): LiveData<List<PublishedBooks>>
+    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend ORDER BY dateTimePublished DESC")
+    fun getLiveRecommendedBooks(recommend:Boolean=true): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100")
-    fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>>
+    @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")
+    fun getLiveTrendingBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY dateTimePublished DESC")
-    fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTimePublished DESC")
+    fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBook>
 
-    @Query("SELECT * FROM PublishedBooks ORDER BY noOfDownloads DESC LIMIT 100")
-    fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")
+    fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBook>
 
-    @Query("SELECT * FROM PublishedBooks WHERE recommended = :recommend   ORDER BY noOfDownloads DESC")
-    fun getRecommendedBooksPageSource(recommend:Boolean=true): PagingSource<Int, PublishedBooks>
+    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend   ORDER BY totalDownloads DESC")
+    fun getRecommendedBooksPageSource(recommend:Boolean=true): PagingSource<Int, PublishedBook>
 }

@@ -8,9 +8,7 @@ import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
-import com.google.gson.Gson
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -30,9 +28,10 @@ class UpdatePublishedBooks @AssistedInject constructor (
 
         cloudDb.getListOfDataAsync(
             DbFields.PUBLISHED_BOOKS.KEY,
-            DbFields.PUBLISHED_BOOK.KEY,
-            PublishedBooks::class.java,
+            DbFields.PUBLISHED.KEY, true,
+            PublishedBook::class.java,
         ){
+
             if (it.isNotEmpty()){
                 coroutineScope {
                     localDb.addAllPubBooks(it)

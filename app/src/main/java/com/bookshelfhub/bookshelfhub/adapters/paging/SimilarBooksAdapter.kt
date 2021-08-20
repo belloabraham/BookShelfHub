@@ -6,20 +6,16 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bookshelfhub.bookshelfhub.BookCategoryActivity
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 
-class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBooks>): PagingDataAdapter<PublishedBooks, SimilarBooksAdapter.ViewHolder>(diffCallBack){
+class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, SimilarBooksAdapter.ViewHolder>(diffCallBack){
 
 
     override fun onBindViewHolder(vh: ViewHolder, position: Int) {
@@ -38,7 +34,7 @@ class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.
     ){
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
-        fun bindToView(model:PublishedBooks, activity: Activity){
+        fun bindToView(model:PublishedBook, activity: Activity){
                 imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
 
             imageView.setOnClickListener {

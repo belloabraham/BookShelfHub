@@ -259,6 +259,7 @@ class MoreFragment : Fragment() {
        lifecycleScope.launch(IO){
            localDb.deleteAllReviews()
            localDb.deleteUserRecord()
+           localDb.deleteAllOrderedBooks()
            withContext(Main){
                onComplete()
            }

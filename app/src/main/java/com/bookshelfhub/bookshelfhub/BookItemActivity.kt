@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View.GONE
@@ -27,11 +26,12 @@ import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBooks
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -68,17 +68,19 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var userAuth: IUserAuth
     private val bookItemViewModel:BookItemViewModel by viewModels()
+    private var userReview:UserReview?=null
+    private var isVerifiedReview:Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-          layout =  ActivityBookItemBinding.inflate(layoutInflater)
-          setContentView(layout.root)
-          setSupportActionBar(layout.toolbar)
-          supportActionBar?.title = null
+        layout =  ActivityBookItemBinding.inflate(layoutInflater)
+        setContentView(layout.root)
+        setSupportActionBar(layout.toolbar)
+        supportActionBar?.title = null
 
 
-        val reviewsLimit = 3L
+        var bookPrice:Float? =null
         val userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
@@ -95,30 +97,49 @@ class BookItemActivity : AppCompatActivity() {
 
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
         layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        layout.similarBooksRecView.adapter= similarBooksAdapter
+        layout.similarBooksRecView.adapter = similarBooksAdapter
 
-        var bookItem:PublishedBooks? = null
+        bookItemViewModel.getPublishedBook().observe(this, Observer { book ->
+            bookPrice = book.price
+            layout.progressBar.visibility = GONE
+            layout.bookItemLayout.visibility = VISIBLE
+
+            layout.price.text = String.format(getString(R.string.price), book.price)
+            layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
+
+            val rating = book.totalRatings/book.totalReviews
+            layout.noRatingTxt.text = "$rating"
+            layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
+
+            lifecycleScope.launch(IO){
+                val orderedBook = localDb.getAnOrderedBook(isbn, userId)
+                withContext(Main){
+                    if (orderedBook.isPresent){
+                        layout.openBookBtn.visibility = VISIBLE
+                        isVerifiedReview = true
+                    }else if(book.price > 0.0){
+                        layout.addToCartBtn.visibility = VISIBLE
+                    }else{
+                        layout.downloadBtn.visibility = VISIBLE
+                    }
+                }
+            }
+        })
+
+
+        var bookItem:PublishedBook? = null
+
        lifecycleScope.launch(IO){
           bookItem =  localDb.getPublishedBook(isbn)
            withContext(Main){
               val book = bookItem!!
-               book.price = 10.0
-               if (book.price==0.0){
-                   layout.downloadBtn.visibility = VISIBLE
-               }
 
                layout.title.text = book.name
                layout.author.text = String.format(getString(R.string.by), book.author)
-               layout.price.text = String.format(getString(R.string.price), book.price)
-               layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), 10)
-               layout.noRatingTxt.text = "4.5"
-               layout.noOfDownloadsText.text = getNoOfDownloads(book.noOfDownloads)
+
                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
 
                bookItemViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
-                   if(book.price > 0.0){
-                       layout.addToCartBtn.visibility = VISIBLE
-                   }
 
                    if(cartItems.isNotEmpty()){
                        layout.checkoutNotifText.text = "${cartItems.size}"
@@ -132,51 +153,32 @@ class BookItemActivity : AppCompatActivity() {
                            layout.addToCartBtn.visibility = GONE
                        }
 
-                       lifecycleScope.launch(IO){
-
-                       }
-
                    }else{
                        layout.checkoutBtnContainer.visibility = GONE
                    }
                })
 
-               lifecycleScope.launch {
-
-                   bookItemViewModel.
-                   getBooksByCategoryPageSource(book.category).collectLatest { similarBooks ->
-
-                       similarBooksAdapter.addLoadStateListener { loadState ->
-                           val isVisible =
-                               !(loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && similarBooksAdapter.itemCount < 1)
-                           layout.similarBooksCard.isVisible = isVisible
-                           layout.similarBooksRecView.isVisible = isVisible
-                       }
-
-                       lifecycleScope.launch {
-                           similarBooksAdapter.submitData(similarBooks)
-                       }
-
-                   }
-               }
+               loadSimilarBooks(book.category, similarBooksAdapter)
 
            }
        }
 
         layout.addToCartBtn.setOnClickListener {
 
-            val book = bookItem!!
-            val cart = Cart(
-                userId, book.isbn, book.pubId,
-                book.name, book.author, book.coverUrl,
-                book.description, book.dateTimePublished,
-                book.noOfDownloads, book.price,
-                book.category, book.language, book.tag
-            )
+            bookPrice?.let {
 
-            lifecycleScope.launch(IO) {
-                localDb.addToCart(cart)
+                val book = bookItem!!
+                val cart = Cart(
+                    userId, book.isbn,
+                    book.name, book.author,
+                    book.coverUrl, it
+                )
+
+                lifecycleScope.launch(IO) {
+                    localDb.addToCart(cart)
+                }
             }
+
 
         }
 
@@ -232,27 +234,41 @@ class BookItemActivity : AppCompatActivity() {
 
         }
 
+        layout.openBookBtn.setOnClickListener {
+
+        }
+
         layout.postBtn.setOnClickListener {
 
-            val review = layout.userReviewEditText.text.toString()
-            val rating = layout.ratingBar.rating
+                val review = layout.userReviewEditText.text.toString()
+                val newRating = layout.ratingBar.rating.toDouble()
 
-            val userName = userAuth.getName()!!
+                val userName = userAuth.getName()!!
 
-            val userReview = UserReview(isbn, review, rating, userName, userPhotoUri)
+            var ratingDiff = 0.0
+            var postedBefore = false
+            userReview?.let {
+                ratingDiff = newRating - it.userRating
+                postedBefore = it.postedBefore
+            }
+
+            val newReview = UserReview(isbn, review, newRating, userName,isVerifiedReview, userPhotoUri, postedBefore)
 
             lifecycleScope.launch(IO) {
-                    localDb.addUserReview(userReview)
-                        val data = Data.Builder()
-                        data.putString(Book.ISBN.KEY, isbn)
-                        val userReviewPostWorker =
-                            OneTimeWorkRequestBuilder<PostUserReview>()
-                                .setConstraints(Constraint.getConnected())
-                                .setInputData(data.build())
-                                .build()
-                        WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
+                    localDb.addUserReview(newReview)
+                    val data = Data.Builder()
+                    data.putString(Book.ISBN.KEY, isbn)
+                    data.putDouble(Book.RATING_DIFF.KEY, ratingDiff)
+                    val userReviewPostWorker =
+                        OneTimeWorkRequestBuilder<PostUserReview>()
+                            .setConstraints(Constraint.getConnected())
+                            .setInputData(data.build())
+                            .build()
+                    WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
 
                 }
+
+
         }
 
         layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
@@ -276,8 +292,7 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
         }
 
-
-        cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, reviewsLimit){ reviews, e->
+        bookItemViewModel.getUserReviews().observe(this, Observer { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.ratingsAndReviewLayout.visibility = VISIBLE
@@ -285,7 +300,8 @@ class BookItemActivity : AppCompatActivity() {
                 layout.reviewRecView.adapter = reviewsAdapter
                 reviewsAdapter.submitList(reviews)
             }
-        }
+
+        })
 
 
         bookItemViewModel.getLiveUserReview().observe(this, Observer { review ->
@@ -293,27 +309,33 @@ class BookItemActivity : AppCompatActivity() {
             layout.ratingInfoLayout.visibility = GONE
 
             if (review.isPresent){
+
                 AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, animDuration)
-                val userReview = review.get()
-                layout.ratingBar.rating = userReview.userRating
+                userReview = review.get()
+                review.get().let { userReview ->
+                    layout.ratingBar.rating = userReview.userRating.toFloat()
 
-                layout.userNameText.text = userReview.userName
-                layout.userReviewTxt.text = userReview.review
-                layout.userRatingBar.rating = userReview.userRating
-                layout.userReviewEditText.setText(userReview.review)
+                    userReview.reviewDate?.let {
+                        val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                        layout.date.text = date
+                    }
+                    layout.userNameText.text = userReview.userName
+                    layout.userReviewTxt.text = userReview.review
+                    layout.userRatingBar.rating = userReview.userRating.toFloat()
+                    layout.userReviewEditText.setText(userReview.review)
 
-                layout.userReviewTxt.isVisible = userReview.review.isNotBlank()
+                    layout.userReviewTxt.isVisible = userReview.review.isNotBlank()
 
-                if (userPhotoUri!=null){
-                    layout.letterIcon.visibility = GONE
-                    layout.userImage.visibility = VISIBLE
-                    layout.userImage.load(userPhotoUri){
+                    if (userPhotoUri!=null){
+                        layout.letterIcon.visibility = GONE
+                        layout.userImage.visibility = VISIBLE
+                        layout.userImage.load(userPhotoUri){
+                            showLetterIcon(userReview.userName)
+                        }
+                    }else{
                         showLetterIcon(userReview.userName)
                     }
-                }else{
-                    showLetterIcon(userReview.userName)
                 }
-
             }else{
                 getUserReviewAsync(isbn, userId, animDuration)
             }
@@ -404,6 +426,26 @@ class BookItemActivity : AppCompatActivity() {
         startBookInfoActivity(isbn, getString(title), fragmentID)
     }
 
+    private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
+        lifecycleScope.launch {
+
+            bookItemViewModel.
+            getBooksByCategoryPageSource(category).collectLatest { similarBooks ->
+
+                similarBooksAdapter.addLoadStateListener { loadState ->
+                    val isVisible =
+                        !(loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && similarBooksAdapter.itemCount < 1)
+                    layout.similarBooksCard.isVisible = isVisible
+                    layout.similarBooksRecView.isVisible = isVisible
+                }
+
+                lifecycleScope.launch {
+                    similarBooksAdapter.submitData(similarBooks)
+                }
+
+            }
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.book_item_activity_menu, menu)

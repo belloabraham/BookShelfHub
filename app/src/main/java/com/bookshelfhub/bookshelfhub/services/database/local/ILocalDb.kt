@@ -3,18 +3,20 @@ package com.bookshelfhub.bookshelfhub.services.database.local
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
-import com.bookshelfhub.bookshelfhub.workers.UnPublishedBooks
 import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
+     fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
+     fun deleteAllOrderedBooks()
      suspend fun updateReview(isbn: String, isVerified:Boolean)
      suspend fun deleteAllReviews()
      suspend fun deleteUserRecord()
      suspend fun getUserReview(isbn:String): Optional<UserReview>
      suspend fun addUserReview(userReview: UserReview)
      fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
-     suspend fun getPublishedBook(isbn: String): PublishedBooks
+     suspend fun getPublishedBook(isbn: String): PublishedBook
      fun getLiveBookmarks(userId: String, deleted: Boolean = false): LiveData<List<Bookmark>>
      suspend fun getListOfCartItems(userId: String):List<Cart>
      fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
@@ -33,7 +35,7 @@ interface ILocalDb {
      suspend fun getBookInterest(userId: String): Optional<BookInterest>
      fun getLiveBookInterest(userId: String): LiveData<Optional<BookInterest>>
      suspend fun addBookInterest(bookInterest: BookInterest)
-     suspend fun addOrderedBook(orderedBooks: OrderedBooks)
+     suspend fun addOrderedBooks(OrderedBooks: List<OrderedBooks>)
      fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>>
      suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory)
      suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory)
@@ -43,14 +45,14 @@ interface ILocalDb {
      suspend fun addPubReferrer(pubReferrers: PubReferrers)
      suspend fun updateRecommendedBooksByCategory(category: String, isRecommended: Boolean = true)
      suspend fun updateRecommendedBooksByTag(tag: String, isRecommended: Boolean = true)
-     suspend fun addAllPubBooks(pubBooks: List<PublishedBooks>)
-     suspend fun deleteUnPublishedBookRecords(unPublishedBooks: List<PublishedBooks>)
-     suspend fun getPublishedBooks(): List<PublishedBooks>
-     fun getLiveTrendingBooks(): LiveData<List<PublishedBooks>>
-     fun getLiveRecommendedBooks(): LiveData<List<PublishedBooks>>
-     fun getLiveBooksByCategory(category: String): LiveData<List<PublishedBooks>>
-     fun getLivePublishedBooks(): LiveData<List<PublishedBooks>>
-     fun getBooksByCategoryPageSource(category: String): PagingSource<Int, PublishedBooks>
-     fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBooks>
-     fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBooks>
+     suspend fun addAllPubBooks(pubBooks: List<PublishedBook>)
+     suspend fun deleteUnPublishedBookRecords(unPublishedBooks: List<PublishedBook>)
+     suspend fun getPublishedBooks(): List<PublishedBook>
+     fun getLiveTrendingBooks(): LiveData<List<PublishedBook>>
+     fun getLiveRecommendedBooks(): LiveData<List<PublishedBook>>
+     fun getLiveBooksByCategory(category: String): LiveData<List<PublishedBook>>
+     fun getLivePublishedBooks(): LiveData<List<PublishedBook>>
+     fun getBooksByCategoryPageSource(category: String): PagingSource<Int, PublishedBook>
+     fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBook>
+     fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBook>
 }

@@ -32,6 +32,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/bookItemLayout"
             android:orientation="vertical">
 
             <LinearLayout
@@ -189,6 +190,17 @@
                 android:text="@string/add_to_Cart"
                 android:id="@+id/addToCartBtn"/>
 
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/size_24"
+                android:layout_marginTop="@dimen/size_16"
+                android:backgroundTint="?colorPrimaryVariant"
+                android:visibility="gone"
+                android:text="@string/open"
+                android:id="@+id/openBookBtn"/>
+
             <com.google.android.material.button.MaterialButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -298,13 +310,28 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <me.zhanghai.android.materialratingbar.MaterialRatingBar
-                    android:layout_width="wrap_content"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/size_24"
                     android:layout_marginBottom="@dimen/size_16"
-                    style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
-                    android:id="@+id/userRatingBar" />
+                    android:layout_marginHorizontal="@dimen/size_24"
+                    android:orientation="horizontal">
+
+                    <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
+                        android:id="@+id/userRatingBar" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/size_8"
+                        android:id="@+id/date"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
 
                 <androidx.emoji.widget.EmojiTextView
                     android:layout_width="match_parent"
@@ -425,7 +452,6 @@
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/size_16"
                     android:id="@+id/allReviewsBtn"
                     android:layout_marginStart="22dp"
                     android:text="@string/see_all_reviews"
@@ -470,12 +496,23 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/size_8"
                 android:layout_marginStart="@dimen/size_8"
                 android:id="@+id/similarBooksRecView" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.core.widget.NestedScrollView>
+
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
 
 
     <FrameLayout

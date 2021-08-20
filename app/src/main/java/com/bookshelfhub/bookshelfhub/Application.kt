@@ -18,6 +18,7 @@ import javax.inject.Inject
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
+import com.bookshelfhub.bookshelfhub.const.GoogleFont
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -80,9 +81,9 @@ class Application: android.app.Application(), Configuration.Provider {
 
     private  fun setupDownloadableEmojiFont(){
         val fontRequest = FontRequest(
-            "com.google.android.gms.fonts",
-            "com.google.android.gms",
-            "Noto Color Emoji Compat",
+            GoogleFont.PROVIDER_AUTHORITY,
+            GoogleFont.PROVIDER_PACKAGE,
+            GoogleFont.QUERY,
             R.array.com_google_android_gms_fonts_certs)
        val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
             .setReplaceAll(true)

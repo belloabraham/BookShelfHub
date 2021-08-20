@@ -7,11 +7,15 @@ import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.google.common.base.Defaults
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -19,7 +23,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
+class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, val cloudDb: ICloudDb,  private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
@@ -30,9 +34,7 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
-    private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
     private var storeSearchHistory: LiveData<List<StoreSearchHistory>> = MutableLiveData()
-    private var orderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
     private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
@@ -46,9 +48,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         checkForUpdate()
         user=localDb.getLiveUser(userId)
         bookInterest = localDb.getLiveBookInterest(userId)
-        shelfShelfSearchHistory = localDb.getLiveShelfSearchHistory(userId)
         storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
-        orderedBooks = localDb.getLiveOrderedBooks(userId)
+
     }
 
     fun getIsNightMode():LiveData<Boolean>{
@@ -59,10 +60,6 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         isNightMode.value = value
     }
 
-    fun getOrderedBooks():LiveData<List<OrderedBooks>>{
-        return orderedBooks
-    }
-
     fun setUserReferralLink(value:String){
         userReferralLink=value
     }
@@ -71,19 +68,12 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         return userReferralLink
     }
 
-    fun getUserId():String{
-        return userId
-    }
 
     fun addPubReferrer(pubReferrer:PubReferrers){
        viewModelScope.launch(IO){
            localDb.addPubReferrer(pubReferrer)
        }
     }
-
-     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
-         return shelfShelfSearchHistory
-     }
 
     fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
         return storeSearchHistory

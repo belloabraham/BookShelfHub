@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -148,7 +147,7 @@ class VerificationFragment:Fragment(){
                             findNavController().navigate(actionUserInfo)
                         }else{
 
-                            cloudDb.getDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+                            cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                                 if(docSnapShot!=null && docSnapShot.exists()){
                                     try {

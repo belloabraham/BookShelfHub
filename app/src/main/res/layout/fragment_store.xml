@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
+        android:visibility="invisible"
         android:id="@+id/appbarLayout"
         android:background="?backgroundColor" >
 
@@ -862,26 +863,27 @@
 </androidx.core.widget.NestedScrollView>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="bottom"
         android:paddingHorizontal="@dimen/size_16"
         android:paddingBottom="50dp"
         android:visibility="gone"
-        android:gravity="center_horizontal"
         android:id="@+id/errorLayout">
 
         <ImageView
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:contentDescription="@null"
+            android:layout_gravity="center_horizontal"
             android:src="@drawable/ic_network_alert"
             android:id="@+id/errorImg"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:id="@+id/errorMsgText"
             android:layout_marginHorizontal="@dimen/size_16"
             android:layout_marginVertical="@dimen/size_32"/>
@@ -900,7 +902,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clickable="false"
-            app:lottie_rawRes="@raw/bouncing_ball"
+            app:lottie_speed="10"
+            app:lottie_rawRes="@raw/bsh_logo"
             android:layout_gravity="center"
             app:lottie_loop="true"
             app:lottie_cacheComposition="false"

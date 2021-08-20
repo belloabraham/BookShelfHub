@@ -24,6 +24,7 @@ import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
@@ -57,6 +58,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var dynamicLink: IDynamicLink
+    @Inject
+    lateinit var userAuth: IUserAuth
 
     private lateinit var userId:String
     private val ENFORCE_UPDATE="enforce_update"
@@ -66,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        userId=mainActivityViewModel.getUserId()
+        userId=userAuth.getUserId()
 
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)

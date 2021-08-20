@@ -11,10 +11,8 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
-import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +23,9 @@ class BookItemViewModel @Inject constructor(
   userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
+  private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
+  private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
 
 
   val userId = userAuth.getUserId()
@@ -40,7 +40,28 @@ class BookItemViewModel @Inject constructor(
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
     liveUserReview = localDb.getLiveUserReview(isbn)
+
+    cloudDb.getLiveDataAsync(
+      DbFields.PUBLISHED_BOOKS.KEY, isbn,
+      PublishedBook::class.java){
+      publishedBook.value = it
+    }
+
+    cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, limit = 3){ reviews, e->
+      userReviews.value = reviews
+    }
+
   }
+
+  fun getUserReviews(): LiveData<List<UserReview>> {
+    return userReviews
+  }
+
+
+  fun getPublishedBook(): LiveData<PublishedBook> {
+    return publishedBook
+  }
+
 
   fun getLiveListOfCartItems(): LiveData<List<Cart>> {
     return liveCartItems
@@ -50,7 +71,7 @@ class BookItemViewModel @Inject constructor(
     return liveUserReview
   }
 
-  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBooks>> {
+  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
     return Pager(config){
       localDb.getBooksByCategoryPageSource(category)
     }.flow

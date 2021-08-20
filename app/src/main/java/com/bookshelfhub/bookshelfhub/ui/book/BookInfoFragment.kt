@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.const.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.enums.DateFormat
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
@@ -53,12 +55,16 @@ class BookInfoFragment : Fragment() {
                         openLink(link)
                   })
 
+                  book.dateTimePublished?.let {
+                      val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                      layout.publishedDateTxt.text = date
+                  }
+
                   layout.authorTxt.text = String.format(getString(R.string.author), book.author)
                   layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
                   layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
 
                   layout.descriptionTxt.text =  book.description
-
                   layout.descriptionTxt.applyLinks(links)
 
               }
