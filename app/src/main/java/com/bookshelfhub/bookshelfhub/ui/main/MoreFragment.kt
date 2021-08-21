@@ -167,6 +167,7 @@ class MoreFragment : Fragment() {
         layout.verifyEmailCard.setOnClickListener {
 
         }
+
         layout.needHelpCard.setOnClickListener {
 
         }

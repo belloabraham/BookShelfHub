@@ -16,7 +16,6 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.const.Referrer
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
@@ -86,6 +85,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //***Pre generate dynamic link before user request on app share to decrease share sheet load time
         getBookShareReferralLink(userId){
             it?.let {
                 val link = it.toString()
@@ -95,6 +95,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             layout.bottomBar.selectTabAt(it, true)
@@ -287,7 +288,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPublisherReferrerLink(referrer:String, userId:String){
-                val pubIdAndIsbn = referrer.split(Referrer.SEPERATOR)
+                val pubIdAndIsbn = referrer.split(PubReferrer.SEPERATOR.KEY)
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)

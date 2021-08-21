@@ -7,22 +7,19 @@ import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartActivityViewModel @Inject constructor(private val localDb: ILocalDb, userAuth: IUserAuth): ViewModel(){
+class BookActivityViewModel @Inject constructor(private val localDb: ILocalDb): ViewModel(){
 
-  private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
-  private val userId = userAuth.getUserId()
-
-  init {
-    liveCartItems = localDb.getLiveListOfCartItems(userId)
-  }
-
-  fun getListOfCartItems(): LiveData<List<Cart>> {
-    return liveCartItems
+  fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
+    viewModelScope.launch(IO){
+      localDb.addShelfSearchHistory(shelfSearchHistory)
+    }
   }
 
 }

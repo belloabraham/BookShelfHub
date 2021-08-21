@@ -169,9 +169,7 @@ class BookItemActivity : AppCompatActivity() {
                     book.coverUrl, it
                 )
 
-                lifecycleScope.launch(IO) {
-                    localDb.addToCart(cart)
-                }
+                bookItemViewModel.addToCart(cart)
             }
 
 

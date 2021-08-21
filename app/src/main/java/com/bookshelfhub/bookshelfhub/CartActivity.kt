@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.ActivityCartBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,9 +28,7 @@ import javax.inject.Inject
 class CartActivity : AppCompatActivity() {
 
   private lateinit var layout: ActivityCartBinding
-  private val cartActivityViewModel: CartActivityViewModel by viewModels()
-  @Inject
-  lateinit var localDb: ILocalDb
+  private val cartViewModel: CartViewModel by viewModels()
   @Inject
   lateinit var userAuth:IUserAuth
 
@@ -59,7 +58,15 @@ class CartActivity : AppCompatActivity() {
       )
     )
 
-    cartActivityViewModel.getListOfCartItems().observe(this, Observer {  cartList ->
+    var listOfCartItems: ArrayList<Cart> =  ArrayList()
+
+    cartViewModel.getListOfCartItems().observe(this, Observer { cartList ->
+
+      if (listOfCartItems.isEmpty()){
+        listOfCartItems = cartList as ArrayList<Cart>
+        adapter.submitList(listOfCartItems)
+      }
+
       if (cartList.isNotEmpty()){
         layout.makePaymentFab.isEnabled = true
         layout.emptyCartLayout.visibility = View.GONE
@@ -74,14 +81,7 @@ class CartActivity : AppCompatActivity() {
     })
 
 
-    var listOfCartItems: ArrayList<Cart> =  ArrayList()
 
-    lifecycleScope.launch(IO) {
-      listOfCartItems = localDb.getListOfCartItems(userId) as ArrayList<Cart>
-      withContext(Main){
-        adapter.submitList(listOfCartItems)
-      }
-    }
 
     layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
       override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -103,20 +103,15 @@ class CartActivity : AppCompatActivity() {
         listOfCartItems.removeAt(position)
         adapter.notifyItemRemoved(position)
 
-        lifecycleScope.launch(IO) {
-          localDb.deleteFromCart(cart)
-          withContext(Main){
+            cartViewModel.deleteFromCart(cart)
             val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
             snackBar.setAction(R.string.undo) {
               listOfCartItems.add(position, cart)
               adapter.notifyItemInserted(position)
-              lifecycleScope.launch(IO){
-                localDb.addToCart(cart)
-              }
-            }.show()
-          }
-        }
 
+              cartViewModel.addToCart(cart)
+
+            }.show()
       }
     }
     val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)

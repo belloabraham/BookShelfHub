@@ -18,8 +18,8 @@ import javax.inject.Inject
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
-import com.bookshelfhub.bookshelfhub.const.GoogleFont
 import com.bookshelfhub.bookshelfhub.const.RemoteConfig
+import com.bookshelfhub.bookshelfhub.enums.EmojiFont
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -81,9 +81,9 @@ class Application: android.app.Application(), Configuration.Provider {
 
     private  fun setupDownloadableEmojiFont(){
         val fontRequest = FontRequest(
-            GoogleFont.PROVIDER_AUTHORITY,
-            GoogleFont.PROVIDER_PACKAGE,
-            GoogleFont.QUERY,
+            EmojiFont.PROVIDER_AUTHORITY.VALUE,
+            EmojiFont.PROVIDER_PACKAGE.VALUE,
+            EmojiFont.QUERY.VALUE,
             R.array.com_google_android_gms_fonts_certs)
        val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
             .setReplaceAll(true)

@@ -57,6 +57,12 @@ class BookItemViewModel @Inject constructor(
 
   }
 
+  fun addToCart(cart: Cart){
+    viewModelScope.launch(IO){
+      localDb.addToCart(cart)
+    }
+  }
+
   fun getLivePublishedBook(): LiveData<PublishedBook> {
     return localLivePublishedBook
   }

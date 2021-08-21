@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
@@ -29,11 +30,10 @@ import javax.inject.Inject
 class BookActivity : AppCompatActivity() {
 
   @Inject
-  lateinit var localDb: ILocalDb
-  @Inject
   lateinit var userAuth: IUserAuth
+  private val bookActivityViewModel: BookActivityViewModel by viewModels()
   private lateinit var layout: ActivityBookBinding
-  private lateinit var fullscreenContent: TextView
+  private lateinit var fullscreenContent: LinearLayout
   private lateinit var fullscreenContentControls: LinearLayout
 
   private val hideHandler = Handler()
@@ -91,11 +91,8 @@ class BookActivity : AppCompatActivity() {
     val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
     if (isSearchItem){
-      lifecycleScope.launch(IO){
-        localDb.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
-      }
+      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
     }
-
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
