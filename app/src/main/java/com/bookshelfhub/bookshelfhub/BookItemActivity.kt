@@ -23,10 +23,11 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.const.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.*
+import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -90,16 +91,14 @@ class BookItemActivity : AppCompatActivity() {
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
         if (isSearchItem){
-            lifecycleScope.launch(IO){
-                localDb.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, LocalDateTimeUtil.getDateTimeAsString()))
-            }
+            bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, LocalDateTimeUtil.getDateTimeAsString()))
         }
 
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
         layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         layout.similarBooksRecView.adapter = similarBooksAdapter
 
-        bookItemViewModel.getPublishedBook().observe(this, Observer { book ->
+        bookItemViewModel.getPublishedBookOnline().observe(this, Observer { book ->
             bookPrice = book.price
             layout.progressBar.visibility = GONE
             layout.bookItemLayout.visibility = VISIBLE
@@ -129,39 +128,35 @@ class BookItemActivity : AppCompatActivity() {
 
         var bookItem:PublishedBook? = null
 
-       lifecycleScope.launch(IO){
-          bookItem =  localDb.getPublishedBook(isbn)
-           withContext(Main){
-              val book = bookItem!!
+        bookItemViewModel.getLivePublishedBook().observe(this, Observer { book->
 
-               layout.title.text = book.name
-               layout.author.text = String.format(getString(R.string.by), book.author)
+                bookItem =  book
+                layout.title.text = book.name
+                layout.author.text = String.format(getString(R.string.by), book.author)
 
-               layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
+                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
 
-               bookItemViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
+                bookItemViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
 
-                   if(cartItems.isNotEmpty()){
-                       layout.checkoutNotifText.text = "${cartItems.size}"
-                       layout.checkoutBtnContainer.visibility = VISIBLE
+                    if(cartItems.isNotEmpty()){
+                        layout.checkoutNotifText.text = "${cartItems.size}"
+                        layout.checkoutBtnContainer.visibility = VISIBLE
 
-                       val bookInCart = cartItems.filter {
-                           it.isbn == book.isbn
-                       }
+                        val bookInCart = cartItems.filter {
+                            it.isbn == book.isbn
+                        }
 
-                       if (bookInCart.isNotEmpty()){
-                           layout.addToCartBtn.visibility = GONE
-                       }
+                        if (bookInCart.isNotEmpty()){
+                            layout.addToCartBtn.visibility = GONE
+                        }
 
-                   }else{
-                       layout.checkoutBtnContainer.visibility = GONE
-                   }
-               })
+                    }else{
+                        layout.checkoutBtnContainer.visibility = GONE
+                    }
+                })
+                loadSimilarBooks(book.category, similarBooksAdapter)
 
-               loadSimilarBooks(book.category, similarBooksAdapter)
-
-           }
-       }
+        })
 
         layout.addToCartBtn.setOnClickListener {
 
@@ -254,8 +249,8 @@ class BookItemActivity : AppCompatActivity() {
 
             val newReview = UserReview(isbn, review, newRating, userName,isVerifiedReview, userPhotoUri, postedBefore)
 
-            lifecycleScope.launch(IO) {
-                    localDb.addUserReview(newReview)
+               bookItemViewModel.addUserReview(newReview)
+                if (isVerifiedReview && !review.containsUrl(Regex.URL_IN_TEXT)){
                     val data = Data.Builder()
                     data.putString(Book.ISBN.KEY, isbn)
                     data.putDouble(Book.RATING_DIFF.KEY, ratingDiff)
@@ -265,9 +260,7 @@ class BookItemActivity : AppCompatActivity() {
                             .setInputData(data.build())
                             .build()
                     WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
-
                 }
-
 
         }
 
@@ -361,9 +354,9 @@ class BookItemActivity : AppCompatActivity() {
                 if (it.exists()){
                     val doc = it.data
                     val userReview = json.fromAny(doc!!, UserReview::class.java)
-                    lifecycleScope.launch {
-                        localDb.addUserReview(userReview)
-                    }
+
+                    bookItemViewModel.addUserReview(userReview)
+
                 }else{
                     AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
                 }

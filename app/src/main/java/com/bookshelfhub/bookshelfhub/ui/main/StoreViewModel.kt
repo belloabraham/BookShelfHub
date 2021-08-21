@@ -46,6 +46,12 @@ class StoreViewModel @Inject constructor(private val cloudDb: ICloudDb, private 
         totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
     }
 
+    fun addAllBooks(publishedBooks: List<PublishedBook>){
+        viewModelScope.launch(IO) {
+            localDb.addAllPubBooks(publishedBooks)
+        }
+    }
+
     fun loadPublishedBooks(){
         if (connectionUtil.isConnected()){
             allPublishedBook = localDb.getLivePublishedBooks()

@@ -21,10 +21,10 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
     private var referrerId: String? =null
 
 
-    fun getReferrer():String?{
+    fun getUserReferrerId():String?{
         return referrerId
     }
-    fun setReferrer(value:String?){
+    fun setUserReferrerId(value:String?){
         referrerId=value
     }
     fun setIsExistingUser(value:Boolean){

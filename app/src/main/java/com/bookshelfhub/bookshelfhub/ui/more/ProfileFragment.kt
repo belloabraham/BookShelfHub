@@ -37,8 +37,6 @@ class ProfileFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var database: Database
     @Inject
     lateinit var keyboardUtil: KeyboardUtil

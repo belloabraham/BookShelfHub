@@ -7,6 +7,7 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     fun getLivePublishedBook(isbn: String): LiveData<PublishedBook>
      suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
      fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
      fun deleteAllOrderedBooks()

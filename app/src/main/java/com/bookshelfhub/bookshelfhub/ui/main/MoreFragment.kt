@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bitvale.switcher.SwitcherX
@@ -54,11 +55,10 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
+    private val moreViewModel:MoreViewModel by viewModels()
 
     private lateinit var layout: FragmentMoreBinding
     override fun onCreateView(
@@ -256,14 +256,8 @@ class MoreFragment : Fragment() {
     }
 
    private fun deleteUserData(onComplete:()->Unit){
-       lifecycleScope.launch(IO){
-           localDb.deleteAllReviews()
-           localDb.deleteUserRecord()
-           localDb.deleteAllOrderedBooks()
-           withContext(Main){
-               onComplete()
-           }
-       }
+       moreViewModel.deleteUserData()
+       onComplete()
    }
 
     private fun startWebActivity(title:Int, rmcUrlKey:String){

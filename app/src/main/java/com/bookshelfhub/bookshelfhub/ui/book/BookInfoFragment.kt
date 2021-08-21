@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.DateUtil
@@ -29,6 +31,8 @@ import javax.inject.Inject
 @WithFragmentBindings
 class BookInfoFragment : Fragment() {
 
+    private val bookInfoViewModel: BookInfoViewModel by viewModels()
+
     private lateinit var layout: BookInfoFragmentBinding
     @Inject
     lateinit var localDb: ILocalDb
@@ -45,31 +49,25 @@ class BookInfoFragment : Fragment() {
 
         layout = BookInfoFragmentBinding.inflate(inflater, container, false)
 
-      arguments?.let { it ->
-          val isbn = it.getString(Book.ISBN.KEY)!!
-          lifecycleScope.launch {
-              val book =   localDb.getPublishedBook(isbn)
+          bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { book->
 
-              withContext(Main){
-                  val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) {link ->
-                        openLink(link)
-                  })
+              val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) {link ->
+                  openLink(link)
+              })
 
-                  book.dateTimePublished?.let {
-                      val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
-                      layout.publishedDateTxt.text = date
-                  }
-
-                  layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-                  layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
-                  layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
-
-                  layout.descriptionTxt.text =  book.description
-                  layout.descriptionTxt.applyLinks(links)
-
+              book.dateTimePublished?.let {
+                  val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                  layout.publishedDateTxt.text = date
               }
-          }
-      }
+
+              layout.authorTxt.text = String.format(getString(R.string.author), book.author)
+              layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
+              layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
+
+              layout.descriptionTxt.text =  book.description
+              layout.descriptionTxt.applyLinks(links)
+
+          })
 
         return layout.root
     }

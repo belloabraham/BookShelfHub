@@ -16,6 +16,7 @@ import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.const.Referrer
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.enums.Settings
@@ -30,7 +31,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
-import com.bookshelfhub.bookshelfhub.views.Toast
+import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
@@ -74,10 +75,18 @@ class MainActivity : AppCompatActivity() {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
-        getReferrer(referrer, userId)
 
-        getUserReferrerLinkAsync(userId){
+        //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
+        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
+
+        //***Open dynamic link that opened this app in Book store if the link is not null and is coming from a publisherReferrer
+        referrer?.let {
+            if (it.length>userId.length){
+                openPublisherReferrerLink(it, userId)
+            }
+        }
+
+        getBookShareReferralLink(userId){
             it?.let {
                 val link = it.toString()
                 mainActivityViewModel.setUserReferralLink(link)
@@ -118,10 +127,6 @@ class MainActivity : AppCompatActivity() {
             if(bookInterest.isPresent && bookInterest.get().added){
                 mainActivityViewModel.setBookInterestNotifNo(0)
 
-               val connected = Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
-
                 val recommendedBooksWorker: WorkRequest =
                     OneTimeWorkRequestBuilder<RecommendedBooks>()
                         .build()
@@ -129,7 +134,7 @@ class MainActivity : AppCompatActivity() {
 
                 val oneTimeBookInterestUpload: WorkRequest =
                     OneTimeWorkRequestBuilder<UploadBookInterest>()
-                        .setConstraints(connected)
+                        .setConstraints(Constraint.getConnected())
                         .build()
 
                 WorkManager.getInstance(this).enqueue(oneTimeBookInterestUpload)
@@ -281,22 +286,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getReferrer(referrer:String?, userId:String){
-        referrer?.let {
-            if (it.length>userId.length){
-                val pubIdAndIsbn = it.split("@")
+    private fun openPublisherReferrerLink(referrer:String, userId:String){
+                val pubIdAndIsbn = referrer.split(Referrer.SEPERATOR)
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
                 intent.putExtra(PubReferrer.ISBN.KEY,isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
+                //***Add publisher referrer to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
                 startActivity(intent)
-            }
-        }
     }
 
-    private fun getUserReferrerLinkAsync(userId:String, onComplete:(Uri?)->Unit){
+    private fun getBookShareReferralLink(userId:String, onComplete:(Uri?)->Unit){
         val title = remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY)
         val description = remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY)
         val imageUrl = remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)

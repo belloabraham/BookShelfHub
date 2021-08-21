@@ -12,7 +12,9 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,7 +28,7 @@ class BookItemViewModel @Inject constructor(
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
-
+  private var localLivePublishedBook: LiveData<PublishedBook> = MutableLiveData()
 
   val userId = userAuth.getUserId()
   val isbn = savedState.get<String>(Book.ISBN.KEY)!!
@@ -41,6 +43,8 @@ class BookItemViewModel @Inject constructor(
     liveCartItems = localDb.getLiveListOfCartItems(userId)
     liveUserReview = localDb.getLiveUserReview(isbn)
 
+    localLivePublishedBook = localDb.getLivePublishedBook(isbn)
+
     cloudDb.getLiveDataAsync(
       DbFields.PUBLISHED_BOOKS.KEY, isbn,
       PublishedBook::class.java){
@@ -53,15 +57,30 @@ class BookItemViewModel @Inject constructor(
 
   }
 
+  fun getLivePublishedBook(): LiveData<PublishedBook> {
+    return localLivePublishedBook
+  }
+
+  fun addUserReview(userReview: UserReview){
+    viewModelScope.launch(IO){
+      localDb.addUserReview(userReview)
+    }
+  }
+
+  fun addStoreSearchHistory(storeSearchHistory: StoreSearchHistory){
+    viewModelScope.launch(IO) {
+      localDb.addStoreSearchHistory(storeSearchHistory)
+    }
+  }
+
   fun getUserReviews(): LiveData<List<UserReview>> {
     return userReviews
   }
 
 
-  fun getPublishedBook(): LiveData<PublishedBook> {
+  fun getPublishedBookOnline(): LiveData<PublishedBook> {
     return publishedBook
   }
-
 
   fun getLiveListOfCartItems(): LiveData<List<Cart>> {
     return liveCartItems

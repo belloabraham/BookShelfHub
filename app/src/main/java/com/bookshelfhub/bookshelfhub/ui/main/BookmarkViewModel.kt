@@ -9,6 +9,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +32,12 @@ class BookmarkViewModel @Inject constructor(private val localDb: ILocalDb, val u
 
         viewModelScope.launch {
             localDb.addBookmarkList(bookmark)
+        }
+    }
+
+    fun addBookmark(bookmark: Bookmark){
+        viewModelScope.launch(IO) {
+            localDb.addBookmark(bookmark)
         }
     }
 

@@ -54,8 +54,6 @@ class StoreFragment : Fragment() {
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var connectionUtil: ConnectionUtil
 
     override fun onCreateView(
@@ -1965,9 +1963,7 @@ class StoreFragment : Fragment() {
                         DbFields.DATE_TIME_PUBLISHED.KEY
                     ) {
                         layout.loadingAnimView.visibility = GONE
-                        lifecycleScope.launch(IO) {
-                            localDb.addAllPubBooks(it)
-                        }
+                        storeViewModel.addAllBooks(it)
                     }
             }
         })

@@ -35,8 +35,6 @@ class BookInterestFragment : Fragment() {
     private lateinit var bookInterestObservable:BookInterestObservable
     private val bookInterestViewModel: BookInterestViewModel by viewModels()
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var userAuth: IUserAuth
     private lateinit var oldBookInterest:BookInterest
     private lateinit var layout: FragmentInterestBinding
@@ -91,7 +89,7 @@ class BookInterestFragment : Fragment() {
                 val bookInterest = bookInterestObservable.getBookInterestRecord()
                  bookInterest.uploaded = false
                  bookInterest.added=true
-                localDb.addBookInterest(bookInterest)
+                bookInterestViewModel.addBookInterest(bookInterest)
                 withContext(Main){
                     activity?.let {
                         showToast(R.string.interest_Saved)

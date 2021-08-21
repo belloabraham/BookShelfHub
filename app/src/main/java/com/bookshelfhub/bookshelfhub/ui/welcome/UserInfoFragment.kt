@@ -132,7 +132,7 @@ class UserInfoFragment : Fragment() {
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)
 
-                val referrer = userAuthViewModel.getReferrer()
+                val referrer = userAuthViewModel.getUserReferrerId()
                 var referrerId:String?=null
                 if (isNewUser){
                     referrer?.let {

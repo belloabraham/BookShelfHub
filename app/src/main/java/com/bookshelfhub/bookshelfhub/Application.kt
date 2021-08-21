@@ -19,14 +19,16 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
 import com.bookshelfhub.bookshelfhub.const.GoogleFont
+import com.bookshelfhub.bookshelfhub.const.RemoteConfig
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
-    private lateinit var notificationChannelBuilder: NotificationChannelBuilder
-    private val rmcFetchIntervalInSeconds = 1800L
+
+    //***Required By Dagger Hilt ***//
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    //***Dagger Hilt Configuration ***//
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -34,23 +36,22 @@ class Application: android.app.Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        //Initialize firebase (Required for App Check)
-        FirebaseApp.initializeApp(this)
+
+        //***Should come First ***//
+        setUpAppCheck()
 
         setupDownloadableEmojiFont()
 
-        //Setup App Check
-        val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
-            SafetyNetAppCheckProviderFactory.getInstance())
-
+        //***Joda Time Library Initialization ***//
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()
 
-        notificationChannelBuilder = NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
-        notificationChannelBuilder.createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
+        //***Creating Notification Channel required by Android 8+ ***//
+        NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
+            .createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
+        //***Enqueue WorkManager workers ***//
         enqueueWorkers()
     }
 
@@ -78,7 +79,6 @@ class Application: android.app.Application(), Configuration.Provider {
         WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }
 
-
     private  fun setupDownloadableEmojiFont(){
         val fontRequest = FontRequest(
             GoogleFont.PROVIDER_AUTHORITY,
@@ -90,10 +90,20 @@ class Application: android.app.Application(), Configuration.Provider {
         EmojiCompat.init(config)
     }
 
+    private fun setUpAppCheck(){
+        //***Initialize firebase (Required by App Check)***//
+        FirebaseApp.initializeApp(this)
+
+        //***Setup App Check ***//
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            SafetyNetAppCheckProviderFactory.getInstance())
+    }
+
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            this.minimumFetchIntervalInSeconds = rmcFetchIntervalInSeconds
+            this.minimumFetchIntervalInSeconds = RemoteConfig.fetchIntervalInSeconds
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)

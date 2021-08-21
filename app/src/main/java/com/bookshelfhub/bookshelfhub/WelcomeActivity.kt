@@ -15,6 +15,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.const.Referrer
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.enums.PubReferrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
@@ -50,38 +51,53 @@ class WelcomeActivity : AppCompatActivity() {
     private var referrer:String?=null
 
     @Inject
-     lateinit var connectionUtil: ConnectionUtil
+    lateinit var connectionUtil: ConnectionUtil
     @Inject
     lateinit var userAuth: IUserAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //***Get Nullable referral userID or PubIdAndISBN
         referrer = intent.getStringExtra(PubReferrer.ID.KEY)
-        userAuthViewModel.setReferrer(referrer)
 
+        //***Set set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
+        referrer?.let { referrerId->
+            if (!referrerId.contains(Referrer.SEPERATOR)){
+                userAuthViewModel.setUserReferrerId(referrerId)
+            }
+        }
+
+        //*** Pass Nullable referral userID or PubIdAndISBN and set to Main Activity
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(PubReferrer.ID.KEY, referrer)
 
+        //***Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
 
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
+
+        //***Initialize Firebase Phone Verification and Auth
         phoneAuth= FBPhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+
+        //***Initialize Firebase Google Auth
         googleAuth = FBGoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
+        //*** Start an activity for result callback
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
+                    //*** Sign in with Google
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                     try {
-                        // Google Sign In was successful, authenticate with Firebase
+                        //***Google Sign In was successful, authenticate with Firebase
                         val account = task.getResult(ApiException::class.java)!!
                         googleAuth.authWithGoogle(account.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
                     } catch (e: ApiException) {
-                        // Google Sign In failed, update UI appropriately
+                        //***Google Sign In failed, update UI appropriately
                         hideAnimation()
                         googleAuthViewModel.setSignInError(signInErrorMsg)
                     }
@@ -130,10 +146,12 @@ class WelcomeActivity : AppCompatActivity() {
                 hideAnimation()
                 if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
                    showConfettiAnim()
+
+                    //***Delay for 1.7sec for confetti animation to show ***
                     lifecycleScope.launch(IO) {
                         delay(1700)
                         withContext(Main) {
-                            signUpCompleted(intent)
+                            showSignUpCompletedDialog(intent)
                         }
                     }
                 }else{
@@ -233,7 +251,8 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun signUpCompleted(intent:Intent){
+    private fun showSignUpCompletedDialog(intent:Intent){
+        //***Show completed dialog with sign up button when user completes sign up
         MaterialAlertDialogBuilder(this)
             .setPositiveBtnId(R.id.getStartedBtn){
                 finish()
@@ -246,6 +265,7 @@ class WelcomeActivity : AppCompatActivity() {
 
 
     private fun restoreBookmarks(isNewUser:Boolean){
+        //***Restore bookmark if user is not signing in for the first time (if user is signing up)
         if(!isNewUser){
             val connected = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -255,7 +275,6 @@ class WelcomeActivity : AppCompatActivity() {
                 OneTimeWorkRequestBuilder<DownloadBookmarks>()
                     .setConstraints(connected)
                     .build()
-
             WorkManager.getInstance(applicationContext).enqueue(downLoadBookmarksWorker)
         }
     }

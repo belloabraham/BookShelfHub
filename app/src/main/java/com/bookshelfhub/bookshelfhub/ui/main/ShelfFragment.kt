@@ -47,8 +47,6 @@ class ShelfFragment : Fragment() {
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var cloudDb: ICloudDb
-    @Inject
-    lateinit var localDb: ILocalDb
 
     private lateinit var layout: FragmentShelfBinding
     override fun onCreateView(
@@ -274,7 +272,6 @@ class ShelfFragment : Fragment() {
                 }
 
                 override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    //TODO Come back to implement this
                     return true
                 }
             })
@@ -311,9 +308,7 @@ class ShelfFragment : Fragment() {
                     layout.emptyShelf.visibility = VISIBLE
                 }
                 orderedBooksChecked = true
-                lifecycleScope.launch(IO){
-                    localDb.addOrderedBooks(it)
-                }
+                shelfViewModel.addOrderedBooks(it)
             }
         }
     }

@@ -166,6 +166,10 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
     //TODO Published Books
 
+    override fun getLivePublishedBook(isbn: String): LiveData<PublishedBook> {
+        return RoomInstance.getDatabase(context).userDao().getLivePublishedBook(isbn)
+    }
+
     override suspend fun getPublishedBook(isbn: String): PublishedBook {
        return RoomInstance.getDatabase(context).userDao().getPublishedBook(isbn)
     }

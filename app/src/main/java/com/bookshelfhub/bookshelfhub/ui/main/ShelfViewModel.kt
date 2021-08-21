@@ -33,6 +33,13 @@ class ShelfViewModel @Inject constructor(
         orderedBooks = localDb.getLiveOrderedBooks(userId)
     }
 
+
+    fun addOrderedBooks(orderedBooks: List<OrderedBooks>){
+        viewModelScope.launch(IO) {
+            localDb.addOrderedBooks(orderedBooks)
+        }
+    }
+
     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
         return shelfShelfSearchHistory
     }

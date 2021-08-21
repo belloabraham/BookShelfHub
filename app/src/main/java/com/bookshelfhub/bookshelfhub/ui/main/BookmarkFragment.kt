@@ -34,10 +34,6 @@ class BookmarkFragment : Fragment() {
 
     private lateinit var layout: FragmentBookmarkBinding
     private val bookmarkViewModel:BookmarkViewModel by viewModels()
-    @Inject
-    lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var localDb: ILocalDb
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,13 +41,22 @@ class BookmarkFragment : Fragment() {
     ): View {
         layout= FragmentBookmarkBinding.inflate(inflater, container, false)
 
-        val userId = userAuth.getUserId()
 
         val adapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter(){
             removeBookmarkHint()
         }
 
+        layout.bookmarkListRecView.adapter = adapter
+
+        var bookmarkList: ArrayList<Bookmark> =  ArrayList()
+
         bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer { bookmarks ->
+
+            if (bookmarkList.isEmpty()){
+                bookmarkList = bookmarks as ArrayList<Bookmark>
+                adapter.submitList(bookmarkList)
+            }
+
             if (bookmarks.isEmpty()){
                 layout.emptyBookmarksLayout.visibility = View.VISIBLE
                 layout.bookmarkListRecView.visibility = View.GONE
@@ -68,16 +73,6 @@ class BookmarkFragment : Fragment() {
             )
         )
 
-        layout.bookmarkListRecView.adapter = adapter
-
-        var bookmarkList: ArrayList<Bookmark> =  ArrayList()
-
-        lifecycleScope.launch(IO){
-            bookmarkList = localDb.getBookmarks(userId) as ArrayList<Bookmark>
-            withContext(Main){
-                adapter.submitList(bookmarkList)
-            }
-        }
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_bookmark_minus_white) {
 
@@ -87,21 +82,17 @@ class BookmarkFragment : Fragment() {
                 bookmark.deleted=true
                 bookmarkList.removeAt(position)
                 adapter.notifyItemRemoved(position)
-
-                lifecycleScope.launch(IO) {
-                    localDb.addBookmark(bookmark)
-                    withContext(Main){
+                    bookmarkViewModel.addBookmark(bookmark)
                         bookmark.deleted = false
                         val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.bookmark_removed_msg, Snackbar.LENGTH_LONG)
                         snackBar.setAction(R.string.undo) {
                             bookmarkList.add(position, bookmark)
                             adapter.notifyItemInserted(position)
-                            lifecycleScope.launch(IO){
-                                localDb.addBookmark(bookmark)
-                            }
+
+                                bookmarkViewModel.addBookmark(bookmark)
+
                         }.show()
-                    }
-                }
+
             }
         }
 

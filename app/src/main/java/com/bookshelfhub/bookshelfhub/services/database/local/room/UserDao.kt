@@ -131,6 +131,9 @@ interface UserDao {
     @Query("SELECT * FROM PublishedBook WHERE isbn = :isbn")
     suspend fun getPublishedBook(isbn: String): PublishedBook
 
+    @Query("SELECT * FROM PublishedBook WHERE isbn = :isbn")
+    fun getLivePublishedBook(isbn: String): LiveData<PublishedBook>
+
     @Delete
     suspend fun deleteUnPublishedBookRecords(publishedBooks: List<PublishedBook>)
 

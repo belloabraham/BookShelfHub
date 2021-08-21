@@ -30,7 +30,6 @@ class PostUserReview @AssistedInject constructor(
         val isbn = inputData.getString(Book.ISBN.KEY)!!
         val userReview =  localDb.getUserReview(isbn).get()
 
-        if(userReview.verified && !userReview.review.containsUrl(Regex.URL_IN_TEXT)){
             val ratingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
             val userId = userAuth.getUserId()
 
@@ -58,9 +57,6 @@ class PostUserReview @AssistedInject constructor(
                 userReview.postedBefore = true
                 localDb.addUserReview(userReview)
             }
-
-
-        }
 
         return Result.success()
     }
