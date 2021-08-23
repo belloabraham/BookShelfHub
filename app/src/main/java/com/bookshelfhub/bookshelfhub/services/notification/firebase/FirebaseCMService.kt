@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
 import androidx.work.*
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.firebase.messaging.FirebaseMessagingService

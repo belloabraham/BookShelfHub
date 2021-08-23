@@ -2,6 +2,13 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+    <!-- TODO: Card Info-->
+    <string name="payment_info">Payment Info</string>
+    <string name="card_no">Card No</string>
+    <string name="cvc">CVC</string>
+    <string name="mmYY">MM/YY</string>
+    <string name="proceed">Proceed</string>
+
 
     <!-- TODO: Book Info-->
     <string name="published_date">Published date: %s</string>
@@ -261,6 +268,8 @@
 
     <!-- TODO: Category Activity -->
     <string name="search">Search</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

@@ -249,7 +249,6 @@
                 android:layout_marginHorizontal="@dimen/size_24"
                 android:layout_marginBottom="@dimen/size_16"
                 android:maxLines="2"
-                android:text="@string/lorep_ipsum"
                 android:id="@+id/descText"/>
 
 
@@ -338,7 +337,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/size_24"
                     android:visibility="gone"
-                    android:text="@string/lorep_ipsum"
                     android:layout_marginBottom="@dimen/size_16"
                     android:id="@+id/userReviewTxt"/>
 

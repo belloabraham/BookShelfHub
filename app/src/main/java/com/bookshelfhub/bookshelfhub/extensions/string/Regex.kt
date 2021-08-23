@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.const
+package com.bookshelfhub.bookshelfhub.extensions.string
 
 class Regex {
 

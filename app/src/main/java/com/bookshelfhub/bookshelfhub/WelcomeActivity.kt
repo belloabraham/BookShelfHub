@@ -16,7 +16,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.enums.PubReferrer
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
@@ -62,7 +62,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         //***Set set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId->
-            if (!referrerId.contains(PubReferrer.SEPERATOR.KEY)){
+            if (!referrerId.contains(PubReferrer.SEPARATOR.KEY)){
                 userAuthViewModel.setUserReferrerId(referrerId)
             }
         }

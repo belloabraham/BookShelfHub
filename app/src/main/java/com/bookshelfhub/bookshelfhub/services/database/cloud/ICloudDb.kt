@@ -1,8 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
-import androidx.work.ListenableWorker
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.DbFields
+import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.google.firebase.Timestamp
@@ -58,13 +56,13 @@ interface ICloudDb {
     )
 
      fun <T : Any> getLiveListOfDataAsyncFrom(
-        collection: String,
-        type: Class<T>,
-        startAt: Timestamp,
-        orderBy: String = DbFields.DATE_TIME_PUBLISHED.KEY,
-        shouldCache: Boolean = false,
-        shouldRetry: Boolean = true,
-        onComplete: (dataList: List<T>) -> Unit
+         collection: String,
+         type: Class<T>,
+         startAt: Timestamp,
+         orderBy: String = DbFields.DATE_TIME_PUBLISHED.KEY,
+         shouldCache: Boolean = false,
+         shouldRetry: Boolean = true,
+         onComplete: (dataList: List<T>) -> Unit
     )
 
     fun getCacheSettings(shouldCache: Boolean): FirebaseFirestoreSettings

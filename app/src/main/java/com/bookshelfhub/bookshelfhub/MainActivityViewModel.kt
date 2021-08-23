@@ -5,17 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
-import com.google.common.base.Defaults
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -23,7 +20,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, val cloudDb: ICloudDb,  private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
+class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, val cloudDb: ICloudDb, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
     private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()

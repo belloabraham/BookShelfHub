@@ -5,7 +5,7 @@ import androidx.room.*
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 
-@Database(entities = [User::class, OrderedBooks::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, PubReferrers::class, PublishedBook::class, Cart::class, UserReview::class, History::class, Bookmark::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, OrderedBooks::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, PubReferrers::class, PublishedBook::class, Cart::class, UserReview::class, PaymentCard::class, History::class, Bookmark::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RoomInstance: RoomDatabase() {
 

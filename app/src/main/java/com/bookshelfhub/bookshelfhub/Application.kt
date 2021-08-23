@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
@@ -18,8 +17,8 @@ import javax.inject.Inject
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
-import com.bookshelfhub.bookshelfhub.const.RemoteConfig
-import com.bookshelfhub.bookshelfhub.enums.EmojiFont
+import co.paystack.android.PaystackSdk
+import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -37,8 +36,12 @@ class Application: android.app.Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
+
         //***Should come First ***//
         setUpAppCheck()
+
+        //***Required by Paystack SDK ***//
+        PaystackSdk.initialize(applicationContext);
 
         setupDownloadableEmojiFont()
 
@@ -103,7 +106,7 @@ class Application: android.app.Application(), Configuration.Provider {
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            this.minimumFetchIntervalInSeconds = RemoteConfig.fetchIntervalInSeconds
+            this.minimumFetchIntervalInSeconds = RemoteConfig.FETCH_INTERVAL_IN_SEC.VALUE
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)

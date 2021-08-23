@@ -15,19 +15,21 @@ import androidx.lifecycle.lifecycleScope
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
-import com.bookshelfhub.bookshelfhub.enums.*
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
+import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
+import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -101,7 +103,7 @@ class MoreFragment : Fragment() {
         }
 
         layout.aboutCard.setOnClickListener {
-            startProfileActivity(R.string.about, R.id.aboutFragment)
+            startMoreActivity(R.id.aboutFragment)
         }
 
         layout.reviewCard.setOnClickListener {
@@ -116,7 +118,7 @@ class MoreFragment : Fragment() {
         }
 
         profileBtn.setOnClickListener {
-            startProfileActivity(R.string.profile, R.id.profileFragment)
+            startMoreActivity(R.id.profileFragment)
         }
 
         signOutBtn.setOnClickListener {
@@ -125,7 +127,7 @@ class MoreFragment : Fragment() {
                  .setCancelable(true)
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
-                     if (authType==AuthType.GOOGLE.ID){
+                     if (authType== AuthType.GOOGLE.ID){
                          userAuth.signOut {
                                  googleAuth.signOut {
                                      deleteUserData {
@@ -173,7 +175,7 @@ class MoreFragment : Fragment() {
         }
 
         layout.interestCard.setOnClickListener {
-            startProfileActivity(R.string.book_interest, R.id.interestFragment)
+            startMoreActivity(R.id.interestFragment)
         }
 
         layout.referraLinkCard.setOnClickListener {
@@ -185,9 +187,9 @@ class MoreFragment : Fragment() {
                         withContext(Main){
                             if (link==null){
                                 dynamicLink.getLinkAsync(
-                                    remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
-                                    remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
-                                    remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
+                                    remoteConfig.getString(ReferrerLink.TITLE.KEY),
+                                    remoteConfig.getString(ReferrerLink.DESC.KEY),
+                                    remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY),
                                     userAuth.getUserId()
                                 ){
                                     if (it!=null){
@@ -271,11 +273,10 @@ class MoreFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun startProfileActivity(title:Int, fragmentID:Int){
+    private fun startMoreActivity(fragmentID:Int){
         val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.TITLE.KEY,title)
-            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.ID.KEY, fragmentID)
+            putExtra(com.bookshelfhub.bookshelfhub.ui.Fragment.ID.KEY, fragmentID)
         }
         startActivity(intent)
     }

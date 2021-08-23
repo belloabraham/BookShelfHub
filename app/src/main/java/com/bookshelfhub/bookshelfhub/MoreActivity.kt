@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMoreBinding
-import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.ui.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,19 +16,19 @@ class MoreActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityMoreBinding
     private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = ActivityMoreBinding.inflate(layoutInflater)
         setContentView(layout.root)
-        val title = intent.getIntExtra(Fragment.TITLE.KEY, 0)
         val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
 
         setSupportActionBar(layout.toolbar)
-        supportActionBar?.setTitle(title)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
         navigateTo(fragmentId)
     }
@@ -42,9 +44,4 @@ class MoreActivity : AppCompatActivity() {
         navController.navigate(fragmentId)
     }
 
-    /* override fun onSupportNavigateUp(): Boolean {
-         val navController = findNavController(R.id.nav_host_fragment_content_profile)
-         return navController.navigateUp(appBarConfiguration)
-                 || super.onSupportNavigateUp()
-     }*/
 }

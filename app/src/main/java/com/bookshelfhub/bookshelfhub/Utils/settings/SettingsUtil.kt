@@ -1,12 +1,10 @@
-package com.bookshelfhub.bookshelfhub.Utils
+package com.bookshelfhub.bookshelfhub.Utils.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.bookshelfhub.bookshelfhub.R
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

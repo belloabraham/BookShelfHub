@@ -7,22 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.DateUtil
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.const.Regex
+import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.DateFormat
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -51,7 +46,7 @@ class BookInfoFragment : Fragment() {
 
           bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { book->
 
-              val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) {link ->
+              val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) { link ->
                   openLink(link)
               })
 

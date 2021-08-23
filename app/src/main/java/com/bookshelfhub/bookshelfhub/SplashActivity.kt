@@ -6,7 +6,7 @@ import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.enums.PubReferrer
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink

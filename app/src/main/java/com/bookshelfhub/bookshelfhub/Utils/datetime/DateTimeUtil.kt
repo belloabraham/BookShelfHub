@@ -1,8 +1,8 @@
-package com.bookshelfhub.bookshelfhub.Utils
+package com.bookshelfhub.bookshelfhub.Utils.datetime
 
 import org.threeten.bp.LocalDateTime
 
- class LocalDateTimeUtil() {
+ class DateTimeUtil() {
 
     companion object{
 

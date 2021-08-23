@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.enums
+package com.bookshelfhub.bookshelfhub
 
 enum class EmojiFont(val VALUE:String) {
     PROVIDER_AUTHORITY("com.google.android.gms.fonts"),

@@ -25,48 +25,16 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:paddingVertical="@dimen/size_8"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:navGraph="@navigation/cart_activity_navigation"
         android:paddingBottom="?actionBarSize"
-        android:id="@+id/cartItemsRecView" />
+        app:defaultNavHost="true" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/size_16"
-        android:id="@+id/emptyCartLayout"
-        android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="@dimen/size_150"
-            android:layout_height="@dimen/size_150"
-            android:src="@drawable/ic_cart"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="@null" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_item_in_cart_msg"
-            android:layout_margin="@dimen/size_16" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/makePaymentFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:icon="@drawable/cart_arrow_right"
-        app:iconTint="@android:color/white"
-        android:textColor="@android:color/white"
-        android:layout_gravity="bottom|end"
-        android:contentDescription="@null"
-        android:text="@string/check_out"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

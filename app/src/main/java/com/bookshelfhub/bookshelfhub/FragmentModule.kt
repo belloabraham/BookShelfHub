@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.helpers.ClipboardHelper
+import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.views.tooltip.ToolTip
 import dagger.Module
@@ -25,7 +25,7 @@ object FragmentModule {
 
     @FragmentScoped
     @Provides
-    fun getClipboardHelper(@ActivityContext context: Context):ClipboardHelper{
+    fun getClipboardHelper(@ActivityContext context: Context): ClipboardHelper {
         return ClipboardHelper(context)
     }
 

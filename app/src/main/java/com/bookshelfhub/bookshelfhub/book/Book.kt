@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.enums
+package com.bookshelfhub.bookshelfhub.book
 
 enum class Book(val KEY:String) {
     TITLE("title"),

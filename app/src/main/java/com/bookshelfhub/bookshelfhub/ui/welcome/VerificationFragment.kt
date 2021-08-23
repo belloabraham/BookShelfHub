@@ -18,8 +18,7 @@ import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
-import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.enums.VeriFragSavedState
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel

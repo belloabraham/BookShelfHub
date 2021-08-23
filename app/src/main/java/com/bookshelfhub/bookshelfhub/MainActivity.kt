@@ -12,14 +12,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.Utils.SettingsUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.enums.PubReferrer
-import com.bookshelfhub.bookshelfhub.enums.Settings
-import com.bookshelfhub.bookshelfhub.enums.UserReferrer
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPublisherReferrerLink(referrer:String, userId:String){
-                val pubIdAndIsbn = referrer.split(PubReferrer.SEPERATOR.KEY)
+                val pubIdAndIsbn = referrer.split(PubReferrer.SEPARATOR.KEY)
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
@@ -300,9 +300,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getBookShareReferralLink(userId:String, onComplete:(Uri?)->Unit){
-        val title = remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY)
-        val description = remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY)
-        val imageUrl = remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY)
+        val title = remoteConfig.getString(ReferrerLink.TITLE.KEY)
+        val description = remoteConfig.getString(ReferrerLink.DESC.KEY)
+        val imageUrl = remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY)
         dynamicLink.getLinkAsync(title, description, imageUrl, userId){
             onComplete(it)
         }

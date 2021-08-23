@@ -1,7 +1,5 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
-import android.util.Log
-import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.wrappers.Json

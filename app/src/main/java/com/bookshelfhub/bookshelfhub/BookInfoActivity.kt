@@ -6,8 +6,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.ui.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 
 

@@ -14,10 +14,10 @@ import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
-import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.DbFields
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
 import com.bookshelfhub.bookshelfhub.extensions.isValidPhoneNumber
+import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
@@ -104,7 +104,7 @@ class UserInfoFragment : Fragment() {
         }
 
 
-        if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
+        if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())
             layout.emailEditTxt.setText(userAuth.getEmail())

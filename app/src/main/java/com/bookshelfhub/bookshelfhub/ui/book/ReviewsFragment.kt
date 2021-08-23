@@ -12,11 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ReviewsFragmentBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import javax.inject.Inject

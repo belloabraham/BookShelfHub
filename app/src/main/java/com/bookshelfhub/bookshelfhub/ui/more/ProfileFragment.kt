@@ -11,17 +11,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.DateUtil
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
-import com.bookshelfhub.bookshelfhub.enums.AuthType
-import com.bookshelfhub.bookshelfhub.enums.DateFormat
+import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.views.Toast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -55,7 +53,7 @@ class ProfileFragment : Fragment() {
         profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
             user = liveUser
             layout.nameEditTxt.setText(liveUser!!.name)
-            if (userAuth.getAuthType()==AuthType.GOOGLE.ID){
+            if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
                 layout.phoneEditTxtLayout.visibility=View.VISIBLE
             }else{
                 layout.emailEditTxtLayout.visibility=View.VISIBLE

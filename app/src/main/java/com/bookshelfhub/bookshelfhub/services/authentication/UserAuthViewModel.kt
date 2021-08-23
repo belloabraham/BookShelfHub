@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User

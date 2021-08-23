@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.enums
+package com.bookshelfhub.bookshelfhub.Utils.settings
 
 enum class Settings(val KEY:String) {
     SHOW_CONTINUE_POPUP("show_continue_popup"),

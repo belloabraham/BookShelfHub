@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.enums
+package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 enum class DbFields(val KEY:String) {
     USERS("users"),

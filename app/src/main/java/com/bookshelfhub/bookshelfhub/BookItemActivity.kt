@@ -19,26 +19,34 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.const.Regex
+import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.enums.*
+import com.bookshelfhub.bookshelfhub.book.*
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -91,7 +99,7 @@ class BookItemActivity : AppCompatActivity() {
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
         if (isSearchItem){
-            bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, LocalDateTimeUtil.getDateTimeAsString()))
+            bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
         }
 
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
@@ -183,9 +191,9 @@ class BookItemActivity : AppCompatActivity() {
 
                     if (link==null){
                         dynamicLink.getLinkAsync(
-                            remoteConfig.getString(UserReferrer.USER_REF_TITLE.KEY),
-                            remoteConfig.getString(UserReferrer.USER_REF_DESC.KEY),
-                            remoteConfig.getString(UserReferrer.USER_REF_IMAGE_URI.KEY),
+                            remoteConfig.getString(ReferrerLink.TITLE.KEY),
+                            remoteConfig.getString(ReferrerLink.DESC.KEY),
+                            remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY),
                             userId
                         ){
                            it?.let {
@@ -224,7 +232,6 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
             layout.ratingInfoLayout.isVisible = rating>0
-
         }
 
         layout.openBookBtn.setOnClickListener {

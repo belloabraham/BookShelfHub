@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.*
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.config.FirebaseRemoteConfig
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth

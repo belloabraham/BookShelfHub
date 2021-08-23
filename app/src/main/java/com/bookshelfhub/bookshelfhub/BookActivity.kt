@@ -7,34 +7,27 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.Utils.LocalDateTimeUtil
+import androidx.lifecycle.LifecycleOwner
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.observers.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- */
+
 @AndroidEntryPoint
-class BookActivity : AppCompatActivity() {
+class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   @Inject
   lateinit var userAuth: IUserAuth
   private val bookActivityViewModel: BookActivityViewModel by viewModels()
   private lateinit var layout: ActivityBookBinding
   private lateinit var fullscreenContent: LinearLayout
-  private lateinit var fullscreenContentControls: LinearLayout
+  private lateinit var bottomNavigationLayout: LinearLayout
 
   private val hideHandler = Handler()
 
@@ -42,9 +35,6 @@ class BookActivity : AppCompatActivity() {
   private val hidePart2Runnable = Runnable {
     // Delayed removal of status and navigation bar
 
-    // Note that some of these constants are new as of API 16 (Jelly Bean)
-    // and API 19 (KitKat). It is safe to use them, as they are inlined
-    // at compile-time and do nothing on earlier devices.
     fullscreenContent.systemUiVisibility =
       View.SYSTEM_UI_FLAG_LOW_PROFILE or
               View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -56,7 +46,7 @@ class BookActivity : AppCompatActivity() {
   private val showPart2Runnable = Runnable {
     // Delayed display of UI elements
     supportActionBar?.show()
-    fullscreenContentControls.visibility = View.VISIBLE
+    bottomNavigationLayout.visibility = View.VISIBLE
   }
   private var isFullscreen: Boolean = false
 
@@ -82,6 +72,7 @@ class BookActivity : AppCompatActivity() {
   @SuppressLint("ClickableViewAccessibility")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    Display(this, lifecycle)
 
     layout = ActivityBookBinding.inflate(layoutInflater)
     setContentView(layout.root)
@@ -91,7 +82,7 @@ class BookActivity : AppCompatActivity() {
     val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
     if (isSearchItem){
-      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), LocalDateTimeUtil.getDateTimeAsString()))
+      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), DateTimeUtil.getDateTimeAsString()))
     }
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -102,7 +93,7 @@ class BookActivity : AppCompatActivity() {
     fullscreenContent = layout.fullscreenContent
     fullscreenContent.setOnClickListener { toggle() }
 
-    fullscreenContentControls = layout.fullscreenContentControls
+    bottomNavigationLayout = layout.fullscreenContentControls
 
     // Upon interacting with UI controls, delay any scheduled hide()
     // operations to prevent the jarring behavior of controls going away
@@ -130,7 +121,7 @@ class BookActivity : AppCompatActivity() {
   private fun hide() {
     // Hide UI first
     supportActionBar?.hide()
-    fullscreenContentControls.visibility = View.GONE
+    bottomNavigationLayout.visibility = View.GONE
     isFullscreen = false
 
     // Schedule a runnable to remove the status and navigation bar after a delay

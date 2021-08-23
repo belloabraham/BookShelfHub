@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.emoji.widget.EmojiTextView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.DateUtil
-import com.bookshelfhub.bookshelfhub.enums.DateFormat
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.views.LetterIcon
