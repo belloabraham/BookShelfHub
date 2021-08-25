@@ -5,9 +5,14 @@
     <!-- TODO: Card Info-->
     <string name="payment_info">Payment Info</string>
     <string name="card_no">Card No</string>
+    <string name="template_card_no">%1s  ************%2s</string>
     <string name="cvc">CVC</string>
     <string name="mmYY">MM/YY</string>
+    <string name="payment_error">There was an error processing your payment</string>
     <string name="proceed">Proceed</string>
+    <string name="invalid_card_no">Invalid card number</string>
+    <string name="invalid_card_exp_date">Invalid expiry date</string>
+    <string name="invalid_cvc_no">invalid CVC number, check behind your card for a 3 digit number</string>
 
 
     <!-- TODO: Book Info-->
@@ -123,7 +128,7 @@
     <string name="continue_reading">Continue Reading</string>
     <string name="dismiss">Dismiss</string>
     <string name="percent">%d%</string>
-    <string name="dismiss_msg">You can disable popup dialog under profile > settings</string>
+    <string name="dismiss_msg">You can disable progress popup under profile > settings</string>
 
 
     <!-- TODO: More Tab -->
@@ -143,6 +148,8 @@
     <string name="referral_link">Get referral link</string>
     <string name="share">Share</string>
     <string name="account">Account</string>
+    <string name="delete_payment_cards">Delete payment cards</string>
+    <string name="all_cards_deleted">All payment cards have been deleted</string>
     <string name="more">More</string>
     <string name="payment_cards">Payment cards</string>
     <string name="verify_email">Verify email</string>
@@ -234,6 +241,7 @@
     <string name="name_req_error">Your name is required</string>
     <string name="mail_req_error">Your email is required</string>
     <string name="updated">Updated</string>
+    <string name="additionalInfo">Additional information</string>
 
     <!-- TODO: Bookmark Fragment -->
     <string name="bookmarks">Bookmarks</string>
@@ -242,12 +250,15 @@
     <string name="bookmark_removed_msg">Removed from bookmarks</string>
     <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab below and bookmark a page.</string>
 
-    <!-- TODO: Cart Activity -->
+    <!-- TODO: Cart Fragment -->
     <string name="check_out">Checkout</string>
     <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
-    <string name="price">Price: $%,.2f</string>
+    <string name="add_new_card">Add new card</string>
+    <string name="price">Price: $%d</string>
+    <string name="total">Total: $%d</string>
     <string name="by">By: %s</string>
     <string name="undo">UNDO</string>
+    <string name="transaction_error">Unable to complete your payment transaction as a result of "%s"</string>
     <string name="item_in_cart_removed_msg">Book removed from cart</string>
     <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
 

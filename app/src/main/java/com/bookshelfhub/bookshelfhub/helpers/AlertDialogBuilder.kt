@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.text.Html
 
+
 class AlertDialogBuilder private constructor(private val activity: Activity, private val message: String){
 
     private lateinit var positiveActionText:String

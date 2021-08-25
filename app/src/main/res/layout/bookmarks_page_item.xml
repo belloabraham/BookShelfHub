@@ -17,7 +17,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/title"
                 android:layout_marginHorizontal="@dimen/size_16"
-                android:singleLine="true"
+                android:ellipsize="end"
                 android:maxLines="1"
                 style="@style/SearchItemTitle"/>
 

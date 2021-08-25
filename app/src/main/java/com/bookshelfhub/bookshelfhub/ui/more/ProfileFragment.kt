@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -56,7 +58,7 @@ class ProfileFragment : Fragment() {
             if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
                 layout.phoneEditTxtLayout.visibility=View.VISIBLE
             }else{
-                layout.emailEditTxtLayout.visibility=View.VISIBLE
+                layout.emailEditTxtLayout.visibility=VISIBLE
             }
             layout.phoneEditTxt.setText(liveUser.phone)
             layout.emailEditTxt.setText(liveUser.email)
@@ -69,6 +71,7 @@ class ProfileFragment : Fragment() {
                 gender =it
                 layout.genderLayout.hint = it
             }
+
         })
 
         layout.dobDatePicker.setOnDatePickListener {
@@ -81,7 +84,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        layout.genderDropDown.setOnItemClickListener{ parent, view, position, id ->
+        layout.genderDropDown.setOnItemClickListener{ parent, _, position, _ ->
            gender = parent.getItemAtPosition(position).toString().trim()
         }
 
@@ -92,6 +95,7 @@ class ProfileFragment : Fragment() {
             val email = layout.emailEditTxt.text.toString().trim()
             val phone = layout.phoneEditTxt.text.toString().trim()
             val name = layout.nameEditTxt.text.toString().trim()
+            val additionalInfo = layout.additionalInfoText.text.toString().trim()
             if(TextUtils.isEmpty(name)){
                 layout.nameEditTxtLayout.error = getString(R.string.name_req_error)
             }else if (TextUtils.isEmpty(phone)){
@@ -103,6 +107,7 @@ class ProfileFragment : Fragment() {
                     updatedUserRecord.dateOfBirth = dateOfBirth
                     updatedUserRecord.gender = gender
                     updatedUserRecord.name = name
+                    updatedUserRecord.additionInfo = additionalInfo
                     if (userAuth.getAuthType() == AuthType.GOOGLE.ID) {
                         if (phone != updatedUserRecord.phone) {
                             updatedUserRecord.mailOrPhoneVerified = false

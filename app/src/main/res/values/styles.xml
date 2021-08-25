@@ -42,7 +42,7 @@
     </style>
 
     <style name="CartItemTextStyle">
-        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:textColor">?colorOnBackground</item>
     </style>
@@ -54,14 +54,14 @@
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">@dimen/size_16sp</item>
-        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="SearchItemAuthor" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:maxLines">1</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
 

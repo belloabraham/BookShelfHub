@@ -26,6 +26,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.ui.VeriFragSavedState
 import com.bookshelfhub.bookshelfhub.wrappers.Json
 import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks

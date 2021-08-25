@@ -19,5 +19,6 @@ data class User(
      var referrerId:String? = null,
      var gender: String?=null,
      var dateOfBirth: String?=null,
-     var mailOrPhoneVerified: Boolean = false
+     var mailOrPhoneVerified: Boolean = false,
+     var additionInfo:String?=null
 )

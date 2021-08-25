@@ -5,33 +5,25 @@ import co.paystack.android.Paystack
 import co.paystack.android.PaystackSdk
 import co.paystack.android.model.Card
 import co.paystack.android.model.Charge
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IPaymentCard
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.wrappers.Json
 
-class PayStack(paymentCard: IPaymentCard) {
+class PayStack(paymentCard: PaymentCard, val activity: Activity, val json: Json, private val callBack: Paystack.TransactionCallback,
+) : IPayment {
 
-    var card:Card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
+    var card: Card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
 
-    fun isValidCard(paymentCard: IPaymentCard): Boolean {
-       return Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv).validCVC()
-    }
-
-    fun isValidCVC(): Boolean {
-        return card.validCVC()
-    }
-
-    fun isValidExpDate(): Boolean {
-        card.type
-        return card.validExpiryDate()
-    }
-
-    fun isValidCardNo(): Boolean {
-        return card.validNumber()
-    }
-
-    fun chargeCard(paymentCard: IPaymentCard, activity: Activity, callBack:Paystack.TransactionCallback){
-        val card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
+    override fun chargeCard(
+        amount:Int,
+        userDataKey:String,
+        userData:HashMap<String, String>,
+        currency:String,
+        ) {
         val charge = Charge()
         charge.card = card
+        charge.amount = amount
+        charge.currency = currency
+        charge.putMetadata(userDataKey, json.getJsonObject(userData))
         PaystackSdk.chargeCard(activity, charge, callBack)
     }
 }

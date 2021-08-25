@@ -16,11 +16,13 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/cardNoLayout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:hint="@string/card_no">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/card_others"
                 android:inputType="number"
                 android:maxLength="19"
                 android:id="@+id/cardNoTxt"/>
@@ -33,33 +35,44 @@
             android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="100dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
+                android:id="@+id/expiryDateLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:hint="@string/mmYY">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLength="5"
+                    android:drawableEnd="@drawable/card_exp_date"
                     android:inputType="number"
-                    android:id="@+id/expiryDate"/>
+                    android:id="@+id/expiryDateTxt"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="100dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/cvc"
+                android:id="@+id/cvvLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginStart="@dimen/size_16">
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
+                    android:drawableEnd="@drawable/card_cvc"
                     android:maxLength="3"
                     android:id="@+id/cvvTxt"/>
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/size_16"
+            android:textColor="@color/red"
+            android:id="@+id/errorTxt"/>
 
     </LinearLayout>
 

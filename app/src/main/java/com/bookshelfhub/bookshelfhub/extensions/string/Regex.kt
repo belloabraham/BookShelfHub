@@ -55,6 +55,17 @@ class Regex {
 
         private val WORD_BOUNDARY = "(?:\\b|$|^)"
 
+
+        const val VISA = "^4"
+        const val MASTERCARD =
+            "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)"
+        const val VERVE = "^((506(0|1))|(507(8|9))|(6500))"
+        const val AMERICAN_EXPRESS = "^3[47]"
+        const val DINERS_CLUB = "^3(?:0[0-5]|[68][0-9])"
+        const val DISCOVER = "^6(?:011|5[0-9]{2})"
+        const val JCB = "^(?:2131|1800|35[0-9]{3})"
+
+
          val URL_IN_TEXT = ("("
                 + "(.*)"
                 + "("

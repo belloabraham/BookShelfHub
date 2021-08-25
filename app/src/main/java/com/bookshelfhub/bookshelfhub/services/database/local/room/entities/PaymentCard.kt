@@ -6,8 +6,11 @@ import androidx.room.PrimaryKey
 @Entity(tableName= "PaymentCard")
 data class PaymentCard(
     @PrimaryKey
-    override val cardNo: String,
-    override val expiryMonth: Int,
-    override val expiryYear:Int,
-    override val cvv:String,
-) : IPaymentCard
+    val cardNo: String,
+    val expiryMonth: Int,
+    val expiryYear:Int,
+    val cvv:String
+){
+    var cardType:String=""
+    var lastFourDigit:String=""
+}

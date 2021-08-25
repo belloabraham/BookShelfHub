@@ -23,7 +23,7 @@ class BookInfoActivity : AppCompatActivity() {
         layout = ActivityBookInfoBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        val title = intent.getStringExtra(Fragment.TITLE.KEY)
+        val title = intent.getStringExtra(Book.TITLE.KEY)
         val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
         val isbn = intent.getStringExtra(Book.ISBN.KEY)
 

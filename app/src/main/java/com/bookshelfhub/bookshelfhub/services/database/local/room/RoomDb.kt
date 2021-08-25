@@ -11,8 +11,17 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
-    override suspend fun deleteUserRecord() {
-        return  RoomInstance.getDatabase(context).userDao().deleteUserRecord()
+    //TODO Payment
+    override suspend fun addPaymentCard(paymentCard: PaymentCard) {
+        RoomInstance.getDatabase(context).userDao().addPaymentCard(paymentCard)
+    }
+
+    override fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
+       return RoomInstance.getDatabase(context).userDao().getLivePaymentCards()
+    }
+
+    override suspend fun deleteAllPaymentCards() {
+        RoomInstance.getDatabase(context).userDao().deleteAllPaymentCards()
     }
 
     //TODO User Review
@@ -92,6 +101,11 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
     //Todo User
+
+    override suspend fun deleteUserRecord() {
+        return  RoomInstance.getDatabase(context).userDao().deleteUserRecord()
+    }
+
     override suspend fun getUser(userId:String): Optional<User> {
       return  RoomInstance.getDatabase(context).userDao().getUser(userId)
     }
@@ -156,8 +170,8 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     }
 
     //TODO Referrer
-    override suspend fun getPubReferrer(isbn:String): Optional<PubReferrers> {
-        return  RoomInstance.getDatabase(context).userDao().getPubReferrer(isbn)
+    override fun getLivePubReferrer(isbn:String): LiveData<Optional<PubReferrers>> {
+        return  RoomInstance.getDatabase(context).userDao().getLivePubReferrer(isbn)
     }
 
     override suspend fun addPubReferrer(pubReferrers: PubReferrers){

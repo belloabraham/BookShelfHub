@@ -36,11 +36,14 @@ class Application: android.app.Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-
-        //***Should come First ***//
+        /**
+         * Should come first
+         */
         setUpAppCheck()
 
-        //***Required by Paystack SDK ***//
+        /**
+         * Initializing Paystack
+         */
         PaystackSdk.initialize(applicationContext);
 
         setupDownloadableEmojiFont()

@@ -73,6 +73,8 @@
     <androidx.emoji.widget.EmojiTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="500"
+        android:ellipsize="end"
         android:layout_marginBottom="@dimen/size_16"
         android:id="@+id/userReviewTxt"/>
 

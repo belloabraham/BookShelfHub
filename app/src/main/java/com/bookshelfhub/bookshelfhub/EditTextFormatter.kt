@@ -4,6 +4,9 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 
+/**
+ * Used to separate user input by a character example is the case of credit card input
+ */
 class EditTextFormatter(private val userInputLen:Int, private val inputChunkDivider:String, private val inputChunkLen:Int, val onTextChanged:(s: CharSequence?)->Unit={}): TextWatcher {
 
     private var currentInput=""

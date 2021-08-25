@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        showProgressPopupDialog()
+        showReadProgressDialog()
 
     }
 
@@ -245,7 +245,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showProgressPopupDialog() {
+
+    private fun showReadProgressDialog() {
         lifecycleScope.launch(IO) {
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
             val lastBookRedTile = settingsUtil.getString(Settings.LAST_BOOK_RED_TITLE.KEY)

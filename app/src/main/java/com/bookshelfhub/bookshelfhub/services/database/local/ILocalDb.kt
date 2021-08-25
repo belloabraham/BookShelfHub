@@ -7,6 +7,9 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     fun getLivePaymentCards(): LiveData<List<PaymentCard>>
+     suspend fun deleteAllPaymentCards()
+     suspend fun addPaymentCard(paymentCard: PaymentCard)
      fun getLivePublishedBook(isbn: String): LiveData<PublishedBook>
      suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
      fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
@@ -42,7 +45,7 @@ interface ILocalDb {
      suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory)
      fun getLiveShelfSearchHistory(userId: String): LiveData<List<ShelfSearchHistory>>
      fun getLiveStoreSearchHistory(userId: String): LiveData<List<StoreSearchHistory>>
-     suspend fun getPubReferrer(isbn: String): Optional<PubReferrers>
+     fun getLivePubReferrer(isbn: String): LiveData<Optional<PubReferrers>>
      suspend fun addPubReferrer(pubReferrers: PubReferrers)
      suspend fun updateRecommendedBooksByCategory(category: String, isRecommended: Boolean = true)
      suspend fun updateRecommendedBooksByTag(tag: String, isRecommended: Boolean = true)

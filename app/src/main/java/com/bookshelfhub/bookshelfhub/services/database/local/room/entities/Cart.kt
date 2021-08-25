@@ -11,5 +11,6 @@ data class Cart(
      val name: String,
      val author:String,
      val coverUrl: String,
-     val price: Float=0.0f,
+     val bookReferrerId:String?,
+     val price: Int=0,
 )

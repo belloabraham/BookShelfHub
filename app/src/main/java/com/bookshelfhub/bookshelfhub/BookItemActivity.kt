@@ -79,6 +79,7 @@ class BookItemActivity : AppCompatActivity() {
     private val bookItemViewModel:BookItemViewModel by viewModels()
     private var userReview:UserReview?=null
     private var isVerifiedReview:Boolean = false
+    private var pubReferrerId:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,7 @@ class BookItemActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
 
-        var bookPrice:Float? =null
+        var bookPrice:Int? =null
         val userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
@@ -105,6 +106,14 @@ class BookItemActivity : AppCompatActivity() {
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
         layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         layout.similarBooksRecView.adapter = similarBooksAdapter
+
+        bookItemViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
+            if (pubReferrer.isPresent){
+                pubReferrerId = pubReferrer.get().pubId
+            }
+        })
+
+
 
         bookItemViewModel.getPublishedBookOnline().observe(this, Observer { book ->
             bookPrice = book.price
@@ -166,7 +175,11 @@ class BookItemActivity : AppCompatActivity() {
 
         })
 
+
+
+
         layout.addToCartBtn.setOnClickListener {
+
 
             bookPrice?.let {
 
@@ -174,7 +187,7 @@ class BookItemActivity : AppCompatActivity() {
                 val cart = Cart(
                     userId, book.isbn,
                     book.name, book.author,
-                    book.coverUrl, it
+                    book.coverUrl, pubReferrerId, it
                 )
 
                 bookItemViewModel.addToCart(cart)
@@ -413,7 +426,7 @@ class BookItemActivity : AppCompatActivity() {
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
-            putExtra(Fragment.TITLE.KEY,title)
+            putExtra(Book.TITLE.KEY,title)
             putExtra(Fragment.ID.KEY, fragmentID)
             putExtra(Book.ISBN.KEY, isbn)
         }

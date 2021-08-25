@@ -9,6 +9,15 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //Todo Payment Card
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPaymentCard(paymentCard: PaymentCard)
+
+    @Query("DELETE FROM PaymentCard")
+    suspend fun deleteAllPaymentCards()
+
+    @Query("SELECT * FROM PaymentCard")
+    fun getLivePaymentCards(): LiveData<List<PaymentCard>>
 
     //Todo User Review
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
@@ -121,7 +130,7 @@ interface UserDao {
 
     //Todo Referral
     @Query("SELECT * FROM PubReferrers WHERE isbn = :isbn")
-    suspend fun getPubReferrer(isbn:String): Optional<PubReferrers>
+    fun getLivePubReferrer(isbn:String): LiveData<Optional<PubReferrers>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addPubReferrer(pubReferrers: PubReferrers)

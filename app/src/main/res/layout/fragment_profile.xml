@@ -92,13 +92,28 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/additionalInfoLayout"
+            android:layout_marginTop="@dimen/size_16"
+            style="@style/Widget.Design.TextInputLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/additionalInfoText"
+                android:inputType="text"
+                android:hint="@string/additionalInfo" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/button_height"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_25"
-        android:text="@string/update"
-        android:padding="@dimen/size_12" />
+        android:text="@string/update"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
