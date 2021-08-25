@@ -1953,7 +1953,7 @@ class StoreFragment : Fragment() {
 
                 layout.loadingAnimView.visibility = VISIBLE
 
-                    cloudDb.getLiveListOfDataAsync(
+                    cloudDb.getListOfDataAsync(
                         DbFields.PUBLISHED_BOOKS.KEY,
                         PublishedBook::class.java,
                         DbFields.DATE_TIME_PUBLISHED.KEY

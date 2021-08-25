@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder
+package com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder
 
 import android.graphics.Color
 import android.widget.TextView
@@ -7,7 +7,7 @@ import com.klinker.android.link_builder.Link
 import com.klinker.android.link_builder.LinkBuilder
 import java.util.regex.Pattern
 
-open class TextLinkBuilder() {
+class TextLinkBuilder() {
 
      fun getTextLink(text:String, onLinkClick: (String)->Unit): Link {
 

@@ -85,18 +85,14 @@ class BookInterestFragment : Fragment() {
            Snackbar.make(view, R.string.select_more_than_3_msg, Snackbar.LENGTH_LONG)
                .show()
         }else{
-            lifecycleScope.launch(IO){
                 val bookInterest = bookInterestObservable.getBookInterestRecord()
                  bookInterest.uploaded = false
                  bookInterest.added=true
-                bookInterestViewModel.addBookInterest(bookInterest)
-                withContext(Main){
+                    bookInterestViewModel.addBookInterest(bookInterest)
                     activity?.let {
                         showToast(R.string.interest_Saved)
                         it.finish()
                     }
-                }
-            }
         }
     }
 

@@ -9,8 +9,7 @@ data class PaymentCard(
     val cardNo: String,
     val expiryMonth: Int,
     val expiryYear:Int,
-    val cvv:String
-){
-    var cardType:String=""
+    val cvv:String,
+    var cardType:String="",
     var lastFourDigit:String=""
-}
+)

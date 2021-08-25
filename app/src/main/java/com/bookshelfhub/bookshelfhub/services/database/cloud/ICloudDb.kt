@@ -9,7 +9,11 @@ import com.google.firebase.firestore.*
 interface ICloudDb {
 
 
-    fun <T: Any> getLiveListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>, shouldCache:Boolean = false, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
+    fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>, onSuccess: suspend ()->Unit)
+
+    fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldCache:Boolean = false, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
+
+    fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String=DbFields.DOWNLOAD_URL.KEY, shouldCache:Boolean = false, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
     fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String, onSuccess: suspend ()->Unit)
 
@@ -46,7 +50,7 @@ interface ICloudDb {
 
     fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldCache:Boolean = false, shouldRetry: Boolean = false, onComplete: suspend (dataList:List<T>)->Unit)
 
-     fun <T : Any> getLiveListOfDataAsync(
+     fun <T : Any> getListOfDataAsync(
          collection: String,
          type: Class<T>,
          orderBy: String,

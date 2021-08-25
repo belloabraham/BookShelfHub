@@ -17,9 +17,9 @@ import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
@@ -33,7 +33,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO

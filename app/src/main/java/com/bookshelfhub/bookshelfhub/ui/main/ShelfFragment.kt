@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
@@ -17,6 +19,7 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
@@ -24,6 +27,10 @@ import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -39,6 +46,8 @@ class ShelfFragment : Fragment() {
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var cloudDb: ICloudDb
+    @Inject
+    lateinit var localDb: ILocalDb
 
     private lateinit var layout: FragmentShelfBinding
     override fun onCreateView(
@@ -47,13 +56,47 @@ class ShelfFragment : Fragment() {
     ): View {
         layout= FragmentShelfBinding.inflate(inflater, container, false)
          val userId = userAuth.getUserId()
-         val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
+
+
+        val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
          val orderedBooksAdapter = OrderedBooksAdapter(requireActivity()).getOrderedBooksAdapter()
 
         shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
             shelfSearchHistoryList=shelfSearchHistory
         })
+
+        lifecycleScope.launch(IO){
+            val orderedBooks = localDb.getOrderedBooks(userId)
+            if (orderedBooks.isEmpty()){
+                //Get all available ordered books the user have
+                cloudDb.getOrderedBooks(
+                    DbFields.ORDERED_BOOKS.KEY,
+                    userId,
+                    OrderedBooks::class.java
+                ) {
+                    if (it.isEmpty()){
+                        layout.progressBar.visibility = GONE
+                        //Show empty shelf that proves that the have not bought any books
+                        layout.emptyShelf.visibility = VISIBLE
+                    }else{
+                        shelfViewModel.addOrderedBooks(it)
+                    }
+                }
+            }else{
+                orderedBooks[0].dateTime?.let { dateTime->
+                    cloudDb.getOrderedBooks(
+                        DbFields.ORDERED_BOOKS.KEY,
+                        userId,
+                        OrderedBooks::class.java,
+                        orderBy = DbFields.ORDER_DATE_TIME.KEY,
+                        startAfter = dateTime,
+                    ) {
+                        shelfViewModel.addOrderedBooks(it)
+                    }
+                }
+            }
+        }
 
         shelfViewModel.getOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
 
@@ -206,16 +249,14 @@ class ShelfFragment : Fragment() {
 
             if (books.isNotEmpty()){
                 layout.orderedBooksRecView.visibility = VISIBLE
-                layout.progressBar.visibility = GONE
                 layout.emptyShelf.visibility = GONE
                 layout.appbarLayout.visibility = VISIBLE
                 orderedBooksAdapter.submitList(books)
                 orderedBookList = books
-
             }else{
+                layout.progressBar.visibility = VISIBLE
                 layout.appbarLayout.visibility = INVISIBLE
                 layout.orderedBooksRecView.visibility = GONE
-                checkOrderedBooks(userId)
             }
         })
 
@@ -245,8 +286,15 @@ class ShelfFragment : Fragment() {
                         params.scrollFlags=0
                         SearchLayout.NavigationIconSupport.ARROW
                     } else {
+
+                        //remove scroll flags from Appbar layout so that user doesn't scroll search view result on scroll
                         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
                                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+
+                        /**
+                         * Fill the searchList Adapter with the default value after being changed
+                         * by @setOnQueryTextListener when user exits search view
+                         */
                         searchListAdapter.submitList(shelfSearchHistoryList)
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
@@ -281,28 +329,7 @@ class ShelfFragment : Fragment() {
             mainActivityViewModel.setSelectedIndex(1)
         }
 
-
         return layout.root
-    }
-
-    var orderedBooksChecked = false
-    private fun checkOrderedBooks(userId:String){
-        if (!orderedBooksChecked){
-            layout.progressBar.visibility = VISIBLE
-            cloudDb.getLiveListOfDataAsync(
-                DbFields.USERS.KEY,
-                userId,
-                DbFields.SHELF.KEY,
-                OrderedBooks::class.java
-            ) {
-                layout.progressBar.visibility = GONE
-                if (it.isEmpty()){
-                    layout.emptyShelf.visibility = VISIBLE
-                }
-                orderedBooksChecked = true
-                shelfViewModel.addOrderedBooks(it)
-            }
-        }
     }
 
 

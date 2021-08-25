@@ -1,18 +1,47 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 enum class DbFields(val KEY:String) {
+    //Collections
     USERS("users"),
-    USER("user"),
-    BOOK_INTEREST("book_interest"),
     PUBLISHED_BOOKS("published_books"),
-    PUBLISHED("published"),
-    DATE_TIME_PUBLISHED("dateTimePublished"),
+    ORDERED_BOOKS("orderedBooks"),
+
+
+    //Sub Collections
     BOOKMARKS("bookmarks"),
     REVIEWS("reviews"),
+    TRANSACTIONS("transactions"),
+
+    //Fields
+    //Must be same as .services.database.local.room.entities.UserReview.verified
     VERIFIED("verified"),
+
+    //Must be same as .services.database.local.room.entities.PublishedBook.totalReviews and totalRatings
     TOTAL_REVIEWS("totalReviews"),
     TOTAL_RATINGS("totalRatings"),
-    SHELF("shelf"),
-    REVIEW_DATE("reviewDate")
+
+    USER("user"),
+    BOOK_INTEREST("book_interest"),
+
+    //Must be same as .services.database.local.room.entities.OrderedBooks.downloadUrl
+    DOWNLOAD_URL("downloadUrl"),
+
+    //Must be same as .services.database.local.room.entities.PublishedBook.published
+    PUBLISHED("published"),
+
+    //Must be same as .services.database.local.room.entities.PublishedBook.dateTime
+    DATE_TIME_PUBLISHED("dateTime"),
+
+    //Must be same as .services.database.local.room.entities.OrderedBooks.userId
+    USER_ID("userId"),
+
+    //Used Must be same as .services.database.local.room.entities.OrderedBooks.dateTime
+    ORDER_DATE_TIME("dateTime")
+
+
+
+
+
+
 
 }

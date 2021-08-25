@@ -14,7 +14,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.FirebaseCM
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.ICloudMessaging
-import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -53,13 +53,13 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getJson():Json{
+    fun getJson(): Json {
         return Json(Gson())
     }
 
     @Singleton
     @Provides
-    fun getCloudDb(json:Json): ICloudDb {
+    fun getCloudDb(json: Json): ICloudDb {
         return Firestore(json)
     }
 

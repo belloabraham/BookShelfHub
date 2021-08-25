@@ -4,10 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentTransaction
 import com.google.common.base.Optional
 
 @Dao
 interface UserDao {
+
+    //Todo Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
+
+    @Query("SELECT * FROM PaymentTransaction")
+    suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
+
+    @Query("DELETE FROM PaymentTransaction")
+    suspend fun deleteAllPaymentTransactions()
 
     //Todo Payment Card
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -111,7 +122,7 @@ interface UserDao {
     @Query("DELETE FROM OrderedBooks")
     fun deleteAllOrderedBooks()
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addOrderedBooks(OrderedBooks: List<OrderedBooks>)
 
 
@@ -156,22 +167,22 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBook>)
 
-    @Query("SELECT * FROM PublishedBook ORDER BY dateTimePublished DESC")
+    @Query("SELECT * FROM PublishedBook ORDER BY dateTime DESC")
     fun getLivePublishedBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook ORDER BY dateTimePublished DESC")
+    @Query("SELECT * FROM PublishedBook ORDER BY dateTime DESC")
     fun getPublishedBooks(): List<PublishedBook>
 
-    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTimePublished DESC")
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTime DESC")
     fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend ORDER BY dateTimePublished DESC")
+    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend ORDER BY dateTime DESC")
     fun getLiveRecommendedBooks(recommend:Boolean=true): LiveData<List<PublishedBook>>
 
     @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")
     fun getLiveTrendingBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTimePublished DESC")
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTime DESC")
     fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBook>
 
     @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")

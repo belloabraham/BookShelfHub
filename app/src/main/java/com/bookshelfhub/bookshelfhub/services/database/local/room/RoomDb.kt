@@ -10,8 +10,20 @@ import javax.inject.Inject
 
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
+    //TODO Payment transactions
+    override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {
+        RoomInstance.getDatabase(context).userDao().addPaymentTransactions(paymentTransactions)
+    }
 
-    //TODO Payment
+    override suspend fun getAllPaymentTransactions(): List<PaymentTransaction> {
+       return RoomInstance.getDatabase(context).userDao().getAllPaymentTransactions()
+    }
+
+    override suspend fun deleteAllPaymentTransactions() {
+        RoomInstance.getDatabase(context).userDao().deleteAllPaymentTransactions()
+    }
+
+    //TODO Payment card
     override suspend fun addPaymentCard(paymentCard: PaymentCard) {
         RoomInstance.getDatabase(context).userDao().addPaymentCard(paymentCard)
     }

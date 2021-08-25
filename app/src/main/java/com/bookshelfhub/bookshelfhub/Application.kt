@@ -75,12 +75,12 @@ class Application: android.app.Application(), Configuration.Provider {
             .setConstraints(connected)
             .build()
 
-        val oneTimeNotificationTokenUpload =
-            OneTimeWorkRequestBuilder<UploadNotificationToken>()
+        val oneTimeVerifyPaymentTrans =
+            OneTimeWorkRequestBuilder<UploadTransactions>()
                 .setConstraints(connected)
                 .build()
 
-        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
+        WorkManager.getInstance(applicationContext).enqueue(oneTimeVerifyPaymentTrans)
         WorkManager.getInstance(applicationContext).enqueue(removeUnPublishedBooks)
         WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }

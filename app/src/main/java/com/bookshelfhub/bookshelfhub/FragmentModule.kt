@@ -4,7 +4,7 @@ import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
-import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.bookshelfhub.views.tooltip.ToolTip
 import dagger.Module
 import dagger.Provides
@@ -43,7 +43,7 @@ object FragmentModule {
 
     @FragmentScoped
     @Provides
-    fun getTextLinkBuilder():TextLinkBuilder{
+    fun getTextLinkBuilder(): TextLinkBuilder {
         return TextLinkBuilder()
     }
 

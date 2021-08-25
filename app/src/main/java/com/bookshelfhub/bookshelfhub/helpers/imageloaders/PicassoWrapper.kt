@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers.imageloaders
+package com.bookshelfhub.bookshelfhub.helpers.imageloaders
 
 import android.widget.ImageView
 import com.squareup.picasso.*

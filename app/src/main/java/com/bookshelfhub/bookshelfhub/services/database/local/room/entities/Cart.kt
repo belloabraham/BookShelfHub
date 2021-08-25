@@ -8,9 +8,9 @@ data class Cart(
     var userId:String,
     @PrimaryKey
      val isbn: String,
-     val name: String,
-     val author:String,
-     val coverUrl: String,
-     val bookReferrerId:String?,
-     val price: Int=0,
+    val title: String,
+    val author:String,
+    val coverUrl: String,
+    val referrerId:String?,
+    val price: Int=0,
 )

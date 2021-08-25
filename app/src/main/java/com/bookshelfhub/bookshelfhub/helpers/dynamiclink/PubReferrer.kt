@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers.dynamiclink
+package com.bookshelfhub.bookshelfhub.helpers.dynamiclink
 
 enum class PubReferrer(val KEY:String) {
     ID("ref_id"),

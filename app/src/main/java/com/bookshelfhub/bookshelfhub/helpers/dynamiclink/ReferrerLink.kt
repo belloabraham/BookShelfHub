@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers.dynamiclink
+package com.bookshelfhub.bookshelfhub.helpers.dynamiclink
 
 enum class ReferrerLink(val KEY:String){
     DESC("user_ref_description"),

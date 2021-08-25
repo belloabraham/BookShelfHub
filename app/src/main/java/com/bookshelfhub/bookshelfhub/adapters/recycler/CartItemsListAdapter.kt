@@ -40,7 +40,7 @@ class CartItemsListAdapter(private val context: Context) {
         private val cover: ImageView = view.findViewById(R.id.cover)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(model:Cart, context: Context, onLongClickListener:()->Boolean) {
-            title.text =  model.name
+            title.text =  model.title
             price.text =  String.format(context.getString(R.string.price), model.price)
             author.text = String.format(context.getString(R.string.by), model.author)
             cover.load(model.coverUrl, R.drawable.ic_store_item_place_holder)

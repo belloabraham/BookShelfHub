@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreViewModel @Inject constructor(private val cloudDb: ICloudDb, private val localDb: ILocalDb, val connectionUtil: ConnectionUtil, val userAuth: IUserAuth): ViewModel() {
+class StoreViewModel @Inject constructor(private val localDb: ILocalDb, val connectionUtil: ConnectionUtil, val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()
     private var isNoConnection : MutableLiveData<Boolean> = MutableLiveData()

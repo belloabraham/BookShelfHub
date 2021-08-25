@@ -12,6 +12,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
@@ -27,9 +30,11 @@ import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.material.card.MaterialCardView
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -177,6 +182,14 @@ class MoreFragment : Fragment() {
         }
 
         layout.needHelpCard.setOnClickListener {
+
+            val oneTimeNotificationTokenUpload =
+                OneTimeWorkRequestBuilder<UploadNotificationToken>()
+                    .setConstraints(Constraint.getConnected())
+                    .build()
+            WorkManager.getInstance(requireContext())
+                .enqueueUniqueWork( "oneTimeNotificationTokenUpload", ExistingWorkPolicy.KEEP, oneTimeNotificationTokenUpload )
+
 
         }
 

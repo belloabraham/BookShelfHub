@@ -14,7 +14,7 @@ import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -34,7 +34,7 @@ class BookInfoFragment : Fragment() {
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
-    lateinit var textLinkBuilder:TextLinkBuilder
+    lateinit var textLinkBuilder: TextLinkBuilder
 
 
     override fun onCreateView(
@@ -50,7 +50,7 @@ class BookInfoFragment : Fragment() {
                   openLink(link)
               })
 
-              book.dateTimePublished?.let {
+              book.dateTime?.let {
                   val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                   layout.publishedDateTxt.text = date
               }

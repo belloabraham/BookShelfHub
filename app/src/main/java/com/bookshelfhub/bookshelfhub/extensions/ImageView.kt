@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.extensions
 
 import android.widget.ImageView
-import com.bookshelfhub.bookshelfhub.wrappers.imageloaders.PicassoWrapper
+import com.bookshelfhub.bookshelfhub.helpers.imageloaders.PicassoWrapper
 
     @JvmSynthetic
      fun ImageView.load(url:String, placeHolder:Int, errorImg:Int=placeHolder, shouldCache:Boolean=true, onSuccess:()->Unit={}){

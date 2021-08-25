@@ -43,10 +43,10 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserR
 import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
-import com.bookshelfhub.bookshelfhub.wrappers.Json
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.continue_reading.*
 import kotlinx.coroutines.Dispatchers.IO

@@ -88,18 +88,10 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     class Builder(private val notificationBuilder: NotificationBuilder, val context: Context, private val notificationStyle:NotificationCompat.Style){
 
 
-         fun showNotification(notificationId:Int, getUrlIntent:String.()->Intent) {
-            var pendingIntent: PendingIntent? = null
-            notificationBuilder.url?.let {
-                val intent = getUrlIntent(it)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-            }
-
-             val msg = notificationBuilder.message
-             val title = notificationBuilder.title
-             val builder: NotificationCompat.Builder =
-                    NotificationCompat.Builder(context, notificationBuilder.notifChannelId)
+       private fun getNotificationBuiler(): NotificationCompat.Builder {
+            val msg = notificationBuilder.message
+            val title = notificationBuilder.title
+            return NotificationCompat.Builder(context, notificationBuilder.notifChannelId)
                     .setSmallIcon(notificationBuilder.smallIcon)
                     .setLargeIcon(
                         notificationBuilder.largeIcon
@@ -114,6 +106,22 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setAutoCancel(notificationBuilder.autoCancel)
+        }
+
+        fun showNotification(notificationId:Int){
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.notify(notificationId, getNotificationBuiler().build())
+        }
+
+         fun showNotification(notificationId:Int, getUrlIntent:String.()->Intent) {
+            var pendingIntent: PendingIntent? = null
+            notificationBuilder.url?.let {
+                val intent = getUrlIntent(it)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+            }
+
+             val builder = getNotificationBuiler()
 
              pendingIntent?.let {
                 builder.addAction(0, notificationBuilder.actionText, it)

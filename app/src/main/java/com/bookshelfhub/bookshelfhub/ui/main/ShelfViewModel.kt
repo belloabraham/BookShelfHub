@@ -1,7 +1,9 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
+import android.view.View
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
@@ -24,7 +26,6 @@ class ShelfViewModel @Inject constructor(
         shelfShelfSearchHistory = localDb.getLiveShelfSearchHistory(userId)
         orderedBooks = localDb.getLiveOrderedBooks(userId)
     }
-
 
     fun addOrderedBooks(orderedBooks: List<OrderedBooks>){
         viewModelScope.launch(IO) {

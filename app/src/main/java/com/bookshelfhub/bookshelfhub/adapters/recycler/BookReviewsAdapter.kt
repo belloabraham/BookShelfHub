@@ -43,7 +43,7 @@ class BookReviewsAdapter (private val activity: Activity) {
        private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         fun bindToView(model:OrderedBooks, activity: Activity){
             title.text = model.title
-            imageView.load(model.bookCoverUrl, R.drawable.ic_store_item_place_holder)
+            imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
             itemCardView.setOnClickListener {
                 val intent = Intent(activity, BookActivity::class.java)
                 with(intent){

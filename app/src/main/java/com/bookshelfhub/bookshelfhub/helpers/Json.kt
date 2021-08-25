@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers
+package com.bookshelfhub.bookshelfhub.helpers
 
 import com.google.gson.Gson
 import org.json.JSONObject

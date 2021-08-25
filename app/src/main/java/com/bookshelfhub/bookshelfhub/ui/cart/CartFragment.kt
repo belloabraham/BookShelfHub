@@ -8,14 +8,19 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import co.paystack.android.Paystack
 import co.paystack.android.Transaction
+import com.bookshelfhub.bookshelfhub.BuildConfig
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
@@ -26,14 +31,21 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.services.payment.IPayment
 import com.bookshelfhub.bookshelfhub.services.payment.PayStack
 import com.bookshelfhub.bookshelfhub.services.payment.Payment
-import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
+import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -49,11 +61,11 @@ class CartFragment : Fragment() {
     lateinit var json: Json
     @Inject
     lateinit var userAuth: IUserAuth
-    private var paymentCards = emptyList<PaymentCard>()
-    private var amount:Int=0
-    private var bookReferrersIds=""
-    private var booksAndRef=""
+    private var savedPaymentCards = emptyList<PaymentCard>()
+    private var totalAmountOfBooks:Int=0
+    private var bookIsbnsAndReferrerIds=""
     private val userId = userAuth.getUserId()
+    private var paymentTransaction = emptyList<PaymentTransaction>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,12 +82,12 @@ class CartFragment : Fragment() {
         layout.cartItemsRecView.adapter = adapter
 
 
-        cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { cardList->
-            paymentCards = cardList
+        cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
+            this.savedPaymentCards = savedPaymentCards
         })
 
         layout.checkoutFab.setOnClickListener {
-            showPaymentCardList()
+            showSavedPaymentCardList()
         }
 
         layout.cartItemsRecView.addItemDecoration(
@@ -94,18 +106,20 @@ class CartFragment : Fragment() {
                 adapter.submitList(listOfCartItems)
             }
 
-            amount = 0
-            bookReferrersIds = ""
-            booksAndRef=""
+            totalAmountOfBooks = 0
+            bookIsbnsAndReferrerIds = ""
+            val countryCode = Location.getCountryCode(requireContext())
+
             if (cartList.isNotEmpty()){
 
                 for (cart in cartList){
-                    amount.plus(cart.price)
-                    booksAndRef.plus("${cart.isbn} (${cart.bookReferrerId}), ")
+                    paymentTransaction.plus(PaymentTransaction(cart.isbn, cart.title,userId, cart.referrerId, countryCode, cart.coverUrl))
+                    totalAmountOfBooks.plus(cart.price)
+                    bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
 
-                layout.totalCostTxt.text = String.format(getString(R.string.total),"$amount")
+                layout.totalCostTxt.text = String.format(getString(R.string.total),"$totalAmountOfBooks")
 
                 layout.checkoutFab.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE
@@ -120,6 +134,7 @@ class CartFragment : Fragment() {
         })
 
 
+        //Expand or Shrink FAB based on recyclerview scroll position
         layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -158,22 +173,29 @@ class CartFragment : Fragment() {
     }
 
 
-    private fun showPaymentCardList(){
+    private fun showSavedPaymentCardList(){
         val view = View.inflate(requireContext(), R.layout.saved_cards, null)
         val addCardBtn = view.findViewById<MaterialButton>(R.id.addNewCardBtn)
 
-        if (paymentCards.isNotEmpty()){
+        if (savedPaymentCards.isNotEmpty()){
 
             val recyclerView = view.findViewById<RecyclerView>(R.id.paymentCardsRecView)
 
             val userData = hashMapOf(
                 Payment.USER_ID.KEY to userId,
-                Payment.BOOKS_AND_REF.KEY to booksAndRef
+                Payment.BOOKS_AND_REF.KEY to bookIsbnsAndReferrerIds
             )
 
             val paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{
+
                 val payment:IPayment = PayStack(it, requireActivity(), json, getPayStackPaymentCallBack())
-                payment.chargeCard(amount, Payment.USERDATA.KEY, userData)
+                val payStackPublicKey = if (BuildConfig.DEBUG){
+                    getString(R.string.paystack_test_public_key)
+                }else{
+                    getString(R.string.paystack_public_key)
+                }
+                payment.chargeCard(payStackPublicKey, totalAmountOfBooks, Payment.USERDATA.KEY, userData)
+
             }
 
             recyclerView.addItemDecoration(
@@ -183,7 +205,7 @@ class CartFragment : Fragment() {
                 )
             )
             recyclerView.adapter = paymentCardsAdapter
-            paymentCardsAdapter.submitList(paymentCards)
+            paymentCardsAdapter.submitList(savedPaymentCards)
         }
 
         addCardBtn.setOnClickListener {
@@ -201,8 +223,34 @@ class CartFragment : Fragment() {
        return object : Paystack.TransactionCallback{
 
             override fun onSuccess(transaction: Transaction?) {
+                transaction?.let {
 
+                    val length = paymentTransaction.size -1
 
+                    for (i in 0..length){
+                        paymentTransaction[i].transactionReference = it.reference
+                    }
+
+                    lifecycleScope.launch(IO){
+                        localDb.addPaymentTransactions(paymentTransaction)
+                        withContext(Main){
+                            val oneTimeVerifyPaymentTrans =
+                                OneTimeWorkRequestBuilder<UploadTransactions>()
+                                    .setConstraints(Constraint.getConnected())
+                                    .build()
+
+                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
+                        }
+                    }
+
+                    AlertDialogBuilder.with(requireActivity(), R.string.transaction_processing)
+                        .setCancelable(false)
+                        .setPositiveAction(R.string.ok){
+                            requireActivity().finish()
+                        }
+                        .build()
+
+                }
 
             }
 
@@ -227,7 +275,7 @@ class CartFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         if (cartViewModel.getIsNewCardAdded()){
-            showPaymentCardList()
+            showSavedPaymentCardList()
             cartViewModel.setIsNewCard(false)
         }
     }

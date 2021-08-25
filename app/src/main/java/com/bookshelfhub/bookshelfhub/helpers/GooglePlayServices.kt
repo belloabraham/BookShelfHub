@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers
+package com.bookshelfhub.bookshelfhub.helpers
 
 import android.app.Activity
 import com.google.android.gms.common.ConnectionResult

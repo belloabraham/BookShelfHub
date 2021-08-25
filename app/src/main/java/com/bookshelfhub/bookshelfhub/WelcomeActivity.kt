@@ -16,14 +16,16 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
-import com.bookshelfhub.bookshelfhub.wrappers.GooglePlayServices
+import com.bookshelfhub.bookshelfhub.helpers.GooglePlayServices
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
@@ -155,7 +157,7 @@ class WelcomeActivity : AppCompatActivity() {
                     }
                 }else{
                     finish()
-                    startActivity(intent)
+                    startMainActivity(intent)
                 }
             }
         })
@@ -255,11 +257,21 @@ class WelcomeActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setPositiveBtnId(R.id.getStartedBtn){
                 finish()
-                startActivity(intent)
+                startMainActivity(intent)
             }
             .build(this)
             .showDialog(R.layout.sign_up_completed, R.dimen.signup_completed_dialog_max_width )
 
+    }
+
+    private fun startMainActivity(intent: Intent){
+        val oneTimeNotificationTokenUpload =
+            OneTimeWorkRequestBuilder<UploadNotificationToken>()
+                .setConstraints(Constraint.getConnected())
+                .build()
+        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
+
+        startActivity(intent)
     }
 
 

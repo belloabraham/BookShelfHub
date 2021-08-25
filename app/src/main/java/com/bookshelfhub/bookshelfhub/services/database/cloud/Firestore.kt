@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
-import com.bookshelfhub.bookshelfhub.wrappers.Json
+import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -31,7 +31,7 @@ import javax.inject.Inject
     }
 
 
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.firestoreSettings=getCacheSettings(shouldCache)
          db.collection(collection)
              .orderBy(orderBy)
@@ -159,9 +159,41 @@ import javax.inject.Inject
 
      //TODO Sub Collections
 
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.firestoreSettings=getCacheSettings(shouldCache)
-         db.collection(collection).document(document).collection(subCollection)
+         db.collection(collection)
+             .whereNotEqualTo(downloadUrlKey, null)
+             .whereEqualTo(userIdKey, userId)
+             .orderBy(orderBy)
+             .startAfter(startAfter)
+             .addSnapshotListener { querySnapShot, e ->
+
+                 if (shouldRetry && e!=null){
+                     return@addSnapshotListener
+                 }
+
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             if (doc.exists()){
+                                 val data =  doc.data
+                                 dataList = dataList.plus(json.fromAny(data, type))
+                             }
+                         }
+                     }
+                 }
+                 onComplete(dataList)
+             }
+     }
+
+
+     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String, shouldCache:Boolean, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+         db.firestoreSettings=getCacheSettings(shouldCache)
+         db.collection(collection)
+             .whereNotEqualTo(downloadUrlKey, null)
+             .whereEqualTo(userIdKey, userId)
              .addSnapshotListener { querySnapShot, e ->
 
                  if (shouldRetry && e!=null){
@@ -263,6 +295,22 @@ import javax.inject.Inject
              }
          }
      }
+
+
+     override fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>, onSuccess: suspend ()->Unit){
+
+         val batch = db.batch()
+         for (item in list){
+             val docRef = db.collection(collection).document(document).collection(subCollection).document()
+             batch.set(docRef, item)
+         }
+         batch.commit().addOnSuccessListener {
+             runBlocking {
+                 onSuccess()
+             }
+         }
+     }
+
 
      override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String,  onSuccess: suspend ()->Unit){
 

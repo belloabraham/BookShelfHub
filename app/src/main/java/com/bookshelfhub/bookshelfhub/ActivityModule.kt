@@ -4,14 +4,13 @@ import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.FirebaseDLink
-import com.bookshelfhub.bookshelfhub.wrappers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 
 

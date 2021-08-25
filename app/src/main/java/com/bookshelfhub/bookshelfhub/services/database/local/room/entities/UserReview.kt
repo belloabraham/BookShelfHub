@@ -13,10 +13,8 @@ data class UserReview(
     var review:String,
     var userRating:Double,
     var userName:String,
-    //This name is "verified" is used as a key for cloud db query @Firestore Defined at DBFields enums
     val verified:Boolean,
     var userPhoto:String?,
     var postedBefore:Boolean,
-    //This name is "reviewDate" is used as a key for cloud db query @Firestore Defined at DBFields enums
     val reviewDate: Timestamp? = null
     )

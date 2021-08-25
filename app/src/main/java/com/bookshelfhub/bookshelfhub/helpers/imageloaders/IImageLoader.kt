@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.wrappers.imageloaders
+package com.bookshelfhub.bookshelfhub.helpers.imageloaders
 
 interface IImageLoader {
     fun loadUnCompressed(resId: Int, shouldCache: Boolean)

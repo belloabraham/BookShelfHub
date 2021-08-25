@@ -27,8 +27,8 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import com.bookshelfhub.bookshelfhub.ui.VeriFragSavedState
-import com.bookshelfhub.bookshelfhub.wrappers.Json
-import com.bookshelfhub.bookshelfhub.wrappers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -57,7 +57,7 @@ class VerificationFragment:Fragment(){
     @Inject
     lateinit var json: Json
     @Inject
-    lateinit var textLinkBuilder:TextLinkBuilder
+    lateinit var textLinkBuilder: TextLinkBuilder
     @Inject
     lateinit var deviceUtil: DeviceUtil
     @Inject

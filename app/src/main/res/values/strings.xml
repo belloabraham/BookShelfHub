@@ -2,26 +2,49 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
-    <!-- TODO: Card Info-->
+
+    <!-- TODO: Payment Verification Worker-->
+    <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again after some time.</string>
+    <string name="payment_unsuccessful_title">Error processing your transaction</string>
+
+    <string name="payment_successful">Your payment transaction was successful and book download will begin in a minute.</string>
+    <string name="payment_successful_title">Payment transaction was successful</string>
+
+
+    <!-- TODO: Card Info Fragment-->
     <string name="payment_info">Payment Info</string>
     <string name="card_no">Card No</string>
     <string name="template_card_no">%1s  ************%2s</string>
     <string name="cvc">CVC</string>
     <string name="mmYY">MM/YY</string>
-    <string name="payment_error">There was an error processing your payment</string>
     <string name="proceed">Proceed</string>
     <string name="invalid_card_no">Invalid card number</string>
     <string name="invalid_card_exp_date">Invalid expiry date</string>
     <string name="invalid_cvc_no">invalid CVC number, check behind your card for a 3 digit number</string>
 
 
-    <!-- TODO: Book Info-->
+    <!-- TODO: Cart Fragment -->
+    <string name="check_out">Checkout</string>
+    <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
+    <string name="add_new_card">Add new card</string>
+    <string name="price">Price: $%d</string>
+    <string name="total">Total: $%d</string>
+    <string name="payment_error">There was an error processing your payment</string>
+    <string name="by">By: %s</string>
+    <string name="undo">UNDO</string>
+    <string name="transaction_processing">Your payment transaction is being verified, you will get a notification about your payment transaction status in a short time, please do not repeat book purchase, while verifying your payment.</string>
+    <string name="transaction_error">Unable to complete your payment transaction as a result of "%s"</string>
+    <string name="item_in_cart_removed_msg">Book removed from cart</string>
+    <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
+
+
+    <!-- TODO: Book Info Fragment-->
     <string name="published_date">Published date: %s</string>
     <string name="author">Author: %s</string>
     <string name="category">Category: %s</string>
     <string name="isbn">ISBN: %s</string>
 
-    <!-- TODO: Book Item-->
+    <!-- TODO: Book Item Activity-->
     <string name="open">Open</string>
     <string name="options">Options</string>
     <string name="report_book">Report book</string>
@@ -250,17 +273,6 @@
     <string name="bookmark_removed_msg">Removed from bookmarks</string>
     <string name="no_bookmark_msg">You currently have no bookmarked book pages. Open a book at the shelf tab below and bookmark a page.</string>
 
-    <!-- TODO: Cart Fragment -->
-    <string name="check_out">Checkout</string>
-    <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
-    <string name="add_new_card">Add new card</string>
-    <string name="price">Price: $%d</string>
-    <string name="total">Total: $%d</string>
-    <string name="by">By: %s</string>
-    <string name="undo">UNDO</string>
-    <string name="transaction_error">Unable to complete your payment transaction as a result of "%s"</string>
-    <string name="item_in_cart_removed_msg">Book removed from cart</string>
-    <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
 
     <!-- TODO: Store Fragment -->
     <string name="request_a_book">Request for a book</string>
