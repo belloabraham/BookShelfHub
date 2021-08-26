@@ -30,6 +30,7 @@ class BookItemViewModel @Inject constructor(
   private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
   private var localLivePublishedBook: LiveData<PublishedBook> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<PubReferrers>> = MutableLiveData()
+  private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
 
   val userId = userAuth.getUserId()
   val isbn = savedState.get<String>(Book.ISBN.KEY)!!
@@ -41,12 +42,16 @@ class BookItemViewModel @Inject constructor(
   )
 
   init {
-    liveCartItems = localDb.getLiveListOfCartItems(userId)
+    localLivePublishedBook = localDb.getLivePublishedBook(isbn)
+
     liveUserReview = localDb.getLiveUserReview(isbn)
 
     publisherReferrer = localDb.getLivePubReferrer(isbn)
 
-    localLivePublishedBook = localDb.getLivePublishedBook(isbn)
+    liveCartItems = localDb.getLiveListOfCartItems(userId)
+
+    orderedBook = localDb.getALiveOrderedBook(isbn)
+
 
     cloudDb.getLiveDataAsync(
       DbFields.PUBLISHED_BOOKS.KEY, isbn,
@@ -60,6 +65,9 @@ class BookItemViewModel @Inject constructor(
 
   }
 
+  fun getALiveOrderedBook(): LiveData<Optional<OrderedBooks>> {
+    return orderedBook
+  }
 
   fun getLivePubReferrer(): LiveData<Optional<PubReferrers>> {
     return publisherReferrer
@@ -71,7 +79,7 @@ class BookItemViewModel @Inject constructor(
     }
   }
 
-  fun getLivePublishedBook(): LiveData<PublishedBook> {
+  fun getLiveLocalBook(): LiveData<PublishedBook> {
     return localLivePublishedBook
   }
 
@@ -87,7 +95,7 @@ class BookItemViewModel @Inject constructor(
     }
   }
 
-  fun getUserReviews(): LiveData<List<UserReview>> {
+  fun getTopThreeOnlineUserReviews(): LiveData<List<UserReview>> {
     return userReviews
   }
 

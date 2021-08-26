@@ -26,7 +26,7 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
@@ -213,7 +213,7 @@ class CartFragment : Fragment() {
             findNavController().navigate(actionCardInfo)
         }
 
-        MaterialBottomSheetBuilder(requireContext(), viewLifecycleOwner)
+        MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
             .setPositiveAction(R.string.dismiss){}
             .showBottomSheet(view)
     }

@@ -188,7 +188,6 @@
                 android:layout_marginHorizontal="@dimen/size_24"
                 android:layout_marginTop="@dimen/size_16"
                 android:backgroundTint="?colorPrimaryVariant"
-                android:visibility="gone"
                 android:text="@string/add_to_Cart"
                 android:id="@+id/addToCartBtn"/>
 

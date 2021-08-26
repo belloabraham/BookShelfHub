@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.adapters.viewpager.slider
+package com.bookshelfhub.bookshelfhub.adapters.viewpager.onboarding
 
 import android.view.View
 import android.widget.ImageView

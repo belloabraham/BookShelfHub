@@ -29,6 +29,7 @@ class UploadBookInterest @AssistedInject constructor (
          val bookInterest = localDb.getBookInterest(userId)
 
         if (bookInterest.isPresent && !bookInterest.get().uploaded){
+
             val bookInterestData = bookInterest.get()
                cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY){
                    bookInterestData.uploaded=true
@@ -36,6 +37,7 @@ class UploadBookInterest @AssistedInject constructor (
                     localDb.addBookInterest(bookInterestData)
                 }
             }
+
         }
 
         return Result.success()

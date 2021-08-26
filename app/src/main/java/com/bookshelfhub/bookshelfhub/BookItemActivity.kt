@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -45,15 +46,11 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.continue_reading.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -80,6 +77,11 @@ class BookItemActivity : AppCompatActivity() {
     private var userReview:UserReview?=null
     private var isVerifiedReview:Boolean = false
     private var pubReferrerId:String?=null
+    private var onlineBookPrice:Int? =null
+    private val visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+    private var bookOnlineVersion:PublishedBook? = null
+    private var localBook:PublishedBook?=null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,24 +91,28 @@ class BookItemActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = null
 
-
-        var bookPrice:Int? =null
-        val userId = userAuth.getUserId()
-        val userPhotoUri = userAuth.getUserPhotoUrl()
-
         val title = intent.getStringExtra(Book.TITLE.KEY)!!
         val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
         val author = intent.getStringExtra(Book.AUTHOR.KEY)!!
         val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
+        //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
+        //for store fragment search result
         if (isSearchItem){
             bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
         }
 
+        val userId = userAuth.getUserId()
+        val userPhotoUri = userAuth.getUserPhotoUrl()
+
+
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
-        layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
         layout.similarBooksRecView.adapter = similarBooksAdapter
 
+
+        //Check referrer database to see if referrer refer this user to the current book and get their ID
         bookItemViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
             if (pubReferrer.isPresent){
                 pubReferrerId = pubReferrer.get().pubId
@@ -114,9 +120,14 @@ class BookItemActivity : AppCompatActivity() {
         })
 
 
-
+        //While Progress bar is loading
+        //Get this particular book from the cloud as things like price, no of downloads and ratings may have changed
+        //which have been queried by the by bookItemViewModel in init as snapshot listener
         bookItemViewModel.getPublishedBookOnline().observe(this, Observer { book ->
-            bookPrice = book.price
+
+            bookOnlineVersion =  book
+
+            onlineBookPrice = book.price
             layout.progressBar.visibility = GONE
             layout.bookItemLayout.visibility = VISIBLE
 
@@ -127,96 +138,85 @@ class BookItemActivity : AppCompatActivity() {
             layout.noRatingTxt.text = "$rating"
             layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
 
-            lifecycleScope.launch(IO){
-                val orderedBook = localDb.getAnOrderedBook(isbn, userId)
-                withContext(Main){
-                    if (orderedBook.isPresent){
-                        layout.openBookBtn.visibility = VISIBLE
-                        isVerifiedReview = true
-                    }else if(book.price > 0.0){
-                        layout.addToCartBtn.visibility = VISIBLE
-                    }else{
-                        layout.downloadBtn.visibility = VISIBLE
-                    }
-                }
+            if(book.price == 0){
+                layout.downloadBtn.visibility = VISIBLE
+                layout.addToCartBtn.visibility = GONE
+            }
+
+            //Load similar books for this book by category
+            loadSimilarBooks(book.category, similarBooksAdapter)
+
+        })
+
+
+        bookItemViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
+
+            if (orderedBook.isPresent){
+                //If the user have bought this book then hide downloadBtn and addToCartBtn
+                //And make op visible so user can just open the book
+                layout.openBookBtn.visibility = VISIBLE
+                layout.downloadBtn.visibility = GONE
+                layout.addToCartBtn.visibility = GONE
+
+                //If the user have bought this book then the user review is verified
+                isVerifiedReview = true
+
             }
         })
 
 
-        var bookItem:PublishedBook? = null
 
-        bookItemViewModel.getLivePublishedBook().observe(this, Observer { book->
+        //Get books in cart to know if books are in cart and if to show Checkout Button or not
+        bookItemViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
 
-                bookItem =  book
-                layout.title.text = book.name
-                layout.author.text = String.format(getString(R.string.by), book.author)
+            if(cartItems.isNotEmpty()){
+                //Show checkout button no of items in cart and checkout button
+                layout.checkoutNotifText.text = "${cartItems.size}"
+                layout.checkoutBtnContainer.visibility = VISIBLE
 
-                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
+                //Check if this book is in cart
+                val bookInCart = cartItems.filter {
+                    it.isbn == isbn
+                }
 
-                bookItemViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
+                //if Book is in cart hide addToCartBtn
+                if (bookInCart.isNotEmpty()){
+                    layout.addToCartBtn.visibility = GONE
+                }
 
-                    if(cartItems.isNotEmpty()){
-                        layout.checkoutNotifText.text = "${cartItems.size}"
-                        layout.checkoutBtnContainer.visibility = VISIBLE
-
-                        val bookInCart = cartItems.filter {
-                            it.isbn == book.isbn
-                        }
-
-                        if (bookInCart.isNotEmpty()){
-                            layout.addToCartBtn.visibility = GONE
-                        }
-
-                    }else{
-                        layout.checkoutBtnContainer.visibility = GONE
-                    }
-                })
-                loadSimilarBooks(book.category, similarBooksAdapter)
-
+            }else{
+                layout.checkoutBtnContainer.visibility = GONE
+            }
         })
 
 
 
+        bookItemViewModel.getLiveLocalBook().observe(this, Observer { book->
+
+                localBook = book
+
+                //This value should remain the same and should not be changed with online book value to avoid surprises for the
+                // user as sudden change in the book cover, title or name is bad
+                layout.title.text = book.name
+                layout.author.text = String.format(getString(R.string.by), book.author)
+                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
+        })
+
 
         layout.addToCartBtn.setOnClickListener {
-
-
-            bookPrice?.let {
-
-                val book = bookItem!!
+            onlineBookPrice?.let {
+                val book = bookOnlineVersion!!
                 val cart = Cart(
                     userId, book.isbn,
                     book.name, book.author,
                     book.coverUrl, pubReferrerId, it
                 )
-
                 bookItemViewModel.addToCart(cart)
             }
-
-
         }
 
         layout.shareBookBtn.setOnClickListener {
-
-            var  link:String?
-            lifecycleScope.launch {
-                  link =  settingsUtil.getString(PubReferrer.USER_REF_LINK.KEY)
-
-                    if (link==null){
-                        dynamicLink.getLinkAsync(
-                            remoteConfig.getString(ReferrerLink.TITLE.KEY),
-                            remoteConfig.getString(ReferrerLink.DESC.KEY),
-                            remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY),
-                            userId
-                        ){
-                           it?.let {
-                              shareBook(it.toString())
-                           }
-                        }
-                    }else{
-                        shareBook(link!!)
-                    }
-            }
+            shareBook(userId, this)
         }
 
         layout.downloadBtn.setOnClickListener {
@@ -224,13 +224,12 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.aboutBookCard.setOnClickListener {
-
-            startBookInfoActivity(isbn,  title = bookItem!!.name, R.id.bookInfoFragment)
+            startBookInfoActivity(isbn,  title = localBook!!.name, R.id.bookInfoFragment)
         }
 
         layout.similarBooksCard.setOnClickListener {
             val intent = Intent(this, BookCategoryActivity::class.java)
-            intent.putExtra(Category.TITLE.KEY, bookItem!!.category)
+            intent.putExtra(Category.TITLE.KEY, bookOnlineVersion!!.category)
             startActivity(intent)
         }
 
@@ -244,6 +243,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
+            //Hide rating layout of edit text if user rating is <=0
             layout.ratingInfoLayout.isVisible = rating>0
         }
 
@@ -251,14 +251,17 @@ class BookItemActivity : AppCompatActivity() {
 
         }
 
+        //Post user review
         layout.postBtn.setOnClickListener {
 
-                val review = layout.userReviewEditText.text.toString()
-                val newRating = layout.ratingBar.rating.toDouble()
+            //Get all userReview Data
+            val review = layout.userReviewEditText.text.toString()
+            val newRating = layout.ratingBar.rating.toDouble()
+            val userName = userAuth.getName()!!
 
-                val userName = userAuth.getName()!!
-
+            //difference in user rating from before compared to now
             var ratingDiff = 0.0
+            //Have the user rating been uploaded to the cloud before?
             var postedBefore = false
             userReview?.let {
                 ratingDiff = newRating - it.userRating
@@ -267,11 +270,16 @@ class BookItemActivity : AppCompatActivity() {
 
             val newReview = UserReview(isbn, review, newRating, userName,isVerifiedReview, userPhotoUri, postedBefore)
 
+            // Save user review to local database
                bookItemViewModel.addUserReview(newReview)
-                if (isVerifiedReview && !review.containsUrl(Regex.URL_IN_TEXT)){
+
+            //Post user review to the cloud if user review does not contain any form of url
+                if (!review.containsUrl(Regex.URL_IN_TEXT)){
+                    //Put data to be passed to the review worker, data of the ISBN(Book that was reviewed) and Rating diff
                     val data = Data.Builder()
                     data.putString(Book.ISBN.KEY, isbn)
                     data.putDouble(Book.RATING_DIFF.KEY, ratingDiff)
+
                     val userReviewPostWorker =
                         OneTimeWorkRequestBuilder<PostUserReview>()
                             .setConstraints(Constraint.getConnected())
@@ -283,27 +291,30 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.userReviewEditText.addTextChangedListener(object:TextWatcher{
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
+            //Show the user the number of text he/she have left to type out of 500 which is review edit
+            // text length as the user type
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
                     layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), it.length)
                 }
-
             }
 
             override fun afterTextChanged(s: Editable?) {}
         })
+        
 
-        val animDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
-
+        //Show review layout
         layout.editYourReviewBtn.setOnClickListener {
             layout.yourReviewLayout.visibility = GONE
             layout.rateBookLayout.visibility = VISIBLE
-            AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
+            //Review layout to existing review layout(if visible) visibility animation
+            AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, visibilityAnimDuration)
         }
 
-        bookItemViewModel.getUserReviews().observe(this, Observer { reviews ->
+        bookItemViewModel.getTopThreeOnlineUserReviews().observe(this, Observer { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.ratingsAndReviewLayout.visibility = VISIBLE
@@ -320,16 +331,19 @@ class BookItemActivity : AppCompatActivity() {
             layout.ratingInfoLayout.visibility = GONE
 
             if (review.isPresent){
-
-                AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, animDuration)
+                //Visibility animation between existing review and new review layout
+                AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, visibilityAnimDuration)
                 userReview = review.get()
+
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
                     userReview.reviewDate?.let {
+                        //Convert server dateTime to local date in string
                         val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                         layout.date.text = date
                     }
+
                     layout.userNameText.text = userReview.userName
                     layout.userReviewTxt.text = userReview.review
                     layout.userRatingBar.rating = userReview.userRating.toFloat()
@@ -348,13 +362,18 @@ class BookItemActivity : AppCompatActivity() {
                     }
                 }
             }else{
-                getUserReviewAsync(isbn, userId, animDuration)
+                //If user review is not present bcos user have not yet reviewed this app or user is opening this book on a
+                    // new device get user review from online database
+                getUserReviewAsync(isbn, userId, visibilityAnimDuration)
             }
 
+            //Get how long the user review text lenght is
             val reviewLength = layout.userReviewEditText.text.toString().length
 
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
         })
+
+
     }
 
     private fun showLetterIcon(value:String){
@@ -362,9 +381,32 @@ class BookItemActivity : AppCompatActivity() {
         layout.letterIcon.letter = value
         layout.userImage.visibility = GONE
     }
-    private fun shareBook(text:String){
-        ShareUtil(this).shareText(text)
+
+
+    private fun shareBook(userId:String, activity: Activity){
+
+        var  link:String?
+        lifecycleScope.launch {
+            link =  settingsUtil.getString(Referrer.REF_LINK.KEY)
+
+            if (link==null){
+                dynamicLink.generateShortLinkAsync(
+                    remoteConfig.getString(Social.TITLE.KEY),
+                    remoteConfig.getString(Social.DESC.KEY),
+                    remoteConfig.getString(Social.IMAGE_URL.KEY),
+                    userId
+                ){
+                    it?.let {
+                        ShareUtil(activity).shareText(it.toString())
+                    }
+                }
+            }else{
+                ShareUtil(activity).shareText(link!!)
+            }
+        }
+
     }
+
 
     private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
         cloudDb.getLiveDataAsync(DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
@@ -421,8 +463,6 @@ class BookItemActivity : AppCompatActivity() {
          return "$main"+unitPlus
     }
 
-
-
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
@@ -436,6 +476,7 @@ class BookItemActivity : AppCompatActivity() {
     private fun startBookInfoActivity(isbn:String, title:Int=R.string.ratings_reviews, fragmentID:Int = R.id.reviewsFragment){
         startBookInfoActivity(isbn, getString(title), fragmentID)
     }
+
 
     private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {
@@ -463,8 +504,10 @@ class BookItemActivity : AppCompatActivity() {
         return true
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+        //User can report this book for anything, like a stolen copyrighted content or so
         if(item.itemId == R.id.reportBook){
             val url = remoteConfig.getString(BOOK_REPORT_URL)
             val intent = Intent(this, WebViewActivity::class.java)
@@ -473,15 +516,13 @@ class BookItemActivity : AppCompatActivity() {
                 putExtra(WebView.URL.KEY, url)
             }
             startActivity(intent)
+        }else{
+            finish()
         }
 
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
-    }
 
 
 }

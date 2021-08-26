@@ -4,16 +4,10 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
-import com.bookshelfhub.bookshelfhub.helpers.webapi.OkHttp
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.services.payment.Payment
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope

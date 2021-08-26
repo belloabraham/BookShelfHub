@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
 import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.ui.Fragment
@@ -16,6 +19,7 @@ class BookInfoActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityBookInfoBinding
     private lateinit var navController: NavController
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,18 +37,25 @@ class BookInfoActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
         navController = navHostFragment.findNavController()
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
 
+
+        //Remove the default fragment that was navigated to set in @res/navigation/book_info_activity_navigation
         navController.popBackStack()
 
+        //Set value for the new fragment bundle to receive
         val args = Bundle()
         args.putString(Book.ISBN.KEY, isbn)
+
+        //Navigate to the new fragment
         navController.navigate(fragmentId, args)
     }
 
 
     override fun onSupportNavigateUp(): Boolean {
-        finish()
-        return true
+        return navController.navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
     }
 
 

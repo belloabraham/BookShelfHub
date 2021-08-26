@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.adapters.viewpager.slider
+package com.bookshelfhub.bookshelfhub.adapters.viewpager.onboarding
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

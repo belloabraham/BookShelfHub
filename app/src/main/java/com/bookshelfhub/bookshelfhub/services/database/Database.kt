@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.google.common.base.Optional
 import java.util.concurrent.TimeUnit
@@ -15,14 +16,15 @@ class Database @Inject constructor(private var context: Context, private val loc
     suspend fun addUser(user:User){
         localDb.addUser(user)
 
+        val connected = Constraint.getConnected()
         val oneTimeUserDataUpload: WorkRequest =
             OneTimeWorkRequestBuilder<UploadUserData>()
-                .setConstraints(getConnectedConstraint())
+                .setConstraints(connected)
                 .build()
 
         val periodicUserDataUpload =
             PeriodicWorkRequestBuilder<UploadUserData>(12, TimeUnit.HOURS)
-                .setConstraints(getConnectedConstraint())
+                .setConstraints(connected)
                 .build()
 
         WorkManager.getInstance(context).enqueue(oneTimeUserDataUpload)
@@ -41,10 +43,5 @@ class Database @Inject constructor(private var context: Context, private val loc
         return  localDb.getLiveBookInterest(userId)
     }
 
-    private fun getConnectedConstraint():Constraints{
-        return Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-    }
 
 }

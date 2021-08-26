@@ -24,6 +24,8 @@ workerParams
 
         val userId = userAuth.getUserId()
 
+
+        //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
         cloudDb.getListOfDataAsync(
             DbFields.USERS.KEY, userId,
             DbFields.BOOKMARKS.KEY,

@@ -10,7 +10,7 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
-    //Todo Transaction
+    //Todo Payment Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
 
@@ -48,17 +48,20 @@ interface UserDao {
 
 
     //Todo Bookmarks
-    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted AND userId =:userId")
-    suspend fun getBookmarks(userId: String, deleted: Boolean):List<Bookmark>
+    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
+    suspend fun getBookmarks(deleted: Boolean):List<Bookmark>
 
-    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted AND userId =:userId")
-    fun getLiveBookmarks(userId: String, deleted: Boolean): LiveData<List<Bookmark>>
+    @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
+    fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>>
 
-    @Query("SELECT * FROM Bookmark WHERE deleted =:deleted AND userId =:userId")
-    suspend fun getDeletedBookmarks(userId: String, deleted: Boolean):List<Bookmark>
+    @Query("DELETE FROM Bookmark")
+    suspend fun deleteAllBookmarks()
 
-    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded AND deleted =:deleted AND userId =:userId")
-    suspend fun getLocalBookmarks(userId: String, uploaded:Boolean, deleted: Boolean):List<Bookmark>
+    @Query("SELECT * FROM Bookmark WHERE deleted =:deleted AND uploaded =:uploaded")
+    suspend fun getDeletedBookmarks(deleted: Boolean, uploaded: Boolean):List<Bookmark>
+
+    @Query("SELECT * FROM Bookmark WHERE uploaded = :uploaded AND deleted =:deleted")
+    suspend fun getLocalBookmarks(uploaded:Boolean, deleted: Boolean):List<Bookmark>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookmarkList(bookmarks: List<Bookmark>)
@@ -116,8 +119,8 @@ interface UserDao {
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
 
-    @Query("SELECT * FROM OrderedBooks WHERE userId = :userId AND isbn =:isbn")
-    fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
+    @Query("SELECT * FROM OrderedBooks WHERE isbn =:isbn")
+    fun getALiveOrderedBook(isbn:String): LiveData<Optional<OrderedBooks>>
 
     @Query("DELETE FROM OrderedBooks")
     fun deleteAllOrderedBooks()

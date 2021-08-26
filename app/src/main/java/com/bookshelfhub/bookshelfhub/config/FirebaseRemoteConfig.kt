@@ -4,7 +4,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 
-open class FirebaseRemoteConfig : IRemoteConfig {
+class FirebaseRemoteConfig : IRemoteConfig {
      private val remoteConfig = Firebase.remoteConfig
 
     override fun getString(key:String):String{

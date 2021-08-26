@@ -23,11 +23,22 @@ workerParams
 
         val userId = userAuth.getUserId()
 
-        val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(userId, true)
+        //Get locally deleted bookmarks
+        val localListOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = false)
 
+        //Remove theme locally
+        if (localListOfDeletedBookmarks.isNotEmpty()){
+            localDb.deleteBookmarks(localListOfDeletedBookmarks)
+        }
+
+        //Get locally deleted bookmarks that are already on the cloud
+        val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = true)
+
+        //Delete them on the cloud using this path user/userId/bookmarks/id
         cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
 
                 coroutineScope {
+                    //Now remove them locally
                     localDb.deleteBookmarks(listOfDeletedBookmarks)
                 }
         }

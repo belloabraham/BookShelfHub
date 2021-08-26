@@ -31,6 +31,8 @@ class BookCategoryActivity : AppCompatActivity() {
     private lateinit var layout:ActivityBookCategoryBinding
     private var listOfBooks = emptyList<PublishedBook>()
     private val bookCategoryViewModel:BookCategoryViewModel by viewModels()
+    //Message shown when user cant find a book they are searching for
+    private val bookReqMsg = getString(R.string.cant_find_book)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,28 +48,31 @@ class BookCategoryActivity : AppCompatActivity() {
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
+        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
+        layout.categoryBookRecView.adapter = bookListAdapter
+
 
         lifecycleScope.launch {
+            //If the category that trigger this book is recommended books, load recommended books as there is no book
+            //with a category of "Recommended for you"
             if (category==getString(R.string.recommended_for)){
                 bookCategoryViewModel.getRecommendedBooks().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
+                //If the category that trigger this book is Trending, load recommended books as there is no book
+                //with a category of "Trending"
             }else if(category==getString(R.string.trending)){
                 bookCategoryViewModel.getTrendingBooks().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }else{
+                //Loads books by the category that was passed
                 bookCategoryViewModel.getBooksByCategory().collectLatest { books->
                     bookListAdapter.submitData(books)
                 }
             }
         }
 
-
-        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
-        layout.categoryBookRecView.adapter = bookListAdapter
-
-        val bookReqMsg = getString(R.string.cant_find_book)
 
         layout.materialSearchView.apply {
             val params =  layout.toolbarLayout.layoutParams as AppBarLayout.LayoutParams
@@ -103,7 +108,6 @@ class BookCategoryActivity : AppCompatActivity() {
                 }
 
                 override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    //TODO Come back to implement this
                     return true
                 }
             })
@@ -136,10 +140,6 @@ class BookCategoryActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        super.onBackPressed()
-        return true
-    }
 
     override fun onBackPressed() {
         if (layout.materialSearchView.hasFocus()) {
@@ -147,14 +147,18 @@ class BookCategoryActivity : AppCompatActivity() {
             layout.materialSearchView.visibility = View.GONE
             layout.toolbar.visibility = View.VISIBLE
         }else{
-            super.onBackPressed()
+            finish()
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        layout.toolbar.visibility = View.GONE
-        layout.materialSearchView.visibility = View.VISIBLE
-        layout.materialSearchView.requestFocus()
+        if(item.itemId == R.id.search){
+            layout.toolbar.visibility = View.GONE
+            layout.materialSearchView.visibility = View.VISIBLE
+            layout.materialSearchView.requestFocus()
+        }else{
+            finish()
+        }
         return super.onOptionsItemSelected(item)
     }
 }

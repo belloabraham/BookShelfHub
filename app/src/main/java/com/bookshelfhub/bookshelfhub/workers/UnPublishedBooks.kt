@@ -28,6 +28,8 @@ class UnPublishedBooks @AssistedInject constructor (
             return Result.retry()
         }
 
+
+        //Get all Published books where published == false
         cloudDb.getListOfDataAsync(
             DbFields.PUBLISHED_BOOKS.KEY,
             DbFields.PUBLISHED.KEY,false,
@@ -35,6 +37,7 @@ class UnPublishedBooks @AssistedInject constructor (
         ) {
             if(it.isNotEmpty()){
                 coroutineScope {
+                    //Delete all of the from local published books database
                     localDb.deleteUnPublishedBookRecords(it)
                 }
             }

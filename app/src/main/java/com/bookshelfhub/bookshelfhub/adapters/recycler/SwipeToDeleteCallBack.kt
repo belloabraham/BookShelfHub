@@ -13,6 +13,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 
+/**
+ * Swipe left to delete call back used with Recycler View
+ */
+
 abstract class SwipeToDeleteCallBack(val context: Context, swipeBackgroundColor:Int, deleteIcon:Int) :
     ItemTouchHelper.Callback() {
 

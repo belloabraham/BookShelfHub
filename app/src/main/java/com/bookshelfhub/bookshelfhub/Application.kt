@@ -18,7 +18,6 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
 import co.paystack.android.PaystackSdk
-import com.bookshelfhub.bookshelfhub.config.RemoteConfig
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -109,7 +108,7 @@ class Application: android.app.Application(), Configuration.Provider {
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            this.minimumFetchIntervalInSeconds = RemoteConfig.FETCH_INTERVAL_IN_SEC.VALUE
+            this.minimumFetchIntervalInSeconds = 1800L
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)

@@ -6,9 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

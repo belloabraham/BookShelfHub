@@ -10,7 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
-open class FBPhoneAuth(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int) :
+open class FirebsePhoneAuth(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int) :
     IPhoneAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
@@ -50,8 +50,6 @@ open class FBPhoneAuth(private  val activity: Activity, val phoneAuthViewModel: 
 
                 }else {
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        //TODO wrong verification code
-                        //phoneAuthViewModel.setSignedInFailedError((task.exception as FirebaseAuthInvalidCredentialsException).message)
                         phoneAuthViewModel.setSignedInFailedError(activity.getString(wrongOTPErrorMsg))
                     }
                 }
@@ -86,7 +84,6 @@ open class FBPhoneAuth(private  val activity: Activity, val phoneAuthViewModel: 
                     phoneAuthViewModel.setSignedInFailedError(activity.getString(tooManyReqErrorMsg))
                 }else{
                     phoneAuthViewModel.setSignedInFailedError(activity.getString(otherAuthErrorMsg))
-                    //TODO Log error to Crashlytics
                 }
             }
 

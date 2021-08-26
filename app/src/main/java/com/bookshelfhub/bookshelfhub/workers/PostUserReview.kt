@@ -23,26 +23,36 @@ class PostUserReview @AssistedInject constructor(
 ){
 
     override suspend fun doWork(): Result {
+
         val isbn = inputData.getString(Book.ISBN.KEY)!!
+
+        //Get the user review
         val userReview =  localDb.getUserReview(isbn).get()
 
-            val ratingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
+            val userRatingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
             val userId = userAuth.getUserId()
 
-            val noOfReview:Long =  if (userReview.postedBefore){
+            //Check if the review have been posted before
+            val bookTotalReview:Long =  if (userReview.postedBefore){
+                //If user is updating a previously posted review
                 0
             }else{
+                //If user is posting a review for the first time
                 1
             }
 
-          val dynamicBookAttr =  if (noOfReview>0){
+
+          val dynamicBookAttr =  if (bookTotalReview>0){ //If user is posting for the first time
                  hashMapOf(
-                     DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(noOfReview),
-                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(ratingDiff)
+                     //Add to book total review
+                     DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
+                     //Add userRatingDiff to total ratings that can be + or -
+                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             }else{
               hashMapOf(
-                  DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(ratingDiff)
+                  //Has user has posted before only upload userRatingDiff
+                  DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
               )
             }
 
@@ -50,6 +60,8 @@ class PostUserReview @AssistedInject constructor(
                 dynamicBookAttr, userReview,
                 DbFields.PUBLISHED_BOOKS.KEY, isbn,
                 DbFields.REVIEWS.KEY, userId){
+
+                //Update user review locally
                 userReview.postedBefore = true
                 localDb.addUserReview(userReview)
             }

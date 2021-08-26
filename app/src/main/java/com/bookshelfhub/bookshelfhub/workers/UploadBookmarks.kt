@@ -25,21 +25,20 @@ workerParams
             return Result.retry()
         }
 
-        val userId = userAuth.getUserId()
+        val listOfBookmarks = localDb.getLocalBookmarks(uploaded = false, deleted = false)
 
-        val listOfBookmarks = localDb.getLocalBookmarks(userId,false)
-
-        cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY){
-
-            val length = listOfBookmarks.size-1
+        if (listOfBookmarks.isNotEmpty()){
+            val userId = userAuth.getUserId()
+            cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY){
+                val length = listOfBookmarks.size-1
 
                 for (i in 0..length){
                     listOfBookmarks[i].uploaded = true
                 }
-
                 coroutineScope {
                     localDb.addBookmarkList(listOfBookmarks)
                 }
+            }
         }
 
         return Result.success()

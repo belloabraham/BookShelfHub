@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.services.database.local
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
+import androidx.room.Query
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
 
@@ -15,7 +16,7 @@ interface ILocalDb {
      suspend fun addPaymentCard(paymentCard: PaymentCard)
      fun getLivePublishedBook(isbn: String): LiveData<PublishedBook>
      suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
-     fun getAnOrderedBook(isbn:String, userId: String): Optional<OrderedBooks>
+     fun getALiveOrderedBook(isbn:String): LiveData<Optional<OrderedBooks>>
      fun deleteAllOrderedBooks()
      suspend fun updateReview(isbn: String, isVerified:Boolean)
      suspend fun deleteAllReviews()
@@ -24,17 +25,18 @@ interface ILocalDb {
      suspend fun addUserReview(userReview: UserReview)
      fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
      suspend fun getPublishedBook(isbn: String): PublishedBook
-     fun getLiveBookmarks(userId: String, deleted: Boolean = false): LiveData<List<Bookmark>>
+     fun getLiveBookmarks(deleted: Boolean = false): LiveData<List<Bookmark>>
      suspend fun getListOfCartItems(userId: String):List<Cart>
      fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
-     suspend fun getDeletedBookmarks(userId: String, deleted: Boolean=true):List<Bookmark>
+     suspend fun getDeletedBookmarks(deleted: Boolean, uploaded: Boolean):List<Bookmark>
+     suspend fun deleteAllBookmarks()
      suspend fun addBookmarkList(bookmarks: List<Bookmark>)
      suspend fun addToCart(cart:Cart)
      suspend fun deleteFromCart(cart: Cart)
      suspend fun addBookmark(bookmark: Bookmark)
      suspend fun deleteBookmarks(bookmarks: List<Bookmark>)
-     suspend fun getLocalBookmarks(userId: String, uploaded:Boolean=false, deleted: Boolean=false): List<Bookmark>
-     suspend fun getBookmarks(userId: String, deleted: Boolean = false):List<Bookmark>
+     suspend fun getLocalBookmarks(uploaded:Boolean=false, deleted: Boolean=false): List<Bookmark>
+     suspend fun getBookmarks(deleted: Boolean = false):List<Bookmark>
      fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
      suspend fun getUser(userId: String): Optional<User>
      fun getLiveUser(userId: String): LiveData<User>

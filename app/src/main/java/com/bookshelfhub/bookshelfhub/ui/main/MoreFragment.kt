@@ -29,10 +29,10 @@ import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebaseGoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.material.card.MaterialCardView
@@ -78,7 +78,7 @@ class MoreFragment : Fragment() {
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
         val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
         val deletePaymentCardsBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.deletePaymentCards)
-        val googleAuth:IGoogleAuth =  FBGoogleAuth(requireActivity(), null, R.string.gcp_web_client)
+        val googleAuth:IGoogleAuth =  FirebaseGoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
         authType= userAuth.getAuthType()
 
@@ -202,13 +202,13 @@ class MoreFragment : Fragment() {
                 var link = mainActivityViewModel.getUserReferralLink()
                 if (link==null){
                     lifecycleScope.launch(IO){
-                      link =  settingsUtil.getString(PubReferrer.USER_REF_LINK.KEY)
+                      link =  settingsUtil.getString(Referrer.REF_LINK.KEY)
                         withContext(Main){
                             if (link==null){
-                                dynamicLink.getLinkAsync(
-                                    remoteConfig.getString(ReferrerLink.TITLE.KEY),
-                                    remoteConfig.getString(ReferrerLink.DESC.KEY),
-                                    remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY),
+                                dynamicLink.generateShortLinkAsync(
+                                    remoteConfig.getString(Social.TITLE.KEY),
+                                    remoteConfig.getString(Social.DESC.KEY),
+                                    remoteConfig.getString(Social.IMAGE_URL.KEY),
                                     userAuth.getUserId()
                                 ){
                                     if (it!=null){

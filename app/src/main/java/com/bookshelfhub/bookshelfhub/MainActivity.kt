@@ -13,16 +13,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.adapters.viewpager.CartMorePagerAdapter
-import com.bookshelfhub.bookshelfhub.adapters.viewpager.ShelfStorePagerAdapter
+import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.ReferrerLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetBuilder
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
@@ -76,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
-        val referrer = intent.getStringExtra(PubReferrer.ID.KEY)
+        val referrer = intent.getStringExtra(Referrer.ID.KEY)
 
         //***Open dynamic link that opened this app in Book store if the link is not null and is coming from a publisherReferrer
         referrer?.let {
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity() {
                 val link = it.toString()
                 mainActivityViewModel.setUserReferralLink(link)
                 lifecycleScope.launch(IO){
-                    settingsUtil.setString(PubReferrer.USER_REF_LINK.KEY,link)
+                    settingsUtil.setString(Referrer.REF_LINK.KEY,link)
                 }
             }
         }
@@ -263,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                         view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =
                             lastBookPercentage
 
-                        MaterialBottomSheetBuilder(this@MainActivity, this@MainActivity)
+                        MaterialBottomSheetDialogBuilder(this@MainActivity, this@MainActivity)
                             .setOnDismissListener {
                                 if (noOfDismiss < 2) {
                                     showToast(R.string.dismiss_msg)
@@ -289,11 +288,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openPublisherReferrerLink(referrer:String, userId:String){
-                val pubIdAndIsbn = referrer.split(PubReferrer.SEPARATOR.KEY)
+                val pubIdAndIsbn = referrer.split(Referrer.SEPARATOR.KEY)
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
-                intent.putExtra(PubReferrer.ISBN.KEY,isbn)
+                intent.putExtra(Referrer.BOOK_REFERRED.KEY,isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
                 //***Add publisher referrer to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
@@ -301,10 +300,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getBookShareReferralLink(userId:String, onComplete:(Uri?)->Unit){
-        val title = remoteConfig.getString(ReferrerLink.TITLE.KEY)
-        val description = remoteConfig.getString(ReferrerLink.DESC.KEY)
-        val imageUrl = remoteConfig.getString(ReferrerLink.IMAGE_URL.KEY)
-        dynamicLink.getLinkAsync(title, description, imageUrl, userId){
+        val title = remoteConfig.getString(Social.TITLE.KEY)
+        val description = remoteConfig.getString(Social.DESC.KEY)
+        val imageUrl = remoteConfig.getString(Social.IMAGE_URL.KEY)
+        dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId){
             onComplete(it)
         }
     }
@@ -313,14 +312,14 @@ class MainActivity : AppCompatActivity() {
     private fun setUpShelfStoreViewPager(){
         val  fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
         val titles = arrayOf(getString(R.string.shelf), getString(R.string.store))
-        val shelfStoreAdapter = ShelfStorePagerAdapter(supportFragmentManager, fragmentList, titles)
+        val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, fragmentList, titles)
         layout.shelfStoreViewPager.adapter = shelfStoreAdapter
     }
 
     private fun setUpCartMoreViewPager(){
         val  fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
         val titles = arrayOf(getString(R.string.cart), getString(R.string.more))
-        val cartMoreAdapter = CartMorePagerAdapter( supportFragmentManager, fragmentList, titles)
+        val cartMoreAdapter = ViewPagerAdapter( supportFragmentManager, fragmentList, titles)
         layout.cartMoreViewPager.adapter = cartMoreAdapter
     }
 

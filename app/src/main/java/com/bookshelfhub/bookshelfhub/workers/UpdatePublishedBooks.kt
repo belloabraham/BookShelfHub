@@ -34,6 +34,7 @@ class UpdatePublishedBooks @AssistedInject constructor (
 
             if (it.isNotEmpty()){
                 coroutineScope {
+                    //Add all published books to the database replacing existing data
                     localDb.addAllPubBooks(it)
                 }
             }

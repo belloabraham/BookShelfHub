@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.services.notification.firebase
+package com.bookshelfhub.bookshelfhub.services.cloudnotification.firebase
 
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.adapters.viewpager.slider
+package com.bookshelfhub.bookshelfhub.adapters.viewpager.onboarding
 
  data class SliderItem(
      val firstTitle: String?,

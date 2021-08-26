@@ -12,7 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.book.Book
-import com.bookshelfhub.bookshelfhub.observers.Display
+import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import dagger.hilt.android.AndroidEntryPoint

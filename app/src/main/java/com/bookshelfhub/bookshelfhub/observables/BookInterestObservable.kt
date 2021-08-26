@@ -6,7 +6,9 @@ import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 
-
+/**
+ * Used for two way data binding in BookInterestFragment
+ */
 class BookInterestObservable (private val bkInts:BookInterest): BaseObservable() {
 
 

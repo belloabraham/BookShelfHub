@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWebViewBinding
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
-import com.bookshelfhub.bookshelfhub.observers.Display
+import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

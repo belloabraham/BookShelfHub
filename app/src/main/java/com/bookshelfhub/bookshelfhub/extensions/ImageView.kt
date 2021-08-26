@@ -9,11 +9,11 @@ import com.bookshelfhub.bookshelfhub.helpers.imageloaders.PicassoWrapper
         imageLoader.load(url, placeHolder, errorImg, shouldCache, onSuccess)
     }
 
-        @JvmSynthetic
-        fun ImageView.load(url:String, onError:()->Unit={}){
-            val imageLoader = PicassoWrapper(this)
-            imageLoader.load(url, onError)
-        }
+    @JvmSynthetic
+    fun ImageView.load(url:String, onError:()->Unit={}){
+        val imageLoader = PicassoWrapper(this)
+        imageLoader.load(url, onError)
+    }
 
     @JvmSynthetic
     fun ImageView.loadUnCompressed(resId: Int, shouldCache:Boolean=false){

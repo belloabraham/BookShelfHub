@@ -21,18 +21,7 @@ class BookmarkViewModel @Inject constructor(private val localDb: ILocalDb, val u
 
 
     init{
-
-       liveBookmarks = localDb.getLiveBookmarks(userId)
-        val bookmark = listOf(
-            Bookmark( userId, "1234", 4,"Hello its me"),
-            Bookmark( userId, "12345", 4,"Hello PPO"),
-            Bookmark( userId, "12346", 4,"Hello Hi"),
-            Bookmark( userId, "12347", 4,"Hello Howdy"),
-        )
-
-        viewModelScope.launch {
-            localDb.addBookmarkList(bookmark)
-        }
+       liveBookmarks = localDb.getLiveBookmarks()
     }
 
     fun addBookmark(bookmark: Bookmark){

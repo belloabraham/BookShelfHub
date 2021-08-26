@@ -15,6 +15,10 @@ import com.bookshelfhub.bookshelfhub.extensions.load
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
+/**
+ * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
+ */
+
 class OrderedBooksAdapter (private val activity: Activity) {
 
     fun getOrderedBooksAdapter():ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>{

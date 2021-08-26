@@ -16,12 +16,12 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.PubReferrer
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FBPhoneAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebaseGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebsePhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -60,18 +60,18 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //***Get Nullable referral userID or PubIdAndISBN
-        referrer = intent.getStringExtra(PubReferrer.ID.KEY)
+        referrer = intent.getStringExtra(Referrer.ID.KEY)
 
         //***Set set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId->
-            if (!referrerId.contains(PubReferrer.SEPARATOR.KEY)){
+            if (!referrerId.contains(Referrer.SEPARATOR.KEY)){
                 userAuthViewModel.setUserReferrerId(referrerId)
             }
         }
 
         //*** Pass Nullable referral userID or PubIdAndISBN and set to Main Activity
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra(PubReferrer.ID.KEY, referrer)
+        intent.putExtra(Referrer.ID.KEY, referrer)
 
         //***Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
@@ -81,10 +81,10 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         //***Initialize Firebase Phone Verification and Auth
-        phoneAuth= FBPhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+        phoneAuth= FirebsePhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
 
         //***Initialize Firebase Google Auth
-        googleAuth = FBGoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
+        googleAuth = FirebaseGoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
         //*** Start an activity for result callback
         resultLauncher =

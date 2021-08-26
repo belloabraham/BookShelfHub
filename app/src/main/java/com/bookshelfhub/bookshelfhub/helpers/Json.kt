@@ -3,8 +3,11 @@ package com.bookshelfhub.bookshelfhub.helpers
 import com.google.gson.Gson
 import org.json.JSONObject
 
-class Json(private val jsonSerDes:Gson) {
+/**
+ * Custom Json Serializer and De-serializer
+ */
 
+class Json(private val jsonSerDes:Gson) {
 
      fun <T: Any> fromAny(obj:Any, type:Class<T>):T{
         val json = jsonSerDes.toJson(obj)

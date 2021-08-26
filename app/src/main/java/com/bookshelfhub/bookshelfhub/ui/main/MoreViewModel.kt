@@ -23,6 +23,7 @@ class MoreViewModel @Inject constructor(private val localDb: ILocalDb): ViewMode
             localDb.deleteAllReviews()
             localDb.deleteAllOrderedBooks()
             localDb.deleteAllPaymentCards()
+            localDb.deleteAllBookmarks()
         }
     }
 

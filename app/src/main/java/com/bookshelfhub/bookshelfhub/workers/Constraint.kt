@@ -7,6 +7,10 @@ import androidx.work.OneTimeWorkRequestBuilder
 class Constraint {
 
     companion object{
+
+        /**
+         * Make sure there is an internet connection before starting the worker
+         */
         fun getConnected(): Constraints {
            return Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)

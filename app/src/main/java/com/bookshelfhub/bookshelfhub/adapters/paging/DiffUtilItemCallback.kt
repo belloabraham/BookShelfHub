@@ -3,6 +3,10 @@ package com.bookshelfhub.bookshelfhub.adapters.paging
 import androidx.recyclerview.widget.DiffUtil
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 
+/**
+ * Used only for Paging adapter of published books
+ */
+
 class DiffUtilItemCallback: DiffUtil.ItemCallback<PublishedBook>() {
 
     override fun areItemsTheSame(oldItem: PublishedBook, newItem: PublishedBook): Boolean {

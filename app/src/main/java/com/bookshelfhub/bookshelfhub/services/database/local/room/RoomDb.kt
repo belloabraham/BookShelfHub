@@ -58,16 +58,20 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     }
 
     //Todo Bookmarks
-    override suspend fun getBookmarks(userId: String, deleted: Boolean): List<Bookmark> {
-        return  RoomInstance.getDatabase(context).userDao().getBookmarks(userId, deleted)
+    override suspend fun getBookmarks(deleted: Boolean): List<Bookmark> {
+        return  RoomInstance.getDatabase(context).userDao().getBookmarks(deleted)
     }
 
     override suspend fun addBookmark(bookmark: Bookmark) {
         RoomInstance.getDatabase(context).userDao().addBookmark(bookmark)
     }
 
-    override suspend fun getDeletedBookmarks(userId: String, deleted: Boolean): List<Bookmark> {
-       return RoomInstance.getDatabase(context).userDao().getDeletedBookmarks(userId, deleted)
+    override suspend fun getDeletedBookmarks(deleted: Boolean, uploaded: Boolean): List<Bookmark> {
+       return RoomInstance.getDatabase(context).userDao().getDeletedBookmarks(deleted, uploaded)
+    }
+
+    override suspend fun deleteAllBookmarks() {
+        return RoomInstance.getDatabase(context).userDao().deleteAllBookmarks()
     }
 
     override suspend fun addBookmarkList(bookmarks: List<Bookmark>) {
@@ -79,15 +83,14 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     }
 
     override suspend fun getLocalBookmarks(
-        userId: String,
         uploaded: Boolean,
         deleted: Boolean
     ): List<Bookmark> {
-        return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(userId, uploaded, deleted)
+        return  RoomInstance.getDatabase(context).userDao().getLocalBookmarks(uploaded, deleted)
     }
 
-    override fun getLiveBookmarks(userId: String, deleted: Boolean): LiveData<List<Bookmark>> {
-        return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks(userId, deleted)
+    override fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveBookmarks( deleted)
     }
 
     //Todo Cart
@@ -149,8 +152,8 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         return RoomInstance.getDatabase(context).userDao().getOrderedBooks(userId)
     }
 
-    override fun getAnOrderedBook(isbn: String, userId: String): Optional<OrderedBooks> {
-       return RoomInstance.getDatabase(context).userDao().getAnOrderedBook(isbn, userId)
+    override fun getALiveOrderedBook(isbn: String): LiveData<Optional<OrderedBooks>> {
+       return RoomInstance.getDatabase(context).userDao().getALiveOrderedBook(isbn)
     }
 
     override fun deleteAllOrderedBooks() {

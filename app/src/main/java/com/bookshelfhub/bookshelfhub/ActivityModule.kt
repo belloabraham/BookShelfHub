@@ -27,7 +27,7 @@ object ActivityModule {
     @ActivityScoped
     @Provides
     fun getDynamicLink(@ActivityContext context: Context, appUtil: AppUtil): IDynamicLink {
-        return FirebaseDLink(context.getString(R.string.dlink_domain_prefix), context, appUtil)
+        return FirebaseDLink(context.getString(R.string.dlink_domain_prefix), context)
     }
 
     @ActivityScoped

@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMoreBinding
 import com.bookshelfhub.bookshelfhub.ui.Fragment
@@ -22,20 +23,23 @@ class MoreActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         layout = ActivityMoreBinding.inflate(layoutInflater)
         setContentView(layout.root)
+
+
         val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
 
         setSupportActionBar(layout.toolbar)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.findNavController()
+        appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         navigateTo(fragmentId)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        finish()
-        return true
+        return navController.navigateUp(appBarConfiguration)
+                || super.onSupportNavigateUp()
     }
 
     private fun navigateTo(fragmentId:Int){

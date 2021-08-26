@@ -1,5 +1,6 @@
-package com.bookshelfhub.bookshelfhub.services.notification.firebase
+package com.bookshelfhub.bookshelfhub.services.cloudnotification.firebase
 
+import com.bookshelfhub.bookshelfhub.services.cloudnotification.ICloudMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
