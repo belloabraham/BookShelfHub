@@ -33,7 +33,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
@@ -72,8 +73,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-
-
     //--Testing
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -83,8 +82,6 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
     //--Data Store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    //--Firestore
-    implementation 'com.google.firebase:firebase-firestore-ktx'
     //--Android - Room
     def room_version = "2.3.0"
     implementation("androidx.room:room-runtime:$room_version")
@@ -125,6 +122,8 @@ dependencies {
     implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
     //Payment
     implementation 'co.paystack.android:paystack:3.1.3'
+    //Web API
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
 
 
@@ -173,13 +172,18 @@ dependencies {
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta02'
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
+    //--Firestore
+    implementation 'com.google.firebase:firebase-firestore-ktx'
     //--Crashlytics
-   // implementation 'com.google.firebase:firebase-crashlytics-ktx'
-
+    // implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    //--Cloud Storage
+    implementation 'com.google.firebase:firebase-storage-ktx'
 
 
     //Google Play
     //--Google Play Services Authentication
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation("com.google.android.play:core:1.10.0")
+    implementation("com.google.android.play:core-ktx:1.8.1")
 
 }

@@ -16,5 +16,5 @@ data class UserReview(
     val verified:Boolean,
     var userPhoto:String?,
     var postedBefore:Boolean,
-    val reviewDate: Timestamp? = null
+    val dateTime: Timestamp? = null
     )

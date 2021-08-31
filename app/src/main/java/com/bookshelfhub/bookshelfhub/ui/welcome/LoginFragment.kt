@@ -19,13 +19,13 @@ import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
+import com.bookshelfhub.bookshelfhub.extensions.showErrorToolTip
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
-import com.bookshelfhub.bookshelfhub.views.tooltip.ToolTip
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -52,8 +52,6 @@ class LoginFragment:Fragment() {
     //Injecting class instance with Dagger Hilt
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
-    @Inject
-    lateinit var tooltip: ToolTip
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
@@ -111,7 +109,7 @@ class LoginFragment:Fragment() {
             lifecycleScope.launch(Main) {
                 delay(100)
                 withContext(Main){
-                    tooltip.showPhoneNumErrorBottom(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
+                    showErrorToolTip(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
                         keyboardUtil.showKeyboard(layout.phoneNumEditText)
                     }
                 }

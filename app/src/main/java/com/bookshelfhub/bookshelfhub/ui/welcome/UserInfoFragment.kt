@@ -15,7 +15,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
-import com.bookshelfhub.bookshelfhub.extensions.isValidPhoneNumber
+import com.bookshelfhub.bookshelfhub.extensions.isPhoneNumber
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
@@ -126,7 +126,7 @@ class UserInfoFragment : Fragment() {
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
                 layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
-            }else if(!phone.isValidPhoneNumber()){
+            }else if(!phone.isPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)

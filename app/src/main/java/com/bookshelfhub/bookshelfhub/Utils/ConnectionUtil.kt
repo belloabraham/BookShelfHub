@@ -11,9 +11,10 @@ import javax.inject.Inject
 
 class ConnectionUtil @Inject constructor (val context:Context) {
 
-        fun isConnected(): Boolean {
+   private  val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    fun isConnected(): Boolean {
 
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val nw      = connectivityManager.activeNetwork ?: return false

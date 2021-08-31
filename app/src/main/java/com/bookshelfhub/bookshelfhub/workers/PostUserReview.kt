@@ -29,7 +29,7 @@ class PostUserReview @AssistedInject constructor(
         //Get the user review
         val userReview =  localDb.getUserReview(isbn).get()
 
-            val userRatingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
+            val userRatingDiff = inputData.getDouble(Book.RATING_DIFF.KEY,0.0)
             val userId = userAuth.getUserId()
 
             //Check if the review have been posted before
@@ -56,15 +56,18 @@ class PostUserReview @AssistedInject constructor(
               )
             }
 
-            cloudDb.updateUserReview(
+         val reviewUpdate =  cloudDb.updateUserReview(
                 dynamicBookAttr, userReview,
                 DbFields.PUBLISHED_BOOKS.KEY, isbn,
-                DbFields.REVIEWS.KEY, userId){
+                DbFields.REVIEWS.KEY, userId)
 
-                //Update user review locally
-                userReview.postedBefore = true
-                localDb.addUserReview(userReview)
-            }
+        if (reviewUpdate.isSuccessful){
+            //Update user review locally
+            userReview.postedBefore = true
+            localDb.addUserReview(userReview)
+        }else{
+            return Result.retry()
+        }
 
         return Result.success()
     }

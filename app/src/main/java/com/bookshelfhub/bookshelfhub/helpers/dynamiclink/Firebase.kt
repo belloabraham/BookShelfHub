@@ -13,7 +13,7 @@ import com.google.firebase.dynamiclinks.ktx.component1
 import com.google.firebase.dynamiclinks.ktx.component2
 import javax.inject.Inject
 
-class FirebaseDLink @Inject constructor(private val domainPrefix:String, private val context:Context) :
+class Firebase @Inject constructor(private val domainPrefix:String, private val context:Context) :
     IDynamicLink {
 
     override fun generateShortLinkAsync(socialTitle:String,

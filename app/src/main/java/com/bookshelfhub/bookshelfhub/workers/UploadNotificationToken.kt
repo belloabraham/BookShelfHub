@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.cloudnotification.ICloudMessaging
+import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope

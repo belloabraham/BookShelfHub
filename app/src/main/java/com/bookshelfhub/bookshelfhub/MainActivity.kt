@@ -14,15 +14,13 @@ import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.extensions.showToast
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
@@ -33,7 +31,10 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -52,17 +53,15 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
-    lateinit var intentUtil: IntentUtil
-    @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var dynamicLink: IDynamicLink
     @Inject
     lateinit var userAuth: IUserAuth
+    private lateinit var inAppUpdate:InAppUpdate
+    private val updateActivityRequestCode=700
 
     private lateinit var userId:String
-    private val ENFORCE_UPDATE="enforce_update"
-    private val CHANGE_LOG="change_log"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +71,22 @@ class MainActivity : AppCompatActivity() {
 
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
+
+        //Check if there is an update for this app
+      val inAppUpdate =  InAppUpdate(this).checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
+
+          mainActivityViewModel.setIsNewUpdate()
+
+             if (isImmediateUpdate){
+                 inAppUpdate.startImmediateUpdate(appUpdateInfo, updateActivityRequestCode)
+             }else{
+                 inAppUpdate.startFlexibleUpdate(appUpdateInfo, updateActivityRequestCode){installState->
+                     if (installState.installStatus() == InstallStatus.DOWNLOADED) {
+                         installUpdateMessage()
+                     }
+                 }
+             }
+          }
 
 
         //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
@@ -144,12 +159,6 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        mainActivityViewModel.getIsUpdateAvailable().observe(this, Observer { updateAvailable ->
-            if (updateAvailable){
-               showNewUpdateAlertAndNotification()
-            }
-        })
-
         setUpShelfStoreViewPager()
         setUpCartMoreViewPager()
 
@@ -183,18 +192,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        showReadProgressDialog()
-
-    }
-
-   private var isFirstStart = true
-    override fun onResume() {
-
-            if(isFirstStart){
-              layout.shelfStoreViewPager.currentItem =0
-              isFirstStart=false
-            }
-
         mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
 
             val mode = if (isNightMode){
@@ -205,43 +202,35 @@ class MainActivity : AppCompatActivity() {
             AppCompatDelegate.setDefaultNightMode(mode)
         })
 
-        super.onResume()
+        showReadProgressDialog()
+
     }
 
-
-    private fun showNewUpdateAlertAndNotification(){
-        val title:String
-        val msg:String
-        val negActionText:String
-        val enforceUpdate = remoteConfig.getBoolean(ENFORCE_UPDATE)
-        if  (enforceUpdate){
-            title=getString(R.string.update_req_title)
-            msg=getString(R.string.update_req_mgs)
-            negActionText=getString(R.string.close)
-        }else{
-            val changeLog = remoteConfig.getString(CHANGE_LOG)
-            title=getString(R.string.update_title)
-            msg=String.format(getString(R.string.update_mgs), changeLog)
-            negActionText=getString(R.string.later)
+    private fun installUpdateMessage(){
+        Snackbar.make(
+            layout.container,
+            getString(R.string.new_update_downloaded),
+            Snackbar.LENGTH_INDEFINITE
+        ).apply {
+            setAction(getString(R.string.install)) {
+                inAppUpdate.installNewUpdate()
+            }
+            show()
         }
-        val positiveActionText=getString(R.string.update)
-        NotificationBuilder(this)
-            .setTitle(title)
-            .setUrl(packageName)
-            .setMessage(msg)
-            .build()
-            .showNotification(R.integer.update_notif_id){
-                intentUtil.openAppStoreIntent(this)
-            }
+    }
 
-        AlertDialogBuilder.with(this, msg).setPositiveAction(positiveActionText){
-            startActivity(intentUtil.openAppStoreIntent(packageName))
-        }.setNegativeAction(negActionText){
-            if(enforceUpdate){
-                finish()
-            }
-        }.build().showDialog(title)
+   private var isFirstStart = true
+    override fun onResume() {
 
+        inAppUpdate.checkForDownloadedOrDownloadingUpdate(updateActivityRequestCode){
+            installUpdateMessage()
+        }
+
+            if(isFirstStart){
+              layout.shelfStoreViewPager.currentItem =0
+              isFirstStart=false
+            }
+        super.onResume()
     }
 
 

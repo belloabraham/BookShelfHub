@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
 
+    <!-- TODO: Payment -->
+    <entry>
+        <key>paystack_public_key</key>
+        <value></value>
+    </entry>
+
+    <entry>
+        <key>currency_conversion_endpoint</key>
+        <value></value>
+    </entry>
+
+
     <!-- TODO: Book Item -->
     <entry>
         <key>book_report_url</key>

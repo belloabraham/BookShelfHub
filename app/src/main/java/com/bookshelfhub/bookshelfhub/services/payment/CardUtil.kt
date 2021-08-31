@@ -39,7 +39,7 @@ class CardUtil(paymentCard: PaymentCard) {
 
 
     companion object{
-        fun getDrawableRes(cardType:String): Int {
+        fun getCardDrawableRes(cardType:String): Int {
             return when (cardType) {
                 Card.CardType.VISA -> {
                     R.drawable.card_visa

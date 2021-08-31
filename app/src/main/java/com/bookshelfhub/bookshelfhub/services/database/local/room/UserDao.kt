@@ -76,6 +76,9 @@ interface UserDao {
     @Query("SELECT COUNT(*) FROM Cart WHERE userId =:userId")
     fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
+    @Query("DELETE FROM Cart WHERE isbn in (:isbnList)")
+    suspend fun deleteFromCart(isbnList: List<String>)
+
     @Delete
     suspend fun deleteFromCart(cart: Cart)
 

@@ -20,10 +20,10 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebaseGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebsePhoneAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
-import com.bookshelfhub.bookshelfhub.helpers.GooglePlayServices
+import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -81,10 +81,10 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         //***Initialize Firebase Phone Verification and Auth
-        phoneAuth= FirebsePhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+        phoneAuth= PhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
 
         //***Initialize Firebase Google Auth
-        googleAuth = FirebaseGoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
+        googleAuth = GoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
         //*** Start an activity for result callback
         resultLauncher =

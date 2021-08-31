@@ -24,6 +24,7 @@ import com.bookshelfhub.bookshelfhub.Utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
@@ -32,12 +33,10 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentTransaction
-import com.bookshelfhub.bookshelfhub.services.payment.IPayment
-import com.bookshelfhub.bookshelfhub.services.payment.PayStack
-import com.bookshelfhub.bookshelfhub.services.payment.Payment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.services.payment.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,11 +57,13 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var localDb: ILocalDb
     @Inject
+    lateinit var remoteConfig: IRemoteConfig
+    @Inject
     lateinit var json: Json
     @Inject
     lateinit var userAuth: IUserAuth
     private var savedPaymentCards = emptyList<PaymentCard>()
-    private var totalAmountOfBooks:Int=0
+    private var totalAmountOfBooks:Double=0.0
     private var bookIsbnsAndReferrerIds=""
     private val userId = userAuth.getUserId()
     private var paymentTransaction = emptyList<PaymentTransaction>()
@@ -106,7 +107,7 @@ class CartFragment : Fragment() {
                 adapter.submitList(listOfCartItems)
             }
 
-            totalAmountOfBooks = 0
+            totalAmountOfBooks = 0.0
             bookIsbnsAndReferrerIds = ""
             val countryCode = Location.getCountryCode(requireContext())
 
@@ -174,48 +175,67 @@ class CartFragment : Fragment() {
 
 
     private fun showSavedPaymentCardList(){
-        val view = View.inflate(requireContext(), R.layout.saved_cards, null)
-        val addCardBtn = view.findViewById<MaterialButton>(R.id.addNewCardBtn)
 
-        if (savedPaymentCards.isNotEmpty()){
+        val country = Location.getCountryCode(requireContext())
 
-            val recyclerView = view.findViewById<RecyclerView>(R.id.paymentCardsRecView)
+        //Get country code value that will not change irrespective of it is is null or not as country code is a reference type
+        country.let { countryCode ->
 
-            val userData = hashMapOf(
-                Payment.USER_ID.KEY to userId,
-                Payment.BOOKS_AND_REF.KEY to bookIsbnsAndReferrerIds
-            )
+            //Get nullable recommended payment SDK to be used for a user based on their location
+            val paymentSDKType = PaymentSDK.get(countryCode)
 
-            val paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{
+            //If their is a payment service for user location proceed with Payment
+            paymentSDKType?.let { paymentSdk->
 
-                val payment:IPayment = PayStack(it, requireActivity(), json, getPayStackPaymentCallBack())
-                val payStackPublicKey = if (BuildConfig.DEBUG){
-                    getString(R.string.paystack_test_public_key)
-                }else{
-                    getString(R.string.paystack_public_key)
+                val view = View.inflate(requireContext(), R.layout.saved_cards, null)
+                val addCardBtn = view.findViewById<MaterialButton>(R.id.addNewCardBtn)
+
+                if (savedPaymentCards.isNotEmpty()){
+
+                    val recyclerView = view.findViewById<RecyclerView>(R.id.paymentCardsRecView)
+
+                    val userData = hashMapOf(
+                        Payment.USER_ID.KEY to userId,
+                        Payment.BOOKS_AND_REF.KEY to bookIsbnsAndReferrerIds
+                    )
+
+                    val paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
+
+                        if (paymentSdk == SDKType.PAYSTACK){
+                            chargeCardWithPayStack(paymentCard, userData)
+                        }
+
+                    }
+
+                    recyclerView.addItemDecoration(
+                        DividerItemDecoration(
+                            requireContext(),
+                            DividerItemDecoration.VERTICAL
+                        )
+                    )
+                    recyclerView.adapter = paymentCardsAdapter
+                    paymentCardsAdapter.submitList(savedPaymentCards)
                 }
-                payment.chargeCard(payStackPublicKey, totalAmountOfBooks, Payment.USERDATA.KEY, userData)
 
+                addCardBtn.setOnClickListener {
+                    val actionCardInfo = CartFragmentDirections.actionCartFragmentToCardInfoFragment()
+                    findNavController().navigate(actionCardInfo)
+                }
+
+                MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
+                    .setPositiveAction(R.string.dismiss){}
+                    .showBottomSheet(view)
             }
 
-            recyclerView.addItemDecoration(
-                DividerItemDecoration(
-                    requireContext(),
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-            recyclerView.adapter = paymentCardsAdapter
-            paymentCardsAdapter.submitList(savedPaymentCards)
+            if (paymentSDKType==null){
+
+                AlertDialogBuilder.with(requireActivity(), R.string.location_not_supported)
+                    .setCancelable(false)
+                    .setPositiveAction(R.string.ok){}
+                    .build()
+            }
         }
 
-        addCardBtn.setOnClickListener {
-            val actionCardInfo = CartFragmentDirections.actionCartFragmentToCardInfoFragment()
-            findNavController().navigate(actionCardInfo)
-        }
-
-        MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
-            .setPositiveAction(R.string.dismiss){}
-            .showBottomSheet(view)
     }
 
     private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
@@ -223,16 +243,20 @@ class CartFragment : Fragment() {
        return object : Paystack.TransactionCallback{
 
             override fun onSuccess(transaction: Transaction?) {
-                transaction?.let {
 
+                transaction?.let {
                     val length = paymentTransaction.size -1
 
+                    //Pass transaction reference to all the transaction record that is created
                     for (i in 0..length){
                         paymentTransaction[i].transactionReference = it.reference
                     }
 
                     lifecycleScope.launch(IO){
+                        //Add transaction to local database
                         localDb.addPaymentTransactions(paymentTransaction)
+
+                        //Start a worker that further process the transaction
                         withContext(Main){
                             val oneTimeVerifyPaymentTrans =
                                 OneTimeWorkRequestBuilder<UploadTransactions>()
@@ -243,6 +267,7 @@ class CartFragment : Fragment() {
                         }
                     }
 
+                    //Show user a message that their transaction is processing and close Cart activity when the click ok
                     AlertDialogBuilder.with(requireActivity(), R.string.transaction_processing)
                         .setCancelable(false)
                         .setPositiveAction(R.string.ok){
@@ -260,6 +285,7 @@ class CartFragment : Fragment() {
 
             override fun onError(error: Throwable?, transaction: Transaction?) {
                 error?.let {
+                    //Show user error transaction message
                     val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
                     AlertDialogBuilder.with(requireActivity(), errorMsg)
                         .setCancelable(false)
@@ -271,6 +297,20 @@ class CartFragment : Fragment() {
        }
     }
 
+
+    private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
+
+        val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
+        val payment:IPayment = PayStack(paymentCard, totalAmountOfBooks, requireActivity(),  json, getPayStackPaymentCallBack())
+
+        val payStackPublicKey = if (BuildConfig.DEBUG){
+            getString(R.string.paystack_test_public_key)
+        }else{
+            payStackProdPublicKey
+        }
+        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)
+
+    }
 
     override fun onResume() {
         super.onResume()

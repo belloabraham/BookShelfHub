@@ -7,7 +7,9 @@
     <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again after some time.</string>
     <string name="payment_unsuccessful_title">Error processing your transaction</string>
 
-    <string name="payment_successful">Your payment transaction was successful and book download will begin in a minute.</string>
+    <string name="location_not_supported">You can not purchase book from this location at the moment.</string>
+
+    <string name="payment_successful">Yay, your payment transaction was successful and books you are in your book shelf ready to be downloaded.</string>
     <string name="payment_successful_title">Payment transaction was successful</string>
 
 
@@ -124,13 +126,9 @@
 
 
     <!-- Todo App Update -->
-    <string name="close">Close</string>
-    <string name="update">Update</string>
-    <string name="later">Later</string>
-    <string name="update_req_title">An update is required</string>
-    <string name="update_mgs">Update &appname;\nIMPROVEMENTS\n%s</string>
-    <string name="update_req_mgs">You need to update &appname; to continue using it.</string>
-    <string name="update_title">You\'re missing out</string>
+    <string name="install">INSTALL</string>
+    <string name="new_update_downloaded">&appname; has just downloaded a new update</string>
+
 
 
     <!-- TODO: Main Activity Bottom Navigation -->

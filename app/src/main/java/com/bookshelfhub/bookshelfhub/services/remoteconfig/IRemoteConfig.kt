@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.config
+package com.bookshelfhub.bookshelfhub.services.remoteconfig
 
 interface IRemoteConfig {
     fun getString(key: String): String

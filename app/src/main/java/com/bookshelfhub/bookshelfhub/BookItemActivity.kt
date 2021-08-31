@@ -27,7 +27,7 @@ import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.book.*
@@ -45,12 +45,18 @@ import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
+import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
+import com.bookshelfhub.bookshelfhub.services.payment.Conversion
+import com.bookshelfhub.bookshelfhub.services.payment.Currency
+import com.bookshelfhub.bookshelfhub.services.payment.LocalCurrency
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import okhttp3.Response
 import javax.inject.Inject
 
 
@@ -77,7 +83,7 @@ class BookItemActivity : AppCompatActivity() {
     private var userReview:UserReview?=null
     private var isVerifiedReview:Boolean = false
     private var pubReferrerId:String?=null
-    private var onlineBookPrice:Int? =null
+    private var onlineBookPriceInUSD:Double? =null
     private val visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
     private var bookOnlineVersion:PublishedBook? = null
     private var localBook:PublishedBook?=null
@@ -106,11 +112,6 @@ class BookItemActivity : AppCompatActivity() {
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
 
-        val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
-
-        layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
-        layout.similarBooksRecView.adapter = similarBooksAdapter
-
 
         //Check referrer database to see if referrer refer this user to the current book and get their ID
         bookItemViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
@@ -127,24 +128,52 @@ class BookItemActivity : AppCompatActivity() {
 
             bookOnlineVersion =  book
 
-            onlineBookPrice = book.price
-            layout.progressBar.visibility = GONE
-            layout.bookItemLayout.visibility = VISIBLE
+            val countryCode = Location.getCountryCode(this)
 
-            layout.price.text = String.format(getString(R.string.price), book.price)
-            layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
+                countryCode?.let {
 
-            val rating = book.totalRatings/book.totalReviews
-            layout.noRatingTxt.text = "$rating"
-            layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
+                    val localCurrency = LocalCurrency.get(it)
 
-            if(book.price == 0){
-                layout.downloadBtn.visibility = VISIBLE
-                layout.addToCartBtn.visibility = GONE
-            }
+                    val buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){ //If seller currency is same as buyer's
+                        //Return seller currency
+                        book.sellerCurrency
+                    }else{
+                        //The buyer must be buying a book not sold in its country (it's fair to show book price in dollars)
+                        Currency.USD.Value
+                    }
 
-            //Load similar books for this book by category
-            loadSimilarBooks(book.category, similarBooksAdapter)
+                    if (book.price >0.0) {
+
+                        val conversionEndpoint = remoteConfig.getString(Currency.CONVERSION_ENDPOINT.Value)
+                        val conversionSuccessfulCode = 200
+
+                        //If buyerVisibleCurrency is not in USD meaning the buyer is buying book sold in his/her country
+                        //Then convert the buyerVisibleCurrency to USD (to show side by side with the local currency)
+                        if (buyerVisibleCurrency != Currency.USD.Value){
+
+                            val toCurrency = Currency.USD.Value
+                            val queryParameters = Conversion.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
+                            convertCurrency(conversionEndpoint, queryParameters){ response ->
+                                if (response.code==conversionSuccessfulCode){
+                                    try {
+                                        val result  =  json.fromJson(response.body.toString(), ConversionResponse::class.java)
+                                        val priceInUSD = result.info.rate*book.price
+                                        showBookDetails(book,buyerVisibleCurrency, priceInUSD)
+                                    }catch (e:Exception){
+
+                                    }
+                                }
+                            }
+                        }else{
+                           showBookDetails(book, buyerVisibleCurrency)
+                        }
+
+                    }else{
+                        showBookDetails(book, buyerVisibleCurrency)
+                    }
+                }
+
+
 
         })
 
@@ -163,8 +192,6 @@ class BookItemActivity : AppCompatActivity() {
 
             }
         })
-
-
 
         //Get books in cart to know if books are in cart and if to show Checkout Button or not
         bookItemViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
@@ -189,8 +216,6 @@ class BookItemActivity : AppCompatActivity() {
             }
         })
 
-
-
         bookItemViewModel.getLiveLocalBook().observe(this, Observer { book->
 
                 localBook = book
@@ -202,9 +227,8 @@ class BookItemActivity : AppCompatActivity() {
                 layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
         })
 
-
         layout.addToCartBtn.setOnClickListener {
-            onlineBookPrice?.let {
+            onlineBookPriceInUSD?.let {
                 val book = bookOnlineVersion!!
                 val cart = Cart(
                     userId, book.isbn,
@@ -376,12 +400,47 @@ class BookItemActivity : AppCompatActivity() {
 
     }
 
+    private fun showBookDetails(book:PublishedBook, buyerVisibleCurrency:String, priceInUSD:Double?=null){
+
+        layout.progressBar.visibility = GONE
+
+        if(priceInUSD!=null){
+            //Book price is in local currency
+        }else{
+            //Book price is in USD
+        }
+
+        onlineBookPriceInUSD = book.price
+
+        val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
+
+        layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
+
+        layout.similarBooksRecView.adapter = similarBooksAdapter
+
+        layout.bookItemLayout.visibility = VISIBLE
+
+        layout.price.text = String.format(getString(R.string.price), book.price)
+        layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
+
+        val rating = book.totalRatings/book.totalReviews
+        layout.noRatingTxt.text = "$rating"
+        layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
+
+        if(book.price == 0.0){
+            layout.downloadBtn.visibility = VISIBLE
+            layout.addToCartBtn.visibility = GONE
+        }
+
+        //Load similar books for this book by category
+        loadSimilarBooks(book.category, similarBooksAdapter)
+    }
+
     private fun showLetterIcon(value:String){
         layout.letterIcon.visibility = VISIBLE
         layout.letterIcon.letter = value
         layout.userImage.visibility = GONE
     }
-
 
     private fun shareBook(userId:String, activity: Activity){
 
@@ -427,6 +486,12 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
+    private fun convertCurrency(conversionEndpoint:String, queryParameters:String, onComplete:(Response)->Unit){
+        WebApi(conversionEndpoint).get(queryParameters) { response ->
+            onComplete(response)
+        }
+    }
+
     private fun getNoOfDownloads(value:Long): String {
         val thousand = 1000
         val billion = 1000000000
@@ -462,6 +527,8 @@ class BookItemActivity : AppCompatActivity() {
         }
          return "$main"+unitPlus
     }
+
+
 
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)

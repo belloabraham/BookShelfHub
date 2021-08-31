@@ -28,7 +28,6 @@ class TextLinkBuilder() {
     }
 
     private fun createTextLink(link:Link, onLinkClick: (String)->Unit): Link {
-
            link.setHighlightAlpha(.4f) // optional, defaults to .15f
             .setUnderlined(true) // optional, defaults to true
             .setOnClickListener {

@@ -4,7 +4,7 @@ import android.os.Build
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import javax.inject.Inject
 
-class DeviceUtil @Inject constructor () {
+object DeviceUtil{
 
     fun getDeviceBrandAndModel():String{
         val manufacturer= Build.MANUFACTURER

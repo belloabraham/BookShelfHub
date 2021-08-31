@@ -1,11 +1,11 @@
-package com.bookshelfhub.bookshelfhub.services.cloudnotification.firebase
+package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
-import com.bookshelfhub.bookshelfhub.services.cloudnotification.ICloudMessaging
+import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.ktx.messaging
 
-open class FirebaseCM : ICloudMessaging {
+open class CloudMessaging : ICloudMessaging {
 
 
   override fun subscribeTo(topic:String){

@@ -36,7 +36,10 @@ enum class DbFields(val KEY:String) {
     USER_ID("userId"),
 
     //Used Must be same as .services.database.local.room.entities.OrderedBooks.dateTime
-    ORDER_DATE_TIME("dateTime")
+    ORDER_DATE_TIME("dateTime"),
+
+    //Used Must be same as .services.database.local.room.entities.OrderedBooks.dateTime
+    REVIEW_DATE_TIME("dateTime")
 
 
 

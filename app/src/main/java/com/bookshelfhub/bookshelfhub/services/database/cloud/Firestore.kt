@@ -3,12 +3,16 @@ package com.bookshelfhub.bookshelfhub.services.database.cloud
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
@@ -16,18 +20,19 @@ import javax.inject.Inject
     private val db:FirebaseFirestore = Firebase.firestore
 
 
-    override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ){
+    override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ) {
         val newData = hashMapOf(
             field to data,
         )
-        db.collection(collection)
-            .document(document)
-            .set(newData, SetOptions.merge())
-            .addOnSuccessListener {
-                runBlocking {
-                    onSuccess()
+            db.collection(collection)
+                .document(document)
+                .set(newData, SetOptions.merge())
+               .addOnSuccessListener{
+                    runBlocking {
+                        onSuccess()
+                    }
                 }
-            }
+
     }
 
 
@@ -275,40 +280,32 @@ import javax.inject.Inject
     }
 
 
-     override fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String, onSuccess: suspend ()->Unit){
+     override fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void> {
 
          val batch = db.batch()
          val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
          val bookDynamicAttrDocRef = db.collection(collection).document(document)
 
          val reviewDate = hashMapOf(
-             "reviewDate" to FieldValue.serverTimestamp()
+             DbFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
          )
 
          batch.set(reviewDocRef, userReview)
          batch.set(reviewDocRef, reviewDate, SetOptions.merge())
          batch.set(bookDynamicAttrDocRef, bookAttr, SetOptions.merge())
 
-         batch.commit().addOnSuccessListener {
-             runBlocking {
-                 onSuccess()
-             }
-         }
+         return  batch.commit()
      }
 
 
-     override fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>, onSuccess: suspend ()->Unit){
+     override fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void> {
 
          val batch = db.batch()
          for (item in list){
              val docRef = db.collection(collection).document(document).collection(subCollection).document()
              batch.set(docRef, item)
          }
-         batch.commit().addOnSuccessListener {
-             runBlocking {
-                 onSuccess()
-             }
-         }
+        return  batch.commit()
      }
 
 

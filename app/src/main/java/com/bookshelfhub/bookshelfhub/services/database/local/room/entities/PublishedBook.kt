@@ -17,11 +17,12 @@ data class PublishedBook(
     val dateTime: Timestamp? = null,
     val category: String="",
     val tag: String="",
+    val sellerCurrency:String ="",
     val totalReviews:Long=0,
     val totalRatings:Float=0f,
     val published:Boolean=true,
     val pubId: String="",
     val language:String="",
-    var price: Int=0,
+    var price: Double=0.0,
     val recommended:Boolean = false
     ) 

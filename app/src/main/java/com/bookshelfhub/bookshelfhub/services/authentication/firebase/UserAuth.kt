@@ -9,7 +9,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-open class FirebaseUserAuth() : IUserAuth {
+open class UserAuth() : IUserAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
 

@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.IconUtil
@@ -49,7 +48,7 @@ class PaymentCardsAdapter(private val context: Context) {
         fun bindToView(card:PaymentCard, context: Context, onItemClickListener:(PaymentCard)->Unit) {
 
             cardTemplateTx.text =  String.format(context.getString(R.string.template_card_no), card.cardType, card.lastFourDigit)
-            val cardDraw = IconUtil.getDrawable(context,CardUtil.getDrawableRes(card.cardType))
+            val cardDraw = IconUtil.getDrawable(context,CardUtil.getCardDrawableRes(card.cardType))
             imageView.setImageDrawable(cardDraw)
 
             itemCardView.setOnClickListener {

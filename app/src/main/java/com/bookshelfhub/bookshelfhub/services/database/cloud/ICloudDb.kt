@@ -3,19 +3,20 @@ package com.bookshelfhub.bookshelfhub.services.database.cloud
 import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.*
 
 interface ICloudDb {
 
 
-    fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>, onSuccess: suspend ()->Unit)
+    fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void>
 
     fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldCache:Boolean = false, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
     fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String=DbFields.DOWNLOAD_URL.KEY, shouldCache:Boolean = false, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
-    fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String, onSuccess: suspend ()->Unit)
+    fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void>
 
     fun <T: Any>  getLiveDataAsync(collection:String, document: String, type:Class<T>, shouldCache:Boolean = false, retry:Boolean=true, onComplete:
         (data:T)->Unit)

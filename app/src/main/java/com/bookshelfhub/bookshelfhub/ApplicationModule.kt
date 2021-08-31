@@ -3,17 +3,17 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.config.FirebaseRemoteConfig
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.Firebase
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebaseUserAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
-import com.bookshelfhub.bookshelfhub.services.cloudnotification.firebase.FirebaseCM
-import com.bookshelfhub.bookshelfhub.services.cloudnotification.ICloudMessaging
+import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
+import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.gson.Gson
 import dagger.Module
@@ -30,7 +30,7 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun getRemoteConfig(): IRemoteConfig {
-        return FirebaseRemoteConfig()
+        return Firebase()
     }
 
     @Singleton
@@ -48,7 +48,7 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun getCloudMessaging(): ICloudMessaging {
-        return FirebaseCM()
+        return CloudMessaging()
     }
 
     @Singleton
@@ -72,7 +72,7 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun getUserAuthentication(): IUserAuth {
-        return FirebaseUserAuth()
+        return UserAuth()
     }
 
     @Singleton

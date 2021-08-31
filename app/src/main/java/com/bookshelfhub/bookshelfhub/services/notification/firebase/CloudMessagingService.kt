@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.services.cloudnotification.firebase
+package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
@@ -9,7 +9,7 @@ import com.google.firebase.messaging.RemoteMessage
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class FirebaseCMService : FirebaseMessagingService() {
+class CloudMessagingService : FirebaseMessagingService() {
 
     private val URL="url"
     private val ACTION="action"

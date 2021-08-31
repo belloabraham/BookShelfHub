@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers
+package com.bookshelfhub.bookshelfhub.helpers.google
 
 import android.app.Activity
 import com.google.android.gms.common.ConnectionResult
@@ -6,7 +6,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 
 class GooglePlayServices(val activity:Activity) {
 
-    private val PLAY_SERVICES_RESOLUTION_REQUEST =9000
+    private val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
 
     /**
      * Used to check if user device have Google Play Service installed as it is required by this app

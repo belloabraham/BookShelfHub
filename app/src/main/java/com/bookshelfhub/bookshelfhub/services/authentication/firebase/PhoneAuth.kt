@@ -10,7 +10,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.TimeUnit
 
-open class FirebsePhoneAuth(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int) :
+open class PhoneAuth(private  val activity: Activity, val phoneAuthViewModel: PhoneAuthViewModel, wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int) :
     IPhoneAuth {
 
     private val auth: FirebaseAuth = Firebase.auth

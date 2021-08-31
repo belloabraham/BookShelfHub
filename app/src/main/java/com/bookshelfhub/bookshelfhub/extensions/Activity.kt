@@ -10,3 +10,5 @@ fun Activity.showToast(msg:String, toastLength:Int = Toast.LENGTH_LONG){
 fun Activity.showToast(msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     Toast(this).showToast(msg, toastLength)
 }
+
+

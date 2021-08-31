@@ -14,6 +14,11 @@ class Json(private val jsonSerDes:Gson) {
          return jsonSerDes.fromJson(json, type)
     }
 
+    fun <T: Any> fromJson(json:String, type:Class<T>):T{
+        return jsonSerDes.fromJson(json, type)
+    }
+
+
     fun getJsonObject(value: Any): JSONObject {
         val jsonString = jsonSerDes.toJson(value)
         return JSONObject(jsonString)

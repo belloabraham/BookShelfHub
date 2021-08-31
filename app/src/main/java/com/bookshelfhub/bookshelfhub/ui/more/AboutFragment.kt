@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
 import com.bookshelfhub.bookshelfhub.views.about.builder.AboutPageBuilder
 import com.bookshelfhub.bookshelfhub.views.about.AutoFitGridLayout

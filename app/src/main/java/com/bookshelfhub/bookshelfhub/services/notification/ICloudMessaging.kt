@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.services.cloudnotification
+package com.bookshelfhub.bookshelfhub.services.notification
 
 interface ICloudMessaging {
      fun subscribeTo(topic: String)

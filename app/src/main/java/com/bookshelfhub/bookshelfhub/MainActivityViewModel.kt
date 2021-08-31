@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -21,13 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, val cloudDb: ICloudDb, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
-    private var isUpdateAvailable: MutableLiveData<Boolean> = MutableLiveData()
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
     private var user: LiveData<User> = MutableLiveData()
     private var bookInterest: LiveData<Optional<BookInterest>> = MutableLiveData()
-    private val NEW_VERSION_CODE="new_version_code"
-    private val APP_VERSION_CODE="app_version_code"
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
@@ -42,7 +39,6 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         verifyPhoneOrEmailNotifNo.value=0
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
-        checkForUpdate()
         user=localDb.getLiveUser(userId)
         bookInterest = localDb.getLiveBookInterest(userId)
         storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
@@ -123,33 +119,9 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         return bottomBarSelectedIndex
     }
 
-    fun getIsUpdateAvailable(): LiveData<Boolean> {
-        return isUpdateAvailable
-    }
-
-
-    private fun checkForUpdate(){
-        remoteConfig.fetchConfigAsync{
-            //it=error msg
-            viewModelScope.launch {
-                val newVersionCode =  remoteConfig.getLong(NEW_VERSION_CODE)
-                val appVersionCode = settingsUtil.getLong(APP_VERSION_CODE, appUtil.getAppVersionCode())
-                withContext(Main){
-                    if  (newVersionCode > appVersionCode){
-                        isUpdateAvailable.value=true
-                        settingsUtil.setLong(APP_VERSION_CODE, newVersionCode)
-                    }
-                    if(newVersionCode>appUtil.getAppVersionCode()){
-                        newAppUpdateNotifNo.value = 1
-                        isNewProfileNotif.value=true
-                    }else{
-                        newAppUpdateNotifNo.value = 0
-                        isNewProfileNotif.value=false
-                    }
-                }
-            }
-
-        }
+    fun setIsNewUpdate(){
+        newAppUpdateNotifNo.value = 1
+        isNewProfileNotif.value=true
     }
 
 }

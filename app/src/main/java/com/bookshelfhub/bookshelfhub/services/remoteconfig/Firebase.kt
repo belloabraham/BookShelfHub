@@ -1,10 +1,10 @@
-package com.bookshelfhub.bookshelfhub.config
+package com.bookshelfhub.bookshelfhub.services.remoteconfig
 
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.get
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 
-class FirebaseRemoteConfig : IRemoteConfig {
+class Firebase : IRemoteConfig {
      private val remoteConfig = Firebase.remoteConfig
 
     override fun getString(key:String):String{

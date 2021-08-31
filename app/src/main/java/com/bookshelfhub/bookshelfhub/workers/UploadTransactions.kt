@@ -11,7 +11,6 @@ import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 
 @HiltWorker
 class UploadTransactions @AssistedInject constructor (
@@ -31,11 +30,21 @@ class UploadTransactions @AssistedInject constructor (
             val userId = userAuth.getUserId()
 
            if (paymentTrans.isNotEmpty()) {
-                cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans){
-                    coroutineScope {
-                        localDb.deleteAllPaymentTransactions()
-                    }
-                }
+
+            val transactionUpload =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
+
+               if (transactionUpload.isSuccessful){
+                       //Get ISBN of all books in transaction
+                       val transactionBooksISBNs = emptyList<String>()
+                       for (trans in paymentTrans){
+                           transactionBooksISBNs.plus(trans.isbn)
+                       }
+                       //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
+                       localDb.deleteFromCart(transactionBooksISBNs)
+                       localDb.deleteAllPaymentTransactions()
+               }else{
+                   return Result.retry()
+               }
            }
         }
 

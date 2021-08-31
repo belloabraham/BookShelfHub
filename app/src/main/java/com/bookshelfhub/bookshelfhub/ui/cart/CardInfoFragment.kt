@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
-import com.bookshelfhub.bookshelfhub.EditTextFormatter
+import com.bookshelfhub.bookshelfhub.views.EditTextFormatter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
@@ -75,8 +75,10 @@ class CardInfoFragment : Fragment() {
 
         })
 
-        layout.cardNoTxt.addTextChangedListener(EditTextFormatter(userInputLen = 4,
-            inputChunkDivider = cardExpDateSeparator, inputChunkLen = 2))
+        layout.cardNoTxt.addTextChangedListener(
+            EditTextFormatter(userInputLen = 4,
+            inputChunkDivider = cardExpDateSeparator, inputChunkLen = 2)
+        )
 
 
         layout.proceedBtn.setOnClickListener {

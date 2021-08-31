@@ -6,20 +6,28 @@ import java.util.regex.Pattern
 
 @JvmSynthetic
 fun String.containsUrl(regex:String):Boolean{
-    return (this.contains("facebook.com/",true) || this.contains("instagram.com/",true) || this.contains("twitter.com/",true) || this.contains("bit.ly/",true) || this.contains("amazon.com/",true) || this.contains("tinyurl.com/",true) || this.contains("goodreads.com/",true) || this.contains("books.google.com/",true)|| Pattern.compile(regex).matcher(this).matches())
+    return Pattern.compile(regex).matcher(this).matches()
 }
 
+/**
+ * Capitalize the first Letter of every word in a string
+ */
 @JvmSynthetic
 fun String.capitalize(): String? {
     return WordUtils.capitalize(this)
 }
+
 
 @JvmSynthetic
 fun String.isValidEmailAddress():Boolean{
     return Patterns.EMAIL_ADDRESS.matcher(this).matches()
 }
 
+/**
+ * Check if string is a type phone number which is to contain optional + at the start
+ * and numbers
+ */
 @JvmSynthetic
-fun String.isValidPhoneNumber():Boolean{
+fun String.isPhoneNumber():Boolean{
     return Patterns.PHONE.matcher(this).matches()
 }

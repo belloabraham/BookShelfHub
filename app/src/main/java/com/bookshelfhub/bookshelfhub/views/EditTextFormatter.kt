@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub
+package com.bookshelfhub.bookshelfhub.views
 
 import android.text.Editable
 import android.text.InputFilter

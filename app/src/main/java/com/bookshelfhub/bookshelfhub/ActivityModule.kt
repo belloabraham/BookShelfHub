@@ -4,7 +4,7 @@ import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import dagger.Module
 import dagger.Provides
@@ -26,8 +26,8 @@ object ActivityModule {
 
     @ActivityScoped
     @Provides
-    fun getDynamicLink(@ActivityContext context: Context, appUtil: AppUtil): IDynamicLink {
-        return FirebaseDLink(context.getString(R.string.dlink_domain_prefix), context)
+    fun getDynamicLink(@ActivityContext context: Context): IDynamicLink {
+        return Firebase(context.getString(R.string.dlink_domain_prefix), context)
     }
 
     @ActivityScoped

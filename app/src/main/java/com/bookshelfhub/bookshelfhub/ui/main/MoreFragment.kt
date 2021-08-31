@@ -21,7 +21,7 @@ import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.config.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
@@ -29,7 +29,7 @@ import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.FirebaseGoogleAuth
+import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
@@ -78,7 +78,7 @@ class MoreFragment : Fragment() {
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
         val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
         val deletePaymentCardsBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.deletePaymentCards)
-        val googleAuth:IGoogleAuth =  FirebaseGoogleAuth(requireActivity(), null, R.string.gcp_web_client)
+        val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
         authType= userAuth.getAuthType()
 

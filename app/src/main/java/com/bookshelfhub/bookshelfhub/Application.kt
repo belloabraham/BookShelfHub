@@ -18,6 +18,8 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.core.provider.FontRequest
 import co.paystack.android.PaystackSdk
+import com.bookshelfhub.bookshelfhub.views.EmojiFont
+import okhttp3.internal.checkDuration
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -64,22 +66,17 @@ class Application: android.app.Application(), Configuration.Provider {
     private fun enqueueWorkers(){
 
         val connected = Constraint.getConnected()
-        val removeUnPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(6, TimeUnit.HOURS)
+        val removeUnPublishedBooks = PeriodicWorkRequestBuilder<UnPublishedBooks>(repeatInterval = 6, TimeUnit.HOURS)
             .setInitialDelay(1, TimeUnit.HOURS)
             .setConstraints(connected)
             .build()
 
-        val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(23, TimeUnit.HOURS)
-            .setInitialDelay(1, TimeUnit.HOURS)
+        val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(repeatInterval = 23, TimeUnit.HOURS)
+            .setInitialDelay( 1, TimeUnit.HOURS)
             .setConstraints(connected)
             .build()
 
-        val oneTimeVerifyPaymentTrans =
-            OneTimeWorkRequestBuilder<UploadTransactions>()
-                .setConstraints(connected)
-                .build()
 
-        WorkManager.getInstance(applicationContext).enqueue(oneTimeVerifyPaymentTrans)
         WorkManager.getInstance(applicationContext).enqueue(removeUnPublishedBooks)
         WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
     }
