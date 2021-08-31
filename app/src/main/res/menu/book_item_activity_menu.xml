@@ -5,9 +5,11 @@
     <item
         android:icon="@drawable/ic_dots_vertical"
         app:showAsAction="always"
+        android:id="@+id/reportBook"
         android:title="@string/options" >
         <menu>
-            <item android:id="@+id/reportBook"
+            <item
+                android:id="@+id/reportBookSubMenu"
                 android:icon="@drawable/ic_alert_octagon"
                 android:title="@string/report_book"/>
         </menu>

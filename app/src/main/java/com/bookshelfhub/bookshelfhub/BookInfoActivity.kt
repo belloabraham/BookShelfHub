@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -45,17 +46,16 @@ class BookInfoActivity : AppCompatActivity() {
         navController.popBackStack()
 
         //Set value for the new fragment bundle to receive
-        val args = Bundle()
-        args.putString(Book.ISBN.KEY, isbn)
+        val bundle = bundleOf(Book.ISBN.KEY to isbn)
 
         //Navigate to the new fragment
-        navController.navigate(fragmentId, args)
+        navController.navigate(fragmentId, bundle)
     }
 
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
 

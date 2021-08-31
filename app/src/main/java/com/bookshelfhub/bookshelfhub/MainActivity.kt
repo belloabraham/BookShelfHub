@@ -73,7 +73,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(layout.root)
 
         //Check if there is an update for this app
-      val inAppUpdate =  InAppUpdate(this).checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
+        inAppUpdate =  InAppUpdate(this)
+        inAppUpdate.checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
 
           mainActivityViewModel.setIsNewUpdate()
 

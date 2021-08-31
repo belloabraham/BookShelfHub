@@ -29,8 +29,7 @@
     <string name="check_out">Checkout</string>
     <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
     <string name="add_new_card">Add new card</string>
-    <string name="price">Price: $%d</string>
-    <string name="total">Total: $%d</string>
+    <string name="total">Total: $%f</string>
     <string name="payment_error">There was an error processing your payment</string>
     <string name="by">By: %s</string>
     <string name="undo">UNDO</string>
@@ -52,6 +51,8 @@
     <string name="report_book">Report book</string>
     <string name="add_to_Cart">Add to cart</string>
     <string name="download">Download</string>
+    <string name="local_price_and_usd">Price: %s%,.2f ($%,.2f)</string>
+    <string name="usd_price">Price: $%,.2f</string>
     <string name="downloads">Downloads</string>
     <string name="review_no">%d reviews</string>
     <string name="about_this_book">About this book</string>
@@ -263,6 +264,7 @@
     <string name="mail_req_error">Your email is required</string>
     <string name="updated">Updated</string>
     <string name="additionalInfo">Additional information</string>
+    <string name="update">Update</string>
 
     <!-- TODO: Bookmark Fragment -->
     <string name="bookmarks">Bookmarks</string>

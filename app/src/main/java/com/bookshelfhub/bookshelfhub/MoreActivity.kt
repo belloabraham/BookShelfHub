@@ -38,8 +38,8 @@ class MoreActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+        onBackPressed()
+        return super.onSupportNavigateUp()
     }
 
     private fun navigateTo(fragmentId:Int){

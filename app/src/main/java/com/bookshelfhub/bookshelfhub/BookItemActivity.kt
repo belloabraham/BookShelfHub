@@ -58,6 +58,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
@@ -84,7 +85,7 @@ class BookItemActivity : AppCompatActivity() {
     private var isVerifiedReview:Boolean = false
     private var pubReferrerId:String?=null
     private var onlineBookPriceInUSD:Double? =null
-    private val visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+    private var visibilityAnimDuration:Long=0
     private var bookOnlineVersion:PublishedBook? = null
     private var localBook:PublishedBook?=null
 
@@ -96,6 +97,8 @@ class BookItemActivity : AppCompatActivity() {
         setContentView(layout.root)
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = null
+
+        visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         val title = intent.getStringExtra(Book.TITLE.KEY)!!
         val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
@@ -258,7 +261,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.allReviewsBtn.setOnClickListener {
-            startBookInfoActivity(isbn)
+            startBookInfoActivity(isbn, getString(R.string.ratings_reviews), R.id.reviewsFragment)
         }
         
         layout.checkoutOutBtn.setOnClickListener {
@@ -362,7 +365,7 @@ class BookItemActivity : AppCompatActivity() {
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
-                    userReview.reviewDate?.let {
+                    userReview.dateTime?.let {
                         //Convert server dateTime to local date in string
                         val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                         layout.date.text = date
@@ -405,12 +408,13 @@ class BookItemActivity : AppCompatActivity() {
         layout.progressBar.visibility = GONE
 
         if(priceInUSD!=null){
-            //Book price is in local currency
+            onlineBookPriceInUSD = priceInUSD
+            layout.price.text = String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price,priceInUSD)
         }else{
-            //Book price is in USD
-        }
+            onlineBookPriceInUSD = book.price
+            layout.price.text = String.format(getString(R.string.usd_price), book.price)
 
-        onlineBookPriceInUSD = book.price
+        }
 
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
 
@@ -420,7 +424,8 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.bookItemLayout.visibility = VISIBLE
 
-        layout.price.text = String.format(getString(R.string.price), book.price)
+
+        //  layout.price.text = String.format(getString(R.string.price), book.price)
         layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
 
         val rating = book.totalRatings/book.totalReviews
@@ -540,10 +545,6 @@ class BookItemActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun startBookInfoActivity(isbn:String, title:Int=R.string.ratings_reviews, fragmentID:Int = R.id.reviewsFragment){
-        startBookInfoActivity(isbn, getString(title), fragmentID)
-    }
-
 
     private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {
@@ -575,7 +576,8 @@ class BookItemActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         //User can report this book for anything, like a stolen copyrighted content or so
-        if(item.itemId == R.id.reportBook){
+        if(item.itemId == R.id.reportBookSubMenu){
+
             val url = remoteConfig.getString(BOOK_REPORT_URL)
             val intent = Intent(this, WebViewActivity::class.java)
             with(intent){
@@ -583,7 +585,7 @@ class BookItemActivity : AppCompatActivity() {
                 putExtra(WebView.URL.KEY, url)
             }
             startActivity(intent)
-        }else{
+        }else if (item.itemId != R.id.reportBook){
             finish()
         }
 

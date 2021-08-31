@@ -59,8 +59,6 @@ class VerificationFragment:Fragment(){
     @Inject
     lateinit var textLinkBuilder: TextLinkBuilder
     @Inject
-    lateinit var deviceUtil: DeviceUtil
-    @Inject
     lateinit var appUtil: AppUtil
 
             override fun onCreateView(
@@ -164,10 +162,10 @@ class VerificationFragment:Fragment(){
                                     try {
                                         val userJsonString = docSnapShot.get(DbFields.USER.KEY)
                                         val user = json.fromAny(userJsonString!!, User::class.java)
-                                        if (user.device != deviceUtil.getDeviceBrandAndModel() || user.deviceOs!=deviceUtil.getDeviceOSVersionInfo(
+                                        if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!=DeviceUtil.getDeviceOSVersionInfo(
                                                 Build.VERSION.SDK_INT)){
-                                            user.device =   deviceUtil.getDeviceBrandAndModel()
-                                            user.deviceOs=deviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
+                                            user.device =   DeviceUtil.getDeviceBrandAndModel()
+                                            user.deviceOs=DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
                                         }else {
                                             user.uploaded = true
                                         }

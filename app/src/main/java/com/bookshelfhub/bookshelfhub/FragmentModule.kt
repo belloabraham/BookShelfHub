@@ -4,7 +4,6 @@ import android.content.Context
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
-import com.bookshelfhub.bookshelfhub.views.tooltip.IToolTip
 import com.bookshelfhub.bookshelfhub.views.ToolTip
 import dagger.Module
 import dagger.Provides
@@ -29,12 +28,6 @@ object FragmentModule {
         return ClipboardHelper(context)
     }
 
-
-    @FragmentScoped
-    @Provides
-    fun getToolTip(@ActivityContext context: Context):IToolTip{
-        return ToolTip(context)
-    }
 
     @FragmentScoped
     @Provides

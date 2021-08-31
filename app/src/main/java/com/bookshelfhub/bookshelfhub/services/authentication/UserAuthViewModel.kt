@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserAuthViewModel @Inject constructor(private val database:Database, private val deviceUtil:DeviceUtil, private val appUtil: AppUtil): ViewModel(){
+class UserAuthViewModel @Inject constructor(private val database:Database, private val appUtil: AppUtil): ViewModel(){
     private var isAddingUser: MutableLiveData<Boolean>  = MutableLiveData<Boolean>()
     private var isExistingUser: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var referrerId: String? =null
@@ -37,8 +37,8 @@ class UserAuthViewModel @Inject constructor(private val database:Database, priva
     fun setIsAddingUser(value:Boolean, user: User){
         viewModelScope.launch {
             user.appVersion=appUtil.getAppVersionName()
-            user.device = deviceUtil.getDeviceBrandAndModel()
-            user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
+            user.device = DeviceUtil.getDeviceBrandAndModel()
+            user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                 Build.VERSION.SDK_INT)
             database.addUser(user)
         }

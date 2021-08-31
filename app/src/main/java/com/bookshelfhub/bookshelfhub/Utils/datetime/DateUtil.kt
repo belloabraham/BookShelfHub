@@ -6,7 +6,7 @@ import java.util.*
 
 object DateUtil {
 
-    
+    @JvmStatic
     fun dateToString(date: Date?, pattern: String?): String? {
         date?.let {
             try {
@@ -19,7 +19,7 @@ object DateUtil {
         return null
     }
 
-    
+    @JvmStatic
     fun stringToDate(date: String?, format: String?): Date? {
         date?.let {
             try {

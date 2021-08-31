@@ -7,14 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.bookshelfhub.ui.welcome.LoginFragmentArgs
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -27,7 +30,6 @@ import javax.inject.Inject
 class BookInfoFragment : Fragment() {
 
     private val bookInfoViewModel: BookInfoViewModel by viewModels()
-
     private lateinit var layout: BookInfoFragmentBinding
     @Inject
     lateinit var localDb: ILocalDb
@@ -44,25 +46,29 @@ class BookInfoFragment : Fragment() {
 
         layout = BookInfoFragmentBinding.inflate(inflater, container, false)
 
-          bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { book->
+        arguments?.let {
 
-              val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) { link ->
-                  openLink(link)
-              })
+            bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { book->
 
-              book.dateTime?.let {
-                  val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
-                  layout.publishedDateTxt.text = date
-              }
+                val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) { link ->
+                    openLink(link)
+                })
 
-              layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-              layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
-              layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
+                book.dateTime?.let {
+                    val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                    layout.publishedDateTxt.text = date
+                }
 
-              layout.descriptionTxt.text =  book.description
-              layout.descriptionTxt.applyLinks(links)
+                layout.authorTxt.text = String.format(getString(R.string.author), book.author)
+                layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
+                layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
 
-          })
+                layout.descriptionTxt.text =  book.description
+                layout.descriptionTxt.applyLinks(links)
+
+            })
+        }
+
 
         return layout.root
     }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -29,7 +30,7 @@ import javax.inject.Inject
 class CardInfoFragment : Fragment() {
 
     private lateinit var layout: FragmentCardInfoBinding
-    private val cartViewModel: CartViewModel by navGraphViewModels(R.id.cartActivityNavigation)
+    private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
     lateinit var localDb: ILocalDb
     val cardNoSeparator = "-"

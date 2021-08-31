@@ -45,8 +45,6 @@ class UserInfoFragment : Fragment() {
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
-    lateinit var deviceUtil: DeviceUtil
-    @Inject
     lateinit var appUtil:AppUtil
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
@@ -146,11 +144,11 @@ class UserInfoFragment : Fragment() {
                     val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name
-                    user.device = deviceUtil.getDeviceBrandAndModel()
+                    user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone = phone
                     user.referrerId = referrerId
-                    user.deviceOs = deviceUtil.getDeviceOSVersionInfo(
+                    user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
                     withContext(Main){
                       userAuthViewModel.setIsAddingUser(false, user)

@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -53,7 +54,7 @@ import javax.inject.Inject
 class CartFragment : Fragment() {
 
     private lateinit var layout: FragmentCartBinding
-    private val cartViewModel: CartViewModel by navGraphViewModels(R.id.cartActivityNavigation)
+    private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
     lateinit var localDb: ILocalDb
     @Inject
@@ -65,7 +66,7 @@ class CartFragment : Fragment() {
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountOfBooks:Double=0.0
     private var bookIsbnsAndReferrerIds=""
-    private val userId = userAuth.getUserId()
+    private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
 
     override fun onCreateView(
@@ -73,7 +74,7 @@ class CartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-
+          userId = userAuth.getUserId()
         layout = FragmentCartBinding.inflate(inflater, container, false)
 
         val adapter = CartItemsListAdapter(requireContext()).getCartListAdapter{

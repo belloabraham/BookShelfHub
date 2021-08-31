@@ -54,7 +54,7 @@ class ReviewListAdapter () {
            userNameText.text = model.userName
             userRatingBar.rating = model.userRating.toFloat()
             userReviewTxt.text = model.review
-            model.reviewDate?.let {
+            model.dateTime?.let {
                 val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                 dateTxt.text = date
             }

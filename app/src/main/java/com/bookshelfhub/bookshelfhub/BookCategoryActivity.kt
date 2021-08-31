@@ -32,13 +32,15 @@ class BookCategoryActivity : AppCompatActivity() {
     private var listOfBooks = emptyList<PublishedBook>()
     private val bookCategoryViewModel:BookCategoryViewModel by viewModels()
     //Message shown when user cant find a book they are searching for
-    private val bookReqMsg = getString(R.string.cant_find_book)
+    private lateinit var bookRequestMsg:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         layout = ActivityBookCategoryBinding.inflate(layoutInflater)
         setContentView(layout.root)
+
+        bookRequestMsg = getString(R.string.cant_find_book)
 
         val category = intent.getStringExtra(Category.TITLE.KEY)!!
 
@@ -103,7 +105,7 @@ class BookCategoryActivity : AppCompatActivity() {
                     val result = listOfBooks.filter {
                         it.name.contains(newText, true) || it.author.contains(newText, true)
                     }
-                    searchListAdapter.submitList(result.plus(BookRequest(bookReqMsg)))
+                    searchListAdapter.submitList(result.plus(BookRequest(bookRequestMsg)))
                     return true
                 }
 
