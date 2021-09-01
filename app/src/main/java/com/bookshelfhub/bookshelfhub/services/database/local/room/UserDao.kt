@@ -79,6 +79,10 @@ interface UserDao {
     @Query("DELETE FROM Cart WHERE isbn in (:isbnList)")
     suspend fun deleteFromCart(isbnList: List<String>)
 
+    @Query("DELETE FROM Cart")
+    suspend fun deleteAllCartItems()
+
+
     @Delete
     suspend fun deleteFromCart(cart: Cart)
 

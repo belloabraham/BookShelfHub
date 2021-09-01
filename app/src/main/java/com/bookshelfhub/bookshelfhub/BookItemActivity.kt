@@ -88,6 +88,7 @@ class BookItemActivity : AppCompatActivity() {
     private var visibilityAnimDuration:Long=0
     private var bookOnlineVersion:PublishedBook? = null
     private var localBook:PublishedBook?=null
+    private lateinit var buyerVisibleCurrency:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +138,7 @@ class BookItemActivity : AppCompatActivity() {
 
                     val localCurrency = LocalCurrency.get(it)
 
-                    val buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){ //If seller currency is same as buyer's
+                     buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){ //If seller currency is same as buyer's
                         //Return seller currency
                         book.sellerCurrency
                     }else{
@@ -233,10 +234,16 @@ class BookItemActivity : AppCompatActivity() {
         layout.addToCartBtn.setOnClickListener {
             onlineBookPriceInUSD?.let {
                 val book = bookOnlineVersion!!
+                val priceInUSD:Double? = if(it == book.price){
+                    null
+                }else{
+                    it
+                }
                 val cart = Cart(
                     userId, book.isbn,
                     book.name, book.author,
-                    book.coverUrl, pubReferrerId, it
+                    book.coverUrl, pubReferrerId, book.price,
+                    buyerVisibleCurrency, priceInUSD
                 )
                 bookItemViewModel.addToCart(cart)
             }
@@ -532,8 +539,6 @@ class BookItemActivity : AppCompatActivity() {
         }
          return "$main"+unitPlus
     }
-
-
 
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)

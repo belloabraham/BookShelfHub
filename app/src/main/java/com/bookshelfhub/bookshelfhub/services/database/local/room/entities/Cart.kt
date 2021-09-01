@@ -13,4 +13,6 @@ data class Cart(
     val coverUrl: String,
     val referrerId:String?,
     val price: Double=0.0,
+    val currency:String,
+    val priceInUsd: Double?
 )

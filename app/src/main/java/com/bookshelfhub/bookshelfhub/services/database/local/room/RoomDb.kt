@@ -110,6 +110,10 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addToCart(cart)
     }
 
+    override suspend fun deleteAllCartItems() {
+        RoomInstance.getDatabase(context).userDao().deleteAllCartItems()
+    }
+
     override suspend fun deleteFromCart(isbnList: List<String>) {
         RoomInstance.getDatabase(context).userDao().deleteFromCart(isbnList)
     }

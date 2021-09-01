@@ -45,7 +45,14 @@ class CartItemsListAdapter(private val context: Context) {
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(model:Cart, context: Context, onLongClickListener:()->Boolean) {
             title.text =  model.title
-            price.text =  String.format(context.getString(R.string.price), model.price)
+
+            if (model.priceInUsd==null){
+                price.text = String.format(context.getString(R.string.usd_price), model.price)
+            }else{
+                price.text = String.format(context.getString(R.string.local_price_and_usd), model.currency,model.price,model.priceInUsd)
+            }
+
+
             author.text = String.format(context.getString(R.string.by), model.author)
             cover.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
             itemCardView.setOnClickListener {

@@ -8,6 +8,7 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun deleteAllCartItems()
      suspend fun deleteFromCart(isbnList: List<String>)
      suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
      suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)

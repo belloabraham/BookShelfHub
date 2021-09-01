@@ -38,6 +38,7 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.services.payment.*
+import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +47,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -65,6 +67,7 @@ class CartFragment : Fragment() {
     lateinit var userAuth: IUserAuth
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountOfBooks:Double=0.0
+    private var totalAmountInUSD:Double=0.0
     private var bookIsbnsAndReferrerIds=""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
@@ -109,19 +112,31 @@ class CartFragment : Fragment() {
             }
 
             totalAmountOfBooks = 0.0
+            totalAmountInUSD = 0.0
             bookIsbnsAndReferrerIds = ""
+            var localCurrency=""
+
             val countryCode = Location.getCountryCode(requireContext())
 
             if (cartList.isNotEmpty()){
 
                 for (cart in cartList){
                     paymentTransaction.plus(PaymentTransaction(cart.isbn, cart.title,userId, cart.referrerId, countryCode, cart.coverUrl))
+
+                    cart.priceInUsd?.let {
+                        totalAmountInUSD.plus(it)
+                    }
+                    localCurrency=cart.currency
                     totalAmountOfBooks.plus(cart.price)
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
+                if (totalAmountInUSD == totalAmountOfBooks){
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountOfBooks)
+                }else{
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountOfBooks,totalAmountInUSD)
+                }
 
-                layout.totalCostTxt.text = String.format(getString(R.string.total),"$totalAmountOfBooks")
 
                 layout.checkoutFab.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE
@@ -258,14 +273,12 @@ class CartFragment : Fragment() {
                         localDb.addPaymentTransactions(paymentTransaction)
 
                         //Start a worker that further process the transaction
-                        withContext(Main){
-                            val oneTimeVerifyPaymentTrans =
-                                OneTimeWorkRequestBuilder<UploadTransactions>()
-                                    .setConstraints(Constraint.getConnected())
-                                    .build()
+                        val oneTimeVerifyPaymentTrans =
+                            OneTimeWorkRequestBuilder<UploadTransactions>()
+                                .setConstraints(Constraint.getConnected())
+                                .build()
 
-                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
-                        }
+                        WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
                     }
 
                     //Show user a message that their transaction is processing and close Cart activity when the click ok
@@ -298,6 +311,16 @@ class CartFragment : Fragment() {
        }
     }
 
+    override fun onDestroy() {
+
+        val clearCart =
+            OneTimeWorkRequestBuilder<ClearCart>()
+                .setInitialDelay(15, TimeUnit.HOURS)
+                .build()
+        WorkManager.getInstance(requireContext()).enqueue(clearCart)
+
+        super.onDestroy()
+    }
 
     private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
 
