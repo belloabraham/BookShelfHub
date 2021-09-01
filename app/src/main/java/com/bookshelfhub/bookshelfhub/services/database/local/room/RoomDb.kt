@@ -28,6 +28,15 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addPaymentCard(paymentCard)
     }
 
+    override suspend fun deletePaymentCard(card: PaymentCard) {
+        RoomInstance.getDatabase(context).userDao().deletePaymentCard(card)
+    }
+
+
+    override suspend fun getPaymentCards(): List<PaymentCard> {
+      return  RoomInstance.getDatabase(context).userDao().getPaymentCards()
+    }
+
     override fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
        return RoomInstance.getDatabase(context).userDao().getLivePaymentCards()
     }

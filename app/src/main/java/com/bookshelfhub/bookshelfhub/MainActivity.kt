@@ -143,17 +143,18 @@ class MainActivity : AppCompatActivity() {
             if(bookInterest.isPresent && bookInterest.get().added){
                 mainActivityViewModel.setBookInterestNotifNo(0)
 
-                val recommendedBooksWorker: WorkRequest =
+                val recommendedBooksWorker =
                     OneTimeWorkRequestBuilder<RecommendedBooks>()
                         .build()
-                WorkManager.getInstance(this).enqueue(recommendedBooksWorker)
+                WorkManager.getInstance(this).enqueueUniqueWork("recommendedBooksWorker", ExistingWorkPolicy.REPLACE, recommendedBooksWorker)
 
-                val oneTimeBookInterestUpload: WorkRequest =
+                val oneTimeBookInterestUpload =
                     OneTimeWorkRequestBuilder<UploadBookInterest>()
                         .setConstraints(Constraint.getConnected())
                         .build()
 
                 WorkManager.getInstance(this).enqueue(oneTimeBookInterestUpload)
+
             }else{
                 mainActivityViewModel.setBookInterestNotifNo(1)
             }

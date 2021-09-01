@@ -8,6 +8,8 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun deletePaymentCard(card: PaymentCard)
+     suspend fun getPaymentCards(): List<PaymentCard>
      suspend fun deleteAllCartItems()
      suspend fun deleteFromCart(isbnList: List<String>)
      suspend fun getAllPaymentTransactions(): List<PaymentTransaction>

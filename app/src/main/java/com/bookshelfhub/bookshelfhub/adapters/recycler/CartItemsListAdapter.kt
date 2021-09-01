@@ -52,12 +52,9 @@ class CartItemsListAdapter(private val context: Context) {
                 price.text = String.format(context.getString(R.string.local_price_and_usd), model.currency,model.price,model.priceInUsd)
             }
 
-
             author.text = String.format(context.getString(R.string.by), model.author)
             cover.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
-            itemCardView.setOnClickListener {
 
-            }
            itemCardView.setOnLongClickListener {
                onLongClickListener()
            }

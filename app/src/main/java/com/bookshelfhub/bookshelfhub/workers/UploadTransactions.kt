@@ -10,7 +10,6 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.coroutineScope
 
 @HiltWorker
 class UploadTransactions @AssistedInject constructor (
@@ -31,9 +30,9 @@ class UploadTransactions @AssistedInject constructor (
 
            if (paymentTrans.isNotEmpty()) {
 
-            val transactionUpload =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
+            val task =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
 
-               if (transactionUpload.isSuccessful){
+               if (task.isSuccessful){
                        //Get ISBN of all books in transaction
                        val transactionBooksISBNs = emptyList<String>()
                        for (trans in paymentTrans){

@@ -31,11 +31,15 @@ class UploadBookInterest @AssistedInject constructor (
         if (bookInterest.isPresent && !bookInterest.get().uploaded){
 
             val bookInterestData = bookInterest.get()
-               cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY){
+            val task =  cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY){
                    bookInterestData.uploaded=true
                 coroutineScope {
                     localDb.addBookInterest(bookInterestData)
                 }
+            }
+
+            if (!task.isSuccessful){
+                return Result.retry()
             }
 
         }

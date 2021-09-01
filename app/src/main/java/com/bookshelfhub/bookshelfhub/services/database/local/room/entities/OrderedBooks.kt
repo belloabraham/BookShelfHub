@@ -15,7 +15,6 @@ data class OrderedBooks(
     override val orderedCountryCode:String?,
     override val coverUrl:String,
     override var transactionReference:String?,
-    override val decryptKey:String?=null,
     override val password:String?=null,
     override val downloadUrl:String?=null,
     override val dateTime:Timestamp?=null

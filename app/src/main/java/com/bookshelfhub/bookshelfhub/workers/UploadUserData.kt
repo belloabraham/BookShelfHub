@@ -27,12 +27,17 @@ class UploadUserData  @AssistedInject constructor (
 
         val userData = user.get()
             if (user.isPresent && !userData.uploaded){
-               cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY){
+            val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY){
                    userData.uploaded = true
                         coroutineScope {
                             localDb.addUser(userData)
                         }
                     }
+
+                if (!task.isSuccessful){
+                    return Result.retry()
+                }
+
             }
         return Result.success()
     }

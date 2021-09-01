@@ -76,9 +76,19 @@ class Application: android.app.Application(), Configuration.Provider {
             .setConstraints(connected)
             .build()
 
+        val deleteBookmarks = PeriodicWorkRequestBuilder<DeleteBookmarks>(repeatInterval = 12, TimeUnit.HOURS)
+            .setConstraints(connected)
+            .build()
 
-        WorkManager.getInstance(applicationContext).enqueue(removeUnPublishedBooks)
-        WorkManager.getInstance(applicationContext).enqueue(updatePublishedBooks)
+        val removeExpiredCards = PeriodicWorkRequestBuilder<RemoveExpiredCard>(repeatInterval = 48, TimeUnit.HOURS)
+            .build()
+
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("removeExpiredCards", ExistingPeriodicWorkPolicy.KEEP, removeExpiredCards)
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("removeUnPublishedBooks", ExistingPeriodicWorkPolicy.KEEP, removeUnPublishedBooks)
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("updatePublishedBooks",ExistingPeriodicWorkPolicy.KEEP, updatePublishedBooks)
+
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("deleteBookmarks", ExistingPeriodicWorkPolicy.KEEP, deleteBookmarks)
     }
 
     private  fun setupDownloadableEmojiFont(){

@@ -897,16 +897,13 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/loadingAnimView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            app:lottie_speed="10"
-            app:lottie_rawRes="@raw/bsh_logo"
-            android:layout_gravity="center"
-            app:lottie_loop="true"
-            app:lottie_cacheComposition="false"
-            app:lottie_autoPlay="true" />
+
+    <ProgressBar
+        android:id="@+id/loadingAnimView"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

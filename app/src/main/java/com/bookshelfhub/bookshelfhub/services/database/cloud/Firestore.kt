@@ -16,6 +16,15 @@ import javax.inject.Inject
  class Firestore @Inject constructor(val json: Json): ICloudDb {
     private val db:FirebaseFirestore = Firebase.firestore
 
+
+     //Published_Books/isbn
+     //Published_Books/isbn/Reviews/userId
+     //Published_Books/isbn/bookmarks/{id}
+     //Ordered_Books/{document}
+     //users/userId/transactions/
+
+     //Earnings/{document}
+
      
      init {
          //Disable firestore caching
@@ -24,11 +33,11 @@ import javax.inject.Inject
          }
      }
 
-    override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ) {
+    override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ): Task<Void> {
         val newData = hashMapOf(
             field to data,
         )
-            db.collection(collection)
+          return  db.collection(collection)
                 .document(document)
                 .set(newData, SetOptions.merge())
                .addOnSuccessListener{
@@ -255,9 +264,9 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit) {
         
-        db.collection(collection).document(document).collection(subCollection)
+     db.collection(collection).document(document).collection(subCollection)
             .addSnapshotListener { querySnapShot, error ->
                 if (error!=null && shouldRetry){
                     return@addSnapshotListener
@@ -278,6 +287,7 @@ import javax.inject.Inject
                     onComplete(dataList)
                 }
             }
+
 
     }
 

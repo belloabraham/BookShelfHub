@@ -14,7 +14,6 @@ interface IOrderedBooks {
     val orderedCountryCode: String?
     val coverUrl: String
     var transactionReference: String?
-    val decryptKey: String?
     val password: String?
     val downloadUrl: String?
     val dateTime: Timestamp?

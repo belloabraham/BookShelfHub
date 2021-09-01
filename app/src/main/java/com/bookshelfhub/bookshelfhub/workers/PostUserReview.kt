@@ -56,12 +56,12 @@ class PostUserReview @AssistedInject constructor(
               )
             }
 
-         val reviewUpdate =  cloudDb.updateUserReview(
+         val task =  cloudDb.updateUserReview(
                 dynamicBookAttr, userReview,
                 DbFields.PUBLISHED_BOOKS.KEY, isbn,
                 DbFields.REVIEWS.KEY, userId)
 
-        if (reviewUpdate.isSuccessful){
+        if (task.isSuccessful){
             //Update user review locally
             userReview.postedBefore = true
             localDb.addUserReview(userReview)

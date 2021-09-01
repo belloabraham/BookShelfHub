@@ -24,11 +24,17 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPaymentCard(paymentCard: PaymentCard)
 
+    @Delete
+    suspend fun deletePaymentCard(card: PaymentCard)
+
     @Query("DELETE FROM PaymentCard")
     suspend fun deleteAllPaymentCards()
 
     @Query("SELECT * FROM PaymentCard")
     fun getLivePaymentCards(): LiveData<List<PaymentCard>>
+
+    @Query("SELECT * FROM PaymentCard")
+    suspend fun getPaymentCards(): List<PaymentCard>
 
     //Todo User Review
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")

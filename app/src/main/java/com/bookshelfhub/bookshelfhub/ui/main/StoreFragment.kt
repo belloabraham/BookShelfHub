@@ -199,11 +199,10 @@ class StoreFragment : Fragment() {
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = GONE
             layout.loadingAnimView.visibility = VISIBLE
-           //TODO  storeViewModel.loadPublishedBooks()
+            storeViewModel.loadPublishedBooks()
         }
 
         lifecycleScope.launch(IO){
-            localDb.addAllPubBooks(getDummyBooks())
             val publishedBooks = localDb.getPublishedBooks()
             if (publishedBooks.isEmpty()){
                 cloudDb.getListOfDataAsync(

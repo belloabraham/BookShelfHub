@@ -146,7 +146,7 @@ dependencies {
     //--OTP Code Input UI
     implementation 'com.github.aabhasr1:OtpView:v1.1.2-ktx'
     //--Animation
-    implementation 'com.airbnb.android:lottie:3.7.0'
+    implementation 'com.airbnb.android:lottie:4.1.0'
     //--Text Link builder
     implementation 'com.klinkerapps:link_builder:2.0.5'
     //--Toast Message

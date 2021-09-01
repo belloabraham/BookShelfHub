@@ -8,6 +8,10 @@ import org.threeten.bp.LocalDateTime
          return LocalDateTime.now().toString()
      }
 
+     fun getMonth():Int{
+         return LocalDateTime.now().monthValue
+     }
+
      fun getYear():Int{
          return LocalDateTime.now().year
      }

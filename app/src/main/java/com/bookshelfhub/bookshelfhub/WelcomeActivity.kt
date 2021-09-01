@@ -278,13 +278,10 @@ class WelcomeActivity : AppCompatActivity() {
     private fun restoreBookmarks(isNewUser:Boolean){
         //***Restore bookmark if user is not signing in for the first time (if user is signing up)
         if(!isNewUser){
-            val connected = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
 
             val downLoadBookmarksWorker =
                 OneTimeWorkRequestBuilder<DownloadBookmarks>()
-                    .setConstraints(connected)
+                    .setConstraints(Constraint.getConnected())
                     .build()
             WorkManager.getInstance(applicationContext).enqueue(downLoadBookmarksWorker)
         }

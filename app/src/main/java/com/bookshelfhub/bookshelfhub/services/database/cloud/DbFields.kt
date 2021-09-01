@@ -4,7 +4,7 @@ enum class DbFields(val KEY:String) {
     //Collections
     USERS("users"),
     PUBLISHED_BOOKS("published_books"),
-    ORDERED_BOOKS("orderedBooks"),
+    ORDERED_BOOKS("ordered_books"),
 
 
     //Sub Collections

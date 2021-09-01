@@ -42,7 +42,7 @@ interface ICloudDb {
         document: String,
         field: String,
         onSuccess: suspend () -> Unit
-    )
+    ): Task<Void>
 
      fun getLiveDataAsync(
         collection: String, document: String, retry:Boolean=false, onComplete:
