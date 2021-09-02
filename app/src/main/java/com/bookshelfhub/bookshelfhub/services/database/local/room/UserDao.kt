@@ -40,6 +40,9 @@ interface UserDao {
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
 
+    @Query("SELECT * FROM UserReview WHERE verified = :isVerified")
+    suspend fun getUserReviews(isVerified:Boolean): List<UserReview>
+
     @Query("UPDATE UserReview set verified =:isVerified where isbn =:isbn")
     suspend fun updateReview(isbn: String, isVerified:Boolean)
 
@@ -48,6 +51,9 @@ interface UserDao {
 
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     suspend fun getUserReview(isbn:String): Optional<UserReview>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addUserReviews(userReviews: List<UserReview>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUserReview(userReview: UserReview)

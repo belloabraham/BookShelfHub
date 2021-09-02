@@ -41,20 +41,24 @@ class PostUserReview @AssistedInject constructor(
                 1
             }
 
+        var dynamicBookAttr:HashMap<String, FieldValue>?=null
 
-          val dynamicBookAttr =  if (bookTotalReview>0){ //If user is posting for the first time
-                 hashMapOf(
-                     //Add to book total review
-                     DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
-                     //Add userRatingDiff to total ratings that can be + or -
-                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+        if (userReview.verified){
+            dynamicBookAttr =  if (bookTotalReview>0){ //If user is posting for the first time
+                hashMapOf(
+                    //Add to book total review
+                    DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
+                    //Add userRatingDiff to total ratings that can be + or -
+                    DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             }else{
-              hashMapOf(
-                  //Has user has posted before only upload userRatingDiff
-                  DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
-              )
+                hashMapOf(
+                    //Has user has posted before only upload userRatingDiff
+                    DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+                )
             }
+        }
+
 
          val task =  cloudDb.updateUserReview(
                 dynamicBookAttr, userReview,
@@ -62,9 +66,11 @@ class PostUserReview @AssistedInject constructor(
                 DbFields.REVIEWS.KEY, userId)
 
         if (task.isSuccessful){
-            //Update user review locally
-            userReview.postedBefore = true
-            localDb.addUserReview(userReview)
+            if (userReview.verified){
+                //Update user review locally
+                userReview.postedBefore = true
+                localDb.addUserReview(userReview)
+            }
         }else{
             return Result.retry()
         }

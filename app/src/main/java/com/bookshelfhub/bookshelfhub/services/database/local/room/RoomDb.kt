@@ -28,6 +28,10 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addPaymentCard(paymentCard)
     }
 
+    override suspend fun getUserReviews(isVerified: Boolean): List<UserReview> {
+      return  RoomInstance.getDatabase(context).userDao().getUserReviews(isVerified)
+    }
+
     override suspend fun deletePaymentCard(card: PaymentCard) {
         RoomInstance.getDatabase(context).userDao().deletePaymentCard(card)
     }
@@ -49,6 +53,11 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     override fun getLiveUserReview(isbn: String): LiveData<Optional<UserReview>> {
         return  RoomInstance.getDatabase(context).userDao().getLiveUserReview(isbn)
     }
+
+    override suspend fun addUserReviews(userReviews: List<UserReview>) {
+        RoomInstance.getDatabase(context).userDao().addUserReviews(userReviews)
+    }
+
 
     override suspend fun updateReview(isbn: String, isVerified: Boolean) {
         return  RoomInstance.getDatabase(context).userDao().updateReview(isbn, isVerified)

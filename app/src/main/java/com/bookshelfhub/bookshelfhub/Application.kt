@@ -80,15 +80,23 @@ class Application: android.app.Application(), Configuration.Provider {
             .setConstraints(connected)
             .build()
 
+        val postPendingUserReview = PeriodicWorkRequestBuilder<PostPendingUserReview>(repeatInterval = 12, TimeUnit.HOURS)
+            .setConstraints(connected)
+            .build()
+
         val removeExpiredCards = PeriodicWorkRequestBuilder<RemoveExpiredCard>(repeatInterval = 48, TimeUnit.HOURS)
             .build()
 
+       enqueueUniquePeriodicWork("postPendingUserReview", postPendingUserReview)
+       enqueueUniquePeriodicWork("removeExpiredCards", removeExpiredCards)
+       enqueueUniquePeriodicWork("removeUnPublishedBooks",removeUnPublishedBooks)
+       enqueueUniquePeriodicWork("updatePublishedBooks", updatePublishedBooks)
+       enqueueUniquePeriodicWork("deleteBookmarks", deleteBookmarks)
+    }
 
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("removeExpiredCards", ExistingPeriodicWorkPolicy.KEEP, removeExpiredCards)
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("removeUnPublishedBooks", ExistingPeriodicWorkPolicy.KEEP, removeUnPublishedBooks)
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("updatePublishedBooks",ExistingPeriodicWorkPolicy.KEEP, updatePublishedBooks)
 
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork("deleteBookmarks", ExistingPeriodicWorkPolicy.KEEP, deleteBookmarks)
+    private fun enqueueUniquePeriodicWork(tag:String,workRequest: PeriodicWorkRequest,  workPolicy:ExistingPeriodicWorkPolicy=ExistingPeriodicWorkPolicy.KEEP){
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(tag, workPolicy, workRequest)
     }
 
     private  fun setupDownloadableEmojiFont(){

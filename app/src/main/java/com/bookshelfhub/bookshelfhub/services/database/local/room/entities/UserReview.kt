@@ -13,7 +13,7 @@ data class UserReview(
     var review:String,
     var userRating:Double,
     var userName:String,
-    val verified:Boolean,
+    var verified:Boolean,
     var userPhoto:String?,
     var postedBefore:Boolean,
     val dateTime: Timestamp? = null

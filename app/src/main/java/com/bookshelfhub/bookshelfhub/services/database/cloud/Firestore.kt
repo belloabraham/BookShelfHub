@@ -288,11 +288,10 @@ import javax.inject.Inject
                 }
             }
 
-
     }
 
 
-     override fun updateUserReview(bookAttr: HashMap<String, FieldValue>, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void> {
+     override fun updateUserReview(bookAttr: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void> {
 
          val batch = db.batch()
          val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
@@ -304,7 +303,28 @@ import javax.inject.Inject
 
          batch.set(reviewDocRef, userReview)
          batch.set(reviewDocRef, reviewDate, SetOptions.merge())
-         batch.set(bookDynamicAttrDocRef, bookAttr, SetOptions.merge())
+         bookAttr?.let {
+             batch.set(bookDynamicAttrDocRef, it, SetOptions.merge())
+         }
+
+         return  batch.commit()
+     }
+
+
+     override fun updateUserReview( userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookAttrs: List<HashMap<String, FieldValue>>): Task<Void> {
+
+         val batch = db.batch()
+
+         val length = userReviews.size - 1
+
+          for (i in 0..length){
+
+              val reviewDocRef = db.collection(collection).document(userReviews[i].isbn).collection(subCollection).document(subDocument)
+              val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].isbn)
+              batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
+              batch.set(bookDynamicAttrDocRef, bookAttrs[i], SetOptions.merge())
+
+          }
 
          return  batch.commit()
      }

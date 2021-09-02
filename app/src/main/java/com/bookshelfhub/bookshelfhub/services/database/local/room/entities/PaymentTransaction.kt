@@ -8,6 +8,7 @@ import com.google.firebase.Timestamp
 data class PaymentTransaction(
     @PrimaryKey
     override val isbn: String,
+    override val priceInUSD: Double,
     override val title: String,
     override val userId: String,
     override val referrerId:String?,
@@ -16,5 +17,5 @@ data class PaymentTransaction(
     override var transactionReference: String?=null,
     override val password: String? = null,
     override val downloadUrl: String? = null,
-    override val dateTime: Timestamp?=null
-    ):IOrderedBooks
+    override val dateTime: Timestamp?=null,
+):IOrderedBooks

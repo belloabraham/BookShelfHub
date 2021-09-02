@@ -8,6 +8,7 @@ import com.google.firebase.Timestamp
  */
 interface IOrderedBooks {
     val isbn: String
+    val priceInUSD: Double
     val title: String
     val userId: String
     val referrerId: String?

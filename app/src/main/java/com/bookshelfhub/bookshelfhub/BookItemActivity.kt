@@ -302,7 +302,7 @@ class BookItemActivity : AppCompatActivity() {
                 postedBefore = it.postedBefore
             }
 
-            val newReview = UserReview(isbn, review, newRating, userName,isVerifiedReview, userPhotoUri, postedBefore)
+            val newReview = UserReview(isbn, review, newRating, userName, isVerifiedReview, userPhotoUri, postedBefore)
 
             // Save user review to local database
                bookItemViewModel.addUserReview(newReview)

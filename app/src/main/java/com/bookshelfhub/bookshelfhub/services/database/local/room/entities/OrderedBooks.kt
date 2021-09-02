@@ -9,6 +9,7 @@ import com.google.firebase.Timestamp
 data class OrderedBooks(
     @PrimaryKey
     override val isbn:String,
+    override val priceInUSD: Double,
     override val title:String,
     override val userId:String,
     override val referrerId:String?,

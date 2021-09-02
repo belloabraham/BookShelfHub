@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -66,8 +65,8 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     private var savedPaymentCards = emptyList<PaymentCard>()
-    private var totalAmountOfBooks:Double=0.0
-    private var totalAmountInUSD:Double=0.0
+    private var totalAmountInLocalCurrency:Double=0.0
+    private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
@@ -80,16 +79,19 @@ class CartFragment : Fragment() {
           userId = userAuth.getUserId()
         layout = FragmentCartBinding.inflate(inflater, container, false)
 
-        val adapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
+        val cartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
             removeCartItemMsg()
         }
 
-        layout.cartItemsRecView.adapter = adapter
+        layout.cartItemsRecView.adapter = cartListAdapter
 
 
+        //Get all available cards and save them a list of cards
         cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
             this.savedPaymentCards = savedPaymentCards
         })
+
+
 
         layout.checkoutFab.setOnClickListener {
             showSavedPaymentCardList()
@@ -104,14 +106,16 @@ class CartFragment : Fragment() {
 
         var listOfCartItems: ArrayList<Cart> =  ArrayList()
 
+
+        //Listen for changes in no of items in cart
         cartViewModel.getListOfCartItems().observe(viewLifecycleOwner, Observer { cartList ->
 
             if (listOfCartItems.isEmpty()){
                 listOfCartItems = cartList as ArrayList<Cart>
-                adapter.submitList(listOfCartItems)
+                cartListAdapter.submitList(listOfCartItems)
             }
 
-            totalAmountOfBooks = 0.0
+            totalAmountInLocalCurrency = 0.0
             totalAmountInUSD = 0.0
             bookIsbnsAndReferrerIds = ""
             var localCurrency=""
@@ -121,20 +125,23 @@ class CartFragment : Fragment() {
             if (cartList.isNotEmpty()){
 
                 for (cart in cartList){
-                    paymentTransaction.plus(PaymentTransaction(cart.isbn, cart.title,userId, cart.referrerId, countryCode, cart.coverUrl))
 
-                    cart.priceInUsd?.let {
-                        totalAmountInUSD.plus(it)
-                    }
-                    localCurrency=cart.currency
-                    totalAmountOfBooks.plus(cart.price)
+                    //If price in USD is null return cart.price else return cart.priceInUsd
+                     val priceInUSD = cart.priceInUsd ?: cart.price
+
+                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, userId, cart.referrerId, countryCode, cart.coverUrl))
+
+                    totalAmountInUSD.plus(priceInUSD)
+                    localCurrency = cart.currency
+                    totalAmountInLocalCurrency.plus(cart.price)
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                if (totalAmountInUSD == totalAmountOfBooks){
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountOfBooks)
+                if (totalAmountInUSD == totalAmountInLocalCurrency){
+                    //Then local currency must be in USD
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency)
                 }else{
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountOfBooks,totalAmountInUSD)
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD)
                 }
 
 
@@ -167,16 +174,16 @@ class CartFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
                 val position: Int = viewHolder.bindingAdapterPosition
-                val cart: Cart = adapter.currentList[position]
+                val cart: Cart = cartListAdapter.currentList[position]
 
                 listOfCartItems.removeAt(position)
-                adapter.notifyItemRemoved(position)
+                cartListAdapter.notifyItemRemoved(position)
 
                 cartViewModel.deleteFromCart(cart)
                 val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
                 snackBar.setAction(R.string.undo) {
                     listOfCartItems.add(position, cart)
-                    adapter.notifyItemInserted(position)
+                    cartListAdapter.notifyItemInserted(position)
 
                     cartViewModel.addToCart(cart)
 
@@ -273,12 +280,14 @@ class CartFragment : Fragment() {
                         localDb.addPaymentTransactions(paymentTransaction)
 
                         //Start a worker that further process the transaction
-                        val oneTimeVerifyPaymentTrans =
-                            OneTimeWorkRequestBuilder<UploadTransactions>()
-                                .setConstraints(Constraint.getConnected())
-                                .build()
+                        withContext(Main){
+                            val oneTimeVerifyPaymentTrans =
+                                OneTimeWorkRequestBuilder<UploadTransactions>()
+                                    .setConstraints(Constraint.getConnected())
+                                    .build()
 
-                        WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
+                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
+                        }
                     }
 
                     //Show user a message that their transaction is processing and close Cart activity when the click ok
@@ -293,9 +302,7 @@ class CartFragment : Fragment() {
 
             }
 
-            override fun beforeValidate(transaction: Transaction?) {
-
-            }
+            override fun beforeValidate(transaction: Transaction?) {}
 
             override fun onError(error: Throwable?, transaction: Transaction?) {
                 error?.let {
@@ -313,6 +320,7 @@ class CartFragment : Fragment() {
 
     override fun onDestroy() {
 
+        //Clear every Items in this cart in the next 15 hours
         val clearCart =
             OneTimeWorkRequestBuilder<ClearCart>()
                 .setInitialDelay(15, TimeUnit.HOURS)
@@ -325,13 +333,21 @@ class CartFragment : Fragment() {
     private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
 
         val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
-        val payment:IPayment = PayStack(paymentCard, totalAmountOfBooks, requireActivity(),  json, getPayStackPaymentCallBack())
+
+        val amountToChargeInUSD = if (totalAmountInUSD==0.0){
+            totalAmountInLocalCurrency
+        }else{
+            totalAmountInUSD
+        }
+
+        val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
 
         val payStackPublicKey = if (BuildConfig.DEBUG){
             getString(R.string.paystack_test_public_key)
         }else{
             payStackProdPublicKey
         }
+
         payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)
 
     }
