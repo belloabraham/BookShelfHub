@@ -19,26 +19,12 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()
   private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
-  private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
 
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
     livePaymentCards = localDb.getLivePaymentCards()
-
-    cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
-
-      earnings.value = it
-
-    }
-
   }
-
-
-  fun getUserEarnings(): LiveData<List<Earnings>> {
-    return earnings
-  }
-
 
   fun setIsNewCard(value:Boolean){
     isNewCardAdded = value

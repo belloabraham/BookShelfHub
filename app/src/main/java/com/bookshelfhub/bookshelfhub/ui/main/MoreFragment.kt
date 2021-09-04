@@ -7,7 +7,10 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -26,6 +29,7 @@ import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
@@ -39,6 +43,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -189,13 +194,11 @@ class MoreFragment : Fragment() {
                     getString(R.string.earnings_connection_error),
                     Snackbar.LENGTH_SHORT
                 ).apply {
-                    setAction(getString(R.string.retry)) {
-
-                    }
+                    setAction(getString(R.string.ok)){}
                     show()
                 }
             }else{
-
+                showEarnings()
             }
 
         }
@@ -291,10 +294,23 @@ class MoreFragment : Fragment() {
 
     private fun showEarnings(){
 
-        cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) {
+        val view = View.inflate(requireContext(), R.layout.earnings, null)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val earningsText = view.findViewById<TextView>(R.id.earningsText)
 
+        cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) { earnings ->
+            progressBar.visibility = GONE
+            val totalEarnings = 0.0
+            for (earning in earnings){
+                totalEarnings.plus(earning.earn)
+            }
 
+            earningsText.text = String.format(getString(R.string.total_earnings), totalEarnings)
         }
+
+        MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
+            .setPositiveAction(R.string.ok){}
+            .showBottomSheet(view)
 
     }
 

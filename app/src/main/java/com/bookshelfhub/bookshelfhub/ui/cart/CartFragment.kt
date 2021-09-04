@@ -36,6 +36,9 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Payme
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.models.Earnings
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.payment.*
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.google.android.material.button.MaterialButton
@@ -63,14 +66,16 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var json: Json
     @Inject
+    lateinit var cloudDb: ICloudDb
+    @Inject
     lateinit var userAuth: IUserAuth
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
     private lateinit var userId:String
-    private var userEarnings = 0.0
     private var paymentTransaction = emptyList<PaymentTransaction>()
+    private var userEarnings =0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,15 +96,6 @@ class CartFragment : Fragment() {
         cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
             this.savedPaymentCards = savedPaymentCards
         })
-
-
-        cartViewModel.getUserEarnings().observe(viewLifecycleOwner, Observer { earnings->
-            userEarnings =0.0
-            for (earning in earnings){
-                userEarnings.plus(earning.earn)
-            }
-        })
-
 
 
         layout.checkoutFab.setOnClickListener {
@@ -146,13 +142,22 @@ class CartFragment : Fragment() {
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                if (totalAmountInUSD == totalAmountInLocalCurrency){
-                    //Then local currency must be in USD
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
-                }else{
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
-                }
+                cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
 
+                    userEarnings = 0.0
+
+                    for(earning in it){
+                        userEarnings.plus(earning.earn)
+                    }
+
+                    if (totalAmountInUSD == totalAmountInLocalCurrency){
+                        //Then local currency must be in USD
+                        layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
+                    }else{
+                        layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
+                    }
+
+                }
 
                 layout.checkoutFab.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE

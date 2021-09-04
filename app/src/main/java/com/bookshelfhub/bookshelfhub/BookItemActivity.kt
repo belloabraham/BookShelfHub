@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -94,6 +95,7 @@ class BookItemActivity : AppCompatActivity() {
     private var localBook:PublishedBook?=null
     private lateinit var buyerVisibleCurrency:String
     private lateinit var userId: String
+    private var bookShareUrl: Uri? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -227,6 +229,15 @@ class BookItemActivity : AppCompatActivity() {
 
         bookItemViewModel.getLiveLocalBook().observe(this, Observer { book->
 
+            dynamicLink.generateShortLinkAsync(
+                book.name,
+                book.description,
+                book.coverUrl,
+                userId
+            ){
+                bookShareUrl = it
+            }
+
                 localBook = book
 
                 //This value should remain the same and should not be changed with online book value to avoid surprises for the
@@ -234,6 +245,8 @@ class BookItemActivity : AppCompatActivity() {
                 layout.title.text = book.name
                 layout.author.text = String.format(getString(R.string.by), book.author)
                 layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
+
+
         })
 
         layout.addToCartBtn.setOnClickListener {
@@ -262,7 +275,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.shareBookBtn.setOnClickListener {
-            shareBook(userId, this)
+            shareBook(this)
         }
 
         layout.downloadBtn.setOnClickListener {
@@ -465,26 +478,9 @@ class BookItemActivity : AppCompatActivity() {
         layout.userImage.visibility = GONE
     }
 
-    private fun shareBook(userId:String, activity: Activity){
-
-        var  link:String?
-        lifecycleScope.launch {
-            link =  settingsUtil.getString(Referrer.REF_LINK.KEY)
-
-            if (link==null){
-                dynamicLink.generateShortLinkAsync(
-                    remoteConfig.getString(Social.TITLE.KEY),
-                    remoteConfig.getString(Social.DESC.KEY),
-                    remoteConfig.getString(Social.IMAGE_URL.KEY),
-                    userId
-                ){
-                    it?.let {
-                        ShareUtil(activity).shareText(it.toString())
-                    }
-                }
-            }else{
-                ShareUtil(activity).shareText(link!!)
-            }
+    private fun shareBook(activity: Activity){
+        bookShareUrl?.let {
+            ShareUtil(activity).shareText(it.toString())
         }
 
     }

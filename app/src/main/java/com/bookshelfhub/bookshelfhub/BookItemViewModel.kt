@@ -4,7 +4,10 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -31,6 +34,7 @@ class BookItemViewModel @Inject constructor(
   private var localLivePublishedBook: LiveData<PublishedBook> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<PubReferrers>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
+
 
   val userId = userAuth.getUserId()
   val isbn = savedState.get<String>(Book.ISBN.KEY)!!
