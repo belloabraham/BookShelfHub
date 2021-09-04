@@ -9,8 +9,8 @@ data class PaymentTransaction(
     @PrimaryKey
     override val isbn: String,
     override val priceInUSD: Double,
-    override val title: String,
     override val userId: String,
+    override val title: String,
     override val coverUrl: String,
     override val referrerId:String?,
     override val orderedCountryCode: String?,

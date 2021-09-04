@@ -21,6 +21,10 @@ workerParams
 ){
     override suspend fun doWork(): Result {
 
+        if (!userAuth.getIsUserAuthenticated()){
+            return Result.retry()
+        }
+
         val userId = userAuth.getUserId()
 
         //Get locally deleted bookmarks

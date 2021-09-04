@@ -24,6 +24,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Order
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -85,14 +86,14 @@ class ShelfFragment : Fragment() {
                     }
                 }
             }else{
-                orderedBooks[0].dateTime?.let { dateTime->
+                 orderedBooks[0].dateTime?.let { timestamp->
                     cloudDb.getOrderedBooks(
                         DbFields.ORDERED_BOOKS.KEY,
                         userId,
                         OrderedBooks::class.java,
                         orderBy = DbFields.ORDER_DATE_TIME.KEY,
                         Query.Direction.DESCENDING,
-                        startAfter = dateTime
+                        startAfter = timestamp
                     ) {
                         shelfViewModel.addOrderedBooks(it)
                     }
@@ -103,7 +104,7 @@ class ShelfFragment : Fragment() {
         shelfViewModel.getOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
 
             val books = listOf(
-                OrderedBooks("1",2.0, userId,  userId, "50 Shades of grey",
+                OrderedBooks("1",2.0, userId, "50 Shades of grey",
                     "https://i.ibb.co/Bqv7XLw/bookfair1.png",
                     "", "", null),
                 OrderedBooks("2",6.0, userId, "Gifted Hands",

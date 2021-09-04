@@ -35,6 +35,8 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Publi
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers
@@ -198,7 +200,7 @@ class StoreFragment : Fragment() {
 
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = GONE
-            layout.loadingAnimView.visibility = VISIBLE
+            layout.progressBar.visibility = VISIBLE
             storeViewModel.loadPublishedBooks()
         }
 
@@ -210,15 +212,16 @@ class StoreFragment : Fragment() {
                     PublishedBook::class.java,
                     DbFields.DATE_TIME_PUBLISHED.KEY
                 ) {
-                    layout.loadingAnimView.visibility = GONE
+                    layout.progressBar.visibility = GONE
                     storeViewModel.addAllBooks(it)
                 }
             }else{
-                publishedBooks[0].dateTime?.let {
+
+                publishedBooks[0].dateTime?.let { timestamp->
                     cloudDb.getLiveListOfDataAsyncFrom(
                         DbFields.PUBLISHED_BOOKS.KEY,
                         PublishedBook::class.java,
-                        it!!
+                        timestamp
                     ){
                         storeViewModel.addAllBooks(it)
                     }
@@ -226,12 +229,13 @@ class StoreFragment : Fragment() {
             }
         }
 
+
         storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { books ->
 
             allBooksLive = books
 
             if (books.isNotEmpty()){
-                layout.loadingAnimView.visibility = GONE
+                layout.progressBar.visibility = GONE
                 layout.appbarLayout.visibility = VISIBLE
                 layout.errorLayout.visibility = GONE
                 layout.booksNestedScroll.visibility = VISIBLE
@@ -239,7 +243,7 @@ class StoreFragment : Fragment() {
             }else{
                 layout.booksNestedScroll.visibility = GONE
                 layout.appbarLayout.visibility = INVISIBLE
-                layout.loadingAnimView.visibility = VISIBLE
+                layout.progressBar.visibility = VISIBLE
             }
         })
 
@@ -2230,7 +2234,7 @@ class StoreFragment : Fragment() {
     }
 
     private fun showErrorMsg(errorMsg:Int){
-        layout.loadingAnimView.visibility=View.GONE
+        layout.progressBar.visibility=View.GONE
         layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireContext(), R.drawable.ic_network_alert))
         layout.errorMsgText.text = getString(errorMsg)
         layout.errorLayout.visibility=View.VISIBLE
