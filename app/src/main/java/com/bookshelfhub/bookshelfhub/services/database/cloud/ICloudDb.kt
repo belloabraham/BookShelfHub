@@ -9,11 +9,13 @@ import com.google.firebase.firestore.*
 
 interface ICloudDb {
 
+    fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit)
+
     fun updateUserReview(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookAttrs: List<HashMap<String, FieldValue>>): Task<Void>
 
     fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void>
 
-    fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
+    fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
     fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String=DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
@@ -50,7 +52,7 @@ interface ICloudDb {
             (data: DocumentSnapshot?, e: Exception?) -> Unit
     )
 
-    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean = false, onComplete: suspend (dataList:List<T>)->Unit)
+    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit)
 
      fun <T : Any> getListOfDataAsync(
          collection: String,
@@ -64,6 +66,7 @@ interface ICloudDb {
          collection: String,
          type: Class<T>,
          startAt: Timestamp,
+         direction: Query.Direction = Query.Direction.DESCENDING,
          orderBy: String = DbFields.DATE_TIME_PUBLISHED.KEY,
          shouldRetry: Boolean = true,
          onComplete: (dataList: List<T>) -> Unit

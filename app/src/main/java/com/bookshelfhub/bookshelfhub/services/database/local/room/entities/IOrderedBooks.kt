@@ -11,9 +11,9 @@ interface IOrderedBooks {
     val priceInUSD: Double
     val title: String
     val userId: String
+    val coverUrl: String
     val referrerId: String?
     val orderedCountryCode: String?
-    val coverUrl: String
     var transactionReference: String?
     val password: String?
     val downloadUrl: String?

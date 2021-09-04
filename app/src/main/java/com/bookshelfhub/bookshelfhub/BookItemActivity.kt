@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
@@ -49,14 +50,17 @@ import com.bookshelfhub.bookshelfhub.helpers.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
+import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
 import com.bookshelfhub.bookshelfhub.services.payment.Conversion
 import com.bookshelfhub.bookshelfhub.services.payment.Currency
 import com.bookshelfhub.bookshelfhub.services.payment.LocalCurrency
+import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
@@ -89,6 +93,7 @@ class BookItemActivity : AppCompatActivity() {
     private var bookOnlineVersion:PublishedBook? = null
     private var localBook:PublishedBook?=null
     private lateinit var buyerVisibleCurrency:String
+    private lateinit var userId: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +117,7 @@ class BookItemActivity : AppCompatActivity() {
             bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
         }
 
-        val userId = userAuth.getUserId()
+        userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
 
@@ -246,6 +251,13 @@ class BookItemActivity : AppCompatActivity() {
                     buyerVisibleCurrency, priceInUSD
                 )
                 bookItemViewModel.addToCart(cart)
+
+                //Clear every Items in this cart in the next 15 hours
+                val clearCart =
+                    OneTimeWorkRequestBuilder<ClearCart>()
+                        .setInitialDelay(15, TimeUnit.HOURS)
+                        .build()
+                WorkManager.getInstance(this).enqueueUniqueWork("clearCart", ExistingWorkPolicy.REPLACE ,clearCart)
             }
         }
 
@@ -406,13 +418,12 @@ class BookItemActivity : AppCompatActivity() {
 
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
         })
-
-
     }
 
     private fun showBookDetails(book:PublishedBook, buyerVisibleCurrency:String, priceInUSD:Double?=null){
 
         layout.progressBar.visibility = GONE
+
 
         if(priceInUSD!=null){
             onlineBookPriceInUSD = priceInUSD

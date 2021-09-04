@@ -121,11 +121,11 @@ import javax.inject.Inject
              }
      }
 
-     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, orderBy:String,  shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, direction: Query.Direction, orderBy:String, shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit){
 
          
          db.collection(collection)
-             .orderBy(orderBy)
+             .orderBy(orderBy, direction)
              .startAfter(startAt)
              .addSnapshotListener { querySnapShot, e ->
 
@@ -147,6 +147,36 @@ import javax.inject.Inject
                  onComplete(dataList)
              }
      }
+
+
+     override fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+
+         db.collection(collection)
+             .whereEqualTo(whereKey, whereValue)
+             .addSnapshotListener { querySnapShot, error  ->
+
+                 if (error!=null && shouldRetry){
+                     return@addSnapshotListener
+                 }
+
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             if (doc.exists()){
+                                 val data =  doc.data
+                                 dataList = dataList.plus(json.fromAny(data, type))
+                             }
+                         }
+                     }
+                 }
+
+                 runBlocking {
+                     onComplete(dataList)
+                 }
+             }
+     }
+
 
 
      override fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>,  onComplete: suspend (dataList:List<T>)->Unit){
@@ -176,12 +206,12 @@ import javax.inject.Inject
 
      //TODO Sub Collections
 
-     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String,direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          
          db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
-             .orderBy(orderBy)
+             .orderBy(orderBy, direction)
              .startAfter(startAfter)
              .addSnapshotListener { querySnapShot, e ->
 

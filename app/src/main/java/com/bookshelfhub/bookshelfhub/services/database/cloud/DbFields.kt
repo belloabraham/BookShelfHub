@@ -5,7 +5,7 @@ enum class DbFields(val KEY:String) {
     USERS("users"),
     PUBLISHED_BOOKS("published_books"),
     ORDERED_BOOKS("ordered_books"),
-
+    EARNINGS("earnings"),
 
     //Sub Collections
     BOOKMARKS("bookmarks"),
@@ -15,6 +15,8 @@ enum class DbFields(val KEY:String) {
     //Fields
     //Must be same as .services.database.local.room.entities.UserReview.verified
     VERIFIED("verified"),
+
+    REFERRER_ID("referrerId"),
 
     //Must be same as .services.database.local.room.entities.PublishedBook.totalReviews and totalRatings
     TOTAL_REVIEWS("totalReviews"),

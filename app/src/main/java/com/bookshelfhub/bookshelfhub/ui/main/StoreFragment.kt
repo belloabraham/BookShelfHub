@@ -218,7 +218,7 @@ class StoreFragment : Fragment() {
                     cloudDb.getLiveListOfDataAsyncFrom(
                         DbFields.PUBLISHED_BOOKS.KEY,
                         PublishedBook::class.java,
-                        publishedBooks[0].dateTime!!
+                        it!!
                     ){
                         storeViewModel.addAllBooks(it)
                     }

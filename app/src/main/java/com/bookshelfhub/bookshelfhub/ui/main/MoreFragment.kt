@@ -17,6 +17,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
@@ -33,9 +34,13 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
+import com.bookshelfhub.bookshelfhub.models.Earnings
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -58,14 +63,19 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
+    lateinit var connectionUtil: ConnectionUtil
+    @Inject
     lateinit var clipboardHelper: ClipboardHelper
     @Inject
     lateinit var userAuth: IUserAuth
+    @Inject
+    lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val moreViewModel:MoreViewModel by viewModels()
+    private lateinit var userId:String
 
     private lateinit var layout: FragmentMoreBinding
     override fun onCreateView(
@@ -81,6 +91,7 @@ class MoreFragment : Fragment() {
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
         authType= userAuth.getAuthType()
+        userId = userAuth.getUserId()
 
         lifecycleScope.launch(IO){
             val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
@@ -172,12 +183,20 @@ class MoreFragment : Fragment() {
 
         layout.earningsCard.setOnClickListener {
 
-        }
+            if (!connectionUtil.isConnected()){
+                Snackbar.make(
+                    layout.container,
+                    getString(R.string.earnings_connection_error),
+                    Snackbar.LENGTH_SHORT
+                ).apply {
+                    setAction(getString(R.string.retry)) {
 
-        layout.verifyPhoneCard.setOnClickListener {
+                    }
+                    show()
+                }
+            }else{
 
-        }
-        layout.verifyEmailCard.setOnClickListener {
+            }
 
         }
 
@@ -268,6 +287,15 @@ class MoreFragment : Fragment() {
         })
 
         return layout.root
+    }
+
+    private fun showEarnings(){
+
+        cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) {
+
+
+        }
+
     }
 
     private fun startSplashActivity(){

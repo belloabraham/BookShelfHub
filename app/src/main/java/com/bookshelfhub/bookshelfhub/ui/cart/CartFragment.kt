@@ -69,6 +69,7 @@ class CartFragment : Fragment() {
     private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
     private lateinit var userId:String
+    private var userEarnings = 0.0
     private var paymentTransaction = emptyList<PaymentTransaction>()
 
     override fun onCreateView(
@@ -89,6 +90,14 @@ class CartFragment : Fragment() {
         //Get all available cards and save them a list of cards
         cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
             this.savedPaymentCards = savedPaymentCards
+        })
+
+
+        cartViewModel.getUserEarnings().observe(viewLifecycleOwner, Observer { earnings->
+            userEarnings =0.0
+            for (earning in earnings){
+                userEarnings.plus(earning.earn)
+            }
         })
 
 
@@ -129,7 +138,7 @@ class CartFragment : Fragment() {
                     //If price in USD is null return cart.price else return cart.priceInUsd
                      val priceInUSD = cart.priceInUsd ?: cart.price
 
-                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, userId, cart.referrerId, countryCode, cart.coverUrl))
+                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, userId,cart.coverUrl, cart.referrerId, countryCode))
 
                     totalAmountInUSD.plus(priceInUSD)
                     localCurrency = cart.currency
@@ -139,9 +148,9 @@ class CartFragment : Fragment() {
 
                 if (totalAmountInUSD == totalAmountInLocalCurrency){
                     //Then local currency must be in USD
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency)
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
                 }else{
-                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD)
+                    layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
                 }
 
 
@@ -318,18 +327,6 @@ class CartFragment : Fragment() {
        }
     }
 
-    override fun onDestroy() {
-
-        //Clear every Items in this cart in the next 15 hours
-        val clearCart =
-            OneTimeWorkRequestBuilder<ClearCart>()
-                .setInitialDelay(15, TimeUnit.HOURS)
-                .build()
-        WorkManager.getInstance(requireContext()).enqueue(clearCart)
-
-        super.onDestroy()
-    }
-
     private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
 
         val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
@@ -338,7 +335,7 @@ class CartFragment : Fragment() {
             totalAmountInLocalCurrency
         }else{
             totalAmountInUSD
-        }
+        } - userEarnings
 
         val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
 

@@ -9,6 +9,9 @@ import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
@@ -18,6 +21,9 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.views.Toast
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
+import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -89,6 +95,15 @@ class BookInterestFragment : Fragment() {
                  bookInterest.uploaded = false
                  bookInterest.added=true
                     bookInterestViewModel.addBookInterest(bookInterest)
+
+           val oneTimeBookInterestUpload =
+               OneTimeWorkRequestBuilder<UploadBookInterest>()
+                   .setConstraints(Constraint.getConnected())
+                   .build()
+
+           WorkManager.getInstance(requireContext()).enqueueUniqueWork("oneTimeBookInterestUpload",
+               ExistingWorkPolicy.REPLACE, oneTimeBookInterestUpload)
+
                     activity?.let {
                         showToast(R.string.interest_Saved)
                         it.finish()

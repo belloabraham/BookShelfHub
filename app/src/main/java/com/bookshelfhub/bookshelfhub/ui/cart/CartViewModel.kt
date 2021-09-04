@@ -1,7 +1,10 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentCard
@@ -11,17 +14,31 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor(private val localDb: ILocalDb, userAuth: IUserAuth): ViewModel(){
+class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloudDb: ICloudDb, userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()
   private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
+  private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
 
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
     livePaymentCards = localDb.getLivePaymentCards()
+
+    cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
+
+      earnings.value = it
+
+    }
+
   }
+
+
+  fun getUserEarnings(): LiveData<List<Earnings>> {
+    return earnings
+  }
+
 
   fun setIsNewCard(value:Boolean){
     isNewCardAdded = value
