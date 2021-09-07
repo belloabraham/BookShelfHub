@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -61,6 +62,8 @@ class MoreFragment : Fragment() {
     private val PRIVACY_URL = "privacy_url"
     private val TERMS_URL = "terms_url"
     private val REFUND_POLICY_URL = "refund_policy_url"
+    private val WA_CUSTOMER_SUPPORT = "wa_customer_support_link"
+
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
@@ -205,13 +208,16 @@ class MoreFragment : Fragment() {
 
         layout.needHelpCard.setOnClickListener {
 
+          val link =   remoteConfig.getString(WA_CUSTOMER_SUPPORT)
+
+            intentUtil.open(Uri.parse(link))
+
             val oneTimeNotificationTokenUpload =
                 OneTimeWorkRequestBuilder<UploadNotificationToken>()
                     .setConstraints(Constraint.getConnected())
                     .build()
             WorkManager.getInstance(requireContext())
                 .enqueueUniqueWork( "oneTimeNotificationTokenUpload", ExistingWorkPolicy.KEEP, oneTimeNotificationTokenUpload )
-
 
         }
 

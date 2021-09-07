@@ -240,7 +240,7 @@ class MainActivity : AppCompatActivity() {
                 if (showPopup) {
                     lastBookRedTile?.let {
                         val view = View.inflate(this@MainActivity, R.layout.continue_reading, null)
-                        view.findViewById<TextView>(R.id.bookName).text = it
+                        view.findViewById<TextView>(R.id.bookName).text =  it
                         view.findViewById<TextView>(R.id.percentageText).text =
                             String.format(getString(R.string.percent), lastBookPercentage)
                         view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =

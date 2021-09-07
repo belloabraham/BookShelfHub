@@ -16,8 +16,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/add_new_card"
+    android:layout_marginHorizontal="@dimen/size_16"
     android:backgroundTint="?colorPrimaryVariant"
-    android:layout_marginBottom="@dimen/size_16"
     android:id="@+id/addNewCardBtn"
     android:layout_gravity="bottom"/>
 

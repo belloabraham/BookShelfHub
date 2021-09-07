@@ -92,7 +92,7 @@ dependencies {
     //---Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
     //--Work Manager
-    def work_version = "2.6.0-rc01"
+    def work_version = "2.6.0"
     implementation("androidx.work:work-runtime-ktx:$work_version")
     //---Test helpers
     androidTestImplementation("androidx.work:work-testing:$work_version")
@@ -110,6 +110,7 @@ dependencies {
     implementation 'androidx.emoji:emoji:1.1.0'
 
 
+    implementation project(path: ':pdfviewer')
 
 
     //Image Loading
@@ -124,8 +125,6 @@ dependencies {
     implementation 'co.paystack.android:paystack:3.1.3'
     //Web API
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
-
-
 
     //UI Libraries
     //--Bottom Sheet Dialog
@@ -183,7 +182,7 @@ dependencies {
     //Google Play
     //--Google Play Services Authentication
     implementation 'com.google.android.gms:play-services-auth:19.2.0'
-    implementation("com.google.android.play:core:1.10.0")
+    implementation("com.google.android.play:core:1.10.1")
     implementation("com.google.android.play:core-ktx:1.8.1")
 
 }

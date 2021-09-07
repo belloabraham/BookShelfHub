@@ -7,5 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName= "History")
 data class History(
     @PrimaryKey
-    val isbn:String
+    val isbn:String,
+    var lastPageNumber:Int,
+    val readPercentage:Int,
+    val bookName:String
 )

@@ -2,20 +2,31 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.History
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.views.Toast
+import com.bookshelfhub.pdfviewer.PDFView
+import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
+import com.bookshelfhub.pdfviewer.listener.OnPageScrollListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -26,16 +37,84 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   lateinit var userAuth: IUserAuth
   private val bookActivityViewModel: BookActivityViewModel by viewModels()
   private lateinit var layout: ActivityBookBinding
-  private lateinit var fullscreenContent: LinearLayout
   private lateinit var bottomNavigationLayout: LinearLayout
+  private var currentPage = 0
+  private var totalPages = 0
 
   private val hideHandler = Handler()
+
+
+  @SuppressLint("ClickableViewAccessibility")
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    Display(this, lifecycle)
+
+    layout = ActivityBookBinding.inflate(layoutInflater)
+    setContentView(layout.root)
+
+    val title = intent.getStringExtra(Book.TITLE.KEY)!!
+    val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
+    val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
+
+    if (isSearchItem){
+      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), DateTimeUtil.getDateTimeAsString()))
+    }
+
+
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    isFullscreen = true
+
+    var isDarkMode = false
+
+    when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+      Configuration.UI_MODE_NIGHT_YES -> {
+        isDarkMode = true
+      }
+    }
+
+    layout.pdfView.fromAsset("welcome.pdf")
+      .nightMode(isDarkMode)
+      .fitEachPage(true)
+      .defaultPage(3)
+      .onPageChange(object:OnPageChangeListener{
+        override fun onPageChanged(page: Int, pageCount: Int) {
+          val pageNo = String.format(getString(R.string.pageNum), page)
+          currentPage = page
+          totalPages = pageCount
+        }
+
+      })
+      .enableAnnotationRendering(true)
+      .enableSwipe(true).load()
+
+    // Set up the user interaction to manually show or hide the system UI.
+    layout.pdfView.setOnClickListener { toggle() }
+
+    bottomNavigationLayout = layout.fullscreenContentControls
+
+    // Upon interacting with UI controls, delay any scheduled hide()
+    // operations to prevent the jarring behavior of controls going away
+    // while interacting with the UI.
+    layout.dummyButton.setOnTouchListener(delayHideTouchListener)
+  }
+
+  override fun onPostCreate(savedInstanceState: Bundle?) {
+    super.onPostCreate(savedInstanceState)
+
+    // Trigger the initial hide() shortly after the activity has been
+    // created, to briefly hint to the user that UI controls
+    // are available.
+    delayedHide(100)
+  }
+
 
   @SuppressLint("InlinedApi")
   private val hidePart2Runnable = Runnable {
     // Delayed removal of status and navigation bar
 
-    fullscreenContent.systemUiVisibility =
+    layout.pdfView.systemUiVisibility =
       View.SYSTEM_UI_FLAG_LOW_PROFILE or
               View.SYSTEM_UI_FLAG_FULLSCREEN or
               View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
@@ -69,47 +148,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     false
   }
 
-  @SuppressLint("ClickableViewAccessibility")
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    Display(this, lifecycle)
-
-    layout = ActivityBookBinding.inflate(layoutInflater)
-    setContentView(layout.root)
-
-    val title = intent.getStringExtra(Book.TITLE.KEY)!!
-    val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
-    val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
-
-    if (isSearchItem){
-      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), DateTimeUtil.getDateTimeAsString()))
-    }
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-    isFullscreen = true
-
-    // Set up the user interaction to manually show or hide the system UI.
-    fullscreenContent = layout.fullscreenContent
-    fullscreenContent.setOnClickListener { toggle() }
-
-    bottomNavigationLayout = layout.fullscreenContentControls
-
-    // Upon interacting with UI controls, delay any scheduled hide()
-    // operations to prevent the jarring behavior of controls going away
-    // while interacting with the UI.
-    layout.dummyButton.setOnTouchListener(delayHideTouchListener)
-  }
-
-  override fun onPostCreate(savedInstanceState: Bundle?) {
-    super.onPostCreate(savedInstanceState)
-
-    // Trigger the initial hide() shortly after the activity has been
-    // created, to briefly hint to the user that UI controls
-    // are available.
-    delayedHide(100)
-  }
-
   private fun toggle() {
     if (isFullscreen) {
       hide()
@@ -131,7 +169,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   private fun show() {
     // Show the system bar
-    fullscreenContent.systemUiVisibility =
+    layout.pdfView.systemUiVisibility =
       View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
               View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
     isFullscreen = true
@@ -170,8 +208,16 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private const val UI_ANIMATION_DELAY = 300
   }
 
-  /*  override fun onSupportNavigateUp(): Boolean {
-        super.onBackPressed()
-        return true
-    }*/
+  override fun onDestroy() {
+
+    val percentage = (currentPage/totalPages)*100
+    val  readHistory = History("", currentPage, percentage, "")
+
+    lifecycleScope.launch(IO){
+      bookActivityViewModel.addReadHistory(readHistory)
+    }
+
+    super.onDestroy()
+  }
+
 }

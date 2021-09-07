@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/size_16"
+    android:padding="@dimen/size_24"
     android:orientation="horizontal">
 
     <ProgressBar
@@ -16,6 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="20sp"
         android:id="@+id/earningsText"
         android:layout_gravity="center_vertical"
         style="@style/TextAppearance.MaterialComponents.Headline5"/>

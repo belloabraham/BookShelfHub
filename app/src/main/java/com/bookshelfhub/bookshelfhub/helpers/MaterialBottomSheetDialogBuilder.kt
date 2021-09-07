@@ -40,11 +40,14 @@ class MaterialBottomSheetDialogBuilder(private val context:Context, private val 
 
     fun showBottomSheet(
         view: View?=null,
-        @LayoutRes viewRes:Int?=null){
+        @LayoutRes viewRes:Int?=null,
+        cornerRadius:Float= 16f,
+        layoutMode:LayoutMode = LayoutMode.WRAP_CONTENT,
+    scrollable:Boolean=true){
 
-        MaterialDialog(context, BottomSheet(LayoutMode.WRAP_CONTENT)).show {
-            customView(viewRes, view,  true, true, true)
-
+        MaterialDialog(context, BottomSheet(layoutMode)).show {
+            customView(viewRes, view,  scrollable, true, false)
+            cornerRadius(cornerRadius)
             negativeAction?.let {
                 negativeButton(negativeActionText){
                     it()

@@ -8,6 +8,8 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun deleteAllHistory()
+     suspend fun addReadHistory(history: History)
      suspend fun addUserReviews(userReviews: List<UserReview>)
      suspend fun getUserReviews(isVerified:Boolean): List<UserReview>
      suspend fun deletePaymentCard(card: PaymentCard)

@@ -25,7 +25,6 @@ import android.graphics.*
 import android.graphics.Paint.Style
 import android.net.Uri
 import android.os.AsyncTask
-import android.os.Build
 import android.os.HandlerThread
 import android.util.AttributeSet
 import android.util.Log
@@ -1328,7 +1327,7 @@ class PDFView(context: Context?, set: AttributeSet?) : RelativeLayout(context, s
             return this
         }
 
-        fun onPageChange(onPageChangeListener: OnPageChangeListener?): Configurator {
+        fun onPageChange(onPageChangeListener: OnPageChangeListener): Configurator {
             this.onPageChangeListener = onPageChangeListener
             return this
         }

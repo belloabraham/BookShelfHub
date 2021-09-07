@@ -2,9 +2,9 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+    <!-- TODO: Book Activity-->
 
     <!-- TODO: Earnings-->
-
     <string name="total_earnings">Total Earnings: $%,.2f </string>
     <string name="earnings_connection_error">Error no internet connection.</string>
 
@@ -156,7 +156,7 @@
     <string name="pick_up">Pick up where you left</string>
     <string name="continue_reading">Continue Reading</string>
     <string name="dismiss">Dismiss</string>
-    <string name="percent">%d%</string>
+    <string name="percent">%d%%</string>
     <string name="dismiss_msg">You can disable progress popup under profile > settings</string>
 
 

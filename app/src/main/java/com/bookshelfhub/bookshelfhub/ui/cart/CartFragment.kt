@@ -198,7 +198,6 @@ class CartFragment : Fragment() {
                 snackBar.setAction(R.string.undo) {
                     listOfCartItems.add(position, cart)
                     cartListAdapter.notifyItemInserted(position)
-
                     cartViewModel.addToCart(cart)
 
                 }.show()

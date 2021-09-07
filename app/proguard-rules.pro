@@ -23,3 +23,6 @@
 #Data Entities
 -keep class com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 -keep class com.bookshelfhub.bookshelfhub.models.*
+
+#PDFViewer
+-keep class com.shockwave.**

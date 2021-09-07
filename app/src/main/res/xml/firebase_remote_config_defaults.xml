@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
 
+    <!-- TODO: Customer support -->
+    <entry>
+        <key>wa_customer_support_link</key>
+        <value></value>
+    </entry>
+
     <!-- TODO: Payment -->
     <entry>
         <key>paystack_public_key</key>

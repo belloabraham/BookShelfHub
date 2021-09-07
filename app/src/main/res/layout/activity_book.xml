@@ -12,13 +12,11 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
 
-    <LinearLayout
+    <com.bookshelfhub.pdfviewer.PDFView
+        android:id="@+id/pdfView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:keepScreenOn="true"
-        android:id="@+id/fullscreen_content">
-
-    </LinearLayout>
+        android:paddingTop="@dimen/size_25"/>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->

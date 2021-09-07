@@ -10,6 +10,13 @@ import com.google.common.base.Optional
 @Dao
 interface UserDao {
 
+    //Todo Book read history
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addReadHistory(history: History)
+
+    @Query("DELETE FROM History")
+    suspend fun deleteAllHistory()
+
     //Todo Payment Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
