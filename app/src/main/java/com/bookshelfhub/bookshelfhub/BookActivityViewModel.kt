@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
@@ -15,11 +16,23 @@ class BookActivityViewModel @Inject constructor(
   val savedState: SavedStateHandle
   ): ViewModel(){
 
+  val isbn = savedState.get<String>(Book.ISBN.KEY)!!
   private var liveOrderedBook: LiveData<OrderedBooks> = MutableLiveData()
 
 
   init {
-      liveOrderedBook = localDb.getLiveOrderedBooks("")
+      liveOrderedBook = localDb.getLiveOrderedBook(isbn)
+  }
+
+
+  fun getLiveOrderedBook(): LiveData<OrderedBooks> {
+    return liveOrderedBook
+  }
+
+  fun deleteAllHistory(){
+    viewModelScope.launch(IO){
+      localDb.deleteAllHistory()
+    }
   }
 
   fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){

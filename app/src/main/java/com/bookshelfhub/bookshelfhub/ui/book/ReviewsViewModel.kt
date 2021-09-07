@@ -14,7 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReviewsViewModel @Inject constructor(
-    val cloudDb: ICloudDb, val savedState: SavedStateHandle, val userAuth:IUserAuth ): ViewModel(){
+    val cloudDb: ICloudDb,
+    val savedState: SavedStateHandle,
+    val userAuth:IUserAuth ): ViewModel(){
 
     val userId = userAuth.getUserId()
     private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()

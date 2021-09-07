@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
@@ -18,6 +19,7 @@ import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.History
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.views.Toast
@@ -40,6 +42,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private lateinit var bottomNavigationLayout: LinearLayout
   private var currentPage = 0
   private var totalPages = 0
+  private lateinit var title:String
+  private lateinit var isbn:String
 
   private val hideHandler = Handler()
 
@@ -52,19 +56,15 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     layout = ActivityBookBinding.inflate(layoutInflater)
     setContentView(layout.root)
 
-    val title = intent.getStringExtra(Book.TITLE.KEY)!!
-    val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
+    bookActivityViewModel.deleteAllHistory()
+
+     title = intent.getStringExtra(Book.TITLE.KEY)!!
+     isbn = intent.getStringExtra(Book.ISBN.KEY)!!
     val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
 
     if (isSearchItem){
       bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userAuth.getUserId(), DateTimeUtil.getDateTimeAsString()))
     }
-
-
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-    isFullscreen = true
 
     var isDarkMode = false
 
@@ -74,20 +74,29 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
       }
     }
 
-    layout.pdfView.fromAsset("welcome.pdf")
-      .nightMode(isDarkMode)
-      .fitEachPage(true)
-      .defaultPage(3)
-      .onPageChange(object:OnPageChangeListener{
-        override fun onPageChanged(page: Int, pageCount: Int) {
-          val pageNo = String.format(getString(R.string.pageNum), page)
-          currentPage = page
-          totalPages = pageCount
-        }
+    bookActivityViewModel.getLiveOrderedBook().observe(this, Observer { orderedBook ->
 
-      })
-      .enableAnnotationRendering(true)
-      .enableSwipe(true).load()
+      layout.pdfView.fromAsset("welcome.pdf")
+        .nightMode(isDarkMode)
+        //TODO .password(orderedBook.password!!)
+        .fitEachPage(true)
+        .defaultPage(3)
+        .onPageChange(object:OnPageChangeListener{
+          override fun onPageChanged(page: Int, pageCount: Int) {
+            val pageNo = String.format(getString(R.string.pageNum), page)
+            currentPage = page
+            totalPages = pageCount
+          }
+
+        })
+        .enableAnnotationRendering(true)
+        .enableSwipe(true).load()
+
+    })
+
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    isFullscreen = true
 
     // Set up the user interaction to manually show or hide the system UI.
     layout.pdfView.setOnClickListener { toggle() }
@@ -211,7 +220,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   override fun onDestroy() {
 
     val percentage = (currentPage/totalPages)*100
-    val  readHistory = History("", currentPage, percentage, "")
+    val  readHistory = History(isbn, currentPage, percentage, title)
 
     lifecycleScope.launch(IO){
       bookActivityViewModel.addReadHistory(readHistory)

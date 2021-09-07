@@ -8,6 +8,7 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     fun getLiveOrderedBook(isbn:String): LiveData<OrderedBooks>
      suspend fun deleteAllHistory()
      suspend fun addReadHistory(history: History)
      suspend fun addUserReviews(userReviews: List<UserReview>)

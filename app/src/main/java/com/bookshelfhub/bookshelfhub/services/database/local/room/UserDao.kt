@@ -142,6 +142,9 @@ interface UserDao {
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     fun getLiveBooksOrdered(userId:String): LiveData<List<OrderedBooks>>
 
+    @Query("SELECT * FROM OrderedBooks WHERE isbn = :isbn")
+    fun getLiveOrderedBook(isbn:String): LiveData<OrderedBooks>
+
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
 

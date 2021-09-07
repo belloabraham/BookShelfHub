@@ -184,6 +184,10 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
     //Todo Ordered Books
 
+    override fun getLiveOrderedBook(isbn: String): LiveData<OrderedBooks> {
+        return RoomInstance.getDatabase(context).userDao().getLiveOrderedBook(isbn)
+    }
+
     override suspend fun getOrderedBooks(userId: String): List<OrderedBooks> {
         return RoomInstance.getDatabase(context).userDao().getOrderedBooks(userId)
     }
