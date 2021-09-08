@@ -160,9 +160,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             lifecycleScope.launch(IO){
               val bookmark = localDb.getBookmark(currentPage.toInt(), isbn)
               withContext(Main){
-                if (bookmark.isPresent){
-                 // layout.bookShareBtn.isEnabled = true
-                }
+                layout.bookmarkBtn.isLiked = bookmark.isPresent
               }
             }
 
