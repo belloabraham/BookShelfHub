@@ -90,6 +90,14 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         return  RoomInstance.getDatabase(context).userDao().getBookmarks(deleted)
     }
 
+    override suspend fun getBookmark(pageNumb: Int, isbn: String): Optional<Bookmark> {
+        return  RoomInstance.getDatabase(context).userDao().getBookmark(pageNumb, isbn)
+    }
+
+    override suspend fun deleteFromBookmark(pageNumb: Int, isbn:String) {
+        RoomInstance.getDatabase(context).userDao().deleteFromBookmark(pageNumb, isbn)
+    }
+
     override suspend fun addBookmark(bookmark: Bookmark) {
         RoomInstance.getDatabase(context).userDao().addBookmark(bookmark)
     }
@@ -181,6 +189,7 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
     override suspend fun addBookInterest(bookInterest: BookInterest){
         RoomInstance.getDatabase(context).userDao().addBookInterest(bookInterest)
     }
+
 
     //Todo Ordered Books
 

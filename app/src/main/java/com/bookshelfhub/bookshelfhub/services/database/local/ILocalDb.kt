@@ -8,6 +8,8 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun getBookmark(pageNumb:Int, isbn:String):  Optional<Bookmark>
+     suspend fun deleteFromBookmark(pageNumb: Int, isbn:String)
      fun getLiveOrderedBook(isbn:String): LiveData<OrderedBooks>
      suspend fun deleteAllHistory()
      suspend fun addReadHistory(history: History)

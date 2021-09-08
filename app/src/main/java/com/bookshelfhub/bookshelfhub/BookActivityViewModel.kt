@@ -26,6 +26,17 @@ class BookActivityViewModel @Inject constructor(
       livePublishedBook = localDb.getLivePublishedBook(isbn)
   }
 
+  fun deleteFromBookmark(pageNumb:Int, isbn:String){
+    viewModelScope.launch(IO){
+      localDb.deleteFromBookmark(pageNumb, isbn)
+    }
+  }
+
+  fun addBookmark(bookmark: Bookmark){
+    viewModelScope.launch(IO){
+      localDb.addBookmark(bookmark)
+    }
+  }
   fun getLivePublishedBook(): LiveData<PublishedBook> {
     return livePublishedBook
   }

@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.contextaware.withContextAvailable
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
@@ -23,6 +24,8 @@ import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.History
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
@@ -32,7 +35,9 @@ import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -50,6 +55,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private lateinit var isbn:String
   @Inject
   lateinit var dynamicLink: IDynamicLink
+  @Inject
+  lateinit var localDb: ILocalDb
   @Inject
   lateinit var connectionUtil: ConnectionUtil
   private var bookShareUrl: Uri? = null
@@ -91,11 +98,15 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
       override fun liked(likeButton: LikeButton?) {
         delayedHide(AUTO_HIDE_DELAY_MILLIS)
+        val bookmark = Bookmark(userId, isbn, currentPage.toInt(), title)
+        bookActivityViewModel.addBookmark(bookmark)
         showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
+
       }
 
       override fun unLiked(likeButton: LikeButton?) {
         delayedHide(AUTO_HIDE_DELAY_MILLIS)
+        bookActivityViewModel.deleteFromBookmark(currentPage.toInt(), isbn)
         showToast(R.string.removed_bookmark_msg, Toast.LENGTH_SHORT)
       }
 
@@ -110,12 +121,13 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     layout.audioBtn.setOnClickListener {
+
     }
 
 
     bookActivityViewModel.getLivePublishedBook().observe(this, Observer { book ->
       book?.let {
-        this.publishedBook = book
+        publishedBook = book
         dynamicLink.generateShortLinkAsync(
           book.name,
           book.description,
@@ -144,6 +156,16 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             totalPages = pageCount.toDouble()
             val progress = ((currentPage/totalPages)*100.0)
             layout.progressIndicator.progress = progress.toInt()
+
+            lifecycleScope.launch(IO){
+              val bookmark = localDb.getBookmark(currentPage.toInt(), isbn)
+              withContext(Main){
+                if (bookmark.isPresent){
+                 // layout.bookShareBtn.isEnabled = true
+                }
+              }
+            }
+
           }
         })
         .enableAnnotationRendering(true)

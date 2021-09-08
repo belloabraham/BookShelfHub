@@ -1,11 +1,15 @@
 package com.bookshelfhub.bookshelfhub.adapters.recycler
 
+import android.app.ActivityOptions
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
+import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
@@ -39,6 +43,12 @@ class BookmarkListAdapter( private val context: Context) {
             title.text =  model.title
             pageNum.text =  String.format(context.getString(R.string.pageNum), model.pageNumb)
             itemCardView.setOnClickListener {
+                val intent = Intent(context, BookActivity::class.java)
+                with(intent){
+                    putExtra(Book.TITLE.KEY, model.title)
+                    putExtra(Book.ISBN.KEY, model.isbn)
+                }
+                context.startActivity(intent)
             }
            itemCardView.setOnLongClickListener {
                onLongClickListener()

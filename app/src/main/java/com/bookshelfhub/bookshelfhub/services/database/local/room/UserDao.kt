@@ -70,6 +70,12 @@ interface UserDao {
     @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
     suspend fun getBookmarks(deleted: Boolean):List<Bookmark>
 
+    @Query("DELETE FROM Bookmark WHERE pageNumb = :pageNumb AND isbn =:isbn")
+    suspend fun deleteFromBookmark(pageNumb: Int, isbn:String)
+
+    @Query("SELECT * FROM Bookmark WHERE pageNumb = :pageNumb AND isbn =:isbn")
+    suspend fun getBookmark(pageNumb:Int, isbn:String):  Optional<Bookmark>
+
     @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
     fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>>
 

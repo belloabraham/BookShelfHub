@@ -142,12 +142,13 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="35dp"
-        android:layout_height="30dp"
+        android:layout_height="35dp"
         app:cardElevation="0dp"
         android:visibility="gone"
         android:id="@+id/pageNumLabel"
         style="@style/PageNumberCardViewStyle"
         app:cardUseCompatPadding="false"
+        android:foregroundGravity="center"
         android:layout_marginHorizontal="@dimen/size_16"
         android:layout_gravity="top|end">
         <TextView
