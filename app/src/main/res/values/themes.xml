@@ -6,7 +6,10 @@
     <style name="SplashTheme" parent="SplashActivityTheme"/>
 
 
-
+    <style name="Widget.Theme.BookShelfHub.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/day_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
@@ -84,8 +87,8 @@
     </style>
 
     <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
-        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+        <item name="fullscreenBackgroundColor">?backgroundColor</item>
+        <item name="fullscreenTextColor">?colorOnBackground</item>
     </style>
 
 </resources>

@@ -2,6 +2,19 @@
 <resources>
 
 
+    <style name="PageNumberCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/PageNumberCardViewShapeAppearance</item>
+        <item name="cardBackgroundColor">@color/light_grey</item>
+    </style>
+
+    <style name="PageNumberCardViewShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomRight">15dp</item>
+        <item name="cornerSizeBottomLeft">15dp</item>
+    </style>
+
     <style name="BookItemImageView" parent="">
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
@@ -38,6 +51,7 @@
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="cornerRadius">0dp</item>
+        <item name="cardBackgroundColor">?backgroundColor</item>
         <item name="backgroundColor">?backgroundColor</item>
     </style>
 
@@ -110,9 +124,5 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="Widget.Theme.BookShelfHub.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
 
 </resources>

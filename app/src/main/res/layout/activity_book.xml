@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.BookShelfHub.FullscreenContainer"
     android:transitionName="@string/trans_book"
@@ -26,23 +27,146 @@
         android:fitsSystemWindows="true">
 
         <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="@style/Widget.Theme.BookShelfHub.ButtonBar.Fullscreen"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/fullscreen_content_controls"
             android:layout_gravity="bottom|center_horizontal"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent">
-
-            <Button
-                android:id="@+id/dummy_button"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0dp"
+            style="@style/Widget.Theme.BookShelfHub.ButtonBar.Fullscreen"
+            tools:ignore="UselessParent"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/dummy_button" />
+                android:weightSum="4"
+                android:orientation="horizontal"
+                android:baselineAligned="false">
 
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+
+
+                    <com.like.LikeButton
+                        android:id="@+id/bookmarkBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:icon_type="heart"
+                        app:circle_start_color="?colorSecondaryVariant"
+                        app:dots_primary_color="?colorSecondaryVariant"
+                        app:dots_secondary_color="?colorAccent"
+                        app:circle_end_color="?colorAccent"
+                        app:icon_size="24dp"
+                        app:like_drawable="@drawable/ic_bookmark_minus_red"
+                        app:unlike_drawable="@drawable/ic_bookmark_check_outline"
+                        app:liked="false"
+                        app:anim_scale_factor="2" />
+
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/videoListBtn"
+                        app:tint="@color/icon_color"
+                        android:layout_width="@dimen/book_control_size"
+                        android:layout_height="@dimen/book_control_size"
+                        android:layout_marginTop="2dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:src="@drawable/ic_playlist_play"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        app:tint="@color/icon_color"
+                        android:id="@+id/audioBtn"
+                        android:layout_marginTop="2dp"
+                        android:src="@drawable/ic_audio"
+                        android:layout_width="@dimen/book_control_size"
+                        android:layout_height="@dimen/book_control_size"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/bookShareBtn"
+                        app:tint="@color/icon_color"
+                        android:layout_marginTop="2dp"
+                        android:layout_width="@dimen/book_control_size"
+                        android:layout_height="@dimen/book_control_size"
+                        android:src="@drawable/ic_share_variant_outline"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside" />
+
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
+
+
+
+
     </FrameLayout>
+
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="35dp"
+        android:layout_height="30dp"
+        app:cardElevation="0dp"
+        android:visibility="gone"
+        android:id="@+id/pageNumLabel"
+        style="@style/PageNumberCardViewStyle"
+        app:cardUseCompatPadding="false"
+        android:layout_marginHorizontal="@dimen/size_16"
+        android:layout_gravity="top|end">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/pageNumberText"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressIndicator"
+        android:layout_gravity="top"
+        android:layout_marginEnd="?actionBarSize"
+        app:indicatorColor="?colorPrimaryVariant"
+        android:background="@color/white"/>
 
 </FrameLayout>

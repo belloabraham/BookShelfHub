@@ -67,7 +67,6 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"

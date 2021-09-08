@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/container"
     android:paddingTop="@dimen/size_16"
+    android:background="?backgroundColor"
     tools:context=".ui.main.MoreFragment">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -19,6 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:title="@string/account"
+                android:background="?backgroundColor"
                 app:icon="@drawable/ic_profile"
                 app:inner_view="@layout/account"
                 app:expandOnClick="true"

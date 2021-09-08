@@ -18,6 +18,7 @@ import es.dmoral.toasty.Toasty
 
      companion object{
         const val LENGTH_LONG = Toasty.LENGTH_LONG
+        const val LENGTH_SHORT = Toasty.LENGTH_SHORT
      }
 
 }

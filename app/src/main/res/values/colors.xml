@@ -7,6 +7,8 @@
 
     <color name="red">#FF0000</color>
 
+    <color name="light_grey">#e6e6e6</color>
+
     <color name="text_hint">#808080</color>
 
 
@@ -34,7 +36,13 @@
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>
 
-    <color name="black_overlay">#66000000</color>
+
+    <color name="day_overlay">#D9FFFFFF</color>
+    <color name="night_overlay">#D9022231</color>
+
+
+
+    <color name="black_overlay">#D9000000</color>
 
     <!-- Todo Notification and tooltip color -->
     <color name="notf_color">@color/light_blue_A400</color>

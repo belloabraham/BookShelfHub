@@ -18,12 +18,17 @@ class BookActivityViewModel @Inject constructor(
 
   val isbn = savedState.get<String>(Book.ISBN.KEY)!!
   private var liveOrderedBook: LiveData<OrderedBooks> = MutableLiveData()
+  private var livePublishedBook: LiveData<PublishedBook> = MutableLiveData()
 
 
   init {
       liveOrderedBook = localDb.getLiveOrderedBook(isbn)
+      livePublishedBook = localDb.getLivePublishedBook(isbn)
   }
 
+  fun getLivePublishedBook(): LiveData<PublishedBook> {
+    return livePublishedBook
+  }
 
   fun getLiveOrderedBook(): LiveData<OrderedBooks> {
     return liveOrderedBook
