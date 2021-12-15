@@ -1,23 +1,22 @@
 package com.bookshelfhub.bookshelfhub.adapters.viewpager
 
+import android.app.Activity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.Lifecycle
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
 
-class ViewPagerAdapter(fm: FragmentManager, private val fragments:List<Fragment>, private val fragmentTitles:Array<String>) :
-    FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle, private val fragments:List<Fragment>) :
+    FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    override fun getItem(position: Int): Fragment {
+    override fun getItemCount(): Int {
+        return fragments.size
+    }
+
+    override fun createFragment(position: Int): Fragment {
         return fragments[position]
-    }
-
-    override fun getPageTitle(position: Int): CharSequence{
-        return fragmentTitles[position]
-    }
-
-    override fun getCount(): Int {
-        return fragmentTitles.size
     }
 
 }

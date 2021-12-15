@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub.adapters.recycler
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.emoji.widget.EmojiTextView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
@@ -48,7 +47,7 @@ class ReviewListAdapter () {
         private val userNameText: TextView = itemView.findViewById(R.id.userNameText)
         private val dateTxt: TextView = itemView.findViewById(R.id.date)
         private val userRatingBar: MaterialRatingBar = itemView.findViewById(R.id.userRatingBar)
-        private val userReviewTxt: EmojiTextView = itemView.findViewById(R.id.userReviewTxt)
+        private val userReviewTxt: TextView = itemView.findViewById(R.id.userReviewTxt)
 
         fun bindToView(model:UserReview, pos:Int){
            userNameText.text = model.userName

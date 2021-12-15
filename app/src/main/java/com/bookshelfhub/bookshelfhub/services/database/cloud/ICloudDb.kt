@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
-import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.google.android.gms.tasks.Task
@@ -25,7 +25,7 @@ interface ICloudDb {
         (data:T)->Unit)
 
 
-    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String=Book.ISBN.KEY, direction: Query.Direction = Query.Direction.DESCENDING, onComplete: (dataList:List<T>, Exception?)->Unit)
+    fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String= Book.ISBN.KEY, direction: Query.Direction = Query.Direction.DESCENDING, onComplete: (dataList:List<T>, Exception?)->Unit)
 
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String,shouldRetry:Boolean = true, onComplete:

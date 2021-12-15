@@ -14,12 +14,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import androidx.emoji.text.EmojiCompat
-import androidx.emoji.text.FontRequestEmojiCompatConfig
-import androidx.core.provider.FontRequest
 import co.paystack.android.PaystackSdk
-import com.bookshelfhub.bookshelfhub.views.EmojiFont
-import okhttp3.internal.checkDuration
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -42,12 +37,6 @@ class Application: android.app.Application(), Configuration.Provider {
          */
         setUpAppCheck()
 
-        /**
-         * Initializing Paystack
-         */
-        PaystackSdk.initialize(applicationContext);
-
-        setupDownloadableEmojiFont()
 
         //***Joda Time Library Initialization ***//
         AndroidThreeTen.init(this)
@@ -71,7 +60,7 @@ class Application: android.app.Application(), Configuration.Provider {
             .setConstraints(connected)
             .build()
 
-        val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(repeatInterval = 23, TimeUnit.HOURS)
+        val updatePublishedBooks = PeriodicWorkRequestBuilder<UpdatePublishedBooks>(repeatInterval = 7, TimeUnit.DAYS)
             .setInitialDelay( 1, TimeUnit.HOURS)
             .setConstraints(connected)
             .build()
@@ -84,30 +73,16 @@ class Application: android.app.Application(), Configuration.Provider {
             .setConstraints(connected)
             .build()
 
-        val removeExpiredCards = PeriodicWorkRequestBuilder<RemoveExpiredCard>(repeatInterval = 48, TimeUnit.HOURS)
-            .build()
 
-       enqueueUniquePeriodicWork("postPendingUserReview", postPendingUserReview)
-       enqueueUniquePeriodicWork("removeExpiredCards", removeExpiredCards)
-       enqueueUniquePeriodicWork("removeUnPublishedBooks",removeUnPublishedBooks)
-       enqueueUniquePeriodicWork("updatePublishedBooks", updatePublishedBooks)
-       enqueueUniquePeriodicWork("deleteBookmarks", deleteBookmarks)
+       enqueueUniquePeriodicWork(Tag.postPendingUserReview, postPendingUserReview)
+       enqueueUniquePeriodicWork(Tag.removeUnPublishedBooks,removeUnPublishedBooks)
+       enqueueUniquePeriodicWork(Tag.updatePublishedBooks, updatePublishedBooks)
+       enqueueUniquePeriodicWork(Tag.deleteBookmarks, deleteBookmarks)
     }
 
 
     private fun enqueueUniquePeriodicWork(tag:String,workRequest: PeriodicWorkRequest,  workPolicy:ExistingPeriodicWorkPolicy=ExistingPeriodicWorkPolicy.KEEP){
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(tag, workPolicy, workRequest)
-    }
-
-    private  fun setupDownloadableEmojiFont(){
-        val fontRequest = FontRequest(
-            EmojiFont.PROVIDER_AUTHORITY.VALUE,
-            EmojiFont.PROVIDER_PACKAGE.VALUE,
-            EmojiFont.QUERY.VALUE,
-            R.array.com_google_android_gms_fonts_certs)
-       val config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
-            .setReplaceAll(true)
-        EmojiCompat.init(config)
     }
 
     private fun setUpAppCheck(){
@@ -122,10 +97,14 @@ class Application: android.app.Application(), Configuration.Provider {
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            this.minimumFetchIntervalInSeconds = 1800L
+
+        if(BuildConfig.DEBUG){
+            val configSettings = remoteConfigSettings {
+                this.minimumFetchIntervalInSeconds = 1800L
+            }
+            remoteConfig.setConfigSettingsAsync(configSettings)
         }
-        remoteConfig.setConfigSettingsAsync(configSettings)
+
         remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)
     }
 }

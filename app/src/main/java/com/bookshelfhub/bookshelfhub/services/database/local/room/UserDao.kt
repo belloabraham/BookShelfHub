@@ -205,22 +205,22 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllPubBooks(publishedBooks: List<PublishedBook>)
 
-    @Query("SELECT * FROM PublishedBook ORDER BY dateTime DESC")
+    @Query("SELECT * FROM PublishedBook ORDER BY publishedDate DESC")
     fun getLivePublishedBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook ORDER BY dateTime DESC")
+    @Query("SELECT * FROM PublishedBook ORDER BY publishedDate DESC")
     fun getPublishedBooks(): List<PublishedBook>
 
-    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTime DESC")
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY publishedDate DESC")
     fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend ORDER BY dateTime DESC")
+    @Query("SELECT * FROM PublishedBook WHERE recommended = :recommend ORDER BY publishedDate DESC")
     fun getLiveRecommendedBooks(recommend:Boolean=true): LiveData<List<PublishedBook>>
 
     @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")
     fun getLiveTrendingBooks(): LiveData<List<PublishedBook>>
 
-    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY dateTime DESC")
+    @Query("SELECT * FROM PublishedBook WHERE category = :category ORDER BY publishedDate DESC")
     fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBook>
 
     @Query("SELECT * FROM PublishedBook ORDER BY totalDownloads DESC LIMIT 100")

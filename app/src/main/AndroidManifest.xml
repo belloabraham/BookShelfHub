@@ -26,6 +26,7 @@
       android:supportsRtl="false"
       android:theme="@style/Theme.BookShelfHub"
       tools:replace="android:supportsRtl,android:allowBackup">
+
     <activity android:name=".BookInfoActivity"/>
 
     <provider
@@ -69,22 +70,22 @@
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:screenOrientation="portrait"
         android:theme="@style/SplashTheme"
+        android:exported="true"
         tools:ignore="LockedOrientationActivity">
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
         <category android:name="android.intent.category.BROWSABLE" />
-
         <data
             android:host="@string/manifest_dlink_domain_prefix"
             android:scheme="https" />
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+
     <activity
         android:name=".MainActivity"
         android:configChanges="orientation|keyboardHidden|screenSize"

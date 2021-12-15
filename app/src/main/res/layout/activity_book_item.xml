@@ -336,7 +336,7 @@
 
 
 
-                <androidx.emoji.widget.EmojiTextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/size_24"
@@ -400,13 +400,16 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                         app:placeholderText="@string/tell_others_what">
 
-                        <androidx.emoji.widget.EmojiEditText
+                        <EditText
                             android:layout_width="match_parent"
                             android:padding="@dimen/size_8"
                             android:layout_height="wrap_content"
                             android:minHeight="?actionBarSize"
                             android:id="@+id/userReviewEditText"
-                            android:maxLength="500"/>
+                            android:maxLength="500"
+                            android:inputType="text"
+                            android:autofillHints=""
+                            tools:ignore="LabelFor" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 

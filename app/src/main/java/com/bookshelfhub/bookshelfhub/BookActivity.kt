@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.net.Uri
@@ -8,18 +7,21 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.activity.contextaware.withContextAvailable
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bitvale.switcher.common.toPx
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.Utils.DisplayUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
-import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
@@ -219,11 +221,15 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     delayedHide(100)
   }
 
+  private fun setTopMargin(topMargin:Float, view: View){
+    val parameter = layout.pageNumLabel.layoutParams as FrameLayout.LayoutParams
+    parameter.setMargins(parameter.leftMargin, DisplayUtil.convertDpToPixels(this, topMargin).toInt(), parameter.rightMargin, parameter.bottomMargin)
+    view.layoutParams = parameter
+  }
 
   @SuppressLint("InlinedApi")
   private val hidePart2Runnable = Runnable {
     // Delayed removal of status and navigation bar
-
     layout.pdfView.systemUiVisibility =
       View.SYSTEM_UI_FLAG_LOW_PROFILE or
               View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -231,15 +237,19 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
               View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
               View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
               View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+    setTopMargin(0f, layout.pageNumLabel)
   }
   private val showPart2Runnable = Runnable {
     // Delayed display of UI elements
     supportActionBar?.show()
     bottomNavigationLayout.visibility = View.VISIBLE
+    setTopMargin(24f, layout.pageNumLabel)
   }
   private var isFullscreen: Boolean = false
 
-  private val hideRunnable = Runnable { hide() }
+  private val hideRunnable = Runnable { hide()
+    setTopMargin(0f, layout.pageNumLabel)
+  }
 
   /**
    * Touch listener to use for in-layout UI controls to delay hiding the

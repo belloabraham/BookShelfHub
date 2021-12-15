@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.adapters.recycler
 
-import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -9,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder

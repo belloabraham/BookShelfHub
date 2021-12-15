@@ -24,22 +24,18 @@ import com.bookshelfhub.bookshelfhub.Utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
-import com.bookshelfhub.bookshelfhub.book.Category
-import com.bookshelfhub.bookshelfhub.extensions.showToast
+import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -204,7 +200,7 @@ class StoreFragment : Fragment() {
             storeViewModel.loadPublishedBooks()
         }
 
-        lifecycleScope.launch(IO){
+        viewLifecycleOwner.lifecycleScope.launch(IO){
             val publishedBooks = localDb.getPublishedBooks()
             if (publishedBooks.isEmpty()){
                 cloudDb.getListOfDataAsync(
@@ -217,7 +213,7 @@ class StoreFragment : Fragment() {
                 }
             }else{
 
-                publishedBooks[0].dateTime?.let { timestamp->
+                publishedBooks[0].publishedDate?.let { timestamp->
                     cloudDb.getLiveListOfDataAsyncFrom(
                         DbFields.PUBLISHED_BOOKS.KEY,
                         PublishedBook::class.java,
@@ -248,134 +244,134 @@ class StoreFragment : Fragment() {
         })
 
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getTrendingBooksPageSource().collectLatest { books ->
                 loadBooks(books, trendingBooksAdapter, layout.trendingLayout)
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getRecommendedBooksPageSource().collectLatest { books ->
                 loadBooks(books, recommendBooksAdapter, layout.recommendedLayout)
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.religion)).collectLatest { books ->
                 loadBooks(books, religionBooksAdapter, layout.religionLayout)
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.cook_books))
                 .collectLatest { books ->
                     loadBooks(books, cooksBooksAdapter, layout.cookBookLayout)
                 }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.science_technology))
                 .collectLatest { books ->
                     loadBooks(books, scienceAndTechBooksAdapter, layout.scienceTecLayout)
                 }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.art_craft))
                 .collectLatest { books ->
                     loadBooks(books, artAndCraftBooksAdapter, layout.artCraftLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.news))
                 .collectLatest { books ->
                     loadBooks(books, newsBooksAdapter, layout.newsLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.history))
                 .collectLatest { books ->
                     loadBooks(books, historyBooksAdapter, layout.historyLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.business_finance))
                 .collectLatest { books ->
                     loadBooks(books, businessBooksAdapter, layout.businessFinanceLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.poetry))
                 .collectLatest { books ->
                     loadBooks(books, loveAndPoetryBooksAdapter, layout.loveLayout)
                 }
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.manuals))
                 .collectLatest { books ->
                     loadBooks(books, howToBooksAdapter, layout.howToLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.politics))
                 .collectLatest { books ->
                     loadBooks(books, politicsBooksAdapter, layout.politicsLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.comic))
                 .collectLatest { books ->
                     loadBooks(books, comicBooksAdapter, layout.comicLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.sport))
                 .collectLatest { books ->
                     loadBooks(books, sportBooksAdapter, layout.sportLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.law))
                 .collectLatest { books ->
                     loadBooks(books, lawBooksAdapter, layout.lawLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.languages_reference))
                 .collectLatest { books ->
                     loadBooks(books, languageAndRefBooksAdapter, layout.langRefLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.education))
                 .collectLatest { books ->
                     loadBooks(books, educationBooksAdapter, layout.educationLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.entertainment))
                 .collectLatest { books ->
                     loadBooks(books, entertainmentBooksAdapter, layout.entertainmentLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.fiction))
                 .collectLatest { books ->
                     loadBooks(books, fictionBooksAdapter, layout.fictionLayout)
                 }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.travel))
                 .collectLatest { books ->
                     loadBooks(books, travelBooksAdapter, layout.travelLayout)
@@ -482,7 +478,7 @@ class StoreFragment : Fragment() {
                 !(loadState.source.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && adapter.itemCount < 1)
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             adapter.submitData(list)
         }
     }

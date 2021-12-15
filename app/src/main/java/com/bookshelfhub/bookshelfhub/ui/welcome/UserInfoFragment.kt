@@ -75,7 +75,7 @@ class UserInfoFragment : Fragment() {
                         val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
                         val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
                         bookInterest.uploaded = true
-                        lifecycleScope.launch(IO) {
+                        viewLifecycleOwner.lifecycleScope.launch(IO) {
                             database.addBookInterest(bookInterest)
                         }
                     } catch (e: Exception) {
@@ -88,7 +88,7 @@ class UserInfoFragment : Fragment() {
                         layout.phoneEditTxt.setText(userData.phone)
                         layout.emailEditTxt.setText(userData.email)
                         userData.uploaded = true
-                        lifecycleScope.launch(IO) {
+                        viewLifecycleOwner.lifecycleScope.launch(IO) {
                             withContext(Main) {
                                 userAuthViewModel.setIsAddingUser(false, userData)
                             }
@@ -140,7 +140,7 @@ class UserInfoFragment : Fragment() {
                     }
                 }
 
-                lifecycleScope.launch(IO) {
+                viewLifecycleOwner.lifecycleScope.launch(IO) {
                     val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
                     user.name = name

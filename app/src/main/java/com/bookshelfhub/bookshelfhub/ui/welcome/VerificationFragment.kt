@@ -153,7 +153,7 @@ class VerificationFragment:Fragment(){
                                         val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
 
                                         bookInterest.uploaded=true
-                                        lifecycleScope.launch(IO){
+                                        viewLifecycleOwner.lifecycleScope.launch(IO){
                                             database.addBookInterest(bookInterest)
                                         }
                                     }catch (e:Exception){

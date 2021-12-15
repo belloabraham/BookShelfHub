@@ -32,7 +32,8 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.book.*
+import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
@@ -49,21 +50,18 @@ import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
-import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
 import com.bookshelfhub.bookshelfhub.services.payment.Conversion
 import com.bookshelfhub.bookshelfhub.services.payment.Currency
 import com.bookshelfhub.bookshelfhub.services.payment.LocalCurrency
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
+import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 
 @AndroidEntryPoint
@@ -397,10 +395,11 @@ class BookItemActivity : AppCompatActivity() {
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
-                    userReview.dateTime?.let {
+                    val date = userReview.dateTime as Timestamp
+                    date.let {
                         //Convert server dateTime to local date in string
-                        val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
-                        layout.date.text = date
+                        val  localDate = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                        layout.date.text = localDate
                     }
 
                     layout.userNameText.text = userReview.userName

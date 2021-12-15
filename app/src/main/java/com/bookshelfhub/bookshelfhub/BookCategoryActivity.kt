@@ -15,7 +15,7 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.CategoryListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
-import com.bookshelfhub.bookshelfhub.book.Category
+import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout

@@ -68,7 +68,7 @@ class ShelfFragment : Fragment() {
             shelfSearchHistoryList=shelfSearchHistory
         })
 
-        lifecycleScope.launch(IO){
+        viewLifecycleOwner.lifecycleScope.launch(IO){
             val orderedBooks = localDb.getOrderedBooks(userId)
             if (orderedBooks.isEmpty()){
                 //Get all available ordered books the user have
@@ -86,7 +86,8 @@ class ShelfFragment : Fragment() {
                     }
                 }
             }else{
-                 orderedBooks[0].dateTime?.let { timestamp->
+
+                orderedBooks[0].dateTime?.let { timestamp->
                     cloudDb.getOrderedBooks(
                         DbFields.ORDERED_BOOKS.KEY,
                         userId,

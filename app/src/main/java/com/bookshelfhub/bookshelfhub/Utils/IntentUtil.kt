@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.R
 class IntentUtil(private val context:Context) {
 
 
-    fun openAppStoreIntent(appId:String):Intent{
+    fun getAppStoreIntent(appId:String):Intent{
         val intent = intent(R.string.uri_play_store_app, appId)
         return if (intent.resolveActivity(context.packageManager) != null) {
             intent

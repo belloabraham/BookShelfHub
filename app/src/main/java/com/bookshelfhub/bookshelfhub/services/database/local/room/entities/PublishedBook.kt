@@ -8,13 +8,13 @@ import com.google.firebase.firestore.FieldValue
 @Entity(tableName= "PublishedBook")
 data class PublishedBook(
     @PrimaryKey
-     val isbn: String,
+    val isbn: String,
     val name: String="",
     val author: String="",
     val coverUrl: String="",
     val totalDownloads: Long=0,
     val description: String="",
-    val dateTime: Timestamp? = null,
+    val publishedDate: Timestamp? = null,
     val category: String="",
     val tag: String="",
     val sellerCurrency:String ="",

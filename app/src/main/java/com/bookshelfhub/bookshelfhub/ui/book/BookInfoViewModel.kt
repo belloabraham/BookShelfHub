@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.book
 
 import androidx.lifecycle.*
-import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import dagger.hilt.android.lifecycle.HiltViewModel

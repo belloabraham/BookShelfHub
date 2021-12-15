@@ -214,17 +214,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-   private var isFirstStart = true
     override fun onResume() {
 
         inAppUpdate.checkForDownloadedOrDownloadingUpdate(updateActivityRequestCode){
             installUpdateMessage()
         }
 
-            if(isFirstStart){
-              layout.shelfStoreViewPager.currentItem =0
-              isFirstStart=false
-            }
         super.onResume()
     }
 
@@ -295,15 +290,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpShelfStoreViewPager(){
         val  fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
-        val titles = arrayOf(getString(R.string.shelf), getString(R.string.store))
-        val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, fragmentList, titles)
+        val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
+        layout.shelfStoreViewPager.isUserInputEnabled = false
         layout.shelfStoreViewPager.adapter = shelfStoreAdapter
     }
 
     private fun setUpCartMoreViewPager(){
         val  fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
-        val titles = arrayOf(getString(R.string.cart), getString(R.string.more))
-        val cartMoreAdapter = ViewPagerAdapter( supportFragmentManager, fragmentList, titles)
+        val cartMoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
+        layout.cartMoreViewPager.isUserInputEnabled = false
         layout.cartMoreViewPager.adapter = cartMoreAdapter
     }
 

@@ -11,7 +11,7 @@ apply plugin: 'kotlin-android-extensions'
 //apply plugin: 'com.google.firebase.crashlytics'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
     def javaVersion = JavaVersion.VERSION_1_8
 
@@ -23,11 +23,11 @@ android {
     defaultConfig {
         applicationId "com.bookshelfhub.bookshelfhub"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         multiDexEnabled = true
-
+        resConfigs "en"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -58,18 +58,18 @@ android {
 
 dependencies {
     //Android Jetpack
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.21"
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.5.31"
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     //--Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     //--Live Data
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     //--View Model
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -92,11 +92,11 @@ dependencies {
     //---Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
     //--Work Manager
-    def work_version = "2.6.0"
+    def work_version = "2.7.1"
     implementation("androidx.work:work-runtime-ktx:$work_version")
     //---Test helpers
     androidTestImplementation("androidx.work:work-testing:$work_version")
-    def paging_version = "3.0.1"
+    def paging_version = "3.1.0"
     implementation("androidx.paging:paging-runtime-ktx:$paging_version") // For Kotlin use paging-runtime-ktx
     // alternatively - without Android dependencies for testing
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
@@ -106,10 +106,8 @@ dependencies {
     implementation("androidx.hilt:hilt-work:$hilt_work_version")
     // When using Kotlin.
     kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
-    //Emoji Compat
-    implementation 'androidx.emoji:emoji:1.1.0'
 
-
+    //PDF Viewer
     implementation project(path: ':pdfviewer')
 
 
@@ -170,7 +168,7 @@ dependencies {
     //--Remote config
     implementation 'com.google.firebase:firebase-config-ktx'
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta02'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta04'
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
     //--Firestore
@@ -183,8 +181,8 @@ dependencies {
 
     //Google Play
     //--Google Play Services Authentication
-    implementation 'com.google.android.gms:play-services-auth:19.2.0'
-    implementation("com.google.android.play:core:1.10.1")
+    implementation 'com.google.android.gms:play-services-auth:20.0.0'
+    implementation("com.google.android.play:core:1.10.2")
     implementation("com.google.android.play:core-ktx:1.8.1")
 
 }

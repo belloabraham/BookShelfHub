@@ -288,7 +288,7 @@ class CartFragment : Fragment() {
                         paymentTransaction[i].transactionReference = it.reference
                     }
 
-                    lifecycleScope.launch(IO){
+                    viewLifecycleOwner.lifecycleScope.launch(IO){
                         //Add transaction to local database
                         localDb.addPaymentTransactions(paymentTransaction)
 

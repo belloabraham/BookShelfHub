@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields

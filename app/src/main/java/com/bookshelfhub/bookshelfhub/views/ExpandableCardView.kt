@@ -96,7 +96,7 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         setInnerView(innerViewRes)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            elevation = DisplayUtil.convertDpToPixels(context, 4f)
+            elevation = 0f //DisplayUtil.convertDpToPixels(context, 4f)
 
         if (startExpanded) {
             animDuration = 0

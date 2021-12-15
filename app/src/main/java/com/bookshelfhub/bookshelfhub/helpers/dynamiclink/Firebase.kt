@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.helpers.dynamiclink
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
@@ -71,14 +72,18 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
     override fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
         Firebase.dynamicLinks
             .getDynamicLink(activity.intent)
-            .addOnSuccessListener(activity) {
-                    pendingDynamicLinkData ->
-                if (pendingDynamicLinkData!=null){
-                    onComplete(pendingDynamicLinkData.link)
-                }else{
-                    onComplete(null)
-                }
+            .addOnCompleteListener {
+                onComplete(null)
             }
+           /* .addOnSuccessListener(activity) {
+                    pendingDynamicLinkData ->
+                onComplete(null)
+                if(pendingDynamicLinkData==null){
+                  //  onComplete(null)
+                }else{
+                    //onComplete(pendingDynamicLinkData.link)
+                }
+            }*/
             .addOnFailureListener(activity) { e ->
                 onComplete(null)
             }

@@ -24,5 +24,8 @@
 -keep class com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 -keep class com.bookshelfhub.bookshelfhub.models.*
 
+#Custom Views
+-keep class com.bookshelfhub.bookshelfhub.views.*
+
 #PDFViewer
 -keep class com.shockwave.**

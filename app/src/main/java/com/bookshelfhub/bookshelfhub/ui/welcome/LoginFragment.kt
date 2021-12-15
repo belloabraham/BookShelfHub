@@ -85,7 +85,7 @@ class LoginFragment:Fragment() {
 
 
 
-        lifecycleScope.launch(IO) {
+        viewLifecycleOwner.lifecycleScope.launch(IO) {
            val number = settingsUtil.getString(PHONE)
             val dialingCode = settingsUtil.getString(DIALING_CODE)
             if (number!=null && dialingCode==layout.ccp.selectedCountryCodeWithPlus){
@@ -104,7 +104,7 @@ class LoginFragment:Fragment() {
         //Hide keyboard and show error message when error button is clicked
         layout.errorAlertBtn.setOnClickListener {
             keyboardUtil.hideKeyboard(layout.phoneNumEditText)
-            lifecycleScope.launch(Main) {
+            viewLifecycleOwner.lifecycleScope.launch(Main) {
                 delay(100)
                 withContext(Main){
                     showErrorToolTip(layout.errorAlertBtn, getString(R.string.phone_error_msg)) {
@@ -156,7 +156,7 @@ class LoginFragment:Fragment() {
                                 val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
                                 val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
                                 bookInterest.uploaded=true
-                                lifecycleScope.launch(IO){
+                                viewLifecycleOwner.lifecycleScope.launch(IO){
                                     database.addBookInterest(bookInterest)
                                 }
                             }catch (e:Exception){

@@ -117,7 +117,7 @@ class ProfileFragment : Fragment() {
                         updatedUserRecord.mailOrPhoneVerified = false
                         updatedUserRecord.email = email
                     }
-                    lifecycleScope.launch(IO) {
+                    viewLifecycleOwner.lifecycleScope.launch(IO) {
                         updatedUserRecord.uploaded=false
                         database.addUser(updatedUserRecord)
                         withContext(Main){

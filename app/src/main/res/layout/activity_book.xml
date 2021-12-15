@@ -133,12 +133,7 @@
             </LinearLayout>
         </LinearLayout>
 
-
-
-
     </FrameLayout>
-
-
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="35dp"
@@ -159,7 +154,6 @@
             android:textColor="@android:color/black"
             android:textSize="20sp"/>
     </com.google.android.material.card.MaterialCardView>
-
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:layout_width="match_parent"

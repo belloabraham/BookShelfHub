@@ -7,17 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
-import com.bookshelfhub.bookshelfhub.book.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
-import com.bookshelfhub.bookshelfhub.ui.welcome.LoginFragmentArgs
+import com.google.firebase.Timestamp
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -54,9 +52,9 @@ class BookInfoFragment : Fragment() {
                     openLink(link)
                 })
 
-                book.dateTime?.let {
-                    val  date = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
-                    layout.publishedDateTxt.text = date
+                book.publishedDate?.let {
+                    val  localDate = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                    layout.publishedDateTxt.text = localDate
                 }
 
                 layout.authorTxt.text = String.format(getString(R.string.author), book.author)
@@ -68,7 +66,6 @@ class BookInfoFragment : Fragment() {
 
             })
         }
-
 
         return layout.root
     }

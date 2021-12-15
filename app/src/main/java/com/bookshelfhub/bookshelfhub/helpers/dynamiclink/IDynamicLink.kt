@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.dynamiclink
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 
 interface IDynamicLink {

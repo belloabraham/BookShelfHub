@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.book.Book
+import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.extensions.load
 import me.ibrahimyilmaz.kiel.adapterOf

@@ -17,5 +17,5 @@ interface IOrderedBooks {
     var transactionReference: String?
     val password: String?
     val downloadUrl: String?
-    val dateTime: Timestamp?
+    val dateTime: Any?
 }
