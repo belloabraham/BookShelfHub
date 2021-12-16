@@ -5,7 +5,7 @@ import com.bookshelfhub.bookshelfhub.models.perspective.post.PostBody
 import com.bookshelfhub.bookshelfhub.models.perspective.post.RequestedAttributes
 import com.bookshelfhub.bookshelfhub.models.perspective.post.TOXICITY
 
-class Perspective {
+class Perspective() {
 
     fun getPostBody(comment:String, language:String="en"): PostBody {
         val requestAttr = RequestedAttributes(TOXICITY())

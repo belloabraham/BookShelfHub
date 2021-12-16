@@ -16,13 +16,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import co.paystack.android.Paystack
-import co.paystack.android.Transaction
 import com.bookshelfhub.bookshelfhub.BuildConfig
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
-import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
@@ -272,63 +269,6 @@ class CartFragment : Fragment() {
             }
         }*/
 
-    }
-
-    private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
-
-       return object : Paystack.TransactionCallback{
-
-            override fun onSuccess(transaction: Transaction?) {
-
-                transaction?.let {
-                    val length = paymentTransaction.size -1
-
-                    //Pass transaction reference to all the transaction record that is created
-                    for (i in 0..length){
-                        paymentTransaction[i].transactionReference = it.reference
-                    }
-
-                    viewLifecycleOwner.lifecycleScope.launch(IO){
-                        //Add transaction to local database
-                        localDb.addPaymentTransactions(paymentTransaction)
-
-                        //Start a worker that further process the transaction
-                        withContext(Main){
-                            val oneTimeVerifyPaymentTrans =
-                                OneTimeWorkRequestBuilder<UploadTransactions>()
-                                    .setConstraints(Constraint.getConnected())
-                                    .build()
-
-                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
-                        }
-                    }
-
-                    //Show user a message that their transaction is processing and close Cart activity when the click ok
-                    AlertDialogBuilder.with(requireActivity(), R.string.transaction_processing)
-                        .setCancelable(false)
-                        .setPositiveAction(R.string.ok){
-                            requireActivity().finish()
-                        }
-                        .build()
-
-                }
-
-            }
-
-            override fun beforeValidate(transaction: Transaction?) {}
-
-            override fun onError(error: Throwable?, transaction: Transaction?) {
-                error?.let {
-                    //Show user error transaction message
-                    val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
-                    AlertDialogBuilder.with(requireActivity(), errorMsg)
-                        .setCancelable(false)
-                        .setPositiveAction(R.string.ok){}
-                        .build()
-                }
-            }
-
-       }
     }
 
     private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){

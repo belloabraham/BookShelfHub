@@ -13,7 +13,6 @@ class ConnectionUtil @Inject constructor (val context:Context) {
 
    private  val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
     fun isConnected(): Boolean {
 
            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

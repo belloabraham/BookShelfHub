@@ -48,7 +48,7 @@ import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.WebApi
+import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
 import com.bookshelfhub.bookshelfhub.services.payment.Conversion
@@ -505,7 +505,7 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun convertCurrency(conversionEndpoint:String, queryParameters:String, onComplete:(Response)->Unit){
-        WebApi(conversionEndpoint).get(queryParameters) { response ->
+        WebApi().get(conversionEndpoint, queryParameters) { response ->
             onComplete(response)
         }
     }

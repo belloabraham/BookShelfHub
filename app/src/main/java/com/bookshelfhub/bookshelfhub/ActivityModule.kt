@@ -1,11 +1,12 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,19 @@ import dagger.hilt.android.scopes.ActivityScoped
 @Module
 @InstallIn(ActivityComponent::class)
 object ActivityModule {
+
+
+    @ActivityScoped
+    @Provides
+    fun getPerspective(): Perspective {
+        return Perspective()
+    }
+
+    @ActivityScoped
+    @Provides
+    fun getWebAPI(): WebApi {
+        return WebApi()
+    }
 
     @ActivityScoped
     @Provides
