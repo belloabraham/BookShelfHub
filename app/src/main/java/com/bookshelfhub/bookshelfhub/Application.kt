@@ -14,7 +14,6 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import co.paystack.android.PaystackSdk
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {

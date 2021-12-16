@@ -12,6 +12,11 @@
         <value></value>
     </entry>
 
+    <entry>
+        <key>perspective_api</key>
+        <value></value>
+    </entry>
+
     <!-- TODO: Book Item -->
     <entry>
         <key>book_report_url</key>

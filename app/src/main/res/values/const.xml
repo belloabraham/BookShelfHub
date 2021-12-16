@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <string translatable="false" name="gcp_web_client">665623853292-e00h53fjf1qnfeobr8879be7jd2ao97g.apps.googleusercontent.com</string>
 
@@ -37,6 +37,9 @@
     <string name="manifest_dlink_domain_prefix" translatable="false">ref.bookshelfhub.com</string>
     <string name="dlink_deeplink_domain" translatable="false">https://bookshelfhub.com?id=%s</string>
 
+
+    <!-- Todo Perspective Endpoint Url -->
+    <string name="perspective_api_endpoint" translatable="false" tools:ignore="Typos">https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=</string>
 
     <!-- Todo Transition Names -->
     <string name="trans_book" translatable="false">book</string>
