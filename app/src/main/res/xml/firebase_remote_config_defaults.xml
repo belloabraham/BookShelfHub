@@ -7,17 +7,10 @@
         <value>https://wa.me/+2349014817860</value>
     </entry>
 
-    <!-- TODO: Payment -->
-    <entry>
-        <key>paystack_public_key</key>
-        <value></value>
-    </entry>
-
     <entry>
         <key>currency_conversion_endpoint</key>
         <value></value>
     </entry>
-
 
     <!-- TODO: Book Item -->
     <entry>

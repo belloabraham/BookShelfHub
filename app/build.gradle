@@ -112,15 +112,13 @@ dependencies {
 
 
     //Image Loading
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.squareup.picasso:picasso:2.8'
     //--RecyclerView Adapter
     implementation 'io.github.ibrahimyilmaz:kiel:1.2.1'
     //String Util
     implementation 'org.apache.commons:commons-text:1.9'
     //Time and Date Util
     implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
-    //Payment
-    implementation 'co.paystack.android:paystack:3.1.3'
     //Web API
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
@@ -158,7 +156,7 @@ dependencies {
 
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    implementation platform('com.google.firebase:firebase-bom:29.0.2')
     //--Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
     //--Authentication

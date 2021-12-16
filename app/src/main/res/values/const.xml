@@ -38,9 +38,6 @@
     <string name="dlink_deeplink_domain" translatable="false">https://bookshelfhub.com?id=%s</string>
 
 
-    <!-- Paystack -->
-    <string name="paystack_test_public_key" translatable="false">pk_test_2bf3f7b439677beceac366ae368fe44a9bc281b4</string>
-
     <!-- Todo Transition Names -->
     <string name="trans_book" translatable="false">book</string>
 

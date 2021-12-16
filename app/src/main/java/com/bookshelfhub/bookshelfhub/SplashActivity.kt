@@ -6,10 +6,12 @@ import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IPendingDynamicLink
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -74,7 +76,9 @@ class SplashActivity : AppCompatActivity() {
     private fun getReferrer(intent:Intent){
         //***Get referral deep link that could be null or from a User or a Publisher referring a book**
         var referrer:String?=null
-        dynamicLink.getDeepLinkAsync(this){
+
+        val fbDLink = FirebaseDLink()
+        fbDLink.getDeepLinkAsync(this){
             if(it!=null){
                 //*** Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
@@ -88,6 +92,7 @@ class SplashActivity : AppCompatActivity() {
                 startNextActivity(intent, referrer)
             }
         }
+
     }
 
     private fun startNextActivity(intent:Intent, referrerId:String?){

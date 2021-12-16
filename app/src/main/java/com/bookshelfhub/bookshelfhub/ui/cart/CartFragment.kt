@@ -214,11 +214,11 @@ class CartFragment : Fragment() {
 
         val country = Location.getCountryCode(requireContext())
 
-        //Get country code value that will not change irrespective of it is is null or not as country code is a reference type
-        country.let { countryCode ->
+        //TODO Get country code value that will not change irrespective of it is is null or not as country code is a reference type
+      /* country.let { countryCode ->
 
             //Get nullable recommended payment SDK to be used for a user based on their location
-            val paymentSDKType = PaymentSDK.get(countryCode)
+          //TODO  val paymentSDKType = PaymentSDK.get(countryCode)
 
             //If their is a payment service for user location proceed with Payment
             paymentSDKType?.let { paymentSdk->
@@ -270,7 +270,7 @@ class CartFragment : Fragment() {
                     .setPositiveAction(R.string.ok){}
                     .build()
             }
-        }
+        }*/
 
     }
 
@@ -341,15 +341,15 @@ class CartFragment : Fragment() {
             totalAmountInUSD
         } - userEarnings
 
-        val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
+        //TODO
+      /*  val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
 
         val payStackPublicKey = if (BuildConfig.DEBUG){
             getString(R.string.paystack_test_public_key)
         }else{
             payStackProdPublicKey
         }
-
-        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)
+        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)*/
 
     }
 
