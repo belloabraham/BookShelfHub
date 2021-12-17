@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -38,14 +39,17 @@ workerParams
         //Get locally deleted bookmarks that are already on the cloud
         val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = true)
 
-        //Delete them on the cloud using this path user/userId/bookmarks/id
-        cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
 
+        if (listOfDeletedBookmarks.isNotEmpty()){
+            //Delete them on the cloud using this path user/userId/bookmarks/id
+            cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
                 coroutineScope {
                     //Now remove them locally
                     localDb.deleteBookmarks(listOfDeletedBookmarks)
                 }
+            }
         }
+
 
         return Result.success()
     }

@@ -1,12 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
-import androidx.work.*
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
-import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
+import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CloudMessagingService : FirebaseMessagingService() {
@@ -17,6 +17,13 @@ class CloudMessagingService : FirebaseMessagingService() {
     lateinit var notificationBuilder: NotificationBuilder
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var cloudDb: ICloudDb
+    @Inject
+    lateinit var userAuth: IUserAuth
+
+    private val  NOTIFICATION_TOKEN="notification_token"
+
 
     override fun onMessageReceived(cloudMesage: RemoteMessage) {
 
@@ -29,24 +36,13 @@ class CloudMessagingService : FirebaseMessagingService() {
         }
     }
 
+
     override fun onNewToken(token: String) {
+        cloudDb.addDataAsync(token,
+            DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN){
 
-        val connected = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-        val oneTimeNotificationTokenUpload: WorkRequest =
-            OneTimeWorkRequestBuilder<UploadNotificationToken>()
-                .setConstraints(connected)
-                .build()
-
-        val periodicNotificationTokenUpload =
-            PeriodicWorkRequestBuilder<UploadNotificationToken>(30, TimeUnit.MINUTES)
-                .setConstraints(connected)
-                .build()
-
-        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
-        WorkManager.getInstance(applicationContext).enqueue(periodicNotificationTokenUpload)
-
+        }
     }
+
+
 }

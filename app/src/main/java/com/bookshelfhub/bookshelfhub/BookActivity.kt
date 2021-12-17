@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -118,8 +119,19 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     }
 
-    layout.bookShareBtn.setOnClickListener {
-      shareBookLink()
+    var isMenuOpened = false
+    layout.menuBtn.setOnClickListener {
+      isMenuOpened = !isMenuOpened
+      if(isMenuOpened){
+        val avdMenuToClose = getDrawable(R.drawable.avd_menu_to_close) as AnimatedVectorDrawable
+        layout.menuBtn.setImageDrawable(avdMenuToClose)
+        avdMenuToClose.start()
+      }else{
+       val avdCloseToMenu = getDrawable(R.drawable.avd_close_to_menu) as AnimatedVectorDrawable
+        layout.menuBtn.setImageDrawable(avdCloseToMenu)
+        avdCloseToMenu.start()
+      }
+
     }
 
     layout.audioBtn.setOnClickListener {
@@ -185,9 +197,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     // Upon interacting with UI controls, delay any scheduled hide()
     // operations to prevent the jarring behavior of controls going away
     // while interacting with the UI.
-    layout.bookShareBtn.setOnTouchListener(delayHideTouchListener)
+   /* layout.menuBtn.setOnTouchListener(delayHideTouchListener)
     layout.videoListBtn.setOnTouchListener(delayHideTouchListener)
-    layout.audioBtn.setOnTouchListener(delayHideTouchListener)
+    layout.audioBtn.setOnTouchListener(delayHideTouchListener)*/
   }
 
 

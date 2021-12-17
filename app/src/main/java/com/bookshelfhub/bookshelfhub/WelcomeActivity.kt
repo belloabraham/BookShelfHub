@@ -25,7 +25,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
@@ -265,12 +264,6 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun startMainActivity(intent: Intent){
-        val oneTimeNotificationTokenUpload =
-            OneTimeWorkRequestBuilder<UploadNotificationToken>()
-                .setConstraints(Constraint.getConnected())
-                .build()
-        WorkManager.getInstance(applicationContext).enqueue(oneTimeNotificationTokenUpload)
-
         startActivity(intent)
     }
 

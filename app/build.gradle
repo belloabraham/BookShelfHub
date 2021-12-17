@@ -101,7 +101,7 @@ dependencies {
     // alternatively - without Android dependencies for testing
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
     //Google Gson
-    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.google.code.gson:gson:2.8.8'
     def hilt_work_version = "1.0.0"
     implementation("androidx.hilt:hilt-work:$hilt_work_version")
     // When using Kotlin.

@@ -43,7 +43,6 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Tag
-import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -213,13 +212,6 @@ class MoreFragment : Fragment() {
            // startActivity(browserIntent)
 
             startActivity(intentUtil.intent(link))
-
-            val oneTimeNotificationTokenUpload =
-                OneTimeWorkRequestBuilder<UploadNotificationToken>()
-                    .setConstraints(Constraint.getConnected())
-                    .build()
-            WorkManager.getInstance(requireContext())
-                .enqueueUniqueWork( Tag.oneTimeNotificationTokenUpload, ExistingWorkPolicy.KEEP, oneTimeNotificationTokenUpload )
 
         }
 

@@ -51,7 +51,6 @@
                     android:gravity="center_horizontal"
                     android:layout_weight="1">
 
-
                     <com.like.LikeButton
                         android:id="@+id/bookmarkBtn"
                         android:layout_width="wrap_content"
@@ -67,8 +66,6 @@
                         app:liked="false"
                         app:anim_scale_factor="2" />
 
-
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -77,17 +74,35 @@
                     android:gravity="center"
                     android:layout_weight="1">
 
-                    <ImageButton
-                        android:id="@+id/videoListBtn"
-                        app:tint="@color/icon_color"
-                        android:layout_width="@dimen/book_control_size"
-                        android:layout_height="@dimen/book_control_size"
-                        android:layout_marginTop="2dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_playlist_play"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
+                        <ImageButton
+                            android:id="@+id/videoListBtn"
+                            app:tint="@color/icon_color"
+                            android:layout_width="@dimen/book_control_size"
+                            android:layout_height="@dimen/book_control_size"
+                            android:layout_marginTop="2dp"
+                            android:layout_gravity="center"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_play"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="10dp"
+                            app:cardBackgroundColor="@color/red"
+                            android:layout_height="10dp"
+                            android:visibility="invisible"
+                            android:id="@+id/newVideoDot"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            app:cardCornerRadius="10dp"
+                            android:layout_gravity="top|center"/>
+
+
+                    </FrameLayout>
 
                 </LinearLayout>
 
@@ -118,12 +133,12 @@
                     android:layout_weight="1">
 
                     <ImageButton
-                        android:id="@+id/bookShareBtn"
+                        android:id="@+id/menuBtn"
                         app:tint="@color/icon_color"
                         android:layout_marginTop="2dp"
                         android:layout_width="@dimen/book_control_size"
                         android:layout_height="@dimen/book_control_size"
-                        android:src="@drawable/ic_share_variant_outline"
+                        android:src="@drawable/avd_menu_to_close"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         android:scaleType="centerInside" />
