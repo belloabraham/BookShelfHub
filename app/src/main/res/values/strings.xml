@@ -6,6 +6,7 @@
     <string name="removed_bookmark_msg">Removed from bookmark</string>
     <string name="bookmark_added_msg">Added to bookmark</string>
     <string name="internet_connection_required">Connect to the internet and retry sharing book</string>
+    <string name="no_video_msg">There is currently no video for this page, make sure you are connected to the internet to get notified of new videos.</string>
 
     <!-- TODO: Earnings-->
     <string name="total_earnings">Total Earnings: $%,.2f </string>

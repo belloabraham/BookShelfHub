@@ -18,15 +18,13 @@ class WebApi() {
         }
     }
 
-    fun post(endPointUrl:String, queryParameter:String, requestBody: RequestBody, onComplete:(Response)->Unit){
+    fun post(endPointUrl:String, queryParameter:String, requestBody: RequestBody): Response {
         val url = endPointUrl+queryParameter
         val request = Request.Builder()
             .post(requestBody)
             .url(url)
             .build()
-        apiClient.newCall(request).execute().use {
-            onComplete(it)
-        }
+       return apiClient.newCall(request).execute()
 
     }
 

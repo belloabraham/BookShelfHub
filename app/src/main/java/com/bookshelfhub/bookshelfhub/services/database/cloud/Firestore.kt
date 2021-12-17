@@ -9,6 +9,7 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -33,6 +34,29 @@ import javax.inject.Inject
          }
      }
 
+
+    override fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit ){
+         db.collection(collection).document(document).collection(subCollection)
+             .addSnapshotListener{ querySnapShot, e ->
+                 if (shouldRetry && e!=null){
+                     return@addSnapshotListener
+                 }
+                 var dataList = emptyList<T>()
+                 querySnapShot?.let {
+                     if (!it.isEmpty){
+                         for (doc in it) {
+                             if (doc.exists()){
+                                 val data =  doc.data
+                                 dataList = dataList.plus(json.fromAny(data, type))
+                             }
+                         }
+                     }
+                 }
+                 onComplete(dataList)
+             }
+     }
+
+
     override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ): Task<Void> {
         val newData = hashMapOf(
             field to data,
@@ -47,7 +71,6 @@ import javax.inject.Inject
                 }
 
     }
-
 
      override fun <T: Any> getListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.collection(collection)
@@ -177,8 +200,6 @@ import javax.inject.Inject
              }
      }
 
-
-
      override fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>,  onComplete: suspend (dataList:List<T>)->Unit){
          
          db.collection(collection)
@@ -205,7 +226,6 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-
      override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String,direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          
          db.collection(collection)

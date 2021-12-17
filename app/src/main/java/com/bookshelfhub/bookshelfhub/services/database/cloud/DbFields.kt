@@ -1,6 +1,9 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 enum class DbFields(val KEY:String) {
+
+    VIDEO_LIST("video_list"),
+
     //Collections
     USERS("users"),
     PUBLISHED_BOOKS("published_books"),

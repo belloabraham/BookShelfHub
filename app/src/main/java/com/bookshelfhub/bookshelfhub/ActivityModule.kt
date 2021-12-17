@@ -28,12 +28,6 @@ object ActivityModule {
 
     @ActivityScoped
     @Provides
-    fun getWebAPI(): WebApi {
-        return WebApi()
-    }
-
-    @ActivityScoped
-    @Provides
     fun getIntentUtil(@ActivityContext context: Context): IntentUtil {
         return IntentUtil(context)
     }

@@ -8,6 +8,9 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>>
+     suspend fun addBookVideos(bookVideos: List<BookVideos>)
+     suspend fun getAnOrderedBook(isbn:String): OrderedBooks
      suspend fun getBookmark(pageNumb:Int, isbn:String):  Optional<Bookmark>
      suspend fun deleteFromBookmark(pageNumb: Int, isbn:String)
      fun getLiveOrderedBook(isbn:String): LiveData<OrderedBooks>
@@ -25,7 +28,7 @@ interface ILocalDb {
      fun getLivePaymentCards(): LiveData<List<PaymentCard>>
      suspend fun deleteAllPaymentCards()
      suspend fun addPaymentCard(paymentCard: PaymentCard)
-     fun getLivePublishedBook(isbn: String): LiveData<PublishedBook>
+     fun getLivePublishedBook(isbn: String): LiveData<Optional<PublishedBook>>
      suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
      fun getALiveOrderedBook(isbn:String): LiveData<Optional<OrderedBooks>>
      fun deleteAllOrderedBooks()
@@ -35,7 +38,7 @@ interface ILocalDb {
      suspend fun getUserReview(isbn:String): Optional<UserReview>
      suspend fun addUserReview(userReview: UserReview)
      fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
-     suspend fun getPublishedBook(isbn: String): PublishedBook
+     suspend fun getPublishedBook(isbn: String): Optional<PublishedBook>
      fun getLiveBookmarks(deleted: Boolean = false): LiveData<List<Bookmark>>
      suspend fun getListOfCartItems(userId: String):List<Cart>
      fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>

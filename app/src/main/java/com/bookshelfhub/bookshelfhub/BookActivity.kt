@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.net.Uri
@@ -8,6 +9,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.viewModels
@@ -28,17 +31,17 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.History
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
 import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_book.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -65,7 +68,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private var bookShareUrl: Uri? = null
   private var publishedBook:PublishedBook? = null
   private lateinit var userId:String
-
+  private var videoLink: String? = null
+  private var bookVideos = listOf<BookVideos>()
   private val hideHandler = Handler()
 
 
@@ -116,7 +120,22 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     })
 
     layout.videoListBtn.setOnClickListener {
+        if (videoLink!=null){
+          lifecycleScope.launch(IO){
+           val orderedBook = localDb.getAnOrderedBook(isbn)
+            withContext(Main){
+              val intent = Intent(this@BookActivity, WebViewActivity::class.java)
+              with(intent){
+                putExtra(WebView.TITLE.KEY,orderedBook.title)
+                putExtra(WebView.URL.KEY, videoLink)
+              }
+              startActivity(intent)
+            }
+          }
 
+        }else{
+          showToast(R.string.no_video_msg)
+        }
     }
 
     var isMenuOpened = false
@@ -141,49 +160,48 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     bookActivityViewModel.getLivePublishedBook().observe(this, Observer { book ->
       book?.let {
-        publishedBook = book
-        dynamicLink.generateShortLinkAsync(
-          book.name,
-          book.description,
-          book.coverUrl,
-          userId
-        ) {
-          bookShareUrl = it
+        if(book.isPresent){
+          val pubBook = book.get()
+          publishedBook = pubBook
+          dynamicLink.generateShortLinkAsync(
+            pubBook.name,
+            pubBook.description,
+            pubBook.coverUrl,
+            userId
+          ) {
+            bookShareUrl = it
+          }
         }
       }
       })
 
-
-    bookActivityViewModel.getLiveOrderedBook().observe(this, Observer { orderedBook ->
-
-      layout.pdfView.fromAsset("welcome.pdf")
-        .nightMode(isDarkMode)
-        //TODO .password(orderedBook.password!!)
-        .fitEachPage(true)
-        .defaultPage(0)
-        .onPageChange(object:OnPageChangeListener{
-          override fun onPageChanged(page: Int, pageCount: Int) {
-            layout.pageNumberText.text = "${page.plus(1)}"
-            layout.pageNumLabel.isVisible = page>0
-            layout.progressIndicator.isVisible = page>0
-            currentPage = page.toDouble()+1
-            totalPages = pageCount.toDouble()
-            val progress = ((currentPage/totalPages)*100.0)
-            layout.progressIndicator.progress = progress.toInt()
-
-            lifecycleScope.launch(IO){
-              val bookmark = localDb.getBookmark(currentPage.toInt(), isbn)
-              withContext(Main){
-                layout.bookmarkBtn.isLiked = bookmark.isPresent
-              }
-            }
-
-          }
-        })
-        .enableAnnotationRendering(true)
-        .enableSwipe(true).load()
-
+    bookActivityViewModel.getLiveListOfBookVideos().observe(this, Observer { bookVideos ->
+     this.bookVideos = bookVideos
     })
+
+
+    layout.pdfView.fromAsset("welcome.pdf")
+      .nightMode(isDarkMode)
+      //TODO .password(orderedBook.password!!)
+      .fitEachPage(true)
+      .defaultPage(0)
+      .onPageChange(object:OnPageChangeListener{
+        override fun onPageChanged(page: Int, pageCount: Int) {
+          layout.pageNumberText.text = "${page.plus(1)}"
+          layout.pageNumLabel.isVisible = page>0
+          layout.progressIndicator.isVisible = page>0
+          currentPage = page.toDouble()+1
+          totalPages = pageCount.toDouble()
+          val progress = ((currentPage/totalPages)*100.0)
+          layout.progressIndicator.progress = progress.toInt()
+
+          checkIfPageIsBookmarked()
+          getPageVideoLink(page)
+
+        }
+      })
+      .enableAnnotationRendering(true)
+      .enableSwipe(true).load()
 
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -193,15 +211,31 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     layout.pdfView.setOnClickListener { toggle() }
 
     bottomNavigationLayout = layout.fullscreenContentControls
-
-    // Upon interacting with UI controls, delay any scheduled hide()
-    // operations to prevent the jarring behavior of controls going away
-    // while interacting with the UI.
-   /* layout.menuBtn.setOnTouchListener(delayHideTouchListener)
-    layout.videoListBtn.setOnTouchListener(delayHideTouchListener)
-    layout.audioBtn.setOnTouchListener(delayHideTouchListener)*/
+   /* layout.menuBtn.setOnTouchListener(delayHideTouchListener)*/
   }
 
+  private fun getPageVideoLink(pageNumber:Int){
+    if(bookVideos.isNotEmpty()){
+      val bookVideo = bookVideos.filter{
+        it.pageNumber == pageNumber
+      }
+      if(bookVideo.isNotEmpty()){
+        this.videoLink =  bookVideo[0].link
+        layout.newVideoDot.visibility = VISIBLE
+      }else{
+        layout.newVideoDot.visibility = GONE
+      }
+    }
+  }
+
+  private fun checkIfPageIsBookmarked(){
+    lifecycleScope.launch(IO){
+      val bookmark = localDb.getBookmark(currentPage.toInt(), isbn)
+      withContext(Main){
+        layout.bookmarkBtn.isLiked = bookmark.isPresent
+      }
+    }
+  }
 
   private fun shareBookLink(){
     if (bookShareUrl!=null){
@@ -227,9 +261,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
     super.onPostCreate(savedInstanceState)
-    // Trigger the initial hide() shortly after the activity has been
-    // created, to briefly hint to the user that UI controls
-    // are available.
     delayedHide(100)
   }
 
@@ -251,6 +282,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
               View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
     setTopMargin(0f, layout.pageNumLabel)
   }
+
   private val showPart2Runnable = Runnable {
     // Delayed display of UI elements
     supportActionBar?.show()
@@ -263,11 +295,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     setTopMargin(0f, layout.pageNumLabel)
   }
 
-  /**
-   * Touch listener to use for in-layout UI controls to delay hiding the
-   * system UI. This is to prevent the jarring behavior of controls going away
-   * while interacting with activity UI.
-   */
   private val delayHideTouchListener = View.OnTouchListener { view, motionEvent ->
     when (motionEvent.action) {
       MotionEvent.ACTION_DOWN -> if (AUTO_HIDE) {
@@ -311,10 +338,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     hideHandler.postDelayed(showPart2Runnable, UI_ANIMATION_DELAY.toLong())
   }
 
-  /**
-   * Schedules a call to hide() in [delayMillis], canceling any
-   * previously scheduled calls.
-   */
+
   private fun delayedHide(delayMillis: Int) {
     hideHandler.removeCallbacks(hideRunnable)
     hideHandler.postDelayed(hideRunnable, delayMillis.toLong())

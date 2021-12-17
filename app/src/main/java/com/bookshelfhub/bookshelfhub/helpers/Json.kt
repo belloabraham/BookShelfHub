@@ -24,7 +24,7 @@ class Json(private val jsonSerDes:Gson) {
         return JSONObject(jsonString)
     }
 
-    fun getJsonString(value:Any): String? {
+    fun getJsonString(value:Any): String {
         return jsonSerDes.toJson(value)
     }
 

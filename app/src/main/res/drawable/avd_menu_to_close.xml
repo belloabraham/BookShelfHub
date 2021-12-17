@@ -15,7 +15,7 @@
                 <path
                     android:name="menu"
                     android:pathData="M 3 6 L 21 6 L 21 8 L 3 8 L 3 6 M 3 11 L 21 11 L 21 13 L 3 13 L 3 11 M 3 16 L 21 16 L 21 18 L 3 18 L 3 16 Z"
-                    android:fillColor="#616161"
+                    android:fillColor="@color/icon_color"
                     android:strokeWidth="1"/>
             </group>
         </vector>

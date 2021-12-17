@@ -11,6 +11,16 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
+    override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>> {
+        return  RoomInstance.getDatabase(context).userDao().getLiveListOfBookVideos(isbn)
+    }
+
+    //Todo Book Videos
+    override suspend fun addBookVideos(bookVideos: List<BookVideos>) {
+        RoomInstance.getDatabase(context).userDao().addBookVideos(bookVideos)
+    }
+
+
     //TODO Read History
     override suspend fun addReadHistory(history: History) {
         RoomInstance.getDatabase(context).userDao().addReadHistory(history)
@@ -190,8 +200,11 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().addBookInterest(bookInterest)
     }
 
-
     //Todo Ordered Books
+
+    override suspend fun getAnOrderedBook(isbn: String): OrderedBooks {
+        return  RoomInstance.getDatabase(context).userDao().getAnOrderedBook(isbn)
+    }
 
     override fun getLiveOrderedBook(isbn: String): LiveData<OrderedBooks> {
         return RoomInstance.getDatabase(context).userDao().getLiveOrderedBook(isbn)
@@ -244,11 +257,11 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
     //TODO Published Books
 
-    override fun getLivePublishedBook(isbn: String): LiveData<PublishedBook> {
+    override fun getLivePublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
         return RoomInstance.getDatabase(context).userDao().getLivePublishedBook(isbn)
     }
 
-    override suspend fun getPublishedBook(isbn: String): PublishedBook {
+    override suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {
        return RoomInstance.getDatabase(context).userDao().getPublishedBook(isbn)
     }
 

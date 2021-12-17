@@ -4,20 +4,36 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.rest.MediaType
+import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.models.perspective.response.ResponseBody
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.services.remoteconfig.Keys
+import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 
 @HiltWorker
 class PostUserReview @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth: IUserAuth
+    private val localDb: ILocalDb,
+    private val cloudDb: ICloudDb,
+    private val webApi:WebApi,
+    private val remoteConfig: IRemoteConfig,
+    private val json: Json,
+    private val userAuth: IUserAuth
 ): CoroutineWorker(context,
     workerParams
 ){
@@ -60,21 +76,38 @@ class PostUserReview @AssistedInject constructor(
         }
 
 
-         val task =  cloudDb.updateUserReview(
-                dynamicBookAttr, userReview,
-                DbFields.PUBLISHED_BOOKS.KEY, isbn,
-                DbFields.REVIEWS.KEY, userId)
+        val endPointUrl = context.getString(R.string.perspective_api_endpoint)
+        val key = remoteConfig.getString(Keys.PERSPECTIVE_API)
+        val postBody = Perspective().getPostBody(userReview.review)
+        val reqBody = json.getJsonString(postBody).toRequestBody(MediaType.APPLICATION_JSON)
 
-        if (task.isSuccessful){
-            if (userReview.verified){
-                //Update user review locally
-                userReview.postedBefore = true
-                localDb.addUserReview(userReview)
+       val response = webApi.post(endPointUrl, key, reqBody)
+
+      if (response.body!=null){
+            val responseBody = json.fromJson(response.body.toString(), ResponseBody::class.java)
+            if (responseBody.attributeScores.TOXICITY.summaryScore.value<=0.5){
+                val task =  cloudDb.updateUserReview(
+                    dynamicBookAttr, userReview,
+                    DbFields.PUBLISHED_BOOKS.KEY, isbn,
+                    DbFields.REVIEWS.KEY, userId)
+
+                if (task.isSuccessful){
+                    if (userReview.verified){
+                        //Update user review locally
+                        userReview.postedBefore = true
+                        localDb.addUserReview(userReview)
+                    }
+                    Result.success()
+                }else{
+                    return Result.retry()
+                }
             }
-        }else{
-            return Result.retry()
-        }
+      }else{
+          return Result.retry()
+      }
 
         return Result.success()
     }
+
+
 }

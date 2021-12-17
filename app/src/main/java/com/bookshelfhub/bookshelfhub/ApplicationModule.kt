@@ -15,6 +15,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,12 @@ object ApplicationModule {
     @Provides
     fun getRemoteConfig(): IRemoteConfig {
         return Firebase()
+    }
+
+    @Singleton
+    @Provides
+    fun getWebAPI(): WebApi {
+        return WebApi()
     }
 
     @Singleton

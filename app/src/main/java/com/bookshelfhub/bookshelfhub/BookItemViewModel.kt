@@ -28,7 +28,7 @@ class BookItemViewModel @Inject constructor(
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
-  private var localLivePublishedBook: LiveData<PublishedBook> = MutableLiveData()
+  private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<PubReferrers>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
 
@@ -80,7 +80,7 @@ class BookItemViewModel @Inject constructor(
     }
   }
 
-  fun getLiveLocalBook(): LiveData<PublishedBook> {
+  fun getLiveLocalBook(): LiveData<Optional<PublishedBook>> {
     return localLivePublishedBook
   }
 

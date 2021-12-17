@@ -118,9 +118,8 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         userId = userAuth.getUserId()
+        //UserPhoto Uri if user signed in with Gmail, to be display bu user review
         val userPhotoUri = userAuth.getUserPhotoUrl()
-
-
 
         //Check referrer database to see if referrer refer this user to the current book and get their ID
         bookItemViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
@@ -225,8 +224,8 @@ class BookItemActivity : AppCompatActivity() {
             }
         })
 
-        bookItemViewModel.getLiveLocalBook().observe(this, Observer { book->
-
+        bookItemViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
+            val book = pubBook.get()
             dynamicLink.generateShortLinkAsync(
                 book.name,
                 book.description,
