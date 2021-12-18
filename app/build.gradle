@@ -104,12 +104,14 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
     def hilt_work_version = "1.0.0"
     implementation("androidx.hilt:hilt-work:$hilt_work_version")
-    // When using Kotlin.
+    //When using Kotlin.
     kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
 
     //PDF Viewer
     implementation project(path: ':pdfviewer')
 
+    //Download Manager
+    implementation project(path: ':downloadmanager')
 
     //Image Loading
     implementation 'com.squareup.picasso:picasso:2.71828'

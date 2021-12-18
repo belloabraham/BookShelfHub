@@ -83,7 +83,7 @@ class PostUserReview @AssistedInject constructor(
 
        val response = webApi.post(endPointUrl, key, reqBody)
 
-      if (response.body!=null){
+     return if (response.body!=null){
             val responseBody = json.fromJson(response.body.toString(), ResponseBody::class.java)
             if (responseBody.attributeScores.TOXICITY.summaryScore.value<=0.5){
                 val task =  cloudDb.updateUserReview(
@@ -99,15 +99,15 @@ class PostUserReview @AssistedInject constructor(
                     }
                     Result.success()
                 }else{
-                    return Result.retry()
+                     Result.retry()
                 }
+            }else{
+                 Result.success()
             }
       }else{
-          return Result.retry()
+           Result.retry()
       }
 
-        return Result.success()
     }
-
 
 }

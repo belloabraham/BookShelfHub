@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName= "BookInterest")
 data class BookInterest(
-    @PrimaryKey
+     @PrimaryKey
      var userId: String,
      var uploaded: Boolean = false,
      var historyChecked:Boolean = false,
