@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -18,14 +19,14 @@ class MoreActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMoreBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private val moreActivityViewModel: MoreActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = ActivityMoreBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-
-        val fragmentId = intent.getIntExtra(Fragment.ID.KEY,0)
+        val fragmentId = moreActivityViewModel.getFragmentId()!!
 
         setSupportActionBar(layout.toolbar)
 

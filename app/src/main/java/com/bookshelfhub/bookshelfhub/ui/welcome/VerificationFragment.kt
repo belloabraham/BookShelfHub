@@ -47,7 +47,7 @@ class VerificationFragment:Fragment(){
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
     private var inProgress:Boolean=true
-    private val timerDurationinMilliSec = 180000L
+    private val timerDurationInMilliSec = 180000L
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
@@ -77,7 +77,7 @@ class VerificationFragment:Fragment(){
 
                 }
 
-        layout.phoneNumberTxt.setText(args.phoneNumber)
+                layout.phoneNumberTxt.text = args.phoneNumber
 
                layout.otpView.otpListener = object : OTPListener {
                     override fun onInteractionListener() {
@@ -107,7 +107,7 @@ class VerificationFragment:Fragment(){
 
 
                 if (inProgress){
-                     phoneAuthViewModel.startTimer(timerDurationinMilliSec)
+                     phoneAuthViewModel.startTimer(timerDurationInMilliSec)
                      inProgress=false
                  }
 
@@ -115,7 +115,8 @@ class VerificationFragment:Fragment(){
                     if (timeRemainingInSec!=0L){
                         val min = timeRemainingInSec/60L
                         val sec = timeRemainingInSec%60L
-                        layout.timerTxtView.setText(String.format(getString(R.string.time_remaining), min, sec))
+                        layout.timerTxtView.text =
+                            String.format(getString(R.string.time_remaining), min, sec)
                     }else{
                         layout.timerTxtView.visibility=View.GONE
                         layout.resendCodeTxtView.visibility=View.VISIBLE
@@ -145,7 +146,7 @@ class VerificationFragment:Fragment(){
                             findNavController().navigate(actionUserInfo)
                         }else{
 
-                            cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+                            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                                 if(docSnapShot!=null && docSnapShot.exists()){
                                     try {

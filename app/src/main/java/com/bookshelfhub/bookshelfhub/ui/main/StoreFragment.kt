@@ -28,7 +28,6 @@ import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
@@ -50,10 +49,7 @@ class StoreFragment : Fragment() {
     private val storeViewModel: StoreViewModel by viewModels()
     private var allBooksLive = emptyList<PublishedBook>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
-    @Inject
-    lateinit var cloudDb: ICloudDb
-    @Inject
-    lateinit var localDb: ILocalDb
+
     @Inject
     lateinit var connectionUtil: ConnectionUtil
 
@@ -200,8 +196,8 @@ class StoreFragment : Fragment() {
             storeViewModel.loadPublishedBooks()
         }
 
-        viewLifecycleOwner.lifecycleScope.launch(IO){
-            val publishedBooks = localDb.getPublishedBooks()
+
+            val publishedBooks = storeViewModel.getPublishedBooks()
             if (publishedBooks.isEmpty()){
                 cloudDb.getListOfDataAsync(
                     DbFields.PUBLISHED_BOOKS.KEY,
@@ -212,7 +208,6 @@ class StoreFragment : Fragment() {
                     storeViewModel.addAllBooks(it)
                 }
             }else{
-
                 publishedBooks[0].publishedDate?.let { timestamp->
                     cloudDb.getLiveListOfDataAsyncFrom(
                         DbFields.PUBLISHED_BOOKS.KEY,
@@ -223,7 +218,6 @@ class StoreFragment : Fragment() {
                     }
                 }
             }
-        }
 
 
         storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { books ->
@@ -2235,6 +2229,5 @@ class StoreFragment : Fragment() {
         layout.errorMsgText.text = getString(errorMsg)
         layout.errorLayout.visibility=View.VISIBLE
     }
-
 
 }

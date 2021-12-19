@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
+import android.app.Activity
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -118,12 +119,12 @@ import javax.inject.Inject
 
 
    // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
-   override fun getLiveDataAsync(collection:String, document: String, retry:Boolean, onComplete:
+   override fun getLiveDataAsync(activity: Activity, collection:String, document: String, retry:Boolean, onComplete:
      (data:DocumentSnapshot?, e:Exception?)->Unit){
        
         db.collection(collection)
             .document(document)
-            .addSnapshotListener { documentSnapShot, error ->
+            .addSnapshotListener(activity) { documentSnapShot, error ->
                 if (retry && error!=null){
                     return@addSnapshotListener
                 }
@@ -132,11 +133,11 @@ import javax.inject.Inject
     }
 
 
-     override fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String,  shouldRetry:Boolean, onComplete:
+     override fun getLiveDataAsync(activity: Activity, collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean, onComplete:
          (data:DocumentSnapshot?, error:FirebaseFirestoreException?)->Unit){
          
          db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .addSnapshotListener { documentSnapShot, error ->
+             .addSnapshotListener(activity){ documentSnapShot, error ->
                  if (shouldRetry && error!=null){
                      return@addSnapshotListener
                  }
@@ -226,14 +227,14 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String,direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String,direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          
          db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
              .orderBy(orderBy, direction)
              .startAfter(startAfter)
-             .addSnapshotListener { querySnapShot, e ->
+             .addSnapshotListener(activity) { querySnapShot, e ->
 
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
@@ -256,11 +257,11 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
-             .addSnapshotListener { querySnapShot, e ->
+             .addSnapshotListener(activity) { querySnapShot, e ->
 
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
@@ -314,10 +315,10 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit) {
+     override fun <T: Any> getLiveListOfDataAsync(activity:Activity, collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit) {
         
      db.collection(collection).document(document).collection(subCollection)
-            .addSnapshotListener { querySnapShot, error ->
+            .addSnapshotListener(activity) { querySnapShot, error ->
                 if (error!=null && shouldRetry){
                     return@addSnapshotListener
                 }

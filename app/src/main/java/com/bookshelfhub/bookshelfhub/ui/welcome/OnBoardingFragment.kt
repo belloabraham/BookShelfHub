@@ -39,7 +39,7 @@ class OnBoardingFragment:Fragment() {
 
         layout = FragmentOnboardingBinding.inflate(inflater, container, false)
 
-        layout.terms.setMovementMethod(LinkMovementMethod.getInstance())
+        layout.terms.movementMethod = LinkMovementMethod.getInstance()
 
         sliderAdapter = SliderAdapter()
 
@@ -51,9 +51,7 @@ class OnBoardingFragment:Fragment() {
         layout.sliderView.setAutoCycle(true)
         layout.sliderView.startAutoCycle()
         layout.sliderView.setOnIndicatorClickListener(ClickListener { position ->
-            layout.sliderView.setCurrentPagePosition(
-                position
-            )
+            layout.sliderView.currentPagePosition = position
         })
         addSliderItems(sliderAdapter)
 

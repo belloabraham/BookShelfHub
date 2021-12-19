@@ -62,8 +62,6 @@ class LoginFragment:Fragment() {
     lateinit var database: Database
     @Inject
     lateinit var json: Json
-    @Inject
-    lateinit var appUtil: AppUtil
 
 
     override fun onCreateView(
@@ -74,15 +72,14 @@ class LoginFragment:Fragment() {
         layout= FragmentLoginBinding.inflate(inflater, container, false)
 
         //Populate UI controls with data based on User login or Sign up
-        layout.title.setText(args.loginSignup)
+        layout.title.text = args.loginSignup
         val description= String.format(getString(R.string.login_signup_desicription), args.loginSignup)
         val loginSignupText= String.format(getString(R.string.with_phone), args.loginSignup)
         val googleBtnText= String.format(getString(R.string.google_btn_text), args.loginSignup)
-        layout.description.setText(description)
-        layout.btnPhoneLogin.setText(loginSignupText)
-        layout.btnGoogleLogin.setText(googleBtnText)
+        layout.description.text = description
+        layout.btnPhoneLogin.text = loginSignupText
+        layout.btnGoogleLogin.text = googleBtnText
         layout.ccp.registerCarrierNumberEditText(layout.phoneNumEditText)
-
 
 
         viewLifecycleOwner.lifecycleScope.launch(IO) {
@@ -149,7 +146,8 @@ class LoginFragment:Fragment() {
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }else{
-                    cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+
+                    cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                         if(docSnapShot!=null && docSnapShot.exists()){
                             try {
@@ -160,6 +158,7 @@ class LoginFragment:Fragment() {
                                     database.addBookInterest(bookInterest)
                                 }
                             }catch (e:Exception){
+
                             }
 
                             try {
@@ -174,7 +173,6 @@ class LoginFragment:Fragment() {
                                 }
                                 userAuthViewModel.setIsAddingUser(false, user)
                             }catch (ex:Exception){
-                                //Toast(requireActivity()).showToast(ex.message.toString())
                                 userAuthViewModel.setIsExistingUser(false)
                             }
                         }else{

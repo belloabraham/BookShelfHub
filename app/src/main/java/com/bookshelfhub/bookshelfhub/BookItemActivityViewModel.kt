@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BookItemViewModel @Inject constructor(
+class BookItemActivityViewModel @Inject constructor(
   private val localDb: ILocalDb,
   val cloudDb:ICloudDb,
   val savedState: SavedStateHandle,
@@ -33,8 +34,12 @@ class BookItemViewModel @Inject constructor(
   private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
 
 
-  val userId = userAuth.getUserId()
-  val isbn = savedState.get<String>(Book.ISBN.KEY)!!
+  private val userId = userAuth.getUserId()
+  private val title = savedState.get<String>(Book.TITLE.KEY)!!
+  private val author = savedState.get<String>(Book.AUTHOR.KEY)!!
+  private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
+  private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM.KEY)?:false
+
 
   private val config  = PagingConfig(
     pageSize = 5,
@@ -64,6 +69,16 @@ class BookItemViewModel @Inject constructor(
       userReviews.value = reviews
     }
 
+    //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
+    //for store fragment search result
+    if (isSearchItem){
+      addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
+    }
+
+  }
+
+  fun getIsbn():String{
+    return  isbn
   }
 
   fun getALiveOrderedBook(): LiveData<Optional<OrderedBooks>> {
@@ -90,7 +105,7 @@ class BookItemViewModel @Inject constructor(
     }
   }
 
-  fun addStoreSearchHistory(storeSearchHistory: StoreSearchHistory){
+  private fun addStoreSearchHistory(storeSearchHistory: StoreSearchHistory){
     viewModelScope.launch(IO) {
       localDb.addStoreSearchHistory(storeSearchHistory)
     }

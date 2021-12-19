@@ -20,7 +20,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -37,13 +36,12 @@ class ProfileFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var database: Database
-    @Inject
     lateinit var keyboardUtil: KeyboardUtil
     private var gender:String?=null
     private var dateOfBirth:String?=null
     private val profileViewModel:ProfileViewModel by viewModels()
     private lateinit var layout: FragmentProfileBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -117,9 +115,10 @@ class ProfileFragment : Fragment() {
                         updatedUserRecord.mailOrPhoneVerified = false
                         updatedUserRecord.email = email
                     }
+
                     viewLifecycleOwner.lifecycleScope.launch(IO) {
                         updatedUserRecord.uploaded=false
-                        database.addUser(updatedUserRecord)
+                        profileViewModel.addUser(updatedUserRecord)
                         withContext(Main){
                             showToast(getString(R.string.updated))
                             requireActivity().finish()

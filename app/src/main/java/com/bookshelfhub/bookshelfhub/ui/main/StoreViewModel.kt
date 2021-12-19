@@ -24,6 +24,7 @@ class StoreViewModel @Inject constructor(private val localDb: ILocalDb, val conn
     private var isNetworkError : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
+    private lateinit var publishBooks:List<PublishedBook>
 
 
     private val config  = PagingConfig(
@@ -36,6 +37,14 @@ class StoreViewModel @Inject constructor(private val localDb: ILocalDb, val conn
     init {
         loadPublishedBooks()
         totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
+        viewModelScope.launch(IO){
+           publishBooks = localDb.getPublishedBooks()
+        }
+    }
+
+
+    fun getPublishedBooks(): List<PublishedBook> {
+        return publishBooks
     }
 
     fun addAllBooks(publishedBooks: List<PublishedBook>){

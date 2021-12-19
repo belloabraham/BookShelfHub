@@ -19,18 +19,15 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.bitvale.switcher.common.toPx
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.DisplayUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
@@ -40,8 +37,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_book.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -57,12 +52,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private lateinit var bottomNavigationLayout: LinearLayout
   private var currentPage:Double = 0.0
   private var totalPages:Double = 0.0
-  private lateinit var title:String
-  private lateinit var isbn:String
   @Inject
   lateinit var dynamicLink: IDynamicLink
-  @Inject
-  lateinit var localDb: ILocalDb
   @Inject
   lateinit var connectionUtil: ConnectionUtil
   private var bookShareUrl: Uri? = null
@@ -83,16 +74,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     layout = ActivityBookBinding.inflate(layoutInflater)
     setContentView(layout.root)
 
-    bookActivityViewModel.deleteAllHistory()
-
-     title = intent.getStringExtra(Book.TITLE.KEY)!!
-     isbn = intent.getStringExtra(Book.ISBN.KEY)!!
-    val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
-
-    if (isSearchItem){
-      bookActivityViewModel.addShelfSearchHistory(ShelfSearchHistory(isbn, title, userId, DateTimeUtil.getDateTimeAsString()))
-    }
-
     var isDarkMode = false
 
     when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
@@ -105,15 +86,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
       override fun liked(likeButton: LikeButton?) {
         delayedHide(AUTO_HIDE_DELAY_MILLIS)
-        val bookmark = Bookmark(userId, isbn, currentPage.toInt(), title)
-        bookActivityViewModel.addBookmark(bookmark)
+        bookActivityViewModel.addBookmark(currentPage.toInt())
         showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
 
       }
 
       override fun unLiked(likeButton: LikeButton?) {
         delayedHide(AUTO_HIDE_DELAY_MILLIS)
-        bookActivityViewModel.deleteFromBookmark(currentPage.toInt(), isbn)
+        bookActivityViewModel.deleteFromBookmark(currentPage.toInt())
         showToast(R.string.removed_bookmark_msg, Toast.LENGTH_SHORT)
       }
 
@@ -121,18 +101,13 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     layout.videoListBtn.setOnClickListener {
         if (videoLink!=null){
-          lifecycleScope.launch(IO){
-           val orderedBook = localDb.getAnOrderedBook(isbn)
-            withContext(Main){
-              val intent = Intent(this@BookActivity, WebViewActivity::class.java)
-              with(intent){
-                putExtra(WebView.TITLE.KEY,orderedBook.title)
-                putExtra(WebView.URL.KEY, videoLink)
-              }
-              startActivity(intent)
-            }
+          val orderedBook = bookActivityViewModel.getAnOrderedBook()
+          val intent = Intent(this, WebViewActivity::class.java)
+          with(intent){
+            putExtra(WebView.TITLE.KEY,orderedBook.title)
+            putExtra(WebView.URL.KEY, videoLink)
           }
-
+          startActivity(intent)
         }else{
           showToast(R.string.no_video_msg)
         }
@@ -230,7 +205,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   private fun checkIfPageIsBookmarked(){
     lifecycleScope.launch(IO){
-      val bookmark = localDb.getBookmark(currentPage.toInt(), isbn)
+      val bookmark = bookActivityViewModel.getBookmark(currentPage.toInt())
       withContext(Main){
         layout.bookmarkBtn.isLiked = bookmark.isPresent
       }
@@ -365,12 +340,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   override fun onDestroy() {
-
     val percentage = (currentPage/totalPages)*100
-    val  readHistory = History(isbn, currentPage.toInt(), percentage.toInt(), title)
-
     lifecycleScope.launch(IO){
-      bookActivityViewModel.addReadHistory(readHistory)
+      bookActivityViewModel.addReadHistory(currentPage.toInt(), percentage.toInt())
     }
 
     super.onDestroy()

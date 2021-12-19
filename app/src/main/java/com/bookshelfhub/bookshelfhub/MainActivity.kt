@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
 
 
         //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
-        val referrer = intent.getStringExtra(Referrer.ID.KEY)
+        val referrer = mainActivityViewModel.getReferrer()
 
         //***Open dynamic link that opened this app in Book store if the link is not null and is coming from a publisherReferrer
         referrer?.let {

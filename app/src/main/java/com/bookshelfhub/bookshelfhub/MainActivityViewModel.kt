@@ -1,11 +1,10 @@
 package com.bookshelfhub.bookshelfhub
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -20,7 +19,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemoteConfig, val cloudDb: ICloudDb, private val appUtil: AppUtil, private val settingsUtil: SettingsUtil, val localDb: ILocalDb, val userAuth: IUserAuth):ViewModel() {
+class MainActivityViewModel @Inject constructor(
+    val cloudDb: ICloudDb,
+    val localDb: ILocalDb,
+    val savedState: SavedStateHandle,
+    val userAuth: IUserAuth
+    ):ViewModel() {
+
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
     private var user: LiveData<User> = MutableLiveData()
@@ -34,6 +39,8 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
+    private val referrer = savedState.get<String>(Referrer.ID.KEY)
+
 
     init {
         verifyPhoneOrEmailNotifNo.value=0
@@ -43,6 +50,10 @@ class MainActivityViewModel @Inject constructor(private val remoteConfig:IRemote
         bookInterest = localDb.getLiveBookInterest(userId)
         storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
 
+    }
+
+    fun getReferrer(): String? {
+        return referrer
     }
 
     fun getIsNightMode():LiveData<Boolean>{

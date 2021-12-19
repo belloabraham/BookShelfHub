@@ -18,13 +18,14 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
-class BookCategoryViewModel @Inject constructor(
+class BookCategoryActivityViewModel @Inject constructor(
   @ApplicationContext context: Context,
   private val localDb: ILocalDb,
   val savedState: SavedStateHandle,
   val userAuth: IUserAuth) : ViewModel(){
 
   private var liveBookByCategory: LiveData<List<PublishedBook>> = MutableLiveData()
+  private var flowOfCategory:Flow<PagingData<PublishedBook>>
 
   private val userId = userAuth.getUserId()
 
@@ -39,33 +40,48 @@ class BookCategoryViewModel @Inject constructor(
 
   init {
 
-    liveBookByCategory = if (category==context.getString(R.string.trending)){
-      localDb.getLiveTrendingBooks()
-    }else if (category == context.getString(R.string.recommended_for)){
-      localDb.getLiveRecommendedBooks()
-    }else{
-      localDb.getLiveBooksByCategory(category)
+     when (category) {
+        context.getString(R.string.trending) -> {
+          liveBookByCategory = localDb.getLiveTrendingBooks()
+          flowOfCategory = getTrendingBooks()
+        }
+        context.getString(R.string.recommended_for) -> {
+          liveBookByCategory =localDb.getLiveRecommendedBooks()
+          flowOfCategory = getRecommendedBooks()
+        }
+        else -> {
+          liveBookByCategory = localDb.getLiveBooksByCategory(category)
+          flowOfCategory = getBooksByCategory()
+        }
     }
 
+  }
+
+  fun getCategory(): String {
+    return category
+  }
+
+  fun getFlowOfBookCategory(): Flow<PagingData<PublishedBook>> {
+    return flowOfCategory
   }
 
   fun getLiveTotalCartItemsNo(): LiveData<Int> {
     return localDb.getLiveTotalCartItemsNo(userId)
   }
 
-  fun getTrendingBooks(): Flow<PagingData<PublishedBook>> {
+  private fun getTrendingBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getTrendingBooksPageSource()
     }.flow
   }
 
-  fun getRecommendedBooks(): Flow<PagingData<PublishedBook>> {
+  private fun getRecommendedBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getRecommendedBooksPageSource()
     }.flow
   }
 
-  fun getBooksByCategory(): Flow<PagingData<PublishedBook>> {
+  private fun getBooksByCategory(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
       localDb.getBooksByCategoryPageSource(category)
     }.flow

@@ -15,7 +15,6 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.CategoryListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
-import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.models.BookRequest
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
@@ -30,7 +29,7 @@ class BookCategoryActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookCategoryBinding
     private var listOfBooks = emptyList<PublishedBook>()
-    private val bookCategoryViewModel:BookCategoryViewModel by viewModels()
+    private val bookCategoryActivityViewModel:BookCategoryActivityViewModel by viewModels()
     //Message shown when user cant find a book they are searching for
     private lateinit var bookRequestMsg:String
 
@@ -42,10 +41,8 @@ class BookCategoryActivity : AppCompatActivity() {
 
         bookRequestMsg = getString(R.string.cant_find_book)
 
-        val category = intent.getStringExtra(Category.TITLE.KEY)!!
-
         setSupportActionBar(layout.toolbar)
-        supportActionBar?.title = category
+        supportActionBar?.title = bookCategoryActivityViewModel.getCategory()
 
         val searchListAdapter = StoreSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
@@ -57,21 +54,8 @@ class BookCategoryActivity : AppCompatActivity() {
         lifecycleScope.launch {
             //If the category that trigger this book is recommended books, load recommended books as there is no book
             //with a category of "Recommended for you"
-            if (category==getString(R.string.recommended_for)){
-                bookCategoryViewModel.getRecommendedBooks().collectLatest { books->
-                    bookListAdapter.submitData(books)
-                }
-                //If the category that trigger this book is Trending, load recommended books as there is no book
-                //with a category of "Trending"
-            }else if(category==getString(R.string.trending)){
-                bookCategoryViewModel.getTrendingBooks().collectLatest { books->
-                    bookListAdapter.submitData(books)
-                }
-            }else{
-                //Loads books by the category that was passed
-                bookCategoryViewModel.getBooksByCategory().collectLatest { books->
-                    bookListAdapter.submitData(books)
-                }
+            bookCategoryActivityViewModel.getFlowOfBookCategory().collectLatest { books->
+                bookListAdapter.submitData(books)
             }
         }
 
@@ -120,7 +104,7 @@ class BookCategoryActivity : AppCompatActivity() {
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        bookCategoryViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
+        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
             if(cartItemsCount>0){
                 layout.cartNotifText.text = "$cartItemsCount"
                 layout.cartBtnContainer.visibility = View.VISIBLE
@@ -130,7 +114,7 @@ class BookCategoryActivity : AppCompatActivity() {
 
         })
 
-        bookCategoryViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
+        bookCategoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
             listOfBooks = books
         })
 

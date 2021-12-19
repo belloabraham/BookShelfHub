@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebViewClient
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
@@ -23,6 +24,7 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var layout: ActivityWebViewBinding
     @Inject
     lateinit var connectionUtil: ConnectionUtil
+    private val webViewActivityViewModel: WebViewActivityViewModel by viewModels()
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +32,8 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
         layout = ActivityWebViewBinding.inflate(layoutInflater)
         Display(this, lifecycle)
 
-         val title =   intent.getStringExtra(WebView.TITLE.KEY)!!.capitalize()
-         val url = intent.getStringExtra(WebView.URL.KEY)
+         val title =   webViewActivityViewModel.getTitle()!!.capitalize()
+         val url = webViewActivityViewModel.getUrl()!!
         setContentView(layout.root)
 
         setSupportActionBar(layout.toolbar)
@@ -41,7 +43,7 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
 
         layout.webView.settings.javaScriptEnabled = true
         layout.webView.settings.loadWithOverviewMode = true
-        layout.webView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY)
+        layout.webView.scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
 
         layout.webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: android.webkit.WebView, url: String?): Boolean {
@@ -63,7 +65,7 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
 
-        layout.webView.loadUrl(url!!)
+        layout.webView.loadUrl(url)
     }
 
 

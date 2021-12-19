@@ -23,7 +23,6 @@ class ReviewsViewModel @Inject constructor(
     val isbn = savedState.get<String>(Book.ISBN.KEY)!!
 
     init {
-
         cloudDb.getListOfDataAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, limit = 300){ reviews, _->
             userReviews.value = reviews
         }

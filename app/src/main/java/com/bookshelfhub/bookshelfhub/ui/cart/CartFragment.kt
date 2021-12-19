@@ -57,13 +57,9 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
     lateinit var json: Json
-    @Inject
-    lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var userAuth: IUserAuth
     private var savedPaymentCards = emptyList<PaymentCard>()
@@ -73,6 +69,7 @@ class CartFragment : Fragment() {
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
     private var userEarnings =0.0
+    private var localCurrency=""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,7 +117,6 @@ class CartFragment : Fragment() {
             totalAmountInLocalCurrency = 0.0
             totalAmountInUSD = 0.0
             bookIsbnsAndReferrerIds = ""
-            var localCurrency=""
 
             val countryCode = Location.getCountryCode(requireContext())
 
@@ -139,22 +135,7 @@ class CartFragment : Fragment() {
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
-
-                    userEarnings = 0.0
-
-                    for(earning in it){
-                        userEarnings.plus(earning.earn)
-                    }
-
-                    if (totalAmountInUSD == totalAmountInLocalCurrency){
-                        //Then local currency must be in USD
-                        layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
-                    }else{
-                        layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
-                    }
-
-                }
+                cartViewModel.fetchEarnings()
 
                 layout.checkoutFab.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE
@@ -168,6 +149,37 @@ class CartFragment : Fragment() {
             }
         })
 
+
+        cartViewModel.getEarnings().observe(viewLifecycleOwner, Observer {
+
+            if(it.isNotEmpty()){
+                 userEarnings = 0.0
+
+            for(earning in it){
+                userEarnings.plus(earning.earn)
+            }
+
+            if (totalAmountInUSD == totalAmountInLocalCurrency){
+                //Then local currency must be in USD
+                layout.totalCostTxt.text = String
+                    .format(
+                        getString(R.string.total_usd),
+                        totalAmountInLocalCurrency,
+                        userEarnings
+                    )
+            }else{
+                layout.totalCostTxt.text = String
+                    .format(
+                        getString(R.string.total_local_and_usd),
+                            localCurrency,
+                            totalAmountInLocalCurrency,
+                            totalAmountInUSD,
+                            userEarnings
+                    )
+            }
+            }
+
+        })
 
         //Expand or Shrink FAB based on recyclerview scroll position
         layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){

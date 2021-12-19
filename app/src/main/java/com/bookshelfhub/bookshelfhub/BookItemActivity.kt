@@ -23,9 +23,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
@@ -39,10 +37,8 @@ import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -70,10 +66,6 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var layout:ActivityBookItemBinding
     private val BOOK_REPORT_URL = "book_report_url"
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
-    lateinit var settingsUtil: SettingsUtil
-    @Inject
     lateinit var dynamicLink: IDynamicLink
     @Inject
     lateinit var remoteConfig: IRemoteConfig
@@ -83,7 +75,7 @@ class BookItemActivity : AppCompatActivity() {
     lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var userAuth: IUserAuth
-    private val bookItemViewModel:BookItemViewModel by viewModels()
+    private val bookItemActivityViewModel:BookItemActivityViewModel by viewModels()
     private var userReview:UserReview?=null
     private var isVerifiedReview:Boolean = false
     private var pubReferrerId:String?=null
@@ -94,7 +86,7 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var buyerVisibleCurrency:String
     private lateinit var userId: String
     private var bookShareUrl: Uri? = null
-
+    private val isbn = bookItemActivityViewModel.getIsbn()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,23 +98,12 @@ class BookItemActivity : AppCompatActivity() {
 
         visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
-        val title = intent.getStringExtra(Book.TITLE.KEY)!!
-        val isbn = intent.getStringExtra(Book.ISBN.KEY)!!
-        val author = intent.getStringExtra(Book.AUTHOR.KEY)!!
-        val isSearchItem = intent.getBooleanExtra(Book.IS_SEARCH_ITEM.KEY, false)
-
-        //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
-        //for store fragment search result
-        if (isSearchItem){
-            bookItemViewModel.addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
-        }
-
         userId = userAuth.getUserId()
         //UserPhoto Uri if user signed in with Gmail, to be display bu user review
         val userPhotoUri = userAuth.getUserPhotoUrl()
 
         //Check referrer database to see if referrer refer this user to the current book and get their ID
-        bookItemViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
+        bookItemActivityViewModel.getLivePubReferrer().observe(this, Observer { pubReferrer ->
             if (pubReferrer.isPresent){
                 pubReferrerId = pubReferrer.get().pubId
             }
@@ -132,7 +113,7 @@ class BookItemActivity : AppCompatActivity() {
         //While Progress bar is loading
         //Get this particular book from the cloud as things like price, no of downloads and ratings may have changed
         //which have been queried by the by bookItemViewModel in init as snapshot listener
-        bookItemViewModel.getPublishedBookOnline().observe(this, Observer { book ->
+        bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
 
             bookOnlineVersion =  book
 
@@ -186,7 +167,7 @@ class BookItemActivity : AppCompatActivity() {
         })
 
 
-        bookItemViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
+        bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
 
             if (orderedBook.isPresent){
                 //If the user have bought this book then hide downloadBtn and addToCartBtn
@@ -202,7 +183,7 @@ class BookItemActivity : AppCompatActivity() {
         })
 
         //Get books in cart to know if books are in cart and if to show Checkout Button or not
-        bookItemViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
+        bookItemActivityViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
 
             if(cartItems.isNotEmpty()){
                 //Show checkout button no of items in cart and checkout button
@@ -224,7 +205,7 @@ class BookItemActivity : AppCompatActivity() {
             }
         })
 
-        bookItemViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
+        bookItemActivityViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
             val book = pubBook.get()
             dynamicLink.generateShortLinkAsync(
                 book.name,
@@ -260,7 +241,7 @@ class BookItemActivity : AppCompatActivity() {
                     book.coverUrl, pubReferrerId, book.price,
                     buyerVisibleCurrency, priceInUSD
                 )
-                bookItemViewModel.addToCart(cart)
+                bookItemActivityViewModel.addToCart(cart)
 
                 //Clear every Items in this cart in the next 15 hours
                 val clearCart =
@@ -327,7 +308,7 @@ class BookItemActivity : AppCompatActivity() {
             val newReview = UserReview(isbn, review, newRating, userName, isVerifiedReview, userPhotoUri, postedBefore)
 
             // Save user review to local database
-               bookItemViewModel.addUserReview(newReview)
+               bookItemActivityViewModel.addUserReview(newReview)
 
             //Post user review to the cloud if user review does not contain any form of url
                 if (!review.containsUrl(Regex.URL_IN_TEXT)){
@@ -370,7 +351,7 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, visibilityAnimDuration)
         }
 
-        bookItemViewModel.getTopThreeOnlineUserReviews().observe(this, Observer { reviews ->
+        bookItemActivityViewModel.getTopThreeOnlineUserReviews().observe(this, Observer { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.ratingsAndReviewLayout.visibility = VISIBLE
@@ -382,7 +363,7 @@ class BookItemActivity : AppCompatActivity() {
         })
 
 
-        bookItemViewModel.getLiveUserReview().observe(this, Observer { review ->
+        bookItemActivityViewModel.getLiveUserReview().observe(this, Observer { review ->
 
             layout.ratingInfoLayout.visibility = GONE
 
@@ -480,18 +461,17 @@ class BookItemActivity : AppCompatActivity() {
         bookShareUrl?.let {
             ShareUtil(activity).shareText(it.toString())
         }
-
     }
 
 
     private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
-        cloudDb.getLiveDataAsync(DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
+        cloudDb.getLiveDataAsync(this, DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
             documentSnapshot?.let {
                 if (it.exists()){
                     val doc = it.data
                     val userReview = json.fromAny(doc!!, UserReview::class.java)
 
-                    bookItemViewModel.addUserReview(userReview)
+                    bookItemActivityViewModel.addUserReview(userReview)
 
                 }else{
                     AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
@@ -559,7 +539,7 @@ class BookItemActivity : AppCompatActivity() {
     private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {
 
-            bookItemViewModel.
+            bookItemActivityViewModel.
             getBooksByCategoryPageSource(category).collectLatest { similarBooks ->
 
                 similarBooksAdapter.addLoadStateListener { loadState ->

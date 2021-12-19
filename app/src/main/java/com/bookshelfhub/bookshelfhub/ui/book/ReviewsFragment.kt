@@ -24,9 +24,6 @@ class ReviewsFragment : Fragment() {
 
     private val reviewsViewModel: ReviewsViewModel by viewModels()
     private lateinit var layout: ReviewsFragmentBinding
-    @Inject
-    lateinit var cloudDb: ICloudDb
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,31 +31,25 @@ class ReviewsFragment : Fragment() {
     ): View {
         layout = ReviewsFragmentBinding.inflate(inflater, container, false)
 
-        arguments?.let { it ->
+        reviewsViewModel.getUserReviews().observe(viewLifecycleOwner, Observer { reviews ->
 
-            reviewsViewModel.getUserReviews().observe(viewLifecycleOwner, Observer { reviews ->
+            if (reviews.isNotEmpty()){
+                layout.progressBar.visibility = GONE
 
-                if (reviews.isNotEmpty()){
-                    layout.progressBar.visibility = GONE
-
-                    layout.reviewRecView.addItemDecoration(
-                        DividerItemDecoration(
-                            requireContext(),
-                            DividerItemDecoration.VERTICAL
-                        )
+                layout.reviewRecView.addItemDecoration(
+                    DividerItemDecoration(
+                        requireContext(),
+                        DividerItemDecoration.VERTICAL
                     )
-                    layout.reviewRecView.visibility = VISIBLE
-                    val reviewsAdapter = ReviewListAdapter().getAdapter()
-                    layout.reviewRecView.adapter = reviewsAdapter
-                    reviewsAdapter.submitList(reviews)
+                )
+                layout.reviewRecView.visibility = VISIBLE
+                val reviewsAdapter = ReviewListAdapter().getAdapter()
+                layout.reviewRecView.adapter = reviewsAdapter
+                reviewsAdapter.submitList(reviews)
 
-                }
+            }
 
-            })
-
-
-        }
-
+        })
 
         return layout.root
     }

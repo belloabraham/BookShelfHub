@@ -47,8 +47,11 @@ class WelcomeActivity : AppCompatActivity() {
     private val phoneAuthViewModel: PhoneAuthViewModel by viewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by viewModels()
     private val userAuthViewModel: UserAuthViewModel by viewModels()
+    private val welcomeActivityViewModel: WelcomeActivityViewModel by viewModels()
     private lateinit var resultLauncher:ActivityResultLauncher<Intent>
-    private var referrer:String?=null
+
+    //***Get Nullable referral userID or PubIdAndISBN
+    private var referrer:String?=welcomeActivityViewModel.getReferrer()
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
@@ -57,9 +60,6 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //***Get Nullable referral userID or PubIdAndISBN
-        referrer = intent.getStringExtra(Referrer.ID.KEY)
 
         //***Set set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId->

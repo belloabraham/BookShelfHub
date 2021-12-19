@@ -68,7 +68,7 @@ class UserInfoFragment : Fragment() {
         }
 
         if (!isNewUser) {
-            cloudDb.getLiveDataAsync(DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot, _ ->
+            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot, _ ->
 
                 docSnapShot?.let {
                     try {

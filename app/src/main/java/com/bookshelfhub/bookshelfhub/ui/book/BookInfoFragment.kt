@@ -30,8 +30,6 @@ class BookInfoFragment : Fragment() {
     private val bookInfoViewModel: BookInfoViewModel by viewModels()
     private lateinit var layout: BookInfoFragmentBinding
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
     lateinit var textLinkBuilder: TextLinkBuilder
@@ -43,8 +41,6 @@ class BookInfoFragment : Fragment() {
     ): View {
 
         layout = BookInfoFragmentBinding.inflate(inflater, container, false)
-
-        arguments?.let {
 
             bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { pubBook->
                 val book = pubBook.get()
@@ -65,7 +61,6 @@ class BookInfoFragment : Fragment() {
                 layout.descriptionTxt.applyLinks(links)
 
             })
-        }
 
         return layout.root
     }
