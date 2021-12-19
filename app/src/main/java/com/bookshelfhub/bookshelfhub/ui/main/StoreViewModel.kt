@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,14 +19,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreViewModel @Inject constructor(private val localDb: ILocalDb, val connectionUtil: ConnectionUtil, val userAuth: IUserAuth): ViewModel() {
+class StoreViewModel @Inject constructor(
+    private val localDb: ILocalDb,
+    val connectionUtil: ConnectionUtil,
+    private val cloudDb:ICloudDb,
+    val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()
     private var isNoConnection : MutableLiveData<Boolean> = MutableLiveData()
     private var isNetworkError : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
-    private lateinit var publishBooks:List<PublishedBook>
+    private lateinit var publishedBooks:List<PublishedBook>
 
 
     private val config  = PagingConfig(
@@ -38,13 +44,36 @@ class StoreViewModel @Inject constructor(private val localDb: ILocalDb, val conn
         loadPublishedBooks()
         totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
         viewModelScope.launch(IO){
-           publishBooks = localDb.getPublishedBooks()
+           publishedBooks = localDb.getPublishedBooks()
+
+            if (publishedBooks.isEmpty()){
+                cloudDb.getListOfDataAsync(
+                    DbFields.PUBLISHED_BOOKS.KEY,
+                    PublishedBook::class.java,
+                    DbFields.DATE_TIME_PUBLISHED.KEY
+                ) {
+                    addAllBooks(it)
+                }
+            }else{
+                publishedBooks[0].publishedDate?.let { timestamp->
+                    cloudDb.getLiveListOfDataAsyncFrom(
+                        DbFields.PUBLISHED_BOOKS.KEY,
+                        PublishedBook::class.java,
+                        timestamp
+                    ){
+                        addAllBooks(it)
+                    }
+                }
+            }
         }
+
+
+
     }
 
 
     fun getPublishedBooks(): List<PublishedBook> {
-        return publishBooks
+        return publishedBooks
     }
 
     fun addAllBooks(publishedBooks: List<PublishedBook>){

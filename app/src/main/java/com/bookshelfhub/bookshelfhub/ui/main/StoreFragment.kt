@@ -197,29 +197,6 @@ class StoreFragment : Fragment() {
         }
 
 
-            val publishedBooks = storeViewModel.getPublishedBooks()
-            if (publishedBooks.isEmpty()){
-                cloudDb.getListOfDataAsync(
-                    DbFields.PUBLISHED_BOOKS.KEY,
-                    PublishedBook::class.java,
-                    DbFields.DATE_TIME_PUBLISHED.KEY
-                ) {
-                    layout.progressBar.visibility = GONE
-                    storeViewModel.addAllBooks(it)
-                }
-            }else{
-                publishedBooks[0].publishedDate?.let { timestamp->
-                    cloudDb.getLiveListOfDataAsyncFrom(
-                        DbFields.PUBLISHED_BOOKS.KEY,
-                        PublishedBook::class.java,
-                        timestamp
-                    ){
-                        storeViewModel.addAllBooks(it)
-                    }
-                }
-            }
-
-
         storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { books ->
 
             allBooksLive = books
@@ -229,6 +206,7 @@ class StoreFragment : Fragment() {
                 layout.appbarLayout.visibility = VISIBLE
                 layout.errorLayout.visibility = GONE
                 layout.booksNestedScroll.visibility = VISIBLE
+                layout.progressBar.visibility = View.GONE
 
             }else{
                 layout.booksNestedScroll.visibility = GONE
