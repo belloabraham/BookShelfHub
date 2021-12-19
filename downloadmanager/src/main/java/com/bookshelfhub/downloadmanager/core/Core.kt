@@ -30,6 +30,4 @@ class Core() {
         return executorSupplier
     }
 
-
-
 }

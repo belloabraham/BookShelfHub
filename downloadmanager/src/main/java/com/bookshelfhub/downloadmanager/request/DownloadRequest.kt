@@ -171,22 +171,22 @@ class DownloadRequest(builder: DownloadRequestBuilder) {
         return onProgressListener
     }
 
-    fun setOnStartOrResumeListener(onStartOrResumeListener: OnStartOrResumeListener?): DownloadRequest? {
+    fun setOnStartOrResumeListener(onStartOrResumeListener: OnStartOrResumeListener?): DownloadRequest {
         this.onStartOrResumeListener = onStartOrResumeListener
         return this
     }
 
-    fun setOnProgressListener(onProgressListener: OnProgressListener?): DownloadRequest? {
+    fun setOnProgressListener(onProgressListener: OnProgressListener?): DownloadRequest{
         this.onProgressListener = onProgressListener
         return this
     }
 
-    fun setOnPauseListener(onPauseListener: OnPauseListener?): DownloadRequest? {
+    fun setOnPauseListener(onPauseListener: OnPauseListener?): DownloadRequest {
         this.onPauseListener = onPauseListener
         return this
     }
 
-    fun setOnCancelListener(onCancelListener: OnCancelListener?): DownloadRequest? {
+    fun setOnCancelListener(onCancelListener: OnCancelListener?): DownloadRequest {
         this.onCancelListener = onCancelListener
         return this
     }

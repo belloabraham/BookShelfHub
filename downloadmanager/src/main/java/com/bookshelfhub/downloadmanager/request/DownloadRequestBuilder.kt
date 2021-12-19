@@ -3,7 +3,6 @@ package com.bookshelfhub.downloadmanager.request
 import com.bookshelfhub.downloadmanager.Priority
 
 
-
 class DownloadRequestBuilder(val url: String, val dirPath: String, val fileName: String):RequestBuilder {
 
     var priority: Priority = Priority.MEDIUM

@@ -64,8 +64,8 @@ object Utils {
                 val models = ComponentHolder.getInstance()
                     .getDbHelper()
                     .getUnwantedModels(days)
-                if (models != null) {
-                    for (model in models) {
+                models?.let {
+                    for (model in it) {
                         val tempPath = getTempPath(model.dirPath, model.fileName)
                         ComponentHolder.getInstance().getDbHelper().remove(model.id)
                         val file = File(tempPath)
@@ -78,9 +78,9 @@ object Utils {
     }
 
     fun getUniqueId(url: String, dirPath: String, fileName: String): Int {
-        val string = url + File.separator + dirPath + File.separator + fileName
+        val filePath = url + File.separator + dirPath + File.separator + fileName
         val hash: ByteArray = try {
-            MessageDigest.getInstance("MD5").digest(string.toByteArray(charset("UTF-8")))
+            MessageDigest.getInstance("MD5").digest(filePath.toByteArray(charset("UTF-8")))
         } catch (e: NoSuchAlgorithmException) {
             throw RuntimeException("NoSuchAlgorithmException", e)
         } catch (e: UnsupportedEncodingException) {

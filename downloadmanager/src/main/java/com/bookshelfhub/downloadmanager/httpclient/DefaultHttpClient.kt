@@ -21,8 +21,8 @@ class DefaultHttpClient:HttpClient {
     @Throws(IOException::class)
     override fun connect(request: DownloadRequest) {
         connection = URL(request.getUrl()).openConnection()
-        connection?.setReadTimeout(request.getReadTimeout())
-        connection?.setConnectTimeout(request.getConnectTimeout())
+        connection?.readTimeout = request.getReadTimeout()
+        connection?.connectTimeout = request.getConnectTimeout()
         val range = java.lang.String.format(
             Locale.ENGLISH,
             "bytes=%d-", request.getDownloadedBytes()

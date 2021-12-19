@@ -65,42 +65,41 @@ class DownloadManagerConfig(builder: Builder) {
         fun newBuilder(): Builder {
             return Builder()
         }
-    }
 
+        class Builder {
+            var readTimeout = Constants.DEFAULT_READ_TIMEOUT_IN_MILLS
+            var connectTimeout = Constants.DEFAULT_CONNECT_TIMEOUT_IN_MILLS
+            var userAgent = Constants.DEFAULT_USER_AGENT
+            var httpClient: HttpClient = DefaultHttpClient()
+            var databaseEnabled = false
+            fun setReadTimeout(readTimeout: Int): Builder {
+                this.readTimeout = readTimeout
+                return this
+            }
 
-    class Builder {
-        var readTimeout = Constants.DEFAULT_READ_TIMEOUT_IN_MILLS
-        var connectTimeout = Constants.DEFAULT_CONNECT_TIMEOUT_IN_MILLS
-        var userAgent = Constants.DEFAULT_USER_AGENT
-        var httpClient: HttpClient = DefaultHttpClient()
-        var databaseEnabled = false
-        fun setReadTimeout(readTimeout: Int): Builder {
-            this.readTimeout = readTimeout
-            return this
-        }
+            fun setConnectTimeout(connectTimeout: Int): Builder {
+                this.connectTimeout = connectTimeout
+                return this
+            }
 
-        fun setConnectTimeout(connectTimeout: Int): Builder {
-            this.connectTimeout = connectTimeout
-            return this
-        }
+            fun setUserAgent(userAgent: String): Builder {
+                this.userAgent = userAgent
+                return this
+            }
 
-        fun setUserAgent(userAgent: String): Builder {
-            this.userAgent = userAgent
-            return this
-        }
+            fun setHttpClient(httpClient: HttpClient): Builder {
+                this.httpClient = httpClient
+                return this
+            }
 
-        fun setHttpClient(httpClient: HttpClient): Builder {
-            this.httpClient = httpClient
-            return this
-        }
+            fun setDatabaseEnabled(databaseEnabled: Boolean): Builder {
+                this.databaseEnabled = databaseEnabled
+                return this
+            }
 
-        fun setDatabaseEnabled(databaseEnabled: Boolean): Builder {
-            this.databaseEnabled = databaseEnabled
-            return this
-        }
-
-        fun build(): DownloadManagerConfig {
-            return DownloadManagerConfig(this)
+            fun build(): DownloadManagerConfig {
+                return DownloadManagerConfig(this)
+            }
         }
     }
 
