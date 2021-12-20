@@ -51,7 +51,7 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var resultLauncher:ActivityResultLauncher<Intent>
 
     //***Get Nullable referral userID or PubIdAndISBN
-    private var referrer:String?=welcomeActivityViewModel.getReferrer()
+    private var referrer:String?=null
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
@@ -61,6 +61,7 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        referrer=welcomeActivityViewModel.getReferrer()
         //***Set set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId->
             if (!referrerId.contains(Referrer.SEPARATOR.KEY)){

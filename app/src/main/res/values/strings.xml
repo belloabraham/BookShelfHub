@@ -149,6 +149,7 @@
     <string name="store">Store</string>
     <string name="profile">Profile</string>
 
+
     <!-- TODO: Search Edit Text -->
     <string name="shelf_search_hint">Type a book name</string>
     <string name="store_search_hint">Type a book name or author</string>
@@ -161,6 +162,9 @@
     <string name="continue_reading">Continue Reading</string>
     <string name="dismiss">Dismiss</string>
     <string name="percent">%d%%</string>
+    <string name="storage_perm_title">Storage permission is required</string>
+    <string name="storage_perm_msg">&appname; requires storage permission to work properly.</string>
+    <string name="storage_perm_disabled_msg">&appname; requires storage permission to work properly. Enabled storage permission in device settings.</string>
     <string name="dismiss_msg">You can disable progress popup under profile > settings</string>
 
 

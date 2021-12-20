@@ -86,7 +86,7 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var buyerVisibleCurrency:String
     private lateinit var userId: String
     private var bookShareUrl: Uri? = null
-    private val isbn = bookItemActivityViewModel.getIsbn()
+    private lateinit var isbn:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,6 +96,7 @@ class BookItemActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = null
 
+        isbn = bookItemActivityViewModel.getIsbn()
         visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         userId = userAuth.getUserId()

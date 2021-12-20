@@ -16,7 +16,6 @@ class ShelfViewModel @Inject constructor(
     val cloudDb: ICloudDb, val userAuth:IUserAuth, val localDb: ILocalDb, ): ViewModel(){
     private var liveOrderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
     private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
-    private lateinit var orderedBooks:List<OrderedBooks>
 
     private val userId:String = userAuth.getUserId()
 
@@ -24,13 +23,10 @@ class ShelfViewModel @Inject constructor(
     init {
         shelfShelfSearchHistory = localDb.getLiveShelfSearchHistory(userId)
         liveOrderedBooks = localDb.getLiveOrderedBooks(userId)
-        viewModelScope.launch(IO){
-            orderedBooks = localDb.getOrderedBooks(userId)
-        }
     }
 
-    fun getOrderedBooks(): List<OrderedBooks> {
-        return orderedBooks
+    suspend fun getOrderedBooks(): List<OrderedBooks> {
+        return localDb.getOrderedBooks(userId)
     }
 
     fun addOrderedBooks(orderedBooks: List<OrderedBooks>){

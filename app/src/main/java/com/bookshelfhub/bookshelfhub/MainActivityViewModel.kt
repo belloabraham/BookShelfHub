@@ -1,11 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
-import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
@@ -13,9 +9,7 @@ import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,7 +34,8 @@ class MainActivityViewModel @Inject constructor(
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
     private val referrer = savedState.get<String>(Referrer.ID.KEY)
-
+    private val ACTIVE_VIEW_PAGER="active_view_pager"
+    private val ACTIVE_PAGE="active_page"
 
     init {
         verifyPhoneOrEmailNotifNo.value=0
@@ -50,6 +45,22 @@ class MainActivityViewModel @Inject constructor(
         bookInterest = localDb.getLiveBookInterest(userId)
         storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
 
+    }
+
+    fun setActivePage(value:Int){
+        savedState.set(ACTIVE_PAGE,value)
+    }
+
+    fun getActivePage(): Int? {
+        return  savedState.get<Int>(ACTIVE_PAGE)
+    }
+
+    fun getActiveViewPager(): Int? {
+      return savedState.get<Int>(ACTIVE_VIEW_PAGER)
+    }
+
+    fun setActiveViewPager(value:Int){
+        savedState.set(ACTIVE_VIEW_PAGER,value)
     }
 
     fun getReferrer(): String? {

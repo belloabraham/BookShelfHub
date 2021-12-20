@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
@@ -25,6 +26,8 @@ import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.android.synthetic.main.search_view.view.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -59,6 +62,7 @@ class ShelfFragment : Fragment() {
             shelfSearchHistoryList=shelfSearchHistory
         })
 
+        viewLifecycleOwner.lifecycleScope.launch(IO){
             val orderedBooks = shelfViewModel.getOrderedBooks()
             if (orderedBooks.isEmpty()){
                 //Get all available ordered books the user have
@@ -91,6 +95,8 @@ class ShelfFragment : Fragment() {
                     }
                 }
             }
+        }
+
 
 
         shelfViewModel.getLiveOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
