@@ -17,16 +17,11 @@ interface ILocalDb {
      suspend fun addReadHistory(history: History)
      suspend fun addUserReviews(userReviews: List<UserReview>)
      suspend fun getUserReviews(isVerified:Boolean): List<UserReview>
-     suspend fun deletePaymentCard(card: PaymentCard)
-     suspend fun getPaymentCards(): List<PaymentCard>
      suspend fun deleteAllCartItems()
      suspend fun deleteFromCart(isbnList: List<String>)
      suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
      suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
      suspend fun deleteAllPaymentTransactions()
-     fun getLivePaymentCards(): LiveData<List<PaymentCard>>
-     suspend fun deleteAllPaymentCards()
-     suspend fun addPaymentCard(paymentCard: PaymentCard)
      fun getLivePublishedBook(isbn: String): LiveData<Optional<PublishedBook>>
      suspend fun getOrderedBooks(userId:String): List<OrderedBooks>
      fun getALiveOrderedBook(isbn:String): LiveData<Optional<OrderedBooks>>

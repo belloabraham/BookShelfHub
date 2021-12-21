@@ -82,33 +82,4 @@
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/ProfileItemCardView"
-        app:cardBackgroundColor="?colorPrimaryVariant"
-        android:id="@+id/deletePaymentCards">
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_marginVertical="@dimen/size_4"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:layout_width="@dimen/image_btn_size"
-                android:layout_height="@dimen/image_btn_size"
-                android:src="@drawable/ic_credit_card_remove_outline"
-                android:layout_gravity="start"
-                android:contentDescription="@null"
-                android:scaleType="centerInside"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="@string/delete_payment_cards"
-                android:textColor="@android:color/white"
-                style="@style/ProfileItemTitle"/>
-
-        </FrameLayout>
-    </com.google.android.material.card.MaterialCardView>
-
 </androidx.appcompat.widget.LinearLayoutCompat>

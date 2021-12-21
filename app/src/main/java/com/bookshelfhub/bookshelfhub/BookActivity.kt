@@ -121,21 +121,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
         val view = View.inflate(this, R.layout.book_menu, null)
         val shareBtn = view.findViewById<MaterialCardView>(R.id.shareBtn)
-        val themeToggleBtn = view.findViewById<SwitcherX>(R.id.darkThemeToggle)
-
-        themeToggleBtn.setChecked(isDarkMode, withAnimation = false)
 
         shareBtn.setOnClickListener {
           shareBookLink()
-        }
-
-        themeToggleBtn.setOnCheckedChangeListener { isChecked->
-          val mode = if (isChecked){
-            AppCompatDelegate.MODE_NIGHT_YES
-          }else{
-            AppCompatDelegate.MODE_NIGHT_NO
-          }
-          AppCompatDelegate.setDefaultNightMode(mode)
         }
 
         MaterialBottomSheetDialogBuilder(this,  this)

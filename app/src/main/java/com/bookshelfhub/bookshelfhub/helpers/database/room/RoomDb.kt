@@ -11,6 +11,7 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
 
 
+    //TODO Book Videos
     override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>> {
         return  RoomInstance.getDatabase(context).userDao().getLiveListOfBookVideos(isbn)
     }
@@ -43,31 +44,10 @@ open class RoomDb @Inject constructor (private val context:Context) : ILocalDb {
         RoomInstance.getDatabase(context).userDao().deleteAllPaymentTransactions()
     }
 
-    //TODO Payment card
-    override suspend fun addPaymentCard(paymentCard: PaymentCard) {
-        RoomInstance.getDatabase(context).userDao().addPaymentCard(paymentCard)
-    }
-
     override suspend fun getUserReviews(isVerified: Boolean): List<UserReview> {
       return  RoomInstance.getDatabase(context).userDao().getUserReviews(isVerified)
     }
 
-    override suspend fun deletePaymentCard(card: PaymentCard) {
-        RoomInstance.getDatabase(context).userDao().deletePaymentCard(card)
-    }
-
-
-    override suspend fun getPaymentCards(): List<PaymentCard> {
-      return  RoomInstance.getDatabase(context).userDao().getPaymentCards()
-    }
-
-    override fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
-       return RoomInstance.getDatabase(context).userDao().getLivePaymentCards()
-    }
-
-    override suspend fun deleteAllPaymentCards() {
-        RoomInstance.getDatabase(context).userDao().deleteAllPaymentCards()
-    }
 
     //TODO User Review
     override fun getLiveUserReview(isbn: String): LiveData<Optional<UserReview>> {

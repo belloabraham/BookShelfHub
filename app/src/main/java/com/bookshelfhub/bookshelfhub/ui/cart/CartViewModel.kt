@@ -7,7 +7,6 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -18,14 +17,12 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()
-  private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
   //private var earnings:List<Earnings> = listOf()
   private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
 
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
-    livePaymentCards = localDb.getLivePaymentCards()
   }
 
 
@@ -45,10 +42,6 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
 
   fun getIsNewCardAdded(): Boolean {
     return isNewCardAdded
-  }
-
-  fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
-    return livePaymentCards
   }
 
   fun deleteFromCart(cart: Cart){

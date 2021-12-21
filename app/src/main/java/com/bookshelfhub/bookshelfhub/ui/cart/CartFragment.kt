@@ -20,7 +20,6 @@ import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.services.payment.*
@@ -42,7 +41,6 @@ class CartFragment : Fragment() {
     lateinit var json: Json
     @Inject
     lateinit var userAuth: IUserAuth
-    private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
@@ -65,11 +63,6 @@ class CartFragment : Fragment() {
 
         layout.cartItemsRecView.adapter = cartListAdapter
 
-
-        //Get all available cards and save them a list of cards
-        cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
-            this.savedPaymentCards = savedPaymentCards
-        })
 
 
         layout.checkoutFab.setOnClickListener {
@@ -263,7 +256,7 @@ class CartFragment : Fragment() {
 
     }
 
-    private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
+    private fun chargeCardWithPayStack(userData:HashMap<String, String>){
 
         val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
 

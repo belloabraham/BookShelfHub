@@ -94,7 +94,6 @@ class MoreFragment : Fragment() {
         val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
         val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
-        val deletePaymentCardsBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.deletePaymentCards)
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
         authType= userAuth.getAuthType()
@@ -114,11 +113,6 @@ class MoreFragment : Fragment() {
         }
 
         darkModeToggle.setChecked(isDarkMode, withAnimation = false)
-
-        deletePaymentCardsBtn.setOnClickListener {
-            moreViewModel.deleteAllPaymentCards()
-            showToast(R.string.all_cards_deleted)
-        }
 
         darkModeToggle.setOnCheckedChangeListener { isChecked->
             mainActivityViewModel.setIsNightMode(isChecked)
