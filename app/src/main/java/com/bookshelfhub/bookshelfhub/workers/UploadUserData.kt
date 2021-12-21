@@ -16,7 +16,9 @@ import kotlinx.coroutines.coroutineScope
 class UploadUserData  @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb, private val userAuth:IUserAuth, private val cloudDb: ICloudDb): CoroutineWorker(context,
+    private val localDb: ILocalDb,
+    private val userAuth:IUserAuth,
+    private val cloudDb: ICloudDb): CoroutineWorker(context,
     workerParams
 ) {
 

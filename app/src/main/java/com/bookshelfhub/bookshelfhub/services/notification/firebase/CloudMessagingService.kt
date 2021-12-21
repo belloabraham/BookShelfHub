@@ -1,15 +1,16 @@
 package com.bookshelfhub.bookshelfhub.services.notification.firebase
 
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
-import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.Tag.NOTIFICATION_TOKEN
+import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.gson.Gson
 import javax.inject.Inject
 
 class CloudMessagingService : FirebaseMessagingService() {
@@ -22,8 +23,6 @@ class CloudMessagingService : FirebaseMessagingService() {
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var userAuth: IUserAuth
-
-    private val  NOTIFICATION_TOKEN="notification_token"
 
 
     override fun onMessageReceived(cloudMesage: RemoteMessage) {
@@ -39,8 +38,16 @@ class CloudMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
 
-        Firestore( Json(Gson())).addDataAsync(token,
-            DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN)
+        val data = Data.Builder()
+        data.putString(NOTIFICATION_TOKEN, token)
+
+        val uploadNotificationToken =
+            OneTimeWorkRequestBuilder<UploadNotificationToken>()
+                .setConstraints(Constraint.getConnected())
+                .setInputData(data.build())
+                .build()
+        WorkManager.getInstance(applicationContext).enqueue(uploadNotificationToken)
+
     }
 
 
