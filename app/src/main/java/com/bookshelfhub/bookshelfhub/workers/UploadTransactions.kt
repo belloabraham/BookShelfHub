@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -15,7 +15,7 @@ import dagger.assisted.AssistedInject
 class UploadTransactions @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userAuth:IUserAuth, private val localDb:ILocalDb,
+    private val userAuth:IUserAuth, private val localDb: ILocalDb,
     private val cloudDb: ICloudDb
 ) : CoroutineWorker(context,
     workerParams
@@ -24,13 +24,15 @@ class UploadTransactions @AssistedInject constructor (
     override suspend fun doWork(): Result {
 
         if (userAuth.getIsUserAuthenticated()){
+            return  Result.success()
+        }
 
             val paymentTrans  = localDb.getAllPaymentTransactions()
             val userId = userAuth.getUserId()
 
-           if (paymentTrans.isNotEmpty()) {
+      return   if (paymentTrans.isNotEmpty()) {
 
-            val task =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
+               val task =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
 
                if (task.isSuccessful){
                        //Get ISBN of all books in transaction
@@ -41,12 +43,16 @@ class UploadTransactions @AssistedInject constructor (
                        //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
                        localDb.deleteFromCart(transactionBooksISBNs)
                        localDb.deleteAllPaymentTransactions()
+
+                   Result.success()
                }else{
                    return Result.retry()
                }
+           }else{
+               Result.success()
            }
-        }
 
-        return Result.success()
+
+
     }
 }

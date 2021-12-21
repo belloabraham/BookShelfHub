@@ -24,8 +24,8 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

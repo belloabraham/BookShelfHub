@@ -10,8 +10,8 @@ import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.models.ISearchResult
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.ShelfSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

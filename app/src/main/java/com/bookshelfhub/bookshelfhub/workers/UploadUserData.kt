@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -26,19 +26,20 @@ class UploadUserData  @AssistedInject constructor (
         val user = localDb.getUser(userId)
 
         val userData = user.get()
-            if (user.isPresent && !userData.uploaded){
-            val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY){
-                   userData.uploaded = true
-                        coroutineScope {
-                            localDb.addUser(userData)
-                        }
-                    }
+         return   if (user.isPresent && !userData.uploaded){
+            val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY)
 
-                if (!task.isSuccessful){
-                    return Result.retry()
+                if (task.isSuccessful){
+                    userData.uploaded = true
+                    localDb.addUser(userData)
+                     Result.success()
+                }else{
+                    Result.retry()
                 }
 
-            }
-        return Result.success()
+            }else{
+             Result.success()
+         }
+
     }
 }

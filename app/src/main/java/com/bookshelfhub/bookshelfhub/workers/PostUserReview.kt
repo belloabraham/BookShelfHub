@@ -13,15 +13,13 @@ import com.bookshelfhub.bookshelfhub.models.perspective.response.ResponseBody
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.Keys
 import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 

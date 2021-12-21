@@ -1,12 +1,10 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.TextView
@@ -30,7 +28,7 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PubReferrers
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
@@ -80,8 +78,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        requestStoragePermission()
-
         //Check if there is an update for this app
         inAppUpdate =  InAppUpdate(this)
         inAppUpdate.checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
@@ -103,7 +99,13 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
          referrer = mainActivityViewModel.getReferrer()
 
-        if(Permission.hasPermission(this, storagePermission)){
+        if(isStoragePermissionRequired()){
+            if(Permission.hasPermission(this, storagePermission)){
+                openPublisherReferrerLink(referrer)
+            }else{
+                requestStoragePermission()
+            }
+        }else{
             openPublisherReferrerLink(referrer)
         }
 
@@ -363,19 +365,19 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun requestStoragePermission(){
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P){
+    private fun isStoragePermissionRequired(): Boolean {
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
+    }
 
-            if(!Permission.hasPermission(this, storagePermission)){
+    private fun requestStoragePermission(){
+
                 if(Permission.isPermissionPermanentlyDenied(this, listOf(storagePermission))){
                     requestNeverAskAgainPermission()
                 }else {
                     val rational = getString(R.string.storage_perm_msg)
                     Permission.requestPermission(this, rational, Permission.WRITE_STORAGE_RC, storagePermission)
                 }
-            }
 
-        }
     }
 
     private fun setUpShelfStoreViewPager(){

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

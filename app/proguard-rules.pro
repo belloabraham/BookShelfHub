@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 #Data Entities
--keep class com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+-keep class com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 -keep class com.bookshelfhub.bookshelfhub.models.*
 
 #Custom Views

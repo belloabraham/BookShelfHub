@@ -12,8 +12,8 @@ import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.WebView
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.StoreSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

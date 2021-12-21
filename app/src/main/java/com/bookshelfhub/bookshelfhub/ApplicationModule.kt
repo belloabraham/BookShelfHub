@@ -10,12 +10,13 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.RoomDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.services.database.Util
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -32,6 +33,12 @@ object ApplicationModule {
     @Provides
     fun getRemoteConfig(): IRemoteConfig {
         return Firebase()
+    }
+
+    @Singleton
+    @Provides
+    fun getDatabaseUtil(json:Json): Util {
+        return Util(json)
     }
 
     @Singleton
@@ -73,7 +80,7 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun getDatabase(@ApplicationContext context: Context, localDb: ILocalDb): Database {
-        return Database(context,localDb )
+        return Database(context, localDb)
     }
 
     @Singleton

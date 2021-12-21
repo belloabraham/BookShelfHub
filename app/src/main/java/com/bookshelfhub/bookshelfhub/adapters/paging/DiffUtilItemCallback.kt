@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.adapters.paging
 
 import androidx.recyclerview.widget.DiffUtil
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 
 /**
  * Used only for Paging adapter of published books

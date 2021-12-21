@@ -40,9 +40,7 @@ class CloudMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
 
         Firestore( Json(Gson())).addDataAsync(token,
-            DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN){
-        }
-
+            DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN)
     }
 
 

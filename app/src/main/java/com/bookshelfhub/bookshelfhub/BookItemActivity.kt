@@ -37,9 +37,9 @@ import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview

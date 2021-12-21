@@ -7,8 +7,9 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.services.database.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +18,9 @@ import kotlinx.coroutines.coroutineScope
 class UnPublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userAuth:IUserAuth, private val localDb:ILocalDb,
+    private val userAuth:IUserAuth,
+    private val util: Util,
+    private val localDb: ILocalDb,
     private val cloudDb:ICloudDb) : CoroutineWorker(context,
     workerParams
 ) {
@@ -30,18 +33,24 @@ class UnPublishedBooks @AssistedInject constructor (
 
 
         //Get all Published books where published == false
-        cloudDb.getListOfDataAsync(
+      val task =  cloudDb.getListOfDataWhereAsync(
             DbFields.PUBLISHED_BOOKS.KEY,
             DbFields.PUBLISHED.KEY,false,
-            PublishedBook::class.java,
-        ) {
-            if(it.isNotEmpty()){
-                coroutineScope {
-                    //Delete all of the from local published books database
-                    localDb.deleteUnPublishedBookRecords(it)
-                }
+        )
+
+        if(task.isSuccessful){
+            val unPublishedBooks =  util.queryToListType(task.result, PublishedBook::class.java)
+
+            if(unPublishedBooks.isEmpty()){
+                localDb.deleteUnPublishedBookRecords(unPublishedBooks)
             }
-         }
+
+            Result.success()
+        }else{
+            Result.retry()
+        }
+
+
         return Result.success()
     }
 }

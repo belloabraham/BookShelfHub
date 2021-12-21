@@ -138,7 +138,7 @@
                         android:layout_marginTop="2dp"
                         android:layout_width="@dimen/book_control_size"
                         android:layout_height="@dimen/book_control_size"
-                        android:src="@drawable/avd_menu_to_close"
+                        android:src="@drawable/ic_menu_24"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="@null"
                         android:scaleType="centerInside" />

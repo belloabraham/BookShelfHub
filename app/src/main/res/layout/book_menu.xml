@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginVertical="@dimen/size_4"
+        android:paddingHorizontal="@dimen/size_16"
+        android:layout_height="52dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/dark_mode"
+            android:gravity="center"
+            android:layout_gravity="start|center_vertical"
+            android:textSize="18sp"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"/>
+
+        <com.bitvale.switcher.SwitcherX
+            android:id="@+id/darkThemeToggle"
+            android:layout_width="wrap_content"
+            android:checked="false"
+            android:layout_marginStart="16dp"
+            app:switcher_off_color="?attr/colorSecondary"
+            app:switcher_on_color="?attr/colorPrimary"
+            app:switcher_icon_color="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"/>
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/ProfileItemCardView"
+        android:id="@+id/shareBtn">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_marginVertical="@dimen/size_4"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:src="@drawable/ic_share_24"
+                android:layout_gravity="start"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/share"
+                style="@style/ProfileItemTitle"/>
+
+            <ImageView
+                android:layout_width="@dimen/image_btn_size"
+                android:layout_height="@dimen/image_btn_size"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_baseline_chevron_right_24"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"/>
+
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

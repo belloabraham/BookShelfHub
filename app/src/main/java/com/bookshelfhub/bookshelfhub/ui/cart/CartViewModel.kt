@@ -1,14 +1,13 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
-import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
 
 
   fun fetchEarnings(){
-    cloudDb.getListOfDataAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
+    cloudDb.getLiveListOfDataWhereAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
       earnings.value = it
     }
   }

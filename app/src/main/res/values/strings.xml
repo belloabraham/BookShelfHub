@@ -7,6 +7,8 @@
     <string name="bookmark_added_msg">Added to bookmark</string>
     <string name="internet_connection_required">Connect to the internet and retry sharing book</string>
     <string name="no_video_msg">There is currently no video for this page, make sure you are connected to the internet to get notified of new videos.</string>
+    <string name="close">Close</string>
+    <string name="unable_to_share_book">You can not share this book at the moment as it has been unpublished from the book store, try later</string>
 
     <!-- TODO: Earnings-->
     <string name="total_earnings">Total Earnings: $%,.2f </string>
@@ -178,7 +180,7 @@
     <string name="privacy">Privacy policy</string>
     <string name="refund_policy">Refund policy</string>
     <string name="about">About</string>
-    <string name="dark_mode">Enable dark mode</string>
+    <string name="dark_mode">Dark mode</string>
     <string name="new_update">Download new update</string>
     <string name="exclamation">1</string>
     <string name="show_progess">Show progress popup</string>

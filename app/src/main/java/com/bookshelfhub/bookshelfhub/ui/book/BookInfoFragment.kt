@@ -13,9 +13,7 @@ import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.BookInfoFragmentBinding
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
-import com.google.firebase.Timestamp
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

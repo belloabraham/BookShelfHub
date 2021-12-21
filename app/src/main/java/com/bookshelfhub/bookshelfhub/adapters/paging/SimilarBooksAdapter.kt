@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 
 class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, SimilarBooksAdapter.ViewHolder>(diffCallBack){

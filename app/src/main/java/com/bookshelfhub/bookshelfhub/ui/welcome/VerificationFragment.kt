@@ -24,8 +24,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.User
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
 import com.bookshelfhub.bookshelfhub.ui.VeriFragSavedState
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder

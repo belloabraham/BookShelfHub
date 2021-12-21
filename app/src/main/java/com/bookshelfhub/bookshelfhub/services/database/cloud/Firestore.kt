@@ -1,8 +1,8 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import android.app.Activity
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.IEntityId
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.IEntityId
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
@@ -10,7 +10,6 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -58,18 +57,18 @@ import javax.inject.Inject
      }
 
 
-    override fun addDataAsync(data: Any, collection:String, document:String, field:String, onSuccess: suspend ()->Unit ): Task<Void> {
+    override fun addDataAsync(data: Any, collection:String, document:String, field:String ): Task<Void> {
         val newData = hashMapOf(
             field to data,
         )
           return  db.collection(collection)
                 .document(document)
                 .set(newData, SetOptions.merge())
-               .addOnSuccessListener{
+               /*.addOnSuccessListener{
                     runBlocking {
                         onSuccess()
                     }
-                }
+                }*/
 
     }
 
@@ -173,7 +172,14 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+     override fun getListOfDataAsync(collection:String, document: String, subCollection: String): Task<QuerySnapshot> {
+        return  db.collection(collection).document(document).collection(subCollection)
+             .get()
+     }
+
+
+
+     override fun <T: Any> getLiveListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit){
 
          db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
@@ -201,28 +207,11 @@ import javax.inject.Inject
              }
      }
 
-     override fun <T: Any> getListOfDataAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>,  onComplete: suspend (dataList:List<T>)->Unit){
+     override fun getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any): Task<QuerySnapshot> {
          
-         db.collection(collection)
+       return  db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
              .get()
-             .addOnSuccessListener { querySnapShot ->
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
-
-                 runBlocking {
-                     onComplete(dataList)
-                 }
-             }
      }
 
 
@@ -284,18 +273,15 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction,  onComplete: (dataList:List<T>, Exception?)->Unit){
+     override fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction,  onComplete: (dataList:List<T>, Exception?)->Unit){
 
-         
          var dataList = emptyList<T>()
          db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
              .limit(limit)
              .get()
-             .addOnSuccessListener { querySnapShot ->
-
-                 querySnapShot?.let {
+             .addOnSuccessListener {
                      if (!it.isEmpty){
                          for (doc in it) {
                              if (doc.exists()){
@@ -306,7 +292,6 @@ import javax.inject.Inject
                              }
                          }
                      }
-                 }
                  onComplete(dataList, null)
              }
              .addOnFailureListener {
@@ -392,31 +377,23 @@ import javax.inject.Inject
      }
 
 
-     override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String,  onSuccess: suspend ()->Unit){
+     override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
 
         val batch = db.batch()
         for (item in list){
             val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
             batch.set(docRef, item)
         }
-        batch.commit().addOnSuccessListener {
-            runBlocking {
-                onSuccess()
-            }
-        }
+      return  batch.commit()
     }
 
-     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String, onSuccess: suspend ()->Unit){
+     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
          val batch = db.batch()
          for (item in list){
              val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
              batch.delete(docRef)
          }
-         batch.commit().addOnSuccessListener {
-             runBlocking {
-                 onSuccess()
-             }
-         }
+        return batch.commit()
      }
 
 }

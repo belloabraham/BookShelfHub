@@ -16,7 +16,7 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.CategoryListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
 import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint

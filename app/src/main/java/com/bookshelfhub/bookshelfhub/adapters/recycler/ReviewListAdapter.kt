@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.views.LetterIcon
 import com.github.ivbaranov.mli.MaterialLetterIcon
 import me.ibrahimyilmaz.kiel.adapterOf

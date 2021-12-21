@@ -4,18 +4,16 @@ import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.BookVideos
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookVideos
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.Job as Job
 
 @HiltViewModel
 class BookActivityViewModel @Inject constructor(
@@ -41,7 +39,7 @@ class BookActivityViewModel @Inject constructor(
         orderedBook = localDb.getAnOrderedBook(isbn)
       }
 
-      cloudDb.getLiveListOfDataAsync(
+      cloudDb.getLiveListOfDataWhereAsync(
         DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.VIDEO_LIST.KEY,BookVideos::class.java, true
       ){
         if (it.isNotEmpty()){

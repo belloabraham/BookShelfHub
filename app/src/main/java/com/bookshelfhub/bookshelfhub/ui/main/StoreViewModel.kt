@@ -1,17 +1,16 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow

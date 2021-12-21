@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -28,22 +28,22 @@ class UploadBookInterest @AssistedInject constructor (
 
          val bookInterest = localDb.getBookInterest(userId)
 
-        if (bookInterest.isPresent && !bookInterest.get().uploaded){
+      return  if (bookInterest.isPresent && !bookInterest.get().uploaded){
 
             val bookInterestData = bookInterest.get()
-            val task =  cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY){
-                   bookInterestData.uploaded=true
-                coroutineScope {
-                    localDb.addBookInterest(bookInterestData)
-                }
+            val task =  cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY)
+
+            if (task.isSuccessful){
+                bookInterestData.uploaded=true
+                localDb.addBookInterest(bookInterestData)
+                 Result.success()
+            }else{
+                Result.retry()
             }
 
-            if (!task.isSuccessful){
-                return Result.retry()
-            }
+        }else{
+          Result.success()
+      }
 
-        }
-
-        return Result.success()
     }
 }

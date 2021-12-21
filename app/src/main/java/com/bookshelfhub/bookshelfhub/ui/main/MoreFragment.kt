@@ -106,15 +106,14 @@ class MoreFragment : Fragment() {
                 progressPopupToggle.setChecked(isChecked, false)
             }
         }
-
-        when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+        val isDarkMode =  when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> {
-                darkModeToggle.setChecked(false, false)
+                false
             }
-            Configuration.UI_MODE_NIGHT_YES -> {
-                darkModeToggle.setChecked(true, false)
-            }
+            else -> true
         }
+
+        darkModeToggle.setChecked(isDarkMode, withAnimation = false)
 
         deletePaymentCardsBtn.setOnClickListener {
             moreViewModel.deleteAllPaymentCards()
@@ -299,14 +298,12 @@ class MoreFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
 
-
         cloudDb.getLiveListOfDataAsync(requireActivity(), DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) { earnings ->
             progressBar.visibility = GONE
             val totalEarnings = 0.0
             for (earning in earnings){
                 totalEarnings.plus(earning.earn)
             }
-
             earningsText.text = String.format(getString(R.string.total_earnings), totalEarnings)
         }
 

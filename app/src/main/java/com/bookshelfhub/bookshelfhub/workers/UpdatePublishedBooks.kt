@@ -7,8 +7,9 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.services.database.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -17,7 +18,11 @@ import kotlinx.coroutines.coroutineScope
 class UpdatePublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userAuth:IUserAuth, private val cloudDb:ICloudDb, private val localDb: ILocalDb) : CoroutineWorker(context,
+    private val userAuth:IUserAuth,
+    private val cloudDb:ICloudDb,
+    private val util: Util,
+    private val localDb: ILocalDb
+) : CoroutineWorker(context,
     workerParams
 ) {
     override suspend fun doWork(): Result {
@@ -26,21 +31,23 @@ class UpdatePublishedBooks @AssistedInject constructor (
             return Result.retry()
         }
 
-        cloudDb.getListOfDataAsync(
+      val task =  cloudDb.getListOfDataWhereAsync(
             DbFields.PUBLISHED_BOOKS.KEY,
             DbFields.PUBLISHED.KEY, true,
-            PublishedBook::class.java,
-        ){
+        )
 
-            if (it.isNotEmpty()){
-                coroutineScope {
-                    //Add all published books to the database replacing existing data
-                    localDb.addAllPubBooks(it)
-                }
+        return if(task.isSuccessful){
+
+            val publishedBooks = util.queryToListType(task.result, PublishedBook::class.java)
+
+            if(publishedBooks.isNotEmpty()){
+                localDb.addAllPubBooks(publishedBooks)
             }
-        }
 
-        return Result.success()
+            Result.success()
+        }else{
+            Result.retry()
+        }
 
     }
 

@@ -1,14 +1,13 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -40,18 +39,21 @@ workerParams
         val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = true)
 
 
-        if (listOfDeletedBookmarks.isNotEmpty()){
+        return if (listOfDeletedBookmarks.isNotEmpty()){
             //Delete them on the cloud using this path user/userId/bookmarks/id
-            cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY){
-                coroutineScope {
-                    //Now remove them locally
-                    localDb.deleteBookmarks(listOfDeletedBookmarks)
-                }
+          val task = cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY)
+
+            if (task.isSuccessful){
+                 localDb.deleteBookmarks(listOfDeletedBookmarks)
+                 Result.success()
+            }else{
+                 Result.retry()
             }
+
+        }else{
+            Result.success()
         }
 
-
-        return Result.success()
     }
 
 }

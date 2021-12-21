@@ -9,7 +9,7 @@ import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.database.local.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -25,7 +25,7 @@ class PostPendingUserReview @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        if (userAuth.getIsUserAuthenticated()){
+       return if (userAuth.getIsUserAuthenticated()){
 
             val userId = userAuth.getUserId()
             val orderedBooks = localDb.getOrderedBooks(userId)
@@ -68,13 +68,20 @@ class PostPendingUserReview @AssistedInject constructor(
 
                    if (task.isSuccessful){
                        localDb.addUserReviews(verifiedReviews)
+                       Result.success()
+                   }else{
+                       Result.retry()
                    }
+               }else{
+                   Result.success()
                }
 
+           }else{
+               Result.success()
            }
+        }else{
+            Result.success()
         }
 
-
-        return Result.success()
     }
 }

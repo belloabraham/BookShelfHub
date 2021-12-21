@@ -13,28 +13,32 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.DisplayUtil
 import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.lifecycle.Display
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.local.room.entities.*
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
+import com.google.android.material.card.MaterialCardView
 import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_book.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -113,18 +117,30 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
     }
 
-    var isMenuOpened = false
     layout.menuBtn.setOnClickListener {
-      isMenuOpened = !isMenuOpened
-      if(isMenuOpened){
-        val avdMenuToClose = getDrawable(R.drawable.avd_menu_to_close) as AnimatedVectorDrawable
-        layout.menuBtn.setImageDrawable(avdMenuToClose)
-        avdMenuToClose.start()
-      }else{
-       val avdCloseToMenu = getDrawable(R.drawable.avd_close_to_menu) as AnimatedVectorDrawable
-        layout.menuBtn.setImageDrawable(avdCloseToMenu)
-        avdCloseToMenu.start()
-      }
+
+        val view = View.inflate(this, R.layout.book_menu, null)
+        val shareBtn = view.findViewById<MaterialCardView>(R.id.shareBtn)
+        val themeToggleBtn = view.findViewById<SwitcherX>(R.id.darkThemeToggle)
+
+        themeToggleBtn.setChecked(isDarkMode, withAnimation = false)
+
+        shareBtn.setOnClickListener {
+          shareBookLink()
+        }
+
+        themeToggleBtn.setOnCheckedChangeListener { isChecked->
+          val mode = if (isChecked){
+            AppCompatDelegate.MODE_NIGHT_YES
+          }else{
+            AppCompatDelegate.MODE_NIGHT_NO
+          }
+          AppCompatDelegate.setDefaultNightMode(mode)
+        }
+
+        MaterialBottomSheetDialogBuilder(this,  this)
+          .setPositiveAction(R.string.close){}
+          .showBottomSheet(view)
 
     }
 
@@ -153,7 +169,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     bookActivityViewModel.getLiveListOfBookVideos().observe(this, Observer { bookVideos ->
      this.bookVideos = bookVideos
     })
-
 
     layout.pdfView.fromAsset("welcome.pdf")
       .nightMode(isDarkMode)
@@ -217,12 +232,11 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
       ShareUtil(this).shareText(bookShareUrl.toString())
     }else if (!connectionUtil.isConnected()){
       showToast(R.string.internet_connection_required)
-    }else{
-      publishedBook?.let {
+    }else if(publishedBook!=null){
         dynamicLink.generateShortLinkAsync(
-          it.name,
-          it.description,
-          it.coverUrl,
+          publishedBook!!.name,
+          publishedBook!!.description,
+          publishedBook!!.coverUrl,
           userId
         ){ uri->
           uri?.let {
@@ -230,8 +244,10 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             ShareUtil(this).shareText(it.toString())
           }
         }
-      }
+    }else{
+      showToast(R.string.unable_to_share_book)
     }
+
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
