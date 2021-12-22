@@ -1,9 +1,11 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.Utils.Logger
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -53,7 +55,8 @@ workerParams
             Result.success()
 
         } catch (e: Exception) {
-            Result.retry()
+         Logger.log("Worker:DownldBookmarks", e)
+         Result.retry()
         }
 
     }

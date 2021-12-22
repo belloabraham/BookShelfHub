@@ -6,6 +6,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.Logger
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.MediaType
@@ -121,6 +122,7 @@ class PostUserReview @AssistedInject constructor(
                     Result.success()
                 }
             }catch (e:Exception){
+                Logger.log("Worker:PostUserReview", e)
                 Result.success()
             }
 

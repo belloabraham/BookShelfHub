@@ -1,9 +1,11 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.Utils.Logger
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
@@ -74,6 +76,7 @@ class PostPendingUserReview @AssistedInject constructor(
                        }
 
                    }catch (e:Exception){
+                       Logger.log("Worker:PostPendReview", e)
                        Result.retry()
                    }
 

@@ -44,9 +44,6 @@ class StoreViewModel @Inject constructor(
         totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
 
         viewModelScope.launch(IO){
-
-            addAllBooks( getDummyBooks() )
-
            publishedBooks = localDb.getPublishedBooks()
 
             if (publishedBooks.isEmpty()){
