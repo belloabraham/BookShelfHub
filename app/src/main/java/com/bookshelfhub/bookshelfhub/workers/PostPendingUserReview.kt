@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.tasks.await
 
 
 @HiltWorker
@@ -63,15 +64,19 @@ class PostPendingUserReview @AssistedInject constructor(
                         listOfBookAttr.plus(dynamicBookAttr)
                    }
 
-                  val task = cloudDb.updateUserReview(
-                      verifiedReviews, DbFields.PUBLISHED_BOOKS.KEY, DbFields.REVIEWS.KEY, userId, listOfBookAttr)
+                   try {
+                       val task = cloudDb.updateUserReview(
+                           verifiedReviews, DbFields.PUBLISHED_BOOKS.KEY, DbFields.REVIEWS.KEY, userId, listOfBookAttr).await()
 
-                   if (task.isSuccessful){
-                       localDb.addUserReviews(verifiedReviews)
-                       Result.success()
-                   }else{
+                       task.run {
+                           localDb.addUserReviews(verifiedReviews)
+                           Result.success()
+                       }
+
+                   }catch (e:Exception){
                        Result.retry()
                    }
+
                }else{
                    Result.success()
                }

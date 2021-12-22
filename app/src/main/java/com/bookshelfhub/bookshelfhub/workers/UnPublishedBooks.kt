@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UnPublishedBooks @AssistedInject constructor (
@@ -32,25 +33,24 @@ class UnPublishedBooks @AssistedInject constructor (
         }
 
 
-        //Get all Published books where published == false
-      val task =  cloudDb.getListOfDataWhereAsync(
-            DbFields.PUBLISHED_BOOKS.KEY,
-            DbFields.PUBLISHED.KEY,false,
-        )
+       return  try {
+            //Get all Published books where published == false
+            val querySnapshot =  cloudDb.getListOfDataWhereAsync(
+                DbFields.PUBLISHED_BOOKS.KEY,
+                DbFields.PUBLISHED.KEY,false,
+            ).await()
 
-        if(task.isSuccessful){
-            val unPublishedBooks =  util.queryToListType(task.result, PublishedBook::class.java)
+            val unPublishedBooks =  util.queryToListType(querySnapshot, PublishedBook::class.java)
 
             if(unPublishedBooks.isEmpty()){
                 localDb.deleteUnPublishedBookRecords(unPublishedBooks)
             }
 
             Result.success()
-        }else{
+
+        }catch (e:Exception){
             Result.retry()
         }
 
-
-        return Result.success()
     }
 }

@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import android.app.Activity
+import android.util.Log
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -124,6 +125,7 @@ import javax.inject.Inject
         db.collection(collection)
             .document(document)
             .addSnapshotListener(activity) { documentSnapShot, error ->
+
                 if (retry && error!=null){
                     return@addSnapshotListener
                 }
@@ -216,7 +218,7 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-     override fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String,direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          
          db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
@@ -246,7 +248,7 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String,  shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
          db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
@@ -329,71 +331,71 @@ import javax.inject.Inject
 
      override fun updateUserReview(bookAttr: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void> {
 
-         val batch = db.batch()
-         val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
-         val bookDynamicAttrDocRef = db.collection(collection).document(document)
+         return db.runBatch { batch->
+             val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
+             val bookDynamicAttrDocRef = db.collection(collection).document(document)
 
-         val reviewDate = hashMapOf(
-             DbFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
-         )
+             val reviewDate = hashMapOf(
+                 DbFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
+             )
 
-         batch.set(reviewDocRef, userReview)
-         batch.set(reviewDocRef, reviewDate, SetOptions.merge())
-         bookAttr?.let {
-             batch.set(bookDynamicAttrDocRef, it, SetOptions.merge())
+             batch.set(reviewDocRef, userReview)
+             batch.set(reviewDocRef, reviewDate, SetOptions.merge())
+             bookAttr?.let {
+                 batch.set(bookDynamicAttrDocRef, it, SetOptions.merge())
+             }
          }
 
-         return  batch.commit()
      }
 
 
      override fun updateUserReview( userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookAttrs: List<HashMap<String, FieldValue>>): Task<Void> {
 
-         val batch = db.batch()
+       return  db.runBatch { batch->
+             val length = userReviews.size - 1
 
-         val length = userReviews.size - 1
+             for (i in 0..length){
+                 val reviewDocRef = db.collection(collection).document(userReviews[i].isbn).collection(subCollection).document(subDocument)
+                 val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].isbn)
+                 batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
+                 batch.set(bookDynamicAttrDocRef, bookAttrs[i], SetOptions.merge())
+             }
+         }
 
-          for (i in 0..length){
-
-              val reviewDocRef = db.collection(collection).document(userReviews[i].isbn).collection(subCollection).document(subDocument)
-              val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].isbn)
-              batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
-              batch.set(bookDynamicAttrDocRef, bookAttrs[i], SetOptions.merge())
-
-          }
-
-         return  batch.commit()
      }
 
 
      override fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void> {
 
-         val batch = db.batch()
-         for (item in list){
-             val docRef = db.collection(collection).document(document).collection(subCollection).document()
-             batch.set(docRef, item)
+        return  db.runBatch { batch->
+             for (item in list){
+                 val docRef = db.collection(collection).document(document).collection(subCollection).document()
+                 batch.set(docRef, item)
+             }
          }
-        return  batch.commit()
      }
 
 
      override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
 
-        val batch = db.batch()
-        for (item in list){
-            val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
-            batch.set(docRef, item)
-        }
-      return  batch.commit()
+       return  db.runBatch { batch->
+             for (item in list){
+                 val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
+                 batch.set(docRef, item)
+             }
+         }
+
     }
 
      override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
-         val batch = db.batch()
-         for (item in list){
-             val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
-             batch.delete(docRef)
+
+        return db.runBatch { batch->
+             for (item in list){
+                 val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
+                 batch.delete(docRef)
+             }
          }
-        return batch.commit()
+
      }
 
 }

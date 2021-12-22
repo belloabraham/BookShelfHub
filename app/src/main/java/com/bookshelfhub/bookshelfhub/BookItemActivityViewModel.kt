@@ -129,7 +129,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
-    return Pager(config){
+   return Pager(config){
       localDb.getBooksByCategoryPageSource(category)
     }.flow
   }

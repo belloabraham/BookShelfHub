@@ -10,7 +10,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class DeleteBookmarks @AssistedInject constructor(
@@ -38,21 +38,23 @@ workerParams
         //Get locally deleted bookmarks that are already on the cloud
         val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = true)
 
+     return  try {
+            if (listOfDeletedBookmarks.isNotEmpty()){
+                //Delete them on the cloud using this path user/userId/bookmarks/id
+              val task = cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY).await()
 
-        return if (listOfDeletedBookmarks.isNotEmpty()){
-            //Delete them on the cloud using this path user/userId/bookmarks/id
-          val task = cloudDb.deleteListOfDataAsync(listOfDeletedBookmarks, DbFields.USERS.KEY, userId, DbFields.BOOKMARKS.KEY)
+                task.run {
+                    localDb.deleteBookmarks(listOfDeletedBookmarks)
+                    Result.success()
+                }
 
-            if (task.isSuccessful){
-                 localDb.deleteBookmarks(listOfDeletedBookmarks)
-                 Result.success()
             }else{
-                 Result.retry()
+                Result.success()
             }
-
-        }else{
-            Result.success()
+        }catch (e:Exception){
+            Result.retry()
         }
+
 
     }
 

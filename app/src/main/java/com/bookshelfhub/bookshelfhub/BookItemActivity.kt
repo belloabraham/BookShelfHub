@@ -146,7 +146,7 @@ class BookItemActivity : AppCompatActivity() {
                             convertCurrency(conversionEndpoint, queryParameters){ response ->
                                 if (response.code==conversionSuccessfulCode){
                                     try {
-                                        val result  =  json.fromJson(response.body.toString(), ConversionResponse::class.java)
+                                        val result  =  json.fromJson(response.body!!.string(), ConversionResponse::class.java)
                                         val priceInUSD = result.info.rate*book.price
                                         showBookDetails(book,buyerVisibleCurrency, priceInUSD)
                                     }catch (e:Exception){
@@ -376,8 +376,7 @@ class BookItemActivity : AppCompatActivity() {
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
-                    val date = userReview.dateTime as Timestamp
-                    date.let {
+                    userReview.dateTime?.let {
                         //Convert server dateTime to local date in string
                         val  localDate = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                         layout.date.text = localDate
@@ -449,7 +448,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         //Load similar books for this book by category
-        loadSimilarBooks(book.category, similarBooksAdapter)
+//        loadSimilarBooks(book.category, similarBooksAdapter)
     }
 
     private fun showLetterIcon(value:String){

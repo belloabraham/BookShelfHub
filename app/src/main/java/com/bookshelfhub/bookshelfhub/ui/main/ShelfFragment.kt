@@ -64,7 +64,7 @@ class ShelfFragment : Fragment() {
             val orderedBooks = shelfViewModel.getOrderedBooks()
             if (orderedBooks.isEmpty()){
                 //Get all available ordered books the user have
-                cloudDb.getOrderedBooks(
+                cloudDb.getLiveOrderedBooks(
                     requireActivity(),
                     DbFields.ORDERED_BOOKS.KEY,
                     userId,
@@ -80,7 +80,7 @@ class ShelfFragment : Fragment() {
                 }
             }else{
                 orderedBooks[0].dateTime?.let { timestamp->
-                    cloudDb.getOrderedBooks(
+                    cloudDb.getLiveOrderedBooks(
                         requireActivity(),
                         DbFields.ORDERED_BOOKS.KEY,
                         userId,

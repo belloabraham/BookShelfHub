@@ -70,16 +70,14 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
      * Used to get the link deep link from the generated Link
      */
     override fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
-        if(activity.intent != null){
             Firebase.dynamicLinks
                 .getDynamicLink(activity.intent)
-                .addOnSuccessListener {pendingDynamicLinkData ->
+                .addOnSuccessListener(activity) {pendingDynamicLinkData ->
                     onComplete(pendingDynamicLinkData.link)
                 }
-                .addOnFailureListener {
+                .addOnFailureListener(activity) {
                     onComplete(null)
                 }
-        }
     }
 
 }

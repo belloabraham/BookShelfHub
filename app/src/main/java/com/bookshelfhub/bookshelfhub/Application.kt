@@ -6,6 +6,7 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBui
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -90,8 +91,14 @@ class Application: android.app.Application(), Configuration.Provider {
 
         //***Setup App Check ***//
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
-            SafetyNetAppCheckProviderFactory.getInstance())
+        if(BuildConfig.DEBUG){
+            firebaseAppCheck.installAppCheckProviderFactory(
+                DebugAppCheckProviderFactory.getInstance()
+            )
+        }else{
+            firebaseAppCheck.installAppCheckProviderFactory(
+                SafetyNetAppCheckProviderFactory.getInstance())
+        }
     }
 
     private fun setupFirebaseRemoteConfig(){

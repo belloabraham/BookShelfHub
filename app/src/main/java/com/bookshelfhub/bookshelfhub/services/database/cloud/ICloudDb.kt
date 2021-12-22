@@ -20,11 +20,11 @@ interface ICloudDb {
 
     fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void>
 
-    fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
+    fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String = DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
-    fun <T: Any> getOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String=DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
+    fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String = DbFields.USER_ID.KEY, downloadUrlKey:String=DbFields.DOWNLOAD_URL.KEY, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit)
 
-    fun updateUserReview(bookAttr: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void>
+    fun updateUserReview(bookAttr: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String):Task<Void>
 
     fun <T: Any>  getLiveDataAsync(collection:String, document: String, type:Class<T>, retry:Boolean=true, onComplete:
         (data:T)->Unit)

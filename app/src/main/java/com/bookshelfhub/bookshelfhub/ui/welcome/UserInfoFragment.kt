@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.ui.welcome
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -68,8 +69,7 @@ class UserInfoFragment : Fragment() {
         }
 
         if (!isNewUser) {
-            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot, _ ->
-
+            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot,_ ->
                 docSnapShot?.let {
                     try {
                         val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)

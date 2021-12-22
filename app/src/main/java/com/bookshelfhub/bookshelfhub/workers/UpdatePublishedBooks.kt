@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.services.database.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UpdatePublishedBooks @AssistedInject constructor (
@@ -31,22 +32,21 @@ class UpdatePublishedBooks @AssistedInject constructor (
             return Result.retry()
         }
 
-      val task =  cloudDb.getListOfDataWhereAsync(
-            DbFields.PUBLISHED_BOOKS.KEY,
-            DbFields.PUBLISHED.KEY, true,
-        )
+       return try {
 
-        return if(task.isSuccessful){
+           val querySnapshot =  cloudDb.getListOfDataWhereAsync(
+               DbFields.PUBLISHED_BOOKS.KEY,
+               DbFields.PUBLISHED.KEY, true,
+           ).await()
 
-            val publishedBooks = util.queryToListType(task.result, PublishedBook::class.java)
+           val publishedBooks = util.queryToListType(querySnapshot, PublishedBook::class.java)
 
-            if(publishedBooks.isNotEmpty()){
-                localDb.addAllPubBooks(publishedBooks)
-            }
-
-            Result.success()
-        }else{
-            Result.retry()
+           if(publishedBooks.isNotEmpty()){
+               localDb.addAllPubBooks(publishedBooks)
+           }
+           Result.success()
+        }catch (e:Exception){
+           Result.retry()
         }
 
     }

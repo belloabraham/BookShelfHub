@@ -10,9 +10,11 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.services.database.Util
+import com.google.android.gms.tasks.Tasks
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class DownloadBookmarks @AssistedInject constructor(
@@ -28,29 +30,31 @@ workerParams
 
         val userId = userAuth.getUserId()
 
-        //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
-     val task = cloudDb.getListOfDataAsync(
-            DbFields.USERS.KEY,
-            userId,
-            DbFields.BOOKMARKS.KEY)
 
-      return  if(task.isSuccessful){
-          val  bookmarks =  util.queryToListType(task.result, Bookmark::class.java)
+     return   try {
+            //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
+            val querySnapShot = cloudDb.getListOfDataAsync(
+                DbFields.USERS.KEY,
+                userId,
+                DbFields.BOOKMARKS.KEY
+            ).await()
 
-          if(bookmarks.isNotEmpty()){
-              val length = bookmarks.size-1
+            val bookmarks = util.queryToListType(querySnapShot, Bookmark::class.java)
 
-              for (i in 0..length){
-                  bookmarks[i].uploaded = true
-              }
-              localDb.addBookmarkList(bookmarks)
-          }
+            if (bookmarks.isNotEmpty()) {
+                val length = bookmarks.size - 1
 
-             Result.success()
+                for (i in 0..length) {
+                    bookmarks[i].uploaded = true
+                }
+                localDb.addBookmarkList(bookmarks)
+            }
 
-         }else{
-             Result.retry()
-         }
+            Result.success()
+
+        } catch (e: Exception) {
+            Result.retry()
+        }
 
     }
 

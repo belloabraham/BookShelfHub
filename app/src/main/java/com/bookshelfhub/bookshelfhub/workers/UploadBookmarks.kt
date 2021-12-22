@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UploadBookmarks @AssistedInject constructor(
@@ -28,24 +29,26 @@ workerParams
         val listOfBookmarks = localDb.getLocalBookmarks(uploaded = false, deleted = false)
 
      return   if (listOfBookmarks.isNotEmpty()){
-            val userId = userAuth.getUserId()
-         val  task =  cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY)
+             val userId = userAuth.getUserId()
 
+             try {
+                 val  task =  cloudDb.addListOfDataAsync(listOfBookmarks, DbFields.USERS.KEY, userId,  DbFields.BOOKMARKS.KEY).await()
 
-            if(task.isSuccessful){
+                 task.run {
+                     val length = listOfBookmarks.size-1
 
-                val length = listOfBookmarks.size-1
+                     for (i in 0..length){
+                         listOfBookmarks[i].uploaded = true
+                     }
 
-                for (i in 0..length){
-                    listOfBookmarks[i].uploaded = true
-                }
+                     localDb.addBookmarkList(listOfBookmarks)
 
-                localDb.addBookmarkList(listOfBookmarks)
+                     Result.success()
+                 }
 
-                Result.success()
-            }else{
-                Result.retry()
-            }
+             }catch (e:Exception){
+                 Result.retry()
+             }
 
         }else{
             Result.success()

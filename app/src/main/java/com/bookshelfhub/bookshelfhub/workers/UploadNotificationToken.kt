@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.workers.Tag.NOTIFICATION_TOKEN
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UploadNotificationToken @AssistedInject constructor(
@@ -30,12 +31,14 @@ class UploadNotificationToken @AssistedInject constructor(
 
         return if(notificationToken!=null){
 
-            val task = cloudDb.addDataAsync(notificationToken,
-                DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN)
+            try {
+                val task = cloudDb.addDataAsync(notificationToken,
+                    DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN).await()
 
-            if(task.isSuccessful){
-                Result.success()
-            }else{
+                task.run {
+                    Result.success()
+                }
+            }catch (e:Exception){
                 Result.retry()
             }
 

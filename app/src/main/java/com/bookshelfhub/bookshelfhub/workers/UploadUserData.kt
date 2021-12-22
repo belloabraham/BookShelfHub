@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UploadUserData  @AssistedInject constructor (
@@ -29,19 +30,23 @@ class UploadUserData  @AssistedInject constructor (
 
         val userData = user.get()
          return   if (user.isPresent && !userData.uploaded){
-            val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY)
 
-                if (task.isSuccessful){
-                    userData.uploaded = true
-                    localDb.addUser(userData)
+             try {
+                 val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY).await()
+
+                 task.run {
+                     userData.uploaded = true
+                     localDb.addUser(userData)
                      Result.success()
-                }else{
-                    Result.retry()
-                }
+                 }
+
+             }catch (e:Exception){
+                 Result.retry()
+             }
 
             }else{
              Result.success()
-         }
+            }
 
     }
 }
