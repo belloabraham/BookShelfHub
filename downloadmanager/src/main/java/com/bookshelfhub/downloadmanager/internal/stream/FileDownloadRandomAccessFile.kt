@@ -10,30 +10,30 @@ import java.io.RandomAccessFile;
 
 class FileDownloadRandomAccessFile(file: File) : FileDownloadOutputStream {
 
-    private var out: BufferedOutputStream
-    private var fd: FileDescriptor
+    private var outputStream: BufferedOutputStream
+    private var fileDescriptor: FileDescriptor
     private var randomAccess: RandomAccessFile = RandomAccessFile(file, "rw")
 
 
     init {
-        fd = randomAccess.getFD()
-        out = BufferedOutputStream(FileOutputStream(randomAccess.getFD()))
+        fileDescriptor = randomAccess.fd
+        outputStream = BufferedOutputStream(FileOutputStream(randomAccess.fd))
     }
 
     @Throws(IOException::class)
     override fun write(b: ByteArray?, off: Int, len: Int) {
-        out.write(b, off, len)
+        outputStream.write(b, off, len)
     }
 
     @Throws(IOException::class)
     override fun flushAndSync() {
-        out.flush()
-        fd.sync()
+        outputStream.flush()
+        fileDescriptor.sync()
     }
 
     @Throws(IOException::class)
     override fun close() {
-        out.close()
+        outputStream.close()
         randomAccess.close()
     }
 

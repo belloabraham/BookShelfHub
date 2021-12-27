@@ -53,7 +53,7 @@ class DecodingAsyncTask( private val docSource: DocumentSource?,
     }
 
     override fun onPostExecute(t: Throwable?) {
-        val pdfView: PDFView? = pdfViewReference?.get()
+        val pdfView: PDFView? = pdfViewReference.get()
         if (pdfView != null) {
             if (t != null) {
                 pdfView.loadError(t)

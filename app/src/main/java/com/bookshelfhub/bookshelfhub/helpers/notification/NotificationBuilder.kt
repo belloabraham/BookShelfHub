@@ -1,9 +1,12 @@
 package com.bookshelfhub.bookshelfhub.helpers.notification
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -19,7 +22,33 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     private lateinit var title: String
     private lateinit var message:String
     private var autoCancel = true
+    private var onGoing = false
+    private var pendingIntent:PendingIntent?=null
+    private var priority = NotificationCompat.PRIORITY_DEFAULT
 
+
+    private fun getPendingIntent(intent:Intent, context: Context): PendingIntent? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getActivity(context, 0, intent,  FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
+        } else {
+            getActivity(context, 0, intent, FLAG_UPDATE_CURRENT)
+        }
+    }
+
+    fun setPriority(value:Int): NotificationBuilder {
+        priority = value
+        return this
+    }
+
+    fun setPendingIntent(intent: Intent): NotificationBuilder {
+        pendingIntent  = getPendingIntent(intent, context)
+        return this
+    }
+
+    fun setOngoing(value: Boolean):NotificationBuilder{
+        onGoing = value
+        return this
+    }
     fun setAutoCancel(value:Boolean): NotificationBuilder {
         autoCancel = value
         return this
@@ -88,22 +117,20 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     class Builder(private val notificationBuilder: NotificationBuilder, val context: Context, private val notificationStyle:NotificationCompat.Style){
 
 
-       private fun getNotificationBuiler(): NotificationCompat.Builder {
-            val msg = notificationBuilder.message
-            val title = notificationBuilder.title
+        fun getNotificationBuiler(): NotificationCompat.Builder {
             return NotificationCompat.Builder(context, notificationBuilder.notifChannelId)
                     .setSmallIcon(notificationBuilder.smallIcon)
                     .setLargeIcon(
                         notificationBuilder.largeIcon
                     )
-                    .setContentTitle(title)
+                    .setContentTitle(notificationBuilder.title)
                     .setShowWhen(true)
-                    .setContentText(msg)
-                    .setStyle(
-                        notificationStyle
-                    )
+                    .setContentText(notificationBuilder.message)
+                    .setOngoing(notificationBuilder.onGoing)
+                    .setContentIntent(notificationBuilder.pendingIntent)
+                    .setStyle(notificationStyle)
                     .setColor(ContextCompat.getColor(context, notificationBuilder.notificationColor))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setPriority(notificationBuilder.priority)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setAutoCancel(notificationBuilder.autoCancel)
         }
@@ -113,12 +140,14 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
             notificationManager.notify(notificationId, getNotificationBuiler().build())
         }
 
+         @SuppressLint("UnspecifiedImmutableFlag")
          fun showNotification(notificationId:Int, getUrlIntent:String.()->Intent) {
             var pendingIntent: PendingIntent? = null
             notificationBuilder.url?.let {
                 val intent = getUrlIntent(it)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+                intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+                pendingIntent = notificationBuilder.getPendingIntent(intent, context)
             }
 
              val builder = getNotificationBuiler()

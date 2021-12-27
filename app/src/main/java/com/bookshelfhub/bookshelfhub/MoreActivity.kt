@@ -47,6 +47,7 @@ class MoreActivity : AppCompatActivity() {
         //***Remove existing fragment as the fragment set as the initial in res/navigation will load first
         navController.popBackStack()
         navController.navigate(fragmentId)
+
     }
 
 }

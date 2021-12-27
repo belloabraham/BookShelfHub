@@ -17,7 +17,6 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.DisplayUtil
 import kotlinx.android.synthetic.main.expandable_cardview.view.*
 
 
@@ -95,7 +94,6 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
 
         setInnerView(innerViewRes)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             elevation = 0f //DisplayUtil.convertDpToPixels(context, 4f)
 
         if (startExpanded) {
