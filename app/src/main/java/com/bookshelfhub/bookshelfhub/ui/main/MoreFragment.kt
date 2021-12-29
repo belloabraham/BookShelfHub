@@ -15,9 +15,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
@@ -94,7 +91,9 @@ class MoreFragment : Fragment() {
         val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
         val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
+        val deletePaymentCardsBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.deletePaymentCards)
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
+
 
         authType= userAuth.getAuthType()
         userId = userAuth.getUserId()
@@ -195,16 +194,16 @@ class MoreFragment : Fragment() {
             }else{
                 showEarnings()
             }
+        }
 
+        deletePaymentCardsBtn.setOnClickListener {
+            moreViewModel.deleteAllPaymentCards()
+            showToast(R.string.all_cards_deleted)
         }
 
         layout.needHelpCard.setOnClickListener {
 
           val link =   remoteConfig.getString(WA_CUSTOMER_SUPPORT)
-
-           // val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
-           // startActivity(browserIntent)
-
             startActivity(intentUtil.intent(link))
 
         }

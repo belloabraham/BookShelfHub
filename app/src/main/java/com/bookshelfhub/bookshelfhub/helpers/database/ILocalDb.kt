@@ -7,6 +7,11 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     suspend fun deletePaymentCard(card: PaymentCard)
+     suspend fun getPaymentCards(): List<PaymentCard>
+     fun getLivePaymentCards(): LiveData<List<PaymentCard>>
+     suspend fun deleteAllPaymentCards()
+     suspend fun addPaymentCard(paymentCard: PaymentCard)
      fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>>
      suspend fun addBookVideos(bookVideos: List<BookVideos>)
      suspend fun getAnOrderedBook(isbn:String): OrderedBooks

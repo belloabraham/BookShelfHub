@@ -9,25 +9,49 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import co.paystack.android.Paystack
+import co.paystack.android.Transaction
+import com.bookshelfhub.bookshelfhub.BuildConfig
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentTransaction
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentTransaction
+import com.bookshelfhub.bookshelfhub.models.Earnings
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.payment.*
+import com.bookshelfhub.bookshelfhub.ui.cart.CartFragmentDirections
+import com.bookshelfhub.bookshelfhub.ui.cart.CartViewModel
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -36,25 +60,30 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
+    lateinit var localDb: ILocalDb
+    @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
     lateinit var json: Json
     @Inject
+    lateinit var cloudDb: ICloudDb
+    @Inject
     lateinit var userAuth: IUserAuth
+
+    private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
     private var userEarnings =0.0
-    private var localCurrency=""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
-          userId = userAuth.getUserId()
+        userId = userAuth.getUserId()
         layout = FragmentCartBinding.inflate(inflater, container, false)
 
         val cartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
@@ -63,6 +92,11 @@ class CartFragment : Fragment() {
 
         layout.cartItemsRecView.adapter = cartListAdapter
 
+
+        //Get all available cards and save them a list of cards
+        cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
+            this.savedPaymentCards = savedPaymentCards
+        })
 
 
         layout.checkoutFab.setOnClickListener {
@@ -90,6 +124,7 @@ class CartFragment : Fragment() {
             totalAmountInLocalCurrency = 0.0
             totalAmountInUSD = 0.0
             bookIsbnsAndReferrerIds = ""
+            var localCurrency=""
 
             val countryCode = Location.getCountryCode(requireContext())
 
@@ -98,7 +133,7 @@ class CartFragment : Fragment() {
                 for (cart in cartList){
 
                     //If price in USD is null return cart.price else return cart.priceInUsd
-                     val priceInUSD = cart.priceInUsd ?: cart.price
+                    val priceInUSD = cart.priceInUsd ?: cart.price
 
                     paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, userId,cart.coverUrl, cart.referrerId, countryCode))
 
@@ -108,7 +143,22 @@ class CartFragment : Fragment() {
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                cartViewModel.fetchEarnings()
+                cloudDb.getLiveListOfDataAsync(requireActivity(), DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
+
+                    userEarnings = 0.0
+
+                    for(earning in it){
+                        userEarnings.plus(earning.earn)
+                    }
+
+                    if (totalAmountInUSD == totalAmountInLocalCurrency){
+                        //Then local currency must be in USD
+                        layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
+                    }else{
+                        layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
+                    }
+
+                }
 
                 layout.checkoutFab.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE
@@ -122,37 +172,6 @@ class CartFragment : Fragment() {
             }
         })
 
-
-        cartViewModel.getEarnings().observe(viewLifecycleOwner, Observer {
-
-            if(it.isNotEmpty()){
-                 userEarnings = 0.0
-
-            for(earning in it){
-                userEarnings.plus(earning.earn)
-            }
-
-            if (totalAmountInUSD == totalAmountInLocalCurrency){
-                //Then local currency must be in USD
-                layout.totalCostTxt.text = String
-                    .format(
-                        getString(R.string.total_usd),
-                        totalAmountInLocalCurrency,
-                        userEarnings
-                    )
-            }else{
-                layout.totalCostTxt.text = String
-                    .format(
-                        getString(R.string.total_local_and_usd),
-                            localCurrency,
-                            totalAmountInLocalCurrency,
-                            totalAmountInUSD,
-                            userEarnings
-                    )
-            }
-            }
-
-        })
 
         //Expand or Shrink FAB based on recyclerview scroll position
         layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
@@ -196,11 +215,11 @@ class CartFragment : Fragment() {
 
         val country = Location.getCountryCode(requireContext())
 
-        //TODO Get country code value that will not change irrespective of it is is null or not as country code is a reference type
-      /* country.let { countryCode ->
+        //Get country code value that will not change irrespective of it is is null or not as country code is a reference type
+        country.let { countryCode ->
 
             //Get nullable recommended payment SDK to be used for a user based on their location
-          //TODO  val paymentSDKType = PaymentSDK.get(countryCode)
+            val paymentSDKType = PaymentSDK.get(countryCode)
 
             //If their is a payment service for user location proceed with Payment
             paymentSDKType?.let { paymentSdk->
@@ -252,11 +271,68 @@ class CartFragment : Fragment() {
                     .setPositiveAction(R.string.ok){}
                     .build()
             }
-        }*/
+        }
 
     }
 
-    private fun chargeCardWithPayStack(userData:HashMap<String, String>){
+    private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
+
+        return object : Paystack.TransactionCallback{
+
+            override fun onSuccess(transaction: Transaction?) {
+
+                transaction?.let {
+                    val length = paymentTransaction.size -1
+
+                    //Pass transaction reference to all the transaction record that is created
+                    for (i in 0..length){
+                        paymentTransaction[i].transactionReference = it.reference
+                    }
+
+                    lifecycleScope.launch(IO){
+                        //Add transaction to local database
+                        localDb.addPaymentTransactions(paymentTransaction)
+
+                        //Start a worker that further process the transaction
+                        withContext(Main){
+                            val oneTimeVerifyPaymentTrans =
+                                OneTimeWorkRequestBuilder<UploadTransactions>()
+                                    .setConstraints(Constraint.getConnected())
+                                    .build()
+
+                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
+                        }
+                    }
+
+                    //Show user a message that their transaction is processing and close Cart activity when the click ok
+                    AlertDialogBuilder.with(requireActivity(), R.string.transaction_processing)
+                        .setCancelable(false)
+                        .setPositiveAction(R.string.ok){
+                            requireActivity().finish()
+                        }
+                        .build()
+
+                }
+
+            }
+
+            override fun beforeValidate(transaction: Transaction?) {}
+
+            override fun onError(error: Throwable?, transaction: Transaction?) {
+                error?.let {
+                    //Show user error transaction message
+                    val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
+                    AlertDialogBuilder.with(requireActivity(), errorMsg)
+                        .setCancelable(false)
+                        .setPositiveAction(R.string.ok){}
+                        .build()
+                }
+            }
+
+        }
+    }
+
+    private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
 
         val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
 
@@ -266,15 +342,15 @@ class CartFragment : Fragment() {
             totalAmountInUSD
         } - userEarnings
 
-        //TODO
-      /*  val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
+        val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
 
         val payStackPublicKey = if (BuildConfig.DEBUG){
             getString(R.string.paystack_test_public_key)
         }else{
             payStackProdPublicKey
         }
-        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)*/
+
+        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)
 
     }
 

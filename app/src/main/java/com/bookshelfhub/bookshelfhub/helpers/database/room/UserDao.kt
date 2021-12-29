@@ -11,6 +11,22 @@ import com.google.common.base.Optional
 interface UserDao {
 
 
+    //Todo Payment Card
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addPaymentCard(paymentCard: PaymentCard)
+
+    @Delete
+    suspend fun deletePaymentCard(card: PaymentCard)
+
+    @Query("DELETE FROM PaymentCard")
+    suspend fun deleteAllPaymentCards()
+
+    @Query("SELECT * FROM PaymentCard")
+    fun getLivePaymentCards(): LiveData<List<PaymentCard>>
+
+    @Query("SELECT * FROM PaymentCard")
+    suspend fun getPaymentCards(): List<PaymentCard>
+
     //TODO Book videos
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookVideos(bookVideos: List<BookVideos>)

@@ -20,4 +20,10 @@ class MoreViewModel @Inject constructor(private val localDb: ILocalDb): ViewMode
         }
     }
 
+    fun deleteAllPaymentCards(){
+        viewModelScope.launch(IO) {
+            localDb.deleteAllPaymentCards()
+        }
+    }
+
 }

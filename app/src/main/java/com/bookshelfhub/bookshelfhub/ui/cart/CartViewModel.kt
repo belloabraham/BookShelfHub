@@ -1,12 +1,13 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -17,23 +18,12 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()
+  private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
-  //private var earnings:List<Earnings> = listOf()
-  private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
 
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
-  }
-
-
-  fun fetchEarnings(){
-    cloudDb.getLiveListOfDataWhereAsync(DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
-      earnings.value = it
-    }
-  }
-
-  fun getEarnings(): LiveData<List<Earnings>> {
-    return earnings
+    livePaymentCards = localDb.getLivePaymentCards()
   }
 
   fun setIsNewCard(value:Boolean){
@@ -42,6 +32,10 @@ class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloud
 
   fun getIsNewCardAdded(): Boolean {
     return isNewCardAdded
+  }
+
+  fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
+    return livePaymentCards
   }
 
   fun deleteFromCart(cart: Cart){
