@@ -24,6 +24,7 @@ import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
@@ -44,15 +45,17 @@ import com.bookshelfhub.bookshelfhub.ui.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Converter
+import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
-import com.bookshelfhub.bookshelfhub.services.payment.Conversion
-import com.bookshelfhub.bookshelfhub.services.payment.Currency
-import com.bookshelfhub.bookshelfhub.services.payment.LocalCurrency
+import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
@@ -74,6 +77,12 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
+    lateinit var privateKeys: PrivateKeys
+    @Inject
+    lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var connectionUtil: ConnectionUtil
+    @Inject
     lateinit var userAuth: IUserAuth
     private val bookItemActivityViewModel:BookItemActivityViewModel by viewModels()
     private var userReview:UserReview?=null
@@ -90,6 +99,8 @@ class BookItemActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        getPrivateKeys()
 
         layout =  ActivityBookItemBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -116,33 +127,35 @@ class BookItemActivity : AppCompatActivity() {
         //which have been queried by the by bookItemViewModel in init as snapshot listener
         bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
 
+            getPrivateKeys()
+
             bookOnlineVersion =  book
 
             val countryCode = Location.getCountryCode(this)
 
                 countryCode?.let {
 
-                    val localCurrency = LocalCurrency.get(it)
+                    val localCurrency = Currency.getLocalCurrency(it)
 
                      buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){ //If seller currency is same as buyer's
                         //Return seller currency
                         book.sellerCurrency
                     }else{
                         //The buyer must be buying a book not sold in its country (it's fair to show book price in dollars)
-                        Currency.USD.Value
+                        Currency.USD
                     }
 
                     if (book.price >0.0) {
 
-                        val conversionEndpoint = remoteConfig.getString(Currency.CONVERSION_ENDPOINT.Value)
+                        val conversionEndpoint = remoteConfig.getString(Converter.CONVERSION_ENDPOINT)
                         val conversionSuccessfulCode = 200
 
                         //If buyerVisibleCurrency is not in USD meaning the buyer is buying book sold in his/her country
                         //Then convert the buyerVisibleCurrency to USD (to show side by side with the local currency)
-                        if (buyerVisibleCurrency != Currency.USD.Value){
+                        if (buyerVisibleCurrency != Currency.USD){
 
-                            val toCurrency = Currency.USD.Value
-                            val queryParameters = Conversion.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
+                            val toCurrency = Currency.USD
+                            val queryParameters = Converter.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
                             convertCurrency(conversionEndpoint, queryParameters){ response ->
                                 if (response.code==conversionSuccessfulCode){
                                     try {
@@ -562,7 +575,6 @@ class BookItemActivity : AppCompatActivity() {
         return true
     }
 
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         //User can report this book for anything, like a stolen copyrighted content or so
@@ -582,6 +594,24 @@ class BookItemActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
+    private fun getPrivateKeys(){
+        lifecycleScope.launch(Dispatchers.IO){
+            val perspectiveKey = settingsUtil.getString(PrivateKeys.PERSPECTIVE_API_KEY)
+            if(perspectiveKey==null){
+                privateKeys.get(PrivateKeys.API_KEYS, ApiKeys::class.java){
+                    it?.let {
+                        lifecycleScope.launch(Dispatchers.IO){
+                            settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PRI_KEY, it.payStackLivePrivateKey)
+                            settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PUB_KEY, it.payStackLivePublicKey)
+                            settingsUtil.setString(PrivateKeys.PERSPECTIVE_API_KEY, it.perspectiveKey)
+                            settingsUtil.setString(PrivateKeys.FIXER_ENDPOINT, it.fixerEndpoint)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 }

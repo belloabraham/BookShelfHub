@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.view.View
@@ -19,6 +20,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
+@SuppressLint("CustomSplashScreen")
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
 
@@ -28,6 +30,7 @@ class SplashActivity : AppCompatActivity() {
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var dynamicLink: IDynamicLink
+
 
     override fun onStart() {
         super.onStart()
@@ -99,5 +102,6 @@ class SplashActivity : AppCompatActivity() {
         finish()
         startActivity(intent)
     }
+
 
 }

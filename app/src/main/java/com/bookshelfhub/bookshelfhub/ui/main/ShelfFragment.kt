@@ -218,13 +218,11 @@ class ShelfFragment : Fragment() {
         return layout.root
     }
 
-
     companion object {
         @JvmStatic
         fun newInstance(): ShelfFragment {
             return ShelfFragment()
         }
     }
-
 
 }

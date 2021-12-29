@@ -1,6 +1,6 @@
-package com.bookshelfhub.bookshelfhub.services.payment
+package com.bookshelfhub.bookshelfhub.helpers.currencyconverter
 
-object Conversion {
+object Converter{
 
     private const val  andFromEq = "&from="
     private const val andToEq = "&to="
@@ -12,4 +12,6 @@ object Conversion {
     fun getQueryParam(fromCurrency: String, toCurrency: String, amount:Double): String {
         return "$andFromEq+$fromCurrency+$andToEq+$toCurrency$andAmountEq$amount"
     }
+
+    const val CONVERSION_ENDPOINT= "currency_conversion_endpoint"
 }

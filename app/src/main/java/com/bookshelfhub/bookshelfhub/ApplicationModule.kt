@@ -16,6 +16,7 @@ import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessagi
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.database.Util
 import com.google.gson.Gson
 import dagger.Module
@@ -33,6 +34,12 @@ object ApplicationModule {
     @Provides
     fun getRemoteConfig(): IRemoteConfig {
         return Firebase()
+    }
+
+    @Singleton
+    @Provides
+    fun getPrivateKeys(): PrivateKeys {
+        return PrivateKeys()
     }
 
     @Singleton

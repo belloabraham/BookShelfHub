@@ -91,6 +91,7 @@ class Application: android.app.Application(), Configuration.Provider {
 
         //***Setup App Check ***//
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
+
         if(BuildConfig.DEBUG){
             firebaseAppCheck.installAppCheckProviderFactory(
                 DebugAppCheckProviderFactory.getInstance()
@@ -100,6 +101,7 @@ class Application: android.app.Application(), Configuration.Provider {
                 SafetyNetAppCheckProviderFactory.getInstance())
         }
     }
+
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig

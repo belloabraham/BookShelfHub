@@ -28,6 +28,9 @@ import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -280,4 +283,6 @@ class WelcomeActivity : AppCompatActivity() {
             WorkManager.getInstance(applicationContext).enqueue(downLoadBookmarksWorker)
         }
     }
+
+
 }

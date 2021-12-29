@@ -7,16 +7,6 @@
         <value>https://wa.me/+2349014817860</value>
     </entry>
 
-    <entry>
-        <key>currency_conversion_endpoint</key>
-        <value></value>
-    </entry>
-
-    <entry>
-        <key>perspective_api</key>
-        <value></value>
-    </entry>
-
     <!-- TODO: Book Item -->
     <entry>
         <key>book_report_url</key>

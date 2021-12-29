@@ -104,7 +104,6 @@ class PostUserReview @AssistedInject constructor(
 
                     Tasks.await(task)
 
-
                         if(task.isSuccessful){
                             if (userReview.verified){
                                 // Update user review locally

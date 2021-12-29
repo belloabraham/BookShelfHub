@@ -17,16 +17,6 @@ import javax.inject.Inject
 
  class Firestore @Inject constructor(val json: Json): ICloudDb {
     private val db:FirebaseFirestore = Firebase.firestore
-
-
-     //Published_Books/isbn
-     //Published_Books/isbn/Reviews/userId
-     //Published_Books/isbn/bookmarks/{id}
-     //Ordered_Books/{document}
-     //users/userId/transactions/
-
-     //Earnings/{document}
-
      
      init {
          //Disable firestore caching
@@ -65,11 +55,6 @@ import javax.inject.Inject
           return  db.collection(collection)
                 .document(document)
                 .set(newData, SetOptions.merge())
-               /*.addOnSuccessListener{
-                    runBlocking {
-                        onSuccess()
-                    }
-                }*/
 
     }
 

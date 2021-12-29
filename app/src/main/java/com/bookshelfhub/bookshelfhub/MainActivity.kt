@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.*
+import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
@@ -29,6 +30,8 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PubReferrers
+import com.bookshelfhub.bookshelfhub.models.ApiKeys
+import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
@@ -41,6 +44,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -57,9 +61,13 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
+    lateinit var privateKeys: PrivateKeys
+    @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
     lateinit var dynamicLink: IDynamicLink
+    @Inject
+    lateinit var connectionUtil: ConnectionUtil
     @Inject
     lateinit var userAuth: IUserAuth
     private lateinit var inAppUpdate:InAppUpdate
@@ -72,6 +80,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        getPrivateKeys()
 
         userId=userAuth.getUserId()
 
@@ -120,9 +130,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
         }
 
-
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
-           // layout.bottomBar.selectTabAt(it, true)
+            //Use to navigate to store from empty shelf
+           layout.bottomBar.selectTabAt(it, true)
         })
 
         mainActivityViewModel.getIsNewProfileNotif().observe(this, Observer { isNewProfileNotif ->
@@ -337,8 +347,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     private fun openPublisherReferrerLink(referrer:String?){
         referrer?.let {
-
-            val ref = it.toString()
+            val ref = it
             if (ref.length>userId.length){
 
                 val pubIdAndIsbn = ref.split(Referrer.SEPARATOR.KEY)
@@ -350,10 +359,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 //***Add publisher referrer to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
                 startActivity(intent)
-
             }
         }
-
     }
 
     private fun getBookShareReferralLink(userId:String, onComplete:(Uri?)->Unit){
@@ -378,6 +385,24 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                     Permission.requestPermission(this, rational, Permission.WRITE_STORAGE_RC, storagePermission)
                 }
 
+    }
+
+    private fun getPrivateKeys(){
+       lifecycleScope.launch(IO){
+           val perspectiveKey = settingsUtil.getString(PrivateKeys.PERSPECTIVE_API_KEY)
+               if(perspectiveKey==null){
+                   privateKeys.get(PrivateKeys.API_KEYS, ApiKeys::class.java){
+                       it?.let {
+                           lifecycleScope.launch(IO){
+                               settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PRI_KEY, it.payStackLivePrivateKey)
+                               settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PUB_KEY, it.payStackLivePublicKey)
+                               settingsUtil.setString(PrivateKeys.PERSPECTIVE_API_KEY, it.perspectiveKey)
+                               settingsUtil.setString(PrivateKeys.FIXER_ENDPOINT, it.fixerEndpoint)
+                           }
+                       }
+                   }
+               }
+       }
     }
 
     private fun setUpShelfStoreViewPager(){

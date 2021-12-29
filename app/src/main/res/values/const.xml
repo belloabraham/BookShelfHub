@@ -32,6 +32,10 @@
     <string name="bsh_social_handle" translatable="false">bookshelfhub</string>
     <string name="bsh_website" translatable="false">https://bookshelfhub.com</string>
 
+
+    <!-- Paystack -->
+    <string name="paystack_test_public_key" translatable="false">pk_test_2bf3f7b439677beceac366ae368fe44a9bc281b4</string>
+
     <!-- Todo Dynamic Link -->
     <string name="dlink_domain_prefix" translatable="false">https://ref.bookshelfhub.com</string>
     <string name="manifest_dlink_domain_prefix" translatable="false">ref.bookshelfhub.com</string>
