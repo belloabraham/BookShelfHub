@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
              }
           }
 
-        //***TODO Get Nullable referral userID or PubIdAndISBN
+        //TODO Get Nullable referral userID or PubIdAndISBN
          referrer = mainActivityViewModel.getReferrer()
 
         if(isStoragePermissionRequired()){
@@ -361,8 +361,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     private fun openReferrerLinkInStore(referrer:String?){
         referrer?.let {
-            //TODO referrer will not be null if referrer exist and it is a publisher link
+            //TODO referrer will not be null if referrer exist
             val ref = it
+            //TODO Check if a publisher refer the user
             if (ref.length>userId.length){
 
                 val pubIdAndIsbn = ref.split(Referrer.SEPARATOR.KEY)
@@ -371,8 +372,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
                 val intent = Intent(this, BookItemActivity::class.java)
                 intent.putExtra(Referrer.BOOK_REFERRED.KEY,isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
-                //***Add publisher referrer to the database
+                //TODO Add publisher ID that refer the user to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
+                //TODO opened the book that the publisher refer in Book Store
                 startActivity(intent)
             }
         }

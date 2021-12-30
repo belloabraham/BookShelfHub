@@ -12,18 +12,14 @@ object Currency {
 
     fun getLocalCurrency(countryCode:String): String {
         return when (countryCode) {
-            SupportedCountries.NIGERIA.COUNTRY_CODE -> {
+            SupportedCountries.NIGERIA.COUNTRY_CODE ->
                 NGN
-            }
-            SupportedCountries.GHANA.COUNTRY_CODE -> {
+            SupportedCountries.GHANA.COUNTRY_CODE ->
                 GHS
-            }
-            SupportedCountries.SOUTH_AFRICA.COUNTRY_CODE -> {
+            SupportedCountries.SOUTH_AFRICA.COUNTRY_CODE ->
                 ZAR
-            }
-            else -> {
+            else ->
                 USD
-            }
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers.currencyconverter
 
-object Converter{
+object CurrencyConverter{
 
     private const val  andFromEq = "&from="
     private const val andToEq = "&to="
@@ -13,5 +13,4 @@ object Converter{
         return "$andFromEq+$fromCurrency+$andToEq+$toCurrency$andAmountEq$amount"
     }
 
-    const val CONVERSION_ENDPOINT= "currency_conversion_endpoint"
 }

@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MoreActivity : AppCompatActivity() {
 
+    //TODO this activity is used to load fragment in ui/more folder fragments triggered by More Fragment
     private lateinit var layout: ActivityMoreBinding
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -42,10 +43,9 @@ class MoreActivity : AppCompatActivity() {
     }
 
     private fun navigateTo(fragmentId:Int){
-        //***Remove existing fragment as the fragment set as the initial in res/navigation will load first
+        //TODO ***Remove existing fragment as the fragment set as the initial in res/navigation will load first
         navController.popBackStack()
         navController.navigate(fragmentId)
-
     }
 
 }

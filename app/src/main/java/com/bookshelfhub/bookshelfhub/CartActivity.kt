@@ -15,13 +15,12 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
-
+  //TODO used to load cart Fragment and card Info fragment
   private lateinit var layout: ActivityCartBinding
   private lateinit var navController: NavController
   private lateinit var appBarConfiguration: AppBarConfiguration
   @Inject
   lateinit var userAuth:IUserAuth
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     layout = ActivityCartBinding.inflate(layoutInflater)

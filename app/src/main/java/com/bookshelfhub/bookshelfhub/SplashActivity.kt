@@ -35,24 +35,24 @@ class SplashActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        //***Enable full screen display ***/
+        //TODO Enable full screen display ***/
         hideSystemUI(window)
 
 
-        //***Check if user signed in ***/
+        //TODO Check if user signed in ***/
         if (userAuth.getIsUserAuthenticated()){
             lifecycleScope.launch(IO) {
 
-                //***Get user data***/
+                //TODO Get user data***/
                 val user = localDb.getUser(userAuth.getUserId())
 
                 withContext(Main){
-                    //***Check if user data exist as user may not complete sign up which requires user data***/
+                    //TODO Check if user data exist as user may not complete sign up which requires user data***/
                     val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
                         Intent(this@SplashActivity, MainActivity::class.java)
                     }else{
-                        //***If user data does not exist but user signed in take user to Welcome screen to complete ***
-                        //***sign in by entering there data***
+                        //TODO If user data does not exist but user signed in take user to Welcome screen to complete ***
+                        //TODO sign in by entering there data***
                         Intent(this@SplashActivity, WelcomeActivity::class.java)
                     }
 
@@ -60,7 +60,7 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
         }else{
-            //***Take user to welcome screen as user is yet to sign in
+            //TODO Take user to welcome screen as user is yet to sign in
             val intent = Intent(this, WelcomeActivity::class.java)
             getReferrer(intent)
         }
@@ -76,21 +76,21 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun getReferrer(intent:Intent){
-        //This App could've been opened by a dynamic link and not the from the app icon
+        //TODO This App could've been opened by a dynamic link and not the from the app icon
         var referrer:String?=null
 
         val fbDLink = FirebaseDLink()
         fbDLink.getDeepLinkAsync(this){
             if(it!=null){
-                //*** Get deep link main url
+                //TODO Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
-                //*** Remove the main url to get referral userID or PubIdAndISBN
+                //TODO  Remove the main url to get referral userID or PubIdAndISBN
                 referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
 
-                //*** Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
+                //TODO  Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }else{
-                //*** Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
+                //TODO  Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }
         }

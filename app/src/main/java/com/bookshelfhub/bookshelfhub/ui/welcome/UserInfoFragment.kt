@@ -101,7 +101,6 @@ class UserInfoFragment : Fragment() {
             }
         }
 
-
         if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.nameEditTxt.setText(userAuth.getName())
@@ -112,7 +111,6 @@ class UserInfoFragment : Fragment() {
         }
 
         layout.btnContinue.setOnClickListener {
-
             layout.nameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
             layout.phoneEditTxtLayout.error=null
@@ -133,6 +131,7 @@ class UserInfoFragment : Fragment() {
                 val referrer = userAuthViewModel.getUserReferrerId()
                 var referrerId:String?=null
                 if (isNewUser){
+                    //TODO if an individual user refer this user get that user id
                     referrer?.let {
                         if (it.length==userId.length){
                             referrerId = it
@@ -147,6 +146,7 @@ class UserInfoFragment : Fragment() {
                     user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone = phone
+                    //TODO save the user ID to database
                     user.referrerId = referrerId
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)

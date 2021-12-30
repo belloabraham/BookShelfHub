@@ -5,12 +5,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
+import com.bookshelfhub.bookshelfhub.models.ApiKeys
+import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,6 +25,7 @@ import javax.inject.Inject
 class BookItemActivityViewModel @Inject constructor(
   private val localDb: ILocalDb,
   val cloudDb:ICloudDb,
+  val settingsUtil: SettingsUtil,
   val savedState: SavedStateHandle,
   userAuth: IUserAuth): ViewModel(){
 
@@ -39,6 +43,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val author = savedState.get<String>(Book.AUTHOR.KEY)!!
   private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM.KEY)?:false
+  private var conversionEndPoint:String?=null
 
 
   private val config  = PagingConfig(
@@ -58,6 +63,9 @@ class BookItemActivityViewModel @Inject constructor(
 
     orderedBook = localDb.getALiveOrderedBook(isbn)
 
+    viewModelScope.launch(IO) {
+       conversionEndPoint =  settingsUtil.getString(PrivateKeys.FIXER_ENDPOINT)
+    }
 
     cloudDb.getLiveDataAsync(
       DbFields.PUBLISHED_BOOKS.KEY, isbn,
@@ -77,6 +85,10 @@ class BookItemActivityViewModel @Inject constructor(
 
   }
 
+  fun getConversionEndPoint(): String? {
+    return conversionEndPoint
+  }
+
   fun getIsbn():String{
     return  isbn
   }
@@ -85,7 +97,7 @@ class BookItemActivityViewModel @Inject constructor(
     return orderedBook
   }
 
-  fun getLivePubReferrer(): LiveData<Optional<PubReferrers>> {
+  fun getLivePubReferrerByIsbn(): LiveData<Optional<PubReferrers>> {
     return publisherReferrer
   }
 
