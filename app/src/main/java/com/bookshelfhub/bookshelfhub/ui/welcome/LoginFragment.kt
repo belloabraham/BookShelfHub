@@ -49,7 +49,6 @@ class LoginFragment:Fragment() {
     private val PHONE = "phone"
     private val DIALING_CODE="dialingCode"
 
-    //Injecting class instance with Dagger Hilt
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
     @Inject
@@ -71,7 +70,7 @@ class LoginFragment:Fragment() {
     ): View {
         layout= FragmentLoginBinding.inflate(inflater, container, false)
 
-        //Populate UI controls with data based on User login or Sign up
+        //TODO Populate UI controls with data based on User login or Sign up
         layout.title.text = args.loginSignup
         val description= String.format(getString(R.string.login_signup_desicription), args.loginSignup)
         val loginSignupText= String.format(getString(R.string.with_phone), args.loginSignup)
@@ -93,12 +92,12 @@ class LoginFragment:Fragment() {
             }
         }
 
-        //Hide error button as user edit or re-type phone number
+        //TODO Hide error button as user edit or re-type phone number
        layout.phoneNumEditText.doOnTextChanged { text, start, before, count ->
            layout.errorAlertBtn.visibility = View.GONE
        }
 
-        //Hide keyboard and show error message when error button is clicked
+        //TODO Hide keyboard and show error message when error button is clicked
         layout.errorAlertBtn.setOnClickListener {
             keyboardUtil.hideKeyboard(layout.phoneNumEditText)
             viewLifecycleOwner.lifecycleScope.launch(Main) {
@@ -112,17 +111,15 @@ class LoginFragment:Fragment() {
         }
 
 
-        //Try to login or signup user when the done key gets press on keyboard if phone number is valid
+        //TODO Try to login or signup user when the done key gets press on keyboard if phone number is valid
         layout.phoneNumEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
                keyboardUtil.hideKeyboard(layout.phoneNumEditText)
                 startPhoneNumberVerification()
                actionId == EditorInfo.IME_ACTION_DONE
         })
 
-        //Try to login or signup user when the login or signup button gets press if phone number is valid
-
+        //TODO Try to login or signup user when the login or signup button gets press if phone number is valid
         layout.btnPhoneLogin.setOnClickListener {
-
                 startPhoneNumberVerification()
         }
 

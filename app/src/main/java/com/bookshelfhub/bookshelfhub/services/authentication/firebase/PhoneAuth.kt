@@ -71,6 +71,7 @@ open class PhoneAuth(private  val activity: Activity, val phoneAuthViewModel: Ph
 
     private fun getAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
         return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                 phoneAuthViewModel.setOTPCode("000000")
                 signInWithPhoneAuthCredential(credential, phoneAuthViewModel, wrongOTPErrorMsg)
@@ -78,12 +79,16 @@ open class PhoneAuth(private  val activity: Activity, val phoneAuthViewModel: Ph
 
             override fun onVerificationFailed(e: FirebaseException) {
 
-                if (e is FirebaseAuthInvalidCredentialsException) {
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(wrongOTPErrorMsg))
-                } else if (e is FirebaseTooManyRequestsException) {
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(tooManyReqErrorMsg))
-                }else{
-                    phoneAuthViewModel.setSignedInFailedError(activity.getString(otherAuthErrorMsg))
+                when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        phoneAuthViewModel.setSignedInFailedError(activity.getString(wrongOTPErrorMsg))
+                    }
+                    is FirebaseTooManyRequestsException -> {
+                        phoneAuthViewModel.setSignedInFailedError(activity.getString(tooManyReqErrorMsg))
+                    }
+                    else -> {
+                        phoneAuthViewModel.setSignedInFailedError(activity.getString(otherAuthErrorMsg))
+                    }
                 }
             }
 

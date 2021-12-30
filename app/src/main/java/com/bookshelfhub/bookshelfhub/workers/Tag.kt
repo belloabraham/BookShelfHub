@@ -5,7 +5,7 @@ object Tag {
     const val deleteBookmarks ="deleteBookmarks"
     const val removeUnPublishedBooks ="removeUnPublishedBooks"
     const val updatePublishedBooks ="updatePublishedBooks"
-
+    const val recommendedBooksWorker ="recommendedBooksWorker"
 
     const val NOTIFICATION_TOKEN="notification_token"
 

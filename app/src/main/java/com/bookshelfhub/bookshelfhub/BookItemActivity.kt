@@ -33,6 +33,7 @@ import com.bookshelfhub.bookshelfhub.extensions.string.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
+import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
@@ -41,7 +42,7 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
-import com.bookshelfhub.bookshelfhub.ui.Fragment
+import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -53,7 +54,6 @@ import com.bookshelfhub.bookshelfhub.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
-import com.google.firebase.Timestamp
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest

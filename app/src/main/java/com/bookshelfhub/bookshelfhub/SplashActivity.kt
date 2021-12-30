@@ -76,7 +76,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun getReferrer(intent:Intent){
-        //***Get referral deep link that could be null or from a User or a Publisher referring a book**
+        //This App could've been opened by a dynamic link and not the from the app icon
         var referrer:String?=null
 
         val fbDLink = FirebaseDLink()
@@ -87,10 +87,10 @@ class SplashActivity : AppCompatActivity() {
                 //*** Remove the main url to get referral userID or PubIdAndISBN
                 referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
 
-                //*** Start Main or Welcome Activity with a null referral userID or PubIdAndISBN
+                //*** Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }else{
-                //*** Start Main or Welcome Activity with a null referral userID or PubIdAndISBN
+                //*** Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }
         }

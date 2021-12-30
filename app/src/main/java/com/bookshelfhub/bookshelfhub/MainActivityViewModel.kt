@@ -21,7 +21,7 @@ class MainActivityViewModel @Inject constructor(
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
-    private var isNewProfileNotif: MutableLiveData<Boolean> = MutableLiveData()
+    private var isNewMoreTabNotif: MutableLiveData<Boolean> = MutableLiveData()
     private var user: LiveData<User> = MutableLiveData()
     private var bookInterest: LiveData<Optional<BookInterest>> = MutableLiveData()
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
@@ -94,15 +94,13 @@ class MainActivityViewModel @Inject constructor(
         return storeSearchHistory
     }
 
-
-    fun getTotalProfileNotifNumber(): Int {
+    fun getTotalMoreTabNotification(): Int {
         return newAppUpdateNotifNo.value!! + verifyPhoneOrEmailNotifNo.value!! + bookInterestNotifNo.value!!
     }
 
     fun getNewAppUpdateNotifNumber():LiveData<Int>{
       return  newAppUpdateNotifNo
     }
-
 
     fun setOnBackPressed(value:Boolean){
         onBackPressed.value = value
@@ -113,12 +111,12 @@ class MainActivityViewModel @Inject constructor(
 
     fun setBookInterestNotifNo(value:Int){
         bookInterestNotifNo.value=value
-        isNewProfileNotif.value=true
+        isNewMoreTabNotif.value=true
     }
 
      fun setVerifyPhoneOrEmailNotif(value:Int){
         verifyPhoneOrEmailNotifNo.value = value
-        isNewProfileNotif.value=true
+        isNewMoreTabNotif.value=true
     }
 
     fun getBookInterest():LiveData<Optional<BookInterest>>{
@@ -129,8 +127,8 @@ class MainActivityViewModel @Inject constructor(
         return user
     }
 
-    fun getIsNewProfileNotif():LiveData<Boolean>{
-        return isNewProfileNotif
+    fun getIsNewMoreTabNotif():LiveData<Boolean>{
+        return isNewMoreTabNotif
     }
 
     fun setSelectedIndex(index:Int){
@@ -143,7 +141,8 @@ class MainActivityViewModel @Inject constructor(
 
     fun setIsNewUpdate(){
         newAppUpdateNotifNo.value = 1
-        isNewProfileNotif.value=true
+        //TODO set that there is a new notification in more tab
+        isNewMoreTabNotif.value=true
     }
 
 }

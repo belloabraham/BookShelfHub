@@ -11,10 +11,8 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class PhoneAuthViewModel @Inject constructor(private val timerUtil: TimerUtil) :ViewModel() {
+class PhoneAuthViewModel @Inject constructor() :ViewModel() {
 
-    private var timeRemainingInMillis: MutableLiveData<Long> = MutableLiveData<Long>()
-    private var timerStarted: Boolean = false
     private var otpCode: MutableLiveData<String> = MutableLiveData<String>()
     private var signedInFailedError: MutableLiveData<String> = MutableLiveData<String>()
     private var isSignedInSuccessfully: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -68,10 +66,6 @@ class PhoneAuthViewModel @Inject constructor(private val timerUtil: TimerUtil) :
         signedInFailedError.value=value
     }
 
-    fun getTimerTimeRemaining():LiveData<Long>{
-        return timeRemainingInMillis
-    }
-
     fun getOTPCode():LiveData<String>{
         return otpCode
     }
@@ -79,12 +73,4 @@ class PhoneAuthViewModel @Inject constructor(private val timerUtil: TimerUtil) :
         this.otpCode.value=otpCode
     }
 
-    fun startTimer(length: Long){
-      if (!timerStarted){
-            timerStarted=true
-            timerUtil.startTimer(length) {
-                timeRemainingInMillis.value=it
-            }
-        }
-    }
 }

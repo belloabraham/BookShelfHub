@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub
+package com.bookshelfhub.bookshelfhub.enums
 
 /**
  * Key for setting and getting two required value by the webView activity

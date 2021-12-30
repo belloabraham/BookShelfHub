@@ -16,7 +16,7 @@
             android:orientation="vertical">
 
             <com.bookshelfhub.bookshelfhub.views.ExpandableCardView
-                android:id="@+id/accountBtn"
+                android:id="@+id/accountDropDownView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:title="@string/account"
@@ -165,7 +165,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.bookshelfhub.bookshelfhub.views.ExpandableCardView
-                android:id="@+id/settingsBtn"
+                android:id="@+id/settingsDropDownView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:title="@string/settings"

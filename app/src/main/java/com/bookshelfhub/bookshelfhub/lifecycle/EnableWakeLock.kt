@@ -9,7 +9,7 @@ import androidx.lifecycle.OnLifecycleEvent
 /**
  * Lifecycle aware screen display manager
  */
-class Display(val activity:Activity, val lifecycle: Lifecycle) : LifecycleObserver {
+class EnableWakeLock(val activity:Activity, val lifecycle: Lifecycle) : LifecycleObserver {
 
     init {
         lifecycle.addObserver(this)

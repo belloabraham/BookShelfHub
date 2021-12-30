@@ -38,13 +38,13 @@ import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
+import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     @Inject
     lateinit var userAuth: IUserAuth
     private lateinit var inAppUpdate:InAppUpdate
-    private val updateActivityRequestCode=700
+    private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE=700
     private var referrer:String?=null
     private val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //TODO Load secret keys from realtime firebase
         getPrivateKeys()
 
         userId=userAuth.getUserId()
@@ -88,38 +89,38 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        //Check if there is an update for this app
+        //TODO Check if there is an update for this app using In App update
         inAppUpdate =  InAppUpdate(this)
         inAppUpdate.checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
 
+          //TODO Notify the more fragment update button of new update
           mainActivityViewModel.setIsNewUpdate()
 
              if (isImmediateUpdate){
-                 inAppUpdate.startImmediateUpdate(appUpdateInfo, updateActivityRequestCode)
+                 inAppUpdate.startImmediateUpdate(appUpdateInfo, IN_APP_UPDATE_ACTIVITY_REQUEST_CODE)
              }else{
-                 inAppUpdate.startFlexibleUpdate(appUpdateInfo, updateActivityRequestCode){installState->
+                 inAppUpdate.startFlexibleUpdate(appUpdateInfo, IN_APP_UPDATE_ACTIVITY_REQUEST_CODE){ installState->
                      if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-                         installUpdateMessage()
+                         newUpdateInstallUpdateMessage()
                      }
                  }
              }
           }
 
-
-        //***Get Nullable referral userID or PubIdAndISBN and set to userAuthViewModel
+        //***TODO Get Nullable referral userID or PubIdAndISBN
          referrer = mainActivityViewModel.getReferrer()
 
         if(isStoragePermissionRequired()){
             if(Permission.hasPermission(this, storagePermission)){
-                openPublisherReferrerLink(referrer)
+                openReferrerLinkInStore(referrer)
             }else{
                 requestStoragePermission()
             }
         }else{
-            openPublisherReferrerLink(referrer)
+            openReferrerLinkInStore(referrer)
         }
 
-        //***Pre generate dynamic link before user request on app share to decrease share sheet load time
+        //***TODO Pre generate dynamic link before user request on app share to decrease share sheet load time
         getBookShareReferralLink(userId){
             it?.let {
                 val link = it.toString()
@@ -131,41 +132,46 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
-            //Use to navigate to store from empty shelf
+            //TODO Navigate to a particular tab based on set value
            layout.bottomBar.selectTabAt(it, true)
         })
 
-        mainActivityViewModel.getIsNewProfileNotif().observe(this, Observer { isNewProfileNotif ->
-
-            val profileTabIndex = 3
-            val notifNumber = mainActivityViewModel.getTotalProfileNotifNumber()
+        mainActivityViewModel.getIsNewMoreTabNotif().observe(this, Observer {
+            val moreTabIndex = 3
+            val notifNumber = mainActivityViewModel.getTotalMoreTabNotification()
 
             if (notifNumber>0){
-                layout.bottomBar.setBadgeAtTabIndex(profileTabIndex, AnimatedBottomBar.Badge("$notifNumber"))
+                //TODO there is a notification, set notification bubble for the bottom tab of more with the number of notification
+                layout.bottomBar.setBadgeAtTabIndex(moreTabIndex, AnimatedBottomBar.Badge("$notifNumber"))
             }else{
-                layout.bottomBar.clearBadgeAtTabIndex(profileTabIndex)
+                //TODO there are no notification remove any notification badge if there is one
+                layout.bottomBar.clearBadgeAtTabIndex(moreTabIndex)
             }
 
         })
 
-        mainActivityViewModel.getUserRecord().observe(this, Observer { userRecord ->
-           /* if (userRecord.mailOrPhoneVerified){
+       /*mainActivityViewModel.getUserRecord().observe(this, Observer { userRecord ->
+            if (userRecord.mailOrPhoneVerified){
                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(0)
             }else{
                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(1)
-            }*/
-        })
+            }
+        })*/
 
 
 
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
+            //TODO Check if user already added book interest
             if(bookInterest.isPresent && bookInterest.get().added){
+
+                //TODO remove book interest button notification bubble
                 mainActivityViewModel.setBookInterestNotifNo(0)
-                
+
+                //TODO Generate recommended books to be shown in book store
                 val recommendedBooksWorker =
                     OneTimeWorkRequestBuilder<RecommendedBooks>()
                         .build()
-                WorkManager.getInstance(this).enqueueUniqueWork("recommendedBooksWorker", ExistingWorkPolicy.REPLACE, recommendedBooksWorker)
+                WorkManager.getInstance(this).enqueueUniqueWork(Tag.recommendedBooksWorker, ExistingWorkPolicy.REPLACE, recommendedBooksWorker)
 
             }else{
                 mainActivityViewModel.setBookInterestNotifNo(1)
@@ -185,8 +191,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             ) {
 
                 if (newIndex>1){
+                    //TODO if user navigates to bookmark or more fragment
                     layout.shelfStoreViewPager.visibility=View.INVISIBLE
                     layout.cartMoreViewPager.visibility=VISIBLE
+                    //TODO set active visible view pager to get the last active view pager in the case of activity recreate when theme changes
                     mainActivityViewModel.setActiveViewPager(1)
                 }else{
                     layout.shelfStoreViewPager.visibility=VISIBLE
@@ -196,6 +204,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
                 when(newIndex){
                     0-> {
+                        //TODO set active page to get the last active page in the case of activity recreate when theme changes
                         mainActivityViewModel.setActivePage(0)
                         layout.shelfStoreViewPager.setCurrentItem(0, true)
                     }
@@ -220,6 +229,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
         mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
 
+            // TODO change activity theme when user switch the theme in more fragment
             val mode = if (isNightMode){
                 AppCompatDelegate.MODE_NIGHT_YES
             }else{
@@ -232,7 +242,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     }
 
-    private fun installUpdateMessage(){
+    private fun newUpdateInstallUpdateMessage(){
         Snackbar.make(
             layout.container,
             getString(R.string.new_update_downloaded),
@@ -248,11 +258,14 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     override fun onResume() {
         super.onResume()
 
-        inAppUpdate.checkForDownloadedOrDownloadingUpdate(updateActivityRequestCode){
-            installUpdateMessage()
+        //TODO Check if user has a completed download to prompt them for install
+        inAppUpdate.checkForDownloadedOrDownloadingUpdate(IN_APP_UPDATE_ACTIVITY_REQUEST_CODE){
+            newUpdateInstallUpdateMessage()
         }
 
+        //TODO Set active view pager and page based on what was last set by bottom nav on select change  to saved state Instance as a result of activity recreated from theme change, as activity recreated create the effect of when resource get reclaimed by the OS
         if(mainActivityViewModel.getActiveViewPager()==0){
+            //TODO Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
             layout.bottomBar.selectTabAt(if(mainActivityViewModel.getActivePage()==0) 0  else 1, true)
             layout.shelfStoreViewPager.visibility=VISIBLE
             layout.cartMoreViewPager.visibility=View.INVISIBLE
@@ -276,10 +289,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        openPublisherReferrerLink(referrer)
+        //TODO Don not open referral link in the case of new user sign up until user grants storage permission
+        openReferrerLinkInStore(referrer)
     }
 
-   private fun requestNeverAskAgainPermission(){
+   private fun reRequestNeverAskAgainPermission(){
         val  resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == 0) {
@@ -297,7 +311,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if(Permission.isPermissionPermanentlyDenied(this, perms) && !Permission.hasPermission(this, storagePermission)){
-            requestNeverAskAgainPermission()
+            reRequestNeverAskAgainPermission()
         }else{
             finish()
         }
@@ -345,8 +359,9 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun openPublisherReferrerLink(referrer:String?){
+    private fun openReferrerLinkInStore(referrer:String?){
         referrer?.let {
+            //TODO referrer will not be null if referrer exist and it is a publisher link
             val ref = it
             if (ref.length>userId.length){
 
@@ -379,7 +394,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private fun requestStoragePermission(){
 
                 if(Permission.isPermissionPermanentlyDenied(this, listOf(storagePermission))){
-                    requestNeverAskAgainPermission()
+                    reRequestNeverAskAgainPermission()
                 }else {
                     val rational = getString(R.string.storage_perm_msg)
                     Permission.requestPermission(this, rational, Permission.WRITE_STORAGE_RC, storagePermission)

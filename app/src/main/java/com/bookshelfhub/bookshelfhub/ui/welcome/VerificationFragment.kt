@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -26,7 +27,6 @@ import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
-import com.bookshelfhub.bookshelfhub.ui.VeriFragSavedState
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
@@ -46,8 +46,7 @@ class VerificationFragment:Fragment(){
     private var otpCode:String? = null
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
-    private var inProgress:Boolean=true
-    private val timerDurationInMilliSec = 180000L
+    private val verificationViewModel:VerificationViewModel by viewModels()
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
@@ -67,15 +66,8 @@ class VerificationFragment:Fragment(){
         savedInstanceState: Bundle?
     ): View {
 
-                if (savedInstanceState!=null){
-                    inProgress =  savedInstanceState[VeriFragSavedState.IN_PROGRESS.KEY] as Boolean
-                }
 
-        layout= FragmentVerificationBinding.inflate(inflater, container, false);
-
-                requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-
-                }
+        layout = FragmentVerificationBinding.inflate(inflater, container, false)
 
                 layout.phoneNumberTxt.text = args.phoneNumber
 
@@ -94,7 +86,7 @@ class VerificationFragment:Fragment(){
                      (requireActivity() as WelcomeActivity).verifyPhoneNumberWithCode(otpCode!!)
                    }else{
                        layout.otpView.showError()
-                       layout.otpErrorTxtView.setText(getString(R.string.otp_error_msg))
+                       layout.otpErrorTxtView.text = getString(R.string.otp_error_msg)
                        layout.otpErrorTxtView.visibility= View.VISIBLE
                    }
                 }
@@ -106,12 +98,7 @@ class VerificationFragment:Fragment(){
                 layout.resendCodeTxtView.applyLinks(links)
 
 
-                if (inProgress){
-                     phoneAuthViewModel.startTimer(timerDurationInMilliSec)
-                     inProgress=false
-                 }
-
-                phoneAuthViewModel.getTimerTimeRemaining().observe(viewLifecycleOwner, Observer { timeRemainingInSec ->
+                verificationViewModel.getTimerTimeRemaining().observe(viewLifecycleOwner, Observer { timeRemainingInSec ->
                     if (timeRemainingInSec!=0L){
                         val min = timeRemainingInSec/60L
                         val sec = timeRemainingInSec%60L
@@ -126,11 +113,10 @@ class VerificationFragment:Fragment(){
 
                 phoneAuthViewModel.getOTPCode().observe(viewLifecycleOwner, Observer { otpCode ->
                     layout.otpView.setOTP(otpCode)
-
                 })
 
                 phoneAuthViewModel.getIsSignedInFailedError().observe(viewLifecycleOwner, Observer { signInErrorMsg ->
-                    layout.otpErrorTxtView.setText(signInErrorMsg)
+                    layout.otpErrorTxtView.text = signInErrorMsg
                     layout.otpErrorTxtView.visibility = View.VISIBLE
                     if (signInErrorMsg==getString(R.string.otp_error_msg)){
                         layout.otpView.setOTP("")
@@ -194,8 +180,13 @@ class VerificationFragment:Fragment(){
                 return layout.root
     }
 
+    override fun onDestroy() {
+        verificationViewModel.setInProgress(false)
+        super.onDestroy()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(VeriFragSavedState.IN_PROGRESS.KEY, inProgress)
+        verificationViewModel.setInProgress(true)
         super.onSaveInstanceState(outState)
     }
 

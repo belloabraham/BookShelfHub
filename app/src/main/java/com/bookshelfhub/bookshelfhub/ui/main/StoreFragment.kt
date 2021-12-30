@@ -465,10 +465,10 @@ class StoreFragment : Fragment() {
     }
 
     private fun showErrorMsg(errorMsg:Int){
-        layout.progressBar.visibility=View.GONE
+        layout.progressBar.visibility=GONE
         layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireContext(), R.drawable.ic_network_alert))
         layout.errorMsgText.text = getString(errorMsg)
-        layout.errorLayout.visibility=View.VISIBLE
+        layout.errorLayout.visibility=VISIBLE
     }
 
 }

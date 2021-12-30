@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui
+package com.bookshelfhub.bookshelfhub.enums
 
 /**
  * Used to Pass fragment Id between Activities

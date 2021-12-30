@@ -17,8 +17,11 @@ object DeviceUtil{
     }
 
      fun getDeviceOSVersionInfo(osVersion:Int):String{
-        Build.VERSION_CODES.O
             when(osVersion) {
+                Build.VERSION_CODES.S_V2 ->
+                    return "Android 12 V2 - API ${osVersion}"
+                Build.VERSION_CODES.S ->
+                    return "Android 12 - API ${osVersion}"
                 Build.VERSION_CODES.P ->
                     return "Android 9 - API ${osVersion}"
                 Build.VERSION_CODES.Q ->
@@ -41,10 +44,8 @@ object DeviceUtil{
                     return "Android 5.1 - API ${osVersion}"
                 Build.VERSION_CODES.BASE->
                     return "Android 5.1 - API ${osVersion}"
-                31->
-                    return "Android 12 - API ${osVersion}"
             }
-        return "Android version greater than 12 - API ${osVersion}"
+        return "Android - API Version ${osVersion}"
     }
 
 }

@@ -7,10 +7,8 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMoreBinding
-import com.bookshelfhub.bookshelfhub.ui.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

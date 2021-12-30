@@ -2,8 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.ui.Fragment
+import com.bookshelfhub.bookshelfhub.enums.Fragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

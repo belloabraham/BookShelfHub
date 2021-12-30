@@ -23,6 +23,7 @@ import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
+import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
@@ -38,15 +39,12 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -87,11 +85,13 @@ class MoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         layout= FragmentMoreBinding.inflate(inflater, container, false)
-        val signOutBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.signOutCard)
-        val progressPopupToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.progressPopupToggle)
-        val darkModeToggle = layout.settingsBtn.findViewById<SwitcherX>(R.id.darkModeToggle)
-        val profileBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.profileCard)
-        val deletePaymentCardsBtn = layout.accountBtn.findViewById<MaterialCardView>(R.id.deletePaymentCards)
+        val signOutBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.signOutCard)
+        val profileBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.profileCard)
+        val deletePaymentCardsBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.deletePaymentCards)
+
+        val progressPopupToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.progressPopupToggle)
+        val darkModeToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.darkModeToggle)
+
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
 
@@ -331,7 +331,7 @@ class MoreFragment : Fragment() {
     private fun startMoreActivity(fragmentID:Int){
         val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.bookshelfhub.ui.Fragment.ID.KEY, fragmentID)
+            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.ID.KEY, fragmentID)
         }
         startActivity(intent)
     }
