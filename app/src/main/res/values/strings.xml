@@ -63,6 +63,8 @@
     <string name="options">Options</string>
     <string name="report_book">Report book</string>
     <string name="add_to_Cart">Add to cart</string>
+    <string name="view_cart">View cart</string>
+    <string name="buy_now">Buy Now</string>
     <string name="download">Download</string>
     <string name="local_price_and_usd">Price: %s%,.2f ($%,.2f)</string>
     <string name="usd_price">Price: $%,.2f</string>
@@ -79,6 +81,7 @@
     <string name="ratings_reviews">Ratings and reviews</string>
     <string name="see_all_reviews">See all reviews</string>
     <string name="similar_books">Similar books</string>
+
 
     <!-- TODO: Onboarding Fragment-->
     <string name="login">Login</string>
