@@ -14,7 +14,6 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -26,7 +25,7 @@ import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.lifecycle.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.Utils.EnableWakeLock
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast

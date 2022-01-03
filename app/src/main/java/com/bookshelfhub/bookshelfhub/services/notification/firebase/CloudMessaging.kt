@@ -16,7 +16,7 @@ open class CloudMessaging : ICloudMessaging {
         Firebase.messaging.unsubscribeFromTopic(topic)
     }
 
-    override fun  getNotificationTokenAsync(onComplete:(token:String)->Unit){
+    override fun getNotificationTokenAsync(onComplete:(token:String)->Unit){
         FirebaseMessaging.getInstance()
             .token
             .addOnCompleteListener {

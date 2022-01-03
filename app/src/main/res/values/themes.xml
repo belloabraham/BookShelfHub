@@ -3,14 +3,6 @@
     <style name="Theme.BookShelfHub" parent="AppTheme"/>
 
 
-    <style name="SplashTheme" parent="SplashActivityTheme"/>
-
-
-    <style name="Widget.Theme.BookShelfHub.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/day_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
         <item name="linkBuilderStyle">@style/LinkBuilder</item>
@@ -32,6 +24,7 @@
         <item name="android:colorBackground">?backgroundColor</item>
         <item name="android:windowBackground">?backgroundColor</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?backgroundColor</item>
         <!-- Customize your theme here. -->
@@ -52,6 +45,13 @@
 
     </style>
 
+
+    <style name="SplashTheme" parent="SplashActivityTheme"/>
+
+    <style name="Widget.Theme.BookShelfHub.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/day_overlay</item>
+        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
+    </style>
 
     <style name="SplashActivityTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>

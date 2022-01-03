@@ -73,6 +73,7 @@ class Application: android.app.Application(), Configuration.Provider {
        enqueueUniquePeriodicWork(Tag.deleteBookmarks, deleteBookmarks)
     }
 
+
     private fun enqueueUniquePeriodicWork(tag:String,workRequest: PeriodicWorkRequest,  workPolicy:ExistingPeriodicWorkPolicy=ExistingPeriodicWorkPolicy.KEEP){
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(tag, workPolicy, workRequest)
     }

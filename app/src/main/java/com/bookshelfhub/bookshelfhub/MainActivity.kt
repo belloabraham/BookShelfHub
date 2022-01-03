@@ -30,7 +30,6 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
@@ -82,7 +81,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
 
         //TODO Load secret keys from realtime firebase
-        getPrivateKeys()
+        privateKeys.loadPrivateKeys(lifecycleScope)
 
         userId=userAuth.getUserId()
 
@@ -404,23 +403,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
 
     }
 
-    private fun getPrivateKeys(){
-       lifecycleScope.launch(IO){
-           val perspectiveKey = settingsUtil.getString(PrivateKeys.PERSPECTIVE_API_KEY)
-               if(perspectiveKey==null){
-                   privateKeys.get(PrivateKeys.API_KEYS, ApiKeys::class.java){
-                       it?.let {
-                           lifecycleScope.launch(IO){
-                               settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PRI_KEY, it.payStackLivePrivateKey)
-                               settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PUB_KEY, it.payStackLivePublicKey)
-                               settingsUtil.setString(PrivateKeys.PERSPECTIVE_API_KEY, it.perspectiveKey)
-                               settingsUtil.setString(PrivateKeys.FIXER_ENDPOINT, it.fixerEndpoint)
-                           }
-                       }
-                   }
-               }
-       }
-    }
 
     private fun setUpShelfStoreViewPager(){
         val  fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())

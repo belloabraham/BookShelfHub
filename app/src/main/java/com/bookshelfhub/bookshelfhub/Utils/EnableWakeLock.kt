@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.lifecycle
+package com.bookshelfhub.bookshelfhub.Utils
 
 import android.app.Activity
 import android.view.WindowManager

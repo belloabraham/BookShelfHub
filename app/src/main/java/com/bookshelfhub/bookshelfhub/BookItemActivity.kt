@@ -34,8 +34,6 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.enums.WebView
-import com.bookshelfhub.bookshelfhub.extensions.containsUrl
-import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -43,19 +41,21 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.extensions.containsUrl
+import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
+import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
@@ -96,12 +96,14 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var userId: String
     private var bookShareUrl: Uri? = null
     private lateinit var isbn:String
+    private var orderedBook: Optional<OrderedBooks> = Optional.absent()
+    private var cartItems = listOf<Cart>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //TODO Retry geetin private API keys if they do not already exist
-        getPrivateKeys()
+        //TODO Retry getting private API keys if they do not already exist
+        privateKeys.loadPrivateKeys(lifecycleScope)
 
         layout =  ActivityBookItemBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -122,104 +124,15 @@ class BookItemActivity : AppCompatActivity() {
             }
         })
 
-
-        //TODO While Progress bar is loading, get this particular book from the cloud as things like price, no of downloads and ratings may have changed
-        //TODO which have been queried by the by bookItemViewModel in init as snapshot listener
-        bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
-
-            //TODO try getting private AI Keys again if it does not exist as there is an assured network connection by now
-            getPrivateKeys()
-
-            bookOnlineVersion =  book
-
-            //TODO get device country code in uppercase, to tell where user is shopping from
-            val countryCode = Location.getCountryCode(this)
-
-                countryCode?.let {
-
-                    val localCurrency = Currency.getLocalCurrency(countryCode = it)
-
-                     buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){
-                         //TODO If seller currency is same as buyer's local return seller currency as buyer's visible currency in the case of a user buying a book that is sold in his or her home country, they don't want to see that book sold in another currency
-                        book.sellerCurrency
-                    }else{
-                        //TODO The buyer must be buying a book not sold in its country (it's fair to show book price in dollars)
-                        Currency.USD
-                    }
-
-                    //TODO the book is not free
-                    if (book.price >0.0) {
-
-                        showBuyNowCartLayout()
-
-                        val conversionEndpoint =  bookItemActivityViewModel.getConversionEndPoint()!!
-                        val conversionSuccessfulCode = 200
-
-                        //TODO If buyerVisibleCurrency is not in USD meaning the buyer is buying book sold in his/her country
-                        if (buyerVisibleCurrency != Currency.USD){
-                            //TODO Then convert the buyerVisibleCurrency to USD (to show side by side with the local currency) as buyer will be charged in USD
-                            val toCurrency = Currency.USD
-                            val queryParameters = CurrencyConverter.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
-                            convertCurrency(conversionEndpoint, queryParameters){ response ->
-                                if (response.code==conversionSuccessfulCode){
-                                    try {
-                                        val result  =  json.fromJson(response.body!!.string(), ConversionResponse::class.java)
-                                        val priceInUSD = result.info.rate*book.price
-                                        showBookDetails(book, buyerVisibleCurrency, priceInUSD)
-                                    }catch (e:Exception){
-
-                                    }
-                                }
-                            }
-                        }else{
-                            //TODO buyer is not buying book sold in his or her country
-                           showBookDetails(book, buyerVisibleCurrency)
-                        }
-                    }else{
-                        //TODO This book is free
-                        showBookDetails(book, buyerVisibleCurrency)
-                    }
-                }
-        })
-
-
         bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
-            if (orderedBook.isPresent){
-                //TODO If the user have bought this book then hide addToCartBtn and Buy button
-                    showOpenDownloadAndViewCartBtnLayout()
-
-                //TODO if book exist on user device make open book button visible
-                if(true){
-                    showOpenBookButton()
-                }else{
-                    //TODO Else make download button visible
-                    showDownloadBookButton()
-                }
-
-                //TODO If the user have bought this book then the user review is verified just in case the user post a review
-                isVerifiedReview = true
-
-            }
+            this.orderedBook = orderedBook
+           showOrderedBook(orderedBook)
         })
 
         //TODO Get books in cart to know if books are in cart
         bookItemActivityViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
-
-            if(cartItems.isNotEmpty()){
-                //TODO Show no of items in cart on view cart button
-                layout.checkoutNotifText.text = "${cartItems.size}"
-
-                //TODO Check if this book is in cart
-                val bookInCart = cartItems.filter {
-                    it.isbn == isbn
-                }
-
-                //TODO if this Book is in cart
-                if (bookInCart.isNotEmpty()){
-                    showOpenDownloadAndViewCartBtnLayout()
-                    showViewCartButton()
-                }
-            }
+            this.cartItems = cartItems
+            showCartItems(cartItems)
         })
 
         bookItemActivityViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
@@ -240,9 +153,68 @@ class BookItemActivity : AppCompatActivity() {
                 layout.title.text = book.name
                 layout.author.text = String.format(getString(R.string.by), book.author)
                 layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
-
-
         })
+
+
+        //TODO While Progress bar is loading, get this particular book from the cloud as things like price, no of downloads and ratings may have changed
+        //TODO which have been queried by the by bookItemViewModel in init as snapshot listener
+        bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
+
+            //TODO try getting private AI Keys again if it does not exist as there is an assured network connection by now
+            privateKeys.loadPrivateKeys(lifecycleScope)
+
+            bookOnlineVersion =  book
+
+            //TODO get device country code in uppercase, to tell where user is shopping from
+            val countryCode = Location.getCountryCode(this)
+
+            countryCode?.let {
+
+                val localCurrency = Currency.getLocalCurrency(countryCode = it)
+
+                buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){
+                    //TODO If seller currency is same as buyer's local return seller currency as buyer's visible currency in the case of a user buying a book that is sold in his or her home country, they don't want to see that book sold in another currency
+                    book.sellerCurrency
+                }else{
+                    //TODO The buyer must be buying a book not sold in its country (it's fair to show book price in dollars)
+                    Currency.USD
+                }
+
+                //TODO the book is not free
+                if (book.price >0.0) {
+
+                    showBuyNowCartLayout()
+
+                    val conversionEndpoint =  bookItemActivityViewModel.getConversionEndPoint()!!
+                    val conversionSuccessfulCode = 200
+
+                    //TODO If buyerVisibleCurrency is not in USD meaning the buyer is buying book sold in his/her country
+                    if (buyerVisibleCurrency != Currency.USD){
+                        //TODO Then convert the buyerVisibleCurrency to USD (to show side by side with the local currency) as buyer will be charged in USD
+                        val toCurrency = Currency.USD
+                        val queryParameters = CurrencyConverter.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
+                        convertCurrency(conversionEndpoint, queryParameters){ response ->
+                            if (response.code==conversionSuccessfulCode){
+                                try {
+                                    val result  =  json.fromJson(response.body!!.string(), ConversionResponse::class.java)
+                                    val priceInUSD = result.info.rate*book.price
+                                    showBookDetails(book, buyerVisibleCurrency, priceInUSD)
+                                }catch (e:Exception){
+
+                                }
+                            }
+                        }
+                    }else{
+                        //TODO buyer is not buying book sold in his or her country
+                        showBookDetails(book, buyerVisibleCurrency)
+                    }
+                }else{
+                    //TODO This book is free
+                    showBookDetails(book, buyerVisibleCurrency)
+                }
+            }
+        })
+
 
         layout.addToCartBtn.setOnClickListener {
             onlineBookPriceInUSD?.let {
@@ -383,7 +355,6 @@ class BookItemActivity : AppCompatActivity() {
 
         })
 
-
         bookItemActivityViewModel.getLiveUserReview().observe(this, Observer { review ->
 
             layout.ratingInfoLayout.visibility = GONE
@@ -429,7 +400,46 @@ class BookItemActivity : AppCompatActivity() {
             val reviewLength = layout.userReviewEditText.text.toString().length
 
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
+
+            showOrderedBook(orderedBook)
+            showCartItems(cartItems)
         })
+    }
+
+    private fun showOrderedBook(orderedBook: Optional<OrderedBooks>){
+        if (orderedBook.isPresent){
+            //TODO If the user have bought this book then hide addToCartBtn and Buy button
+            showOpenDownloadAndViewCartBtnLayout()
+
+            //TODO if book exist on user device make open book button visible
+            if(true){
+                showOpenBookButton()
+            }else{
+                //TODO Else make download button visible
+                showDownloadBookButton()
+            }
+
+            //TODO If the user have bought this book then the user review is verified just in case the user post a review
+            isVerifiedReview = true
+        }
+    }
+
+    private fun showCartItems(cartItems:List<Cart>){
+        if(cartItems.isNotEmpty()){
+            //TODO Show no of items in cart on view cart button
+            layout.checkoutNotifText.text = "${cartItems.size}"
+
+            //TODO Check if this book is in cart
+            val bookInCart = cartItems.filter {
+                it.isbn == isbn
+            }
+
+            //TODO if this Book is in cart
+            if (bookInCart.isNotEmpty()){
+                showOpenDownloadAndViewCartBtnLayout()
+                showViewCartButton()
+            }
+        }
     }
 
     private fun showBookDetails(book:PublishedBook, buyerVisibleCurrency:String, priceInUSD:Double?=null){
@@ -543,17 +553,17 @@ class BookItemActivity : AppCompatActivity() {
       val unit:String = when {
           value>=billion -> {
               remainder = value.mod(billion)
-              main = (value-remainder)/billion
+              main = (value - remainder)/billion
               "B"
           }
           value >= million -> {
               remainder = value.mod(million)
-              main = (value-remainder)/million
+              main = (value - remainder)/million
               "M"
           }
           value >= thousand -> {
               remainder = value.mod(thousand)
-              main = (value-remainder)/thousand
+              main = (value - remainder)/thousand
               "K"
           }
           else -> {
@@ -632,24 +642,6 @@ class BookItemActivity : AppCompatActivity() {
     private  fun showOpenDownloadAndViewCartBtnLayout(){
         layout.addToCartBuyNowBtnLayout.visibility=GONE
         layout.openViewCartDownloadLayout.visibility = VISIBLE
-    }
-
-    private fun getPrivateKeys(){
-        lifecycleScope.launch(Dispatchers.IO){
-            val perspectiveKey = settingsUtil.getString(PrivateKeys.PERSPECTIVE_API_KEY)
-            if(perspectiveKey==null){
-                privateKeys.get(PrivateKeys.API_KEYS, ApiKeys::class.java){
-                    it?.let {
-                        lifecycleScope.launch(Dispatchers.IO){
-                            settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PRI_KEY, it.payStackLivePrivateKey)
-                            settingsUtil.setString(PrivateKeys.PAYSTACK_LIVE_PUB_KEY, it.payStackLivePublicKey)
-                            settingsUtil.setString(PrivateKeys.PERSPECTIVE_API_KEY, it.perspectiveKey)
-                            settingsUtil.setString(PrivateKeys.FIXER_ENDPOINT, it.fixerEndpoint)
-                        }
-                    }
-                }
-            }
-        }
     }
 
 }
