@@ -15,6 +15,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.Storage
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.database.Util
@@ -38,8 +39,14 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getPrivateKeys(): PrivateKeys {
-        return PrivateKeys()
+    fun getStorage(): Storage {
+        return Storage()
+    }
+
+    @Singleton
+    @Provides
+    fun getPrivateKeys(settingsUtil: SettingsUtil): PrivateKeys {
+        return PrivateKeys(settingsUtil)
     }
 
     @Singleton

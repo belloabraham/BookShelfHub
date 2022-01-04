@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -26,6 +27,8 @@ import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.Utils.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.enums.Book
+import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
@@ -61,14 +64,19 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private var videoLink: String? = null
   private var bookVideos = listOf<BookVideos>()
   private val hideHandler = Handler()
+  private lateinit var isbn: String
+  private lateinit var title: String
 
 
   @SuppressLint("ClickableViewAccessibility")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     EnableWakeLock(this, lifecycle)
 
     userId = userAuth.getUserId()
+    isbn = bookActivityViewModel.getIsbnNo()
+    title = bookActivityViewModel.getBookTitle()
 
     layout = ActivityBookBinding.inflate(layoutInflater)
     setContentView(layout.root)
@@ -116,9 +124,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
         val view = View.inflate(this, R.layout.book_menu, null)
         val shareBtn = view.findViewById<MaterialCardView>(R.id.shareBtn)
+        val aboutBook = view.findViewById<MaterialCardView>(R.id.aboutBook)
+
+        aboutBook.setOnClickListener {
+            startBookInfoActivity(isbn, title, R.id.bookInfoFragment)
+        }
 
         shareBtn.setOnClickListener {
-          shareBookLink()
+            shareBookLink()
         }
 
         MaterialBottomSheetDialogBuilder(this,  this)
@@ -185,6 +198,16 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     bottomNavigationLayout = layout.fullscreenContentControls
    /* layout.menuBtn.setOnTouchListener(delayHideTouchListener)*/
+  }
+
+  private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
+    val intent = Intent(this, BookInfoActivity::class.java)
+    with(intent){
+      putExtra(Book.TITLE.KEY,title)
+      putExtra(Fragment.ID.KEY, fragmentID)
+      putExtra(Book.ISBN.KEY, isbn)
+    }
+    startActivity(intent)
   }
 
   private fun getPageVideoLink(pageNumber:Int){

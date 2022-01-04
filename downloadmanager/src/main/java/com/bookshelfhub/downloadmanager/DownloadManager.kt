@@ -39,7 +39,7 @@ object DownloadManager{
      * @param fileName The file name with which file is to be saved
      * @return the DownloadRequestBuilder
      */
-    fun download(url: String, dirPath: String, fileName: String): DownloadRequestBuilder? {
+    fun download(url: String, dirPath: String, fileName: String): DownloadRequestBuilder{
         return DownloadRequestBuilder(url, dirPath, fileName)
     }
 

@@ -79,13 +79,13 @@
                         android:layout_marginVertical="@dimen/size_8"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         android:id="@+id/author"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
                         android:id="@+id/price"/>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
@@ -494,7 +494,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
-
 
     <LinearLayout
         android:layout_width="match_parent"

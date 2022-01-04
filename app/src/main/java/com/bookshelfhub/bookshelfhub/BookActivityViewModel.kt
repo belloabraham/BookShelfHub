@@ -33,6 +33,7 @@ class BookActivityViewModel @Inject constructor(
   private lateinit var orderedBook:OrderedBooks
 
   init {
+
       deleteAllHistory()
       livePublishedBook = localDb.getLivePublishedBook(isbn)
       viewModelScope.launch(IO){
@@ -53,6 +54,13 @@ class BookActivityViewModel @Inject constructor(
     }
   }
 
+  fun getIsbnNo(): String {
+    return isbn
+  }
+
+  fun getBookTitle(): String {
+        return title
+  }
 
   fun deleteFromBookmark(pageNumb:Int){
     viewModelScope.launch(IO){

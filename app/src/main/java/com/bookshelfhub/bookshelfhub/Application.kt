@@ -4,6 +4,8 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
+import com.bookshelfhub.downloadmanager.DownloadManager
+import com.bookshelfhub.downloadmanager.DownloadManagerConfig
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
@@ -33,6 +35,8 @@ class Application: android.app.Application(), Configuration.Provider {
 
         //TODO Should come first
         setUpAppCheck()
+
+        setupDownloadManager()
 
         //TODO Joda Time Library Initialization
         AndroidThreeTen.init(this)
@@ -93,6 +97,16 @@ class Application: android.app.Application(), Configuration.Provider {
             firebaseAppCheck.installAppCheckProviderFactory(
                 SafetyNetAppCheckProviderFactory.getInstance())
         }
+    }
+
+    private fun setupDownloadManager(){
+        val builder = DownloadManagerConfig.newBuilder()
+            builder.databaseEnabled=true
+        builder.setReadTimeout(30_000)
+        builder.setConnectTimeout(30_000)
+        val config = builder.build()
+        DownloadManager.initialize(this, config)
+
     }
 
     private fun setupFirebaseRemoteConfig(){

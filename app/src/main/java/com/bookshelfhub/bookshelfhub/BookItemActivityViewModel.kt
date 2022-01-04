@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
@@ -64,7 +65,7 @@ class BookItemActivityViewModel @Inject constructor(
     orderedBook = localDb.getALiveOrderedBook(isbn)
 
     viewModelScope.launch(IO) {
-       conversionEndPoint =  settingsUtil.getString(PrivateKeys.FIXER_ENDPOINT)
+       conversionEndPoint =  settingsUtil.getString(Settings.FIXER_ENDPOINT.KEY)
     }
 
     cloudDb.getLiveDataAsync(

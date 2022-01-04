@@ -51,9 +51,10 @@ import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.models.conversion.ConversionResponse
+import com.bookshelfhub.bookshelfhub.models.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
+import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -196,7 +197,7 @@ class BookItemActivity : AppCompatActivity() {
                         convertCurrency(conversionEndpoint, queryParameters){ response ->
                             if (response.code==conversionSuccessfulCode){
                                 try {
-                                    val result  =  json.fromJson(response.body!!.string(), ConversionResponse::class.java)
+                                    val result  =  json.fromJson(response.body!!.string(), Fixer::class.java)
                                     val priceInUSD = result.info.rate*book.price
                                     showBookDetails(book, buyerVisibleCurrency, priceInUSD)
                                 }catch (e:Exception){
@@ -237,7 +238,7 @@ class BookItemActivity : AppCompatActivity() {
                     OneTimeWorkRequestBuilder<ClearCart>()
                         .setInitialDelay(15, TimeUnit.HOURS)
                         .build()
-                WorkManager.getInstance(this).enqueueUniqueWork("clearCart", ExistingWorkPolicy.REPLACE ,clearCart)
+                WorkManager.getInstance(this).enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE ,clearCart)
             }
         }
 
@@ -588,7 +589,6 @@ class BookItemActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
-
 
     private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {

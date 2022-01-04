@@ -6,6 +6,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.Logger
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -48,7 +49,7 @@ class PostUserReview @AssistedInject constructor(
 
         //TODO no worries about null exception as this worker is one time and will be triggered on book item activity, so api is certain to be available
             runBlocking {
-                apiKey = settingsUtil.getString(PrivateKeys.PERSPECTIVE_API_KEY)!!
+                apiKey = settingsUtil.getString(Settings.PERSPECTIVE_API.KEY)!!
             }
 
 

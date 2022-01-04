@@ -8,5 +8,6 @@ object Tag {
     const val recommendedBooksWorker ="recommendedBooksWorker"
 
     const val NOTIFICATION_TOKEN="notification_token"
+    const val CLEAR_CART="clearCart"
 
 }

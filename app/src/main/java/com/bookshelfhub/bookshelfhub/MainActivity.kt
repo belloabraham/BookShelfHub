@@ -1,14 +1,11 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.TextView
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -21,9 +18,8 @@ import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.Permission
+import com.bookshelfhub.bookshelfhub.helpers.Storage
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
@@ -38,6 +34,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.bookshelfhub.downloadmanager.DownloadManager
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
@@ -48,12 +45,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import pub.devrel.easypermissions.EasyPermissions
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
+class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallbacks
 
     private lateinit var layout: ActivityMainBinding
     private val mainActivityViewModel:MainActivityViewModel by viewModels()
@@ -64,6 +60,8 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
+    lateinit var storage: Storage
+    @Inject
     lateinit var dynamicLink: IDynamicLink
     @Inject
     lateinit var connectionUtil: ConnectionUtil
@@ -72,7 +70,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     private lateinit var inAppUpdate:InAppUpdate
     private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE=700
     private var referrer:String?=null
-    private val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+   // private val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
     private lateinit var userId:String
 
@@ -109,7 +107,11 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         //TODO Get Nullable referral userID or PubIdAndISBN
          referrer = mainActivityViewModel.getReferrer()
 
-        if(isStoragePermissionRequired()){
+        openReferrerLinkInStore(referrer)
+
+        openReferrerLinkInStore(referrer)
+
+       /* if(isStoragePermissionRequired()){
             if(Permission.hasPermission(this, storagePermission)){
                 openReferrerLinkInStore(referrer)
             }else{
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             }
         }else{
             openReferrerLinkInStore(referrer)
-        }
+        }*/
 
         //***TODO Pre generate dynamic link before user request on app share to decrease share sheet load time
         getBookShareReferralLink(userId){
@@ -238,7 +240,6 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         })
 
         showReadProgressDialog()
-
     }
 
     private fun newUpdateInstallUpdateMessage(){
@@ -276,9 +277,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
             layout.cartMoreViewPager.visibility = VISIBLE
         }
 
+
     }
 
-    override fun onRequestPermissionsResult(
+ /*   override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
@@ -292,7 +294,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         openReferrerLinkInStore(referrer)
     }
 
-   private fun reRequestNeverAskAgainPermission(){
+    private fun reRequestNeverAskAgainPermission(){
         val  resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == 0) {
@@ -314,7 +316,7 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }else{
             finish()
         }
-    }
+    }*/
 
     private fun showReadProgressDialog() {
         lifecycleScope.launch(IO) {
@@ -388,20 +390,18 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    private fun isStoragePermissionRequired(): Boolean {
+   /* private fun isStoragePermissionRequired(): Boolean {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
     }
 
     private fun requestStoragePermission(){
-
                 if(Permission.isPermissionPermanentlyDenied(this, listOf(storagePermission))){
                     reRequestNeverAskAgainPermission()
                 }else {
                     val rational = getString(R.string.storage_perm_msg)
                     Permission.requestPermission(this, rational, Permission.WRITE_STORAGE_RC, storagePermission)
                 }
-
-    }
+    }*/
 
 
     private fun setUpShelfStoreViewPager(){
@@ -416,6 +416,10 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
         val cartMoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
         layout.cartMoreViewPager.isUserInputEnabled = false
         layout.cartMoreViewPager.adapter = cartMoreAdapter
+    }
+
+    private fun startDownload(){
+        DownloadManager.download("","", "123.png")
     }
 
 }
