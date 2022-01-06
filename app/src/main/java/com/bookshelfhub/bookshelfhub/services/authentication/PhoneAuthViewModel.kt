@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class PhoneAuthViewModel @Inject constructor() :ViewModel() {
+class PhoneAuthViewModel @Inject constructor() :ViewModel(), IPhoneAuthViewModel {
 
     private var otpCode: MutableLiveData<String> = MutableLiveData<String>()
     private var signedInFailedError: MutableLiveData<String> = MutableLiveData<String>()
@@ -22,54 +22,54 @@ class PhoneAuthViewModel @Inject constructor() :ViewModel() {
     private var signInCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
 
-    fun setSignInCompleted(value:Boolean){
+    override fun setSignInCompleted(value:Boolean){
         signInCompleted.value=value
     }
-    fun getSignInCompleted():LiveData<Boolean>{
+    override fun getSignInCompleted():LiveData<Boolean>{
         return signInCompleted
     }
 
-    fun setSignInStarted(value:Boolean){
+    override fun setSignInStarted(value:Boolean){
         signInStarted.value=value
     }
-    fun getSignInStarted():LiveData<Boolean>{
+    override fun getSignInStarted():LiveData<Boolean>{
         return signInStarted
     }
 
-    fun setIsCodeSent(value:Boolean){
+    override fun setIsCodeSent(value:Boolean){
         isCodeSent.value=value
     }
-    fun getIsCodeSent():LiveData<Boolean>{
+    override fun getIsCodeSent():LiveData<Boolean>{
         return isCodeSent
     }
 
-    fun setIsNewUser(isNewUser:Boolean?){
+    override fun setIsNewUser(isNewUser:Boolean?){
          this.isNewUser.value = isNewUser
     }
 
-    fun getIsNewUser():LiveData<Boolean>{
+    override fun getIsNewUser():LiveData<Boolean>{
         return isNewUser
     }
 
-    fun getIsSignedInSuccessfully():LiveData<Boolean>{
+    override fun getIsSignedInSuccessfully():LiveData<Boolean>{
         return isSignedInSuccessfully
     }
-    fun setIsSignedInSuccessfully(value:Boolean){
+    override fun setIsSignedInSuccessfully(value:Boolean){
         isSignedInSuccessfully.value=value
     }
 
-    fun getIsSignedInFailedError():LiveData<String>{
+    override fun getIsSignedInFailedError():LiveData<String>{
         return signedInFailedError
     }
 
-    fun setSignedInFailedError(value:String){
+    override fun setSignedInFailedError(value:String){
         signedInFailedError.value=value
     }
 
-    fun getOTPCode():LiveData<String>{
+    override fun getOTPCode():LiveData<String>{
         return otpCode
     }
-    fun setOTPCode(otpCode: String){
+    override fun setOTPCode(otpCode: String){
         this.otpCode.value=otpCode
     }
 

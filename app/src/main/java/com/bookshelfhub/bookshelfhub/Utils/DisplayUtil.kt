@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.Resources
 
 
-
 object DisplayUtil {
 
     fun convertPixelsToDp(px: Float, context: Context): Float {
