@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
+import co.paystack.android.PaystackSdk
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.bookshelfhub.downloadmanager.DownloadManager
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
 
-    //TODO ***Dagger Hilt Configuration ***//
+    // ***Dagger Hilt Worker ***//
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
     override fun getWorkManagerConfiguration() =
@@ -33,17 +34,21 @@ class Application: android.app.Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        //TODO Should come first
+        // Should come first
         setUpAppCheck()
 
         setupDownloadManager()
 
-        //TODO Joda Time Library Initialization
+        // Joda Time Library Initialization
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()
 
-        //TODO ***Creating Notification Channel required by Android 8+ ***//
+
+        // Initializing PayStack
+        PaystackSdk.initialize(applicationContext)
+
+        // ***Creating Notification Channel required by Android 8+ ***//
         NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
             .createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
 
@@ -83,10 +88,10 @@ class Application: android.app.Application(), Configuration.Provider {
     }
 
     private fun setUpAppCheck(){
-        //TODO ***Initialize firebase (Required by App Check)***//
+        // ***Initialize firebase (Required by App Check)***//
         FirebaseApp.initializeApp(this)
 
-        //TODO ***Setup App Check ***//
+        // ***Setup App Check ***//
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
 
         if(BuildConfig.DEBUG){
@@ -117,6 +122,8 @@ class Application: android.app.Application(), Configuration.Provider {
             }
             remoteConfig.setConfigSettingsAsync(configSettings)
         }
-        remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults)
+        remoteConfig.setDefaultsAsync(R.xml.firebase_remote_config_defaults).addOnCompleteListener {
+            remoteConfig.fetchAndActivate()
+        }
     }
 }

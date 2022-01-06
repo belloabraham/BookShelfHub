@@ -54,19 +54,17 @@ android {
 }
 
 dependencies {
-    //implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    //implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 
     //Android Jetpack
     //--Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
 
     def lifecycle_version = "2.4.0"
     //--Service
@@ -79,9 +77,6 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    //--Dagger Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
     //--Data Store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     //--Android - Room
@@ -98,6 +93,12 @@ dependencies {
     //--Work Manager
     def work_version = "2.7.1"
     implementation("androidx.work:work-runtime-ktx:$work_version")
+    //--Dagger Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    def hilt_work_version = "1.0.0"
+    implementation("androidx.hilt:hilt-work:$hilt_work_version")
+    kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
     //---Test helpers
     androidTestImplementation("androidx.work:work-testing:$work_version")
     def paging_version = "3.1.0"
@@ -105,11 +106,9 @@ dependencies {
     // alternatively - without Android dependencies for testing
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
     //Google Gson
-    implementation 'com.google.code.gson:gson:2.8.8'
-    def hilt_work_version = "1.0.0"
-    implementation("androidx.hilt:hilt-work:$hilt_work_version")
-    //When using Kotlin.
-    kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
+    implementation 'com.google.code.gson:gson:2.8.9'
+
+
 
 
     //PDF Viewer
@@ -128,7 +127,7 @@ dependencies {
     //Time and Date Util
     implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
     //Web API
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation('com.squareup.okhttp3:okhttp:5.0.0-alpha.3')
     //Permission
     implementation 'pub.devrel:easypermissions:3.0.0'
     //Payment
@@ -148,7 +147,7 @@ dependencies {
     //--Bottom Navigation
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
     //--Country dialing code picker
-    implementation 'com.hbb20:ccp:2.5.1'
+    implementation 'com.hbb20:ccp:2.5.4'
     //--ToolTip
     implementation "com.github.skydoves:balloon:1.3.4"
     //--OnBoarding Image Auto Slider
@@ -187,7 +186,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
     //--Firestore
     implementation 'com.google.firebase:firebase-firestore-ktx'
-    //--Realtim Db
+    //--Realtime Db
     implementation 'com.google.firebase:firebase-database-ktx'
     //--Crashlytics
     // implementation 'com.google.firebase:firebase-crashlytics-ktx'
@@ -196,15 +195,14 @@ dependencies {
 
 
     //Google Play Services
+    //--Google Sign in auth
     implementation 'com.google.android.gms:play-services-auth:20.0.0'
     //---In App Update
     implementation("com.google.android.play:core:1.10.2")
     implementation("com.google.android.play:core-ktx:1.8.1")
-    //---Google Pay
-    //implementation 'com.google.android.gms:play-services-wallet:19.0.0'
 
     //---Task
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.9'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0-native-mt'
 
 }
 

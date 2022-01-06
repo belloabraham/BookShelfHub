@@ -40,8 +40,6 @@ import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.payment.*
-import com.bookshelfhub.bookshelfhub.ui.cart.CartFragmentDirections
-import com.bookshelfhub.bookshelfhub.ui.cart.CartViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,7 +48,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -87,7 +84,7 @@ class CartFragment : Fragment() {
         layout = FragmentCartBinding.inflate(inflater, container, false)
 
         val cartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
-            removeCartItemMsg()
+            showRemoveCartItemMsg()
         }
 
         layout.cartItemsRecView.adapter = cartListAdapter
@@ -99,7 +96,7 @@ class CartFragment : Fragment() {
         })
 
 
-        layout.checkoutFab.setOnClickListener {
+        layout.checkoutBtn.setOnClickListener {
             showSavedPaymentCardList()
         }
 
@@ -160,30 +157,16 @@ class CartFragment : Fragment() {
 
                 }
 
-                layout.checkoutFab.isEnabled = true
+                layout.checkoutBtn.isEnabled = true
                 layout.emptyCartLayout.visibility = GONE
                 layout.cartItemsRecView.visibility = VISIBLE
-                layout.checkoutFab.extend()
             }else{
-                layout.checkoutFab.shrink()
-                layout.checkoutFab.isEnabled = false
+                layout.checkoutBtn.isEnabled = false
                 layout.emptyCartLayout.visibility = VISIBLE
                 layout.cartItemsRecView.visibility = GONE
             }
         })
 
-
-        //Expand or Shrink FAB based on recyclerview scroll position
-        layout.cartItemsRecView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if(dy>0 && layout.checkoutFab.isExtended){
-                    layout.checkoutFab.shrink()
-                }else if(dy<0 && !layout.checkoutFab.isExtended){
-                    layout.checkoutFab.extend()
-                }
-            }
-        })
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
 
@@ -362,7 +345,7 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun removeCartItemMsg():Boolean{
+    private fun showRemoveCartItemMsg():Boolean{
         Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)
             .show()
         return  true

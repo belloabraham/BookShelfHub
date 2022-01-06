@@ -35,24 +35,24 @@ class SplashActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        //TODO Enable full screen display ***/
+        // Enable full screen display ***/
         hideSystemUI(window)
 
 
-        //TODO Check if user signed in ***/
+        // Check if user signed in ***/
         if (userAuth.getIsUserAuthenticated()){
             lifecycleScope.launch(IO) {
 
-                //TODO Get user data***/
+                // Get user data***/
                 val user = localDb.getUser(userAuth.getUserId())
 
                 withContext(Main){
-                    //TODO Check if user data exist as user may not complete sign up which requires user data***/
+                    // Check if user data exist as user may not complete sign up which requires user data***/
                     val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
                         Intent(this@SplashActivity, MainActivity::class.java)
                     }else{
-                        //TODO If user data does not exist but user signed in take user to Welcome screen to complete ***
-                        //TODO sign in by entering there data***
+                        // If user data does not exist but user signed in take user to Welcome screen to complete ***
+                        // sign in by entering there data***
                         Intent(this@SplashActivity, WelcomeActivity::class.java)
                     }
 
@@ -60,13 +60,14 @@ class SplashActivity : AppCompatActivity() {
                 }
             }
         }else{
-            //TODO Take user to welcome screen as user is yet to sign in
+            // Take user to welcome screen as user is yet to sign in
             val intent = Intent(this, WelcomeActivity::class.java)
             getReferrer(intent)
         }
 
     }
 
+    @Suppress("DEPRECATION")
     private fun hideSystemUI(window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(true)
@@ -76,21 +77,21 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun getReferrer(intent:Intent){
-        //TODO This App could've been opened by a dynamic link and not the from the app icon
+        // This App could've been opened by a dynamic link and not the from the app icon
         var referrer:String?=null
 
         val fbDLink = FirebaseDLink()
         fbDLink.getDeepLinkAsync(this){
             if(it!=null){
-                //TODO Get deep link main url
+                // Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
-                //TODO  Remove the main url to get referral userID or PubIdAndISBN
+                //  Remove the main url to get referral userID or PubIdAndISBN
                 referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
 
-                //TODO  Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
+                //  Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }else{
-                //TODO  Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
+                //  Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
                 startNextActivity(intent, referrer)
             }
         }

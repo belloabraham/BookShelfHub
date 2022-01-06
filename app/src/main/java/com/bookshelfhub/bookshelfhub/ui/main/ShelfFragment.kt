@@ -37,7 +37,6 @@ class ShelfFragment : Fragment() {
     private var orderedBookList:List<OrderedBooks> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
-
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject

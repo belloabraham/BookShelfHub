@@ -11,14 +11,11 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Implementaions" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app/redapt" />
             <option value="$PROJECT_DIR$/downloadmanager" />
             <option value="$PROJECT_DIR$/helpers" />
-            <option value="$PROJECT_DIR$/materialsearchview" />
             <option value="$PROJECT_DIR$/pdfviewer" />
-            <option value="$PROJECT_DIR$/readapt" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

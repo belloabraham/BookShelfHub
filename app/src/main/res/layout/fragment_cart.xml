@@ -47,16 +47,19 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/checkoutFab"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:icon="@drawable/cart_arrow_right"
-        app:iconTint="@android:color/white"
-        android:textColor="@android:color/white"
-        android:layout_gravity="bottom|end"
-        android:contentDescription="@null"
-        android:text="@string/check_out"/>
+        android:layout_gravity="bottom"
+        android:padding="@dimen/size_16">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/check_out"
+            android:id="@+id/checkoutBtn"/>
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

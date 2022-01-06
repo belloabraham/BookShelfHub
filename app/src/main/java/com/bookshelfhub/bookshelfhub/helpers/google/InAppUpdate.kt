@@ -10,7 +10,7 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 
-class InAppUpdate(val activity: Activity) {
+class InAppUpdate(private val activity: Activity) {
 
     private val appUpdateManager = AppUpdateManagerFactory.create(activity.baseContext)
     private val daysForImmediateUpdate = 90

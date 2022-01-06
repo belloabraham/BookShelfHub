@@ -42,7 +42,7 @@ class OrderedBooksAdapter (private val activity: Activity) {
 
     private class OrderedBookViewHolder(view: View):RecyclerViewHolder<OrderedBooks>(view){
        private val title: TextView = view.findViewById(R.id.title)
-     //  private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
+       //private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
        private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         fun bindToView(model:OrderedBooks, activity: Activity){
             title.text = model.title
