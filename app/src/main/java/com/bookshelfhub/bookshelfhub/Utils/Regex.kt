@@ -1,7 +1,6 @@
-package com.bookshelfhub.bookshelfhub.extensions.string
+package com.bookshelfhub.bookshelfhub.Utils
 
 object Regex {
-
 
     private val PROTOCOL = "(?i:http|https|rtsp)://"
     private val PORT_NUMBER = "\\:\\d{1,5}"
@@ -87,4 +86,5 @@ object Regex {
             + WORD_BOUNDARY
             + ")")
 
+   const val FULL_NAME = "^[a-zA-Z]{2,}(?: [a-zA-Z]+){0,2}$"
 }

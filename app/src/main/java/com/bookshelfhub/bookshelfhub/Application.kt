@@ -2,7 +2,6 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
-import co.paystack.android.PaystackSdk
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.bookshelfhub.downloadmanager.DownloadManager
@@ -39,14 +38,14 @@ class Application: android.app.Application(), Configuration.Provider {
 
         setupDownloadManager()
 
-        // Joda Time Library Initialization
+        // ThreeTen Time Library Initialization
         AndroidThreeTen.init(this)
 
         setupFirebaseRemoteConfig()
 
 
         // Initializing PayStack
-        PaystackSdk.initialize(applicationContext)
+       // PaystackSdk.initialize(applicationContext)
 
         // ***Creating Notification Channel required by Android 8+ ***//
         NotificationChannelBuilder(this,getString(R.string.notif_channel_id))

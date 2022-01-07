@@ -12,7 +12,7 @@ import com.bookshelfhub.bookshelfhub.views.EditTextFormatter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
-import com.bookshelfhub.bookshelfhub.extensions.string.Regex
+import com.bookshelfhub.bookshelfhub.Utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 import dagger.hilt.android.AndroidEntryPoint

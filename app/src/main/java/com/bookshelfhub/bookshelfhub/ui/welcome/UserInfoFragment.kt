@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
+import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
 import com.bookshelfhub.bookshelfhub.extensions.isPhoneNumber
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
@@ -114,16 +115,18 @@ class UserInfoFragment : Fragment() {
             layout.nameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
             layout.phoneEditTxtLayout.error=null
-            val email = layout.emailEditTxt.text.toString()
-            val phone = layout.phoneEditTxt.text.toString()
-            val name = layout.nameEditTxt.text.toString()
+            val email = layout.emailEditTxt.text.toString().trim()
+            val phone = layout.phoneEditTxt.text.toString().trim()
+            val name = layout.nameEditTxt.text.toString().trim()
 
             if (!email.isValidEmailAddress()){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(name)){
-                layout.emailEditTxtLayout.error=getString(R.string.empty_name_error)
+                layout.nameEditTxtLayout.error=getString(R.string.empty_name_error)
             }else if(!phone.isPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
+            }else if (!name.isFullName(Regex.FULL_NAME)){
+                layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)

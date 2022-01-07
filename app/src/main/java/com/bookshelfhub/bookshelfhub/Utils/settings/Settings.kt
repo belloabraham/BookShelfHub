@@ -7,10 +7,12 @@ enum class Settings(val KEY:String) {
     LAST_BOOK_PERCENTAGE("last_book_percentage"),
     NO_OF_TIME_DISMISSED("no_of_time_dismissed"),
 
+    FLUTTER_ENCRYPTION("flutterEncKey"),
+    FLUTTER_PUBLIC("flutterPublicKey"),
 
      API_KEYS("api_keys"),
      FIXER_ENDPOINT("fixerEndpoint"),
-     PAYSTACK_LIVE_PUB("payStackLivePublicKe"),
-     PAYSTACK_LIVE_PRIVATE("payStackLivePrivateKe"),
-     PERSPECTIVE_API("perspectiveKe")
+     PAYSTACK_LIVE_PUB("payStackLivePublicKey"),
+     PAYSTACK_LIVE_PRIVATE("payStackLivePrivateKey"),
+     PERSPECTIVE_API("perspectiveKey")
 }

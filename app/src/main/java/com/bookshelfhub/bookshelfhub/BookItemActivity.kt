@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -10,14 +9,18 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -30,7 +33,8 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.extensions.string.Regex
+import com.bookshelfhub.bookshelfhub.Utils.Regex
+import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
@@ -44,9 +48,11 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.Storage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
@@ -55,8 +61,11 @@ import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.models.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
+import com.bookshelfhub.bookshelfhub.services.payment.PaymentSDK
+import com.bookshelfhub.bookshelfhub.ui.cart.CartFragmentDirections
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.google.android.material.button.MaterialButton
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -188,7 +197,7 @@ class BookItemActivity : AppCompatActivity() {
                 // the book is not free
                 if (book.price >0.0) {
 
-                    showBuyNowCartLayout()
+                    showAddToCartButton()
 
                     val conversionEndpoint =  bookItemActivityViewModel.getConversionEndPoint()!!
                     val conversionSuccessfulCode = 200
@@ -258,9 +267,6 @@ class BookItemActivity : AppCompatActivity() {
             startBookActivity()
         }
 
-        layout.buyNowBtn.setOnClickListener {
-
-        }
 
         layout.aboutBookCard.setOnClickListener {
             startBookInfoActivity(isbn,  title = localBook!!.name, R.id.bookInfoFragment)
@@ -414,7 +420,6 @@ class BookItemActivity : AppCompatActivity() {
     private fun showOrderedBook(orderedBook: Optional<OrderedBooks>){
         if (orderedBook.isPresent){
             // If the user have bought this book then hide addToCartBtn and Buy button
-            showOpenDownloadAndViewCartBtnLayout()
 
             val book = orderedBook.get()
             // if book exist on user device make open book button visible
@@ -442,7 +447,6 @@ class BookItemActivity : AppCompatActivity() {
 
             // if this Book is in cart
             if (bookInCart.isNotEmpty()){
-                showOpenDownloadAndViewCartBtnLayout()
                 showViewCartButton()
             }
         }
@@ -477,12 +481,12 @@ class BookItemActivity : AppCompatActivity() {
         layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
 
         if(book.price == 0.0){
-            showOpenDownloadAndViewCartBtnLayout()
-            // If book does not exist on user device
-            if(!storage.isDocumentFileExist(this, book.isbn)){
-                showDownloadBookButton()
-            }else{
+            // If book  exist on user device
+            if(storage.isDocumentFileExist(this, book.isbn)){
                 showOpenBookButton()
+            }else{
+                showDownloadBookButton()
+
             }
         }
 
@@ -493,16 +497,25 @@ class BookItemActivity : AppCompatActivity() {
         layout.bookItemLayout.visibility = VISIBLE
     }
 
+    private fun showAddToCartButton(){
+        layout.openBookBtn.visibility = GONE
+        layout.downloadBtn.visibility = GONE
+        layout.viewCartFrame.visibility = GONE
+        layout.addToCartBtn.visibility= VISIBLE
+    }
+
     private fun showDownloadBookButton(){
         layout.openBookBtn.visibility = GONE
         layout.downloadBtn.visibility = VISIBLE
         layout.viewCartFrame.visibility = GONE
+        layout.addToCartBtn.visibility= GONE
     }
 
     private fun showOpenBookButton(){
         layout.openBookBtn.visibility = VISIBLE
         layout.downloadBtn.visibility = GONE
         layout.viewCartFrame.visibility = GONE
+        layout.addToCartBtn.visibility= GONE
     }
 
    private  fun showViewCartButton(){
@@ -510,6 +523,7 @@ class BookItemActivity : AppCompatActivity() {
        layout.viewCartFrame.visibility = VISIBLE
        layout.openBookBtn.visibility = GONE
        layout.downloadBtn.visibility = GONE
+       layout.addToCartBtn.visibility= GONE
    }
 
     private fun showLetterIcon(value:String){
@@ -649,14 +663,5 @@ class BookItemActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private  fun showBuyNowCartLayout(){
-        layout.addToCartBuyNowBtnLayout.visibility= VISIBLE
-        layout.openViewCartDownloadLayout.visibility = GONE
-    }
-
-    private  fun showOpenDownloadAndViewCartBtnLayout(){
-        layout.addToCartBuyNowBtnLayout.visibility=GONE
-        layout.openViewCartDownloadLayout.visibility = VISIBLE
-    }
 
 }

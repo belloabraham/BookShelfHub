@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub.Utils
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.appcompat.widget.AppCompatEditText
 
 class KeyboardUtil {
 

@@ -1,20 +1,13 @@
 package com.bookshelfhub.bookshelfhub.Utils.payment
 
-import android.app.Activity
-import co.paystack.android.Paystack
-import co.paystack.android.PaystackSdk
+
 import co.paystack.android.model.Card
-import co.paystack.android.model.Charge
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 
 class CardUtil(paymentCard: PaymentCard) {
 
-    var card:Card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
-
-    fun isValidCard(paymentCard: PaymentCard): Boolean {
-        return Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv).validCVC()
-    }
+    var card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
 
     fun isValidCVC(): Boolean {
         return card.validCVC()
@@ -67,6 +60,5 @@ class CardUtil(paymentCard: PaymentCard) {
             }
         }
     }
-
 
 }

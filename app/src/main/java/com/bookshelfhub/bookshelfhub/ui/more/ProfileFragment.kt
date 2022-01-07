@@ -14,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.Utils.Regex
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
@@ -99,6 +101,8 @@ class ProfileFragment : Fragment() {
                 layout.phoneEditTxtLayout.error = getString(R.string.phone_req_error)
             }else if (TextUtils.isEmpty(email)){
                 layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
+            }else if (!name.isFullName(Regex.FULL_NAME)){
+                layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else {
                 user?.let { updatedUserRecord ->
                     updatedUserRecord.dateOfBirth = dateOfBirth

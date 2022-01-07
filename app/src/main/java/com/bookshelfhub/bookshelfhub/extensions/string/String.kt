@@ -8,6 +8,11 @@ import java.util.regex.Pattern
 fun String.containsUrl(regex:String):Boolean{
     return Pattern.compile(regex).matcher(this).matches()
 }
+@JvmSynthetic
+fun String.isFullName(regex:String):Boolean{
+    return Pattern.compile(regex).matcher(this).matches()
+}
+
 
 /**
  * Capitalize the first Letter of every word in a string
@@ -31,3 +36,4 @@ fun String.isValidEmailAddress():Boolean{
 fun String.isPhoneNumber():Boolean{
     return Patterns.PHONE.matcher(this).matches()
 }
+

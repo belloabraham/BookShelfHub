@@ -110,7 +110,7 @@
 
 
     <!-- TODO: Form field data -->
-    <string name="name">Name</string>
+    <string name="name">Full Name</string>
     <string name="phone_number">Phone number</string>
     <string name="empty_name_error">Name field is required</string>
     <string name="valid_phone_error">Enter a valid phone number</string>
@@ -311,6 +311,7 @@
 
     <!-- TODO: Category Activity -->
     <string name="search">Search</string>
+    <string name="valid_full_name">Enter a valid full name</string>
 
 
 </resources>

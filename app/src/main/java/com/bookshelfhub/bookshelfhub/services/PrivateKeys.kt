@@ -31,10 +31,12 @@ class PrivateKeys(private val settingsUtil: SettingsUtil) {
                 get(Settings.API_KEYS.KEY, ApiKeys::class.java){
                     it?.let {
                         lifecycleScope.launch(IO){
-                            settingsUtil.setString(Settings.PAYSTACK_LIVE_PRIVATE.KEY, it.payStackLivePrivateKey)
-                            settingsUtil.setString(Settings.PAYSTACK_LIVE_PUB.KEY, it.payStackLivePublicKey)
+                          //  settingsUtil.setString(Settings.PAYSTACK_LIVE_PRIVATE.KEY, it.payStackLivePrivateKey)
+                           // settingsUtil.setString(Settings.PAYSTACK_LIVE_PUB.KEY, it.payStackLivePublicKey)
                             settingsUtil.setString(Settings.PERSPECTIVE_API.KEY, it.perspectiveKey)
                             settingsUtil.setString(Settings.FIXER_ENDPOINT.KEY, it.fixerEndpoint)
+                            settingsUtil.setString(Settings.FLUTTER_ENCRYPTION.KEY, it.flutterEncKey)
+                            settingsUtil.setString(Settings.FLUTTER_PUBLIC.KEY, it.flutterPublicKey)
                         }
                     }
                 }

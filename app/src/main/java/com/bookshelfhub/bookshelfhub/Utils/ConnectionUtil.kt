@@ -8,7 +8,6 @@ import android.os.Build
 import dagger.hilt.android.qualifiers.ActivityContext
 import javax.inject.Inject
 
-
 class ConnectionUtil @Inject constructor (val context:Context) {
 
    private  val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

@@ -1,5 +1,5 @@
 package com.bookshelfhub.bookshelfhub.services.payment
-
+/*
 import android.app.Activity
 import co.paystack.android.model.Card
 import co.paystack.android.Paystack
@@ -9,18 +9,19 @@ import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
 
 class PayStack(
-    paymentCard: PaymentCard, private val amount:Double, private val activity: Activity, private val json: Json, private val callBack: Paystack.TransactionCallback,
+    private val userDataKey:String,
+    private val userData:HashMap<String, String>,
+    private val activity: Activity, private val json: Json,
+    private val callBack: Paystack.TransactionCallback
 ) : IPayment {
-
-    var card: Card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
-
 
     override fun chargeCard(
         publicKey:String,
-        userDataKey:String,
-        userData:HashMap<String, String>,
+        paymentCard: PaymentCard,
+        amount:Double,
         currency:String
     ) {
+        val card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
         PaystackSdk.setPublicKey(publicKey)
         val charge = Charge()
         charge.card = card
@@ -31,4 +32,4 @@ class PayStack(
     }
 
 
-}
+}*/

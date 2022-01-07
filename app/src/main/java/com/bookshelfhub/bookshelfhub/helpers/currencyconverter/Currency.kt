@@ -1,14 +1,19 @@
 package com.bookshelfhub.bookshelfhub.helpers.currencyconverter
 
+import com.bookshelfhub.bookshelfhub.services.payment.GPaySupportedCountries
 import com.bookshelfhub.bookshelfhub.services.payment.SupportedCountries
 
 
 object Currency {
     
     const val USD="USD"
-    const val NGN="NGN"
-    const val ZAR="ZAR"
-    const val GHS="GHS"
+    private const val NGN="NGN"
+    private const val ZAR="ZAR"
+    private const val GHS="GHS"
+
+    private const val KES="KES"
+    private const val UGX="UGX"
+    private const val TZX="TZX"
 
     fun getLocalCurrency(countryCode:String): String {
         return when (countryCode) {
@@ -16,8 +21,14 @@ object Currency {
                 NGN
             SupportedCountries.GHANA.COUNTRY_CODE ->
                 GHS
-            SupportedCountries.SOUTH_AFRICA.COUNTRY_CODE ->
+            SupportedCountries.TANZANIA.COUNTRY_CODE ->
+                TZX
+            SupportedCountries.UGANDA.COUNTRY_CODE ->
+                UGX
+            GPaySupportedCountries.SOUTH_AFRICA.COUNTRY_CODE ->
                 ZAR
+            GPaySupportedCountries.KENYA.COUNTRY_CODE ->
+                KES
             else ->
                 USD
         }

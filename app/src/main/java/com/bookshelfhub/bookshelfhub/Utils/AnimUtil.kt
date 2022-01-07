@@ -12,7 +12,6 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import java.time.Duration
 
-
 class AnimUtil (private val activity:Activity) {
 
 
@@ -28,7 +27,7 @@ class AnimUtil (private val activity:Activity) {
     fun fadeIn(view: View, duration: Long){
         view.apply {
             alpha =0f
-            visibility = View.VISIBLE
+            visibility = VISIBLE
             animate()
                 .alpha(1f)
                 .setDuration(duration)

@@ -1,12 +1,13 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
-import com.bookshelfhub.bookshelfhub.models.Earnings
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -14,16 +15,42 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor(private val localDb: ILocalDb, val cloudDb: ICloudDb, userAuth: IUserAuth): ViewModel(){
+class CartViewModel @Inject constructor(
+  private val localDb: ILocalDb,
+  val cloudDb: ICloudDb,
+  val settingsUtil: SettingsUtil,
+  userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()
   private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
+  private var flutterEncKey:String?=null
+  private var flutterPublicKey:String?=null
+  private lateinit var user: User
 
   init {
     liveCartItems = localDb.getLiveListOfCartItems(userId)
     livePaymentCards = localDb.getLivePaymentCards()
+
+    viewModelScope.launch(IO){
+      flutterPublicKey = settingsUtil.getString(Settings.FLUTTER_PUBLIC.KEY)
+      flutterEncKey = settingsUtil.getString(Settings.FLUTTER_ENCRYPTION.KEY)
+
+      user =  localDb.getUser(userId).get()
+    }
+  }
+
+  fun getUser(): User {
+    return user
+  }
+
+  fun getFlutterPublicKey(): String? {
+    return flutterPublicKey
+  }
+
+  fun getFlutterEncKey(): String? {
+    return flutterEncKey
   }
 
   fun setIsNewCard(value:Boolean){

@@ -500,39 +500,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:paddingBottom="@dimen/size_16"
-        android:visibility="gone"
-        android:id="@+id/addToCartBuyNowBtnLayout"
-        android:paddingHorizontal="@dimen/size_8"
-        android:weightSum="2"
-        android:orientation="horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_8"
-            android:layout_weight="1"
-            android:id="@id/addToCartBtn"
-            android:text="@string/add_to_Cart"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="@dimen/size_8"
-            android:id="@+id/buyNowBtn"
-            android:text="@string/buy_now"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:paddingBottom="@dimen/size_16"
-        android:visibility="gone"
-        android:id="@+id/openViewCartDownloadLayout"
         android:paddingHorizontal="@dimen/size_16"
         android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/size_8"
+            android:id="@id/addToCartBtn"
+            android:text="@string/add_to_Cart"/>
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
