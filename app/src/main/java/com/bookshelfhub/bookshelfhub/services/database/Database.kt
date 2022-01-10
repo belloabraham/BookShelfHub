@@ -14,6 +14,7 @@ import javax.inject.Inject
 class Database @Inject constructor(private var context: Context, private val localDb: ILocalDb) {
 
     suspend fun addUser(user:User){
+
         localDb.addUser(user)
 
         val connected = Constraint.getConnected()

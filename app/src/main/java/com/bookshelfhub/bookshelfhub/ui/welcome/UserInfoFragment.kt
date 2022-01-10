@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub.ui.welcome
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -125,7 +124,7 @@ class UserInfoFragment : Fragment() {
                 layout.nameEditTxtLayout.error=getString(R.string.empty_name_error)
             }else if(!phone.isPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
-            }else if (!name.isFullName(Regex.FULL_NAME)){
+            }else if (!name.isFullName(Regex.FIRST_NAME_LAST_NAME)){
                 layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)

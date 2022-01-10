@@ -101,7 +101,7 @@ class ProfileFragment : Fragment() {
                 layout.phoneEditTxtLayout.error = getString(R.string.phone_req_error)
             }else if (TextUtils.isEmpty(email)){
                 layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
-            }else if (!name.isFullName(Regex.FULL_NAME)){
+            }else if (!name.isFullName(Regex.FIRST_NAME_LAST_NAME)){
                 layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else {
                 user?.let { updatedUserRecord ->

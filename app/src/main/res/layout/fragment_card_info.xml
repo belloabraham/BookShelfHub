@@ -37,7 +37,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/expiryDateLayout"
+                android:id="@+id/cardExpiryDateLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:hint="@string/mmYY">
                 <com.google.android.material.textfield.TextInputEditText
@@ -46,12 +46,11 @@
                     android:maxLength="5"
                     android:drawableEnd="@drawable/card_exp_date"
                     android:inputType="number"
-                    android:id="@+id/expiryDateTxt"/>
+                    android:id="@+id/cardExpiryDateTxt"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_width="150dp" android:layout_height="wrap_content"
                 android:hint="@string/cvc"
                 android:id="@+id/cvvLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

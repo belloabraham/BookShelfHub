@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.DialogInterface
 import android.text.Html
 
-
 class AlertDialogBuilder private constructor(private val activity: Activity, private val message: String){
 
     private lateinit var positiveActionText:String
@@ -73,15 +72,15 @@ class AlertDialogBuilder private constructor(private val activity: Activity, pri
                 .setCancelable(alertDialogBuilder.cancelable)
 
                    alertDialogBuilder.positiveAction?.let {
-                       builder.setPositiveButton(alertDialogBuilder.positiveActionText, DialogInterface.OnClickListener{
-                               _, _ -> it()
-                   })
+                       builder.setPositiveButton(alertDialogBuilder.positiveActionText) { _, _ ->
+                           it()
+                       }
                    }
 
             alertDialogBuilder.negativeAction?.let {
-                builder.setNegativeButton(alertDialogBuilder.negativeActionText, DialogInterface.OnClickListener{
-                        _, _ -> it()
-                } )
+                builder.setNegativeButton(alertDialogBuilder.negativeActionText) { _, _ ->
+                    it()
+                }
             }
             builder.create().show()
         }

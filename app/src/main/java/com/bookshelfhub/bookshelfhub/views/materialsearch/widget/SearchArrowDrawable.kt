@@ -1,13 +1,11 @@
 package com.bookshelfhub.bookshelfhub.views.materialsearch.widget
 
-
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.Property
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.core.content.ContextCompat
-
 
 @Suppress("unused")
 class SearchArrowDrawable constructor(context: Context) : DrawerArrowDrawable(context) {

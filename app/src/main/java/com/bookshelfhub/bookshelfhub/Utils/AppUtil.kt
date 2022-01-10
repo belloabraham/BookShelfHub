@@ -23,7 +23,7 @@ class AppUtil @Inject constructor (private val context: Context) {
 
     fun getAppVersionName():String{
         return try {
-            val packageInfo = context.getPackageManager().getPackageInfo(context.packageName, 0)
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             ""

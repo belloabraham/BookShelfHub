@@ -9,7 +9,6 @@ class WebApi() {
 
     fun get(endPointUrl:String, queryParameters:String, onComplete:(Response)->Unit) {
         val url = endPointUrl+queryParameters
-
         val request = Request.Builder()
             .url(url)
             .build()

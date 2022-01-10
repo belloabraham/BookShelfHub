@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 
-
 class MaterialSearchView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -213,7 +212,5 @@ class MaterialSearchView @JvmOverloads constructor(
             }
         })
     }
-
-
 
 }

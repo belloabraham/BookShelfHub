@@ -47,7 +47,7 @@ class PostPendingUserReview @AssistedInject constructor(
 
                //Get verified reviews from all reviews
                val verifiedReviews = unVerifiedUserReviews.filter {
-                   it.verified && !it.review.containsUrl(Regex.URL_IN_TEXT)
+                   it.verified && !it.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
                }
 
 

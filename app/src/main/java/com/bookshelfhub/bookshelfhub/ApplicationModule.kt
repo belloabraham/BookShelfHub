@@ -16,6 +16,7 @@ import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessagi
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.Storage
+import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.database.Util
@@ -33,79 +34,87 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun getRemoteConfig(): IRemoteConfig {
+    fun provideRemoteConfig(): IRemoteConfig {
         return Firebase()
     }
 
     @Singleton
     @Provides
-    fun getStorage(): Storage {
+    fun provideStorage(): Storage {
         return Storage()
     }
 
     @Singleton
     @Provides
-    fun getPrivateKeys(settingsUtil: SettingsUtil): PrivateKeys {
+    fun providePrivateKeys(settingsUtil: SettingsUtil): PrivateKeys {
         return PrivateKeys(settingsUtil)
     }
 
     @Singleton
     @Provides
-    fun getDatabaseUtil(json:Json): Util {
+    fun provideDatabaseUtil(json:Json): Util {
         return Util(json)
     }
 
     @Singleton
     @Provides
-    fun getWebAPI(): WebApi {
+    fun provideWebAPI(): WebApi {
         return WebApi()
     }
 
     @Singleton
     @Provides
-    fun getAppUtil(@ApplicationContext context: Context): AppUtil {
+    fun provideAppUtil(@ApplicationContext context: Context): AppUtil {
         return AppUtil(context)
     }
 
+
     @Singleton
     @Provides
-    fun getLocalDb(@ApplicationContext context: Context): ILocalDb {
-        return RoomDb(context)
+    fun provideRoomInstance(@ApplicationContext context: Context): RoomInstance {
+        return RoomInstance.getDatabase(context)
+    }
+    
+
+    @Singleton
+    @Provides
+    fun provideLocalDb(roomInstance:RoomInstance): ILocalDb {
+        return RoomDb(roomInstance.userDao())
     }
 
     @Singleton
     @Provides
-    fun getCloudMessaging(): ICloudMessaging {
+    fun provideCloudMessaging(): ICloudMessaging {
         return CloudMessaging()
     }
 
     @Singleton
     @Provides
-    fun getJson(): Json {
+    fun provideJson(): Json {
         return Json(Gson())
     }
 
     @Singleton
     @Provides
-    fun getCloudDb(json: Json): ICloudDb {
+    fun provideCloudDb(json: Json): ICloudDb {
         return Firestore(json)
     }
 
     @Singleton
     @Provides
-    fun getDatabase(@ApplicationContext context: Context, localDb: ILocalDb): Database {
+    fun provideDatabase(@ApplicationContext context: Context, localDb: ILocalDb): Database {
         return Database(context, localDb)
     }
 
     @Singleton
     @Provides
-    fun getUserAuthentication(): IUserAuth {
+    fun provideUserAuthentication(): IUserAuth {
         return UserAuth()
     }
 
     @Singleton
     @Provides
-    fun getSettingsUtil(@ApplicationContext context: Context): SettingsUtil {
+    fun provideSettingsUtil(@ApplicationContext context: Context): SettingsUtil {
         return SettingsUtil(context)
     }
 

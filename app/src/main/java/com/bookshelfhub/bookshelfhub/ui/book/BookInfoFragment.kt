@@ -42,7 +42,7 @@ class BookInfoFragment : Fragment() {
 
             bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { pubBook->
                 val book = pubBook.get()
-                val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.URL)) { link ->
+                val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.WEB_LINK)) { link ->
                     openLink(link)
                 })
 

@@ -1,13 +1,14 @@
-package com.bookshelfhub.bookshelfhub.views
+package com.bookshelfhub.bookshelfhub.helpers
 
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
 
+
 /**
  * Used to separate user input by a character example is the case of credit card input
  */
-class EditTextFormatter(private val userInputLen:Int, private val inputChunkDivider:String, private val inputChunkLen:Int, val onTextChanged:(s: CharSequence?)->Unit={}): TextWatcher {
+class EditTextCreditCardNumberFormatterWatcher(private val maxUserInputLength:Int, private val inputChunkLen:Int, private val inputChuckDividerChar:String, val onTextChanged:(s: CharSequence?)->Unit={}): TextWatcher {
 
     private var currentInput=""
 
@@ -19,12 +20,11 @@ class EditTextFormatter(private val userInputLen:Int, private val inputChunkDivi
 
     override fun afterTextChanged(s: Editable?) {
         val userInput = s!!.toString()
-        if (userInput != currentInput && userInput.length<=userInputLen){
-            currentInput = userInput.chunked(inputChunkLen).joinToString { inputChunkDivider }
+        if (userInput != currentInput && userInput.length<=maxUserInputLength){
+            currentInput = userInput.chunked(inputChunkLen).joinToString { inputChuckDividerChar }
             s.filters = arrayOfNulls<InputFilter>(0)
         }
         s.replace(0, s.length, currentInput, 0, currentInput.length)
     }
-
 
 }

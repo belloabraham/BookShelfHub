@@ -9,18 +9,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -34,7 +30,6 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.Utils.Regex
-import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
@@ -48,11 +43,9 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.Storage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
@@ -61,11 +54,8 @@ import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.models.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
-import com.bookshelfhub.bookshelfhub.services.payment.PaymentSDK
-import com.bookshelfhub.bookshelfhub.ui.cart.CartFragmentDirections
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
-import com.google.android.material.button.MaterialButton
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -315,7 +305,7 @@ class BookItemActivity : AppCompatActivity() {
                bookItemActivityViewModel.addUserReview(newReview)
 
             // Post user review to the cloud if user review does not contain any form of url
-                if (!review.containsUrl(Regex.URL_IN_TEXT)){
+                if (!review.containsUrl(Regex.WEB_LINK_IN_TEXT)){
                     //Put data to be passed to the review worker, data of the ISBN(Book that was reviewed) and Rating diff
                     val data = Data.Builder()
                     data.putString(Book.ISBN.KEY, isbn)

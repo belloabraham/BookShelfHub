@@ -64,7 +64,7 @@ object Regex {
     const val JCB = "^(?:2131|1800|35[0-9]{3})"
 
 
-    val URL_IN_TEXT = ("("
+    val WEB_LINK_IN_TEXT = ("("
             + "(.*)"
             + "("
             + "(?:" + PROTOCOL + "(?:" + USER_INFO + ")?" + ")?"
@@ -76,7 +76,7 @@ object Regex {
             + "(.*)"
             + ")")
 
-    val URL = ("("
+    val WEB_LINK = ("("
             + "("
             + "(?:" + PROTOCOL + "(?:" + USER_INFO + ")?" + ")?"
             + "(?:" + DOMAIN_NAME_STR + ")"
@@ -86,5 +86,5 @@ object Regex {
             + WORD_BOUNDARY
             + ")")
 
-   const val FULL_NAME = "^[a-zA-Z]{2,}(?: [a-zA-Z]+){0,2}$"
+   const val FIRST_NAME_LAST_NAME = "^[a-zA-Z]{2,}(?: [a-zA-Z]+){0,2}$"
 }

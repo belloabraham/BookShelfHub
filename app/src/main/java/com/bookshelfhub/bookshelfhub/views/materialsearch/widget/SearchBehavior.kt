@@ -8,7 +8,6 @@ import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-
 class SearchBehavior<S : SearchLayout> : CoordinatorLayout.Behavior<S>() {
 
 

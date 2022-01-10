@@ -5,7 +5,6 @@ import android.os.Parcelable
 import android.text.TextUtils
 import android.view.View
 
-
 class SearchViewSavedState(superState: Parcelable) : View.BaseSavedState(superState) {
 
     var query: CharSequence? = null

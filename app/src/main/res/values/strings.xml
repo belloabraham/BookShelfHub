@@ -110,7 +110,7 @@
 
 
     <!-- TODO: Form field data -->
-    <string name="name">Full Name</string>
+    <string name="first_last_name">First and Last Name</string>
     <string name="phone_number">Phone number</string>
     <string name="empty_name_error">Name field is required</string>
     <string name="valid_phone_error">Enter a valid phone number</string>

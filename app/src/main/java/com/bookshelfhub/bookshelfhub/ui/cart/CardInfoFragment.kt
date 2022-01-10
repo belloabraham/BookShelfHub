@@ -8,13 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bookshelfhub.bookshelfhub.views.EditTextFormatter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
 import com.bookshelfhub.bookshelfhub.Utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.helpers.EditTextCreditCardNumberFormatterWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -43,8 +43,8 @@ class CardInfoFragment : Fragment() {
         layout = FragmentCardInfoBinding.inflate(inflater, container, false)
 
 
-        layout.cardNoTxt.addTextChangedListener(EditTextFormatter(userInputLen = 16,
-            inputChunkDivider = cardNoSeparator, inputChunkLen = 4){
+        layout.cardNoTxt.addTextChangedListener(EditTextCreditCardNumberFormatterWatcher(maxUserInputLength = 16,
+            inputChuckDividerChar = cardNoSeparator, inputChunkLen = 4){
 
             when {
                 it.toString().contains(Regex.VISA) -> {
@@ -75,9 +75,10 @@ class CardInfoFragment : Fragment() {
 
         })
 
-        layout.cardNoTxt.addTextChangedListener(
-            EditTextFormatter(userInputLen = 4,
-                inputChunkDivider = cardExpDateSeparator, inputChunkLen = 2)
+
+        layout.cardExpiryDateTxt.addTextChangedListener(
+            EditTextCreditCardNumberFormatterWatcher(maxUserInputLength = 4,
+                inputChuckDividerChar = cardExpDateSeparator, inputChunkLen = 2)
         )
 
 
@@ -85,9 +86,9 @@ class CardInfoFragment : Fragment() {
             layout.errorTxt.text = null
             layout.cardNoLayout.error = null
 
-            val cardNo = layout.cardNoTxt.text.toString().replace(cardNoSeparator,"")
+            val cardNo = layout.cardNoTxt.text.toString().trim().replace(cardNoSeparator,"")
             val cardCVC = layout.cvvTxt.toString()
-            val cardMMYY = layout.expiryDateTxt.toString()
+            val cardMMYY = layout.cardExpiryDateTxt.toString()
             val cardExpMonth:Int
             val cardExpYear:Int
             //***If cardMMYY is properly formatted

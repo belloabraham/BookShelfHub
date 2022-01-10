@@ -8,12 +8,12 @@ import android.speech.RecognizerIntent
 
 object SearchUtils {
 
-    const val SPEECH_REQUEST_CODE = 300
+    private const val SPEECH_REQUEST_CODE = 300
 
     @JvmStatic
     fun setVoiceSearch(activity: Activity, text: String) {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM

@@ -19,9 +19,6 @@ import androidx.annotation.StringRes
 import com.bookshelfhub.bookshelfhub.R
 import kotlinx.android.synthetic.main.expandable_cardview.view.*
 
-
-
-
 class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
 
     private var title: String? = null
@@ -66,10 +63,10 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
     private fun initView(context: Context) {
         //Inflating View
         LayoutInflater.from(context).inflate(R.layout.expandable_cardview, this)
+
     }
 
     private fun initAttributes(context: Context, attrs: AttributeSet) {
-        //Ottengo attributi
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.ExpandableCardView)
         this@ExpandableCardView.typedArray = typedArray
         title = typedArray.getString(R.styleable.ExpandableCardView_title)
@@ -85,7 +82,7 @@ class ExpandableCardView @JvmOverloads constructor(context: Context, attrs: Attr
         super.onFinishInflate()
 
         //Setting attributes
-        if (! TextUtils.isEmpty(title)) card_title.text = title
+        if (!TextUtils.isEmpty(title)) card_title.text = title
 
         iconDrawable?.let { drawable ->
             card_header.visibility = View.VISIBLE

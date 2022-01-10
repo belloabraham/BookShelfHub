@@ -4,7 +4,7 @@ import android.app.Activity
 import com.bookshelfhub.bookshelfhub.R
 import es.dmoral.toasty.Toasty
 
- class Toast(val activity: Activity, val backgroundColor:Int = R.color.light_blue_A400 ) {
+ class Toast(val activity: Activity, private val backgroundColor:Int = R.color.light_blue_A400 ) {
 
      fun showToast(msg:Int, toastLength:Int){
         showToast(activity.getString(msg), toastLength)

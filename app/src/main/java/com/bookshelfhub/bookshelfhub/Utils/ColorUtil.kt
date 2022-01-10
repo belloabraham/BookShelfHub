@@ -2,7 +2,6 @@ package com.bookshelfhub.bookshelfhub.Utils
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 
 object ColorUtil {
