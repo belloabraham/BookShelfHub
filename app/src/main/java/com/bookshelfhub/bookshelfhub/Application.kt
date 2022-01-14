@@ -4,6 +4,7 @@ import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.bookshelfhub.downloadmanager.DownloadManager
 import com.bookshelfhub.downloadmanager.DownloadManagerConfig
 import com.google.firebase.FirebaseApp
@@ -28,6 +29,9 @@ class Application: android.app.Application(), Configuration.Provider {
         Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    @Inject
+    lateinit var worker: Worker
 
 
     override fun onCreate() {
@@ -83,7 +87,7 @@ class Application: android.app.Application(), Configuration.Provider {
 
 
     private fun enqueueUniquePeriodicWork(tag:String,workRequest: PeriodicWorkRequest,  workPolicy:ExistingPeriodicWorkPolicy=ExistingPeriodicWorkPolicy.KEEP){
-        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(tag, workPolicy, workRequest)
+       worker.enqueueUniquePeriodicWork(tag, workRequest, workPolicy)
     }
 
     private fun setUpAppCheck(){

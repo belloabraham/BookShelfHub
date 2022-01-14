@@ -10,8 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.work.Constraints
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
@@ -25,6 +23,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Tasks
@@ -59,6 +58,8 @@ class WelcomeActivity : AppCompatActivity() {
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
+    @Inject
+    lateinit var worker: Worker
     @Inject
     lateinit var userAuth: IUserAuth
 
@@ -286,7 +287,7 @@ class WelcomeActivity : AppCompatActivity() {
                 OneTimeWorkRequestBuilder<DownloadBookmarks>()
                     .setConstraints(Constraint.getConnected())
                     .build()
-            WorkManager.getInstance(applicationContext).enqueue(downLoadBookmarksWorker)
+            worker.enqueue(downLoadBookmarksWorker)
         }
     }
 

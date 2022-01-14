@@ -34,6 +34,7 @@ import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.bookshelfhub.downloadmanager.DownloadManager
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
@@ -62,6 +63,8 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     @Inject
     lateinit var storage: Storage
     @Inject
+    lateinit var worker: Worker
+    @Inject
     lateinit var dynamicLink: IDynamicLink
     @Inject
     lateinit var connectionUtil: ConnectionUtil
@@ -70,7 +73,6 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     private lateinit var inAppUpdate:InAppUpdate
     private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE=700
     private var referrer:String?=null
-   // private val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
     private lateinit var userId:String
 
@@ -172,7 +174,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
                 val recommendedBooksWorker =
                     OneTimeWorkRequestBuilder<RecommendedBooks>()
                         .build()
-                WorkManager.getInstance(this).enqueueUniqueWork(Tag.recommendedBooksWorker, ExistingWorkPolicy.REPLACE, recommendedBooksWorker)
+                worker.enqueueUniqueWork(Tag.recommendedBooksWorker, ExistingWorkPolicy.REPLACE, recommendedBooksWorker)
 
             }else{
                 mainActivityViewModel.setBookInterestNotifNo(1)
@@ -263,9 +265,9 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             newUpdateInstallUpdateMessage()
         }
 
-        //TODO Set active view pager and page based on what was last set by bottom nav on select change  to saved state Instance as a result of activity recreated from theme change, as activity recreated create the effect of when resource get reclaimed by the OS
+        //Set active view pager and page based on what was last set by bottom nav on select change  to saved state Instance as a result of activity recreated from theme change, as activity recreated create the effect of when resource get reclaimed by the OS
         if(mainActivityViewModel.getActiveViewPager()==0){
-            //TODO Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
+            //Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
             layout.bottomBar.selectTabAt(if(mainActivityViewModel.getActivePage()==0) 0  else 1, true)
             layout.shelfStoreViewPager.visibility=VISIBLE
             layout.cartMoreViewPager.visibility=View.INVISIBLE

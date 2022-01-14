@@ -9,5 +9,7 @@ object Tag {
 
     const val NOTIFICATION_TOKEN="notification_token"
     const val CLEAR_CART="clearCart"
+    const val oneTimeBookInterestUpload =  "oneTimeBookInterestUpload"
+    const val periodicUserDataUpload = "periodicUserDataUpload"
 
 }

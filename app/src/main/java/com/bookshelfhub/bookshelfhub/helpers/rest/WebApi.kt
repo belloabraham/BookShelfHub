@@ -12,7 +12,7 @@ class WebApi() {
         val request = Request.Builder()
             .url(url)
             .build()
-       apiClient.newCall(request).execute().use {
+        apiClient.newCall(request).execute().use {
             onComplete(it)
         }
     }

@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
 interface IUserAuth {
-     fun getUserPhotoUrl(): String?
+     fun getPhotoUrl(): String?
      fun getIsUserAuthenticated(): Boolean
      fun getUserId(): String
      fun getEmail(): String?

@@ -43,8 +43,6 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.Storage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
@@ -54,8 +52,7 @@ import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.models.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
-import com.bookshelfhub.bookshelfhub.workers.ClearCart
-import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -80,6 +77,8 @@ class BookItemActivity : AppCompatActivity() {
     lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var privateKeys: PrivateKeys
+    @Inject
+    lateinit var worker: Worker
     @Inject
     lateinit var storage: Storage
     @Inject
@@ -119,7 +118,7 @@ class BookItemActivity : AppCompatActivity() {
 
         userId = userAuth.getUserId()
         // UserPhoto Uri if user signed in with Gmail, to be display bu user review
-        val userPhotoUri = userAuth.getUserPhotoUrl()
+        val userPhotoUri = userAuth.getPhotoUrl()
 
         // Check publisher referrer database to see if a publisher refer this user to the current book and get their ID
         bookItemActivityViewModel.getLivePubReferrerByIsbn().observe(this, Observer { referrer ->
@@ -241,7 +240,7 @@ class BookItemActivity : AppCompatActivity() {
                     OneTimeWorkRequestBuilder<ClearCart>()
                         .setInitialDelay(15, TimeUnit.HOURS)
                         .build()
-                WorkManager.getInstance(this).enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE ,clearCart)
+                worker.enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE , clearCart)
             }
         }
 
@@ -316,7 +315,7 @@ class BookItemActivity : AppCompatActivity() {
                             .setConstraints(Constraint.getConnected())
                             .setInputData(data.build())
                             .build()
-                    WorkManager.getInstance(applicationContext).enqueue(userReviewPostWorker)
+                    worker.enqueue(userReviewPostWorker)
                 }
 
         }

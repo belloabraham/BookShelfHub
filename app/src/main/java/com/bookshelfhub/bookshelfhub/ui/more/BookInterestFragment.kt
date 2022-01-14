@@ -19,7 +19,9 @@ import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -34,6 +36,8 @@ class BookInterestFragment : Fragment() {
     private val bookInterestViewModel: BookInterestViewModel by viewModels()
     @Inject
     lateinit var userAuth: IUserAuth
+    @Inject
+    lateinit var worker: Worker
     private lateinit var oldBookInterest:BookInterest
     private lateinit var layout: FragmentInterestBinding
 
@@ -93,7 +97,7 @@ class BookInterestFragment : Fragment() {
                    .setConstraints(Constraint.getConnected())
                    .build()
 
-           WorkManager.getInstance(requireContext()).enqueueUniqueWork("oneTimeBookInterestUpload",
+           worker.enqueueUniqueWork(Tag.oneTimeBookInterestUpload,
                ExistingWorkPolicy.REPLACE, oneTimeBookInterestUpload)
 
                     activity?.let {

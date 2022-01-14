@@ -42,11 +42,10 @@ class Storage() {
         return "$fileName$fileFormat"
     }
 
+
     fun requestClearStorage(context:Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            val storageIntent = Intent()
-            storageIntent.action = ACTION_MANAGE_STORAGE
-            context.startActivity(storageIntent)
+            context.startActivity(Intent(ACTION_MANAGE_STORAGE))
         }
     }
 

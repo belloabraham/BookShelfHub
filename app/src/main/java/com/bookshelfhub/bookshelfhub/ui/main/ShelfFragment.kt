@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bookshelfhub.bookshelfhub.DummyData
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
@@ -98,39 +99,7 @@ class ShelfFragment : Fragment() {
 
         shelfViewModel.getLiveOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
 
-            val books = listOf(
-                OrderedBooks("1",2.0, userId, "50 Shades of grey",
-                    "https://i.ibb.co/Bqv7XLw/bookfair1.png",
-                    "", "", null),
-                OrderedBooks("2",6.0, userId, "Gifted Hands",
-                    "https://i.ibb.co/ph2hL56/time-for-yourself.png",
-                    "", "", null),
-                OrderedBooks("3",2.0, userId, "Tunde on the run",
-                    "https://i.ibb.co/ckJQXYC/stay-home-blue.png",
-                    "", "", null),
-                OrderedBooks("4",2.0, userId, "Prince of Persia",
-                    "https://i.ibb.co/QDHKYV8/peace-where-love.png",
-                    "", "", null),
-                OrderedBooks("5",4.0, userId, "Hello its me",
-                    "https://i.ibb.co/YdZMYzW/best-place.png",
-                    "", "", null),
-                OrderedBooks("6",2.0, userId, "The Carebean",
-                    "https://i.ibb.co/D1mYc3s/greate-weekend.png",
-                    "", "", null),
-                OrderedBooks("7",5.0, userId, "Pirates of the seven seas",
-                    "https://i.ibb.co/Rb40dwX/home-sweet-home.png",
-                    "", "", null),
-                OrderedBooks("8",3.0, userId, "Prince of Persia",
-                    "https://i.ibb.co/k0J2mt0/lazy-sunday.png",
-                    "", "", null),
-                OrderedBooks("9",3.0, userId, "Shreck",
-                    "https://i.ibb.co/Dfn7jGQ/my-cosy-home.png",
-                    "", "", null),
-                OrderedBooks("10",3.0, userId, "Prince of Persia",
-                    "https://i.ibb.co/gMpTyLY/bookfair2.png",
-                    "", "", null),
-                
-            )
+            val books = DummyData.getOrderedBooks(userId)
 
             if (books.isNotEmpty()){
                 layout.orderedBooksRecView.visibility = VISIBLE

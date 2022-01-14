@@ -13,7 +13,6 @@ fun String.isFullName(regex:String):Boolean{
     return Pattern.compile(regex).matcher(this).matches()
 }
 
-
 /**
  * Capitalize the first Letter of every word in a string
  */

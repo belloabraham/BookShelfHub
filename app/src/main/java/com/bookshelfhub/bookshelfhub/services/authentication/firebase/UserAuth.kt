@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.services.authentication.firebase
 
-import android.net.Uri
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.google.firebase.auth.FirebaseAuth
@@ -13,7 +12,7 @@ open class UserAuth() : IUserAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
 
-    override fun getUserPhotoUrl(): String? {
+    override fun getPhotoUrl(): String? {
         val photoUrl = auth.currentUser!!.photoUrl
       return photoUrl?.toString()?.replace("s96-c", "s492-c")
     }
@@ -39,10 +38,7 @@ open class UserAuth() : IUserAuth {
     }
 
     override fun getName(): String? {
-        auth.currentUser?.displayName?.let {
-            return it.capitalize()
-        }
-        return null
+       return auth.currentUser?.displayName?.capitalize()
     }
 
     override fun getPhone(): String? {

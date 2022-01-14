@@ -115,9 +115,10 @@ class CardInfoFragment : Fragment() {
                      * to ensure data is completely added before nav controller navigates back
                      */
 
-                    lifecycleScope.launch(IO){
+                    viewLifecycleOwner.lifecycleScope.launch(IO){
                         localDb.addPaymentCard(paymentCard)
                         withContext(Main){
+                            //Set is new card to notify Cart fragment that there is now a new card
                             cartViewModel.setIsNewCard(true)
                             findNavController().navigateUp()
                         }

@@ -36,18 +36,18 @@ class BookmarkFragment : Fragment() {
 
         val adapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
             //TODO Show users a hint on how to remove an added bookmark
-            removeBookmarkHint()
+            showRemoveBookmarkHint()
         }
 
         layout.bookmarkListRecView.adapter = adapter
 
-        var bookmarArrayList: ArrayList<Bookmark> =  ArrayList()
+        var bookmarkArrayList: ArrayList<Bookmark> =  ArrayList()
 
         bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer { bookmarkList ->
 
-            if (bookmarArrayList.isEmpty()){
-                bookmarArrayList = bookmarkList as ArrayList<Bookmark>
-                adapter.submitList(bookmarArrayList)
+            if (bookmarkArrayList.isEmpty()){
+                bookmarkArrayList = bookmarkList as ArrayList<Bookmark>
+                adapter.submitList(bookmarkArrayList)
             }
 
             if (bookmarkList.isEmpty()){
@@ -73,13 +73,13 @@ class BookmarkFragment : Fragment() {
                 val position: Int = viewHolder.bindingAdapterPosition
                 val bookmark: Bookmark = adapter.currentList[position]
                 bookmark.deleted=true
-                bookmarArrayList.removeAt(position)
+                bookmarkArrayList.removeAt(position)
                 adapter.notifyItemRemoved(position)
                     bookmarkViewModel.addBookmark(bookmark)
                         bookmark.deleted = false
                         val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.bookmark_removed_msg, Snackbar.LENGTH_LONG)
                         snackBar.setAction(R.string.undo) {
-                            bookmarArrayList.add(position, bookmark)
+                            bookmarkArrayList.add(position, bookmark)
                             adapter.notifyItemInserted(position)
 
                                 bookmarkViewModel.addBookmark(bookmark)
@@ -96,7 +96,7 @@ class BookmarkFragment : Fragment() {
     }
 
 
-    private fun removeBookmarkHint():Boolean{
+    private fun showRemoveBookmarkHint():Boolean{
         Snackbar.make(layout.rootCoordinateLayout, R.string.remove_bookmark_msg, Snackbar.LENGTH_LONG)
             .show()
         return true

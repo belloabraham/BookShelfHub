@@ -9,6 +9,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Tag.NOTIFICATION_TOKEN
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import javax.inject.Inject
@@ -21,6 +22,8 @@ class CloudMessagingService : FirebaseMessagingService() {
     lateinit var notificationBuilder: NotificationBuilder
     @Inject
     lateinit var settingsUtil: SettingsUtil
+    @Inject
+    lateinit var worker:Worker
     @Inject
     lateinit var userAuth: IUserAuth
 
@@ -46,7 +49,7 @@ class CloudMessagingService : FirebaseMessagingService() {
                 .setConstraints(Constraint.getConnected())
                 .setInputData(data.build())
                 .build()
-        WorkManager.getInstance(applicationContext).enqueue(uploadNotificationToken)
+        worker.enqueue(uploadNotificationToken)
 
     }
 

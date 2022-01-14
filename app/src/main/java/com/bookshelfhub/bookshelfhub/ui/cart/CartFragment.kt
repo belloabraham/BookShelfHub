@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import co.paystack.android.Paystack
-import co.paystack.android.Transaction
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.Location
@@ -30,7 +28,7 @@ import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.UploadTransactions
+import com.bookshelfhub.bookshelfhub.workers.UploadPaymentTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
@@ -40,6 +38,7 @@ import com.bookshelfhub.bookshelfhub.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.payment.*
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.flutterwave.raveandroid.rave_java_commons.Meta
 import com.flutterwave.raveandroid.rave_presentation.card.CardPaymentCallback
 import com.google.android.material.button.MaterialButton
@@ -61,9 +60,9 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var localDb: ILocalDb
     @Inject
-    lateinit var remoteConfig: IRemoteConfig
-    @Inject
     lateinit var json: Json
+    @Inject
+    lateinit var worker: Worker
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
@@ -311,11 +310,11 @@ class CartFragment : Fragment() {
             //Start a worker that further process the transaction
             withContext(Main){
                 val oneTimeVerifyPaymentTrans =
-                    OneTimeWorkRequestBuilder<UploadTransactions>()
+                    OneTimeWorkRequestBuilder<UploadPaymentTransactions>()
                         .setConstraints(Constraint.getConnected())
                         .build()
 
-                WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
+               worker.enqueue(oneTimeVerifyPaymentTrans)
             }
             withContext(Main){
                 onComplete()
@@ -406,79 +405,5 @@ class CartFragment : Fragment() {
             .show()
         return  true
     }
-
-    /*
-    private fun chargeCardWithPayStack(paymentCard:PaymentCard, userData:HashMap<String, String>){
-
-        val payStackProdPublicKey = remoteConfig.getString(Payment.PAY_STACK_PUBLIC_KEY.KEY)
-
-        val amountToChargeInUSD = if (totalAmountInUSD==0.0){
-            totalAmountInLocalCurrency
-        }else{
-            totalAmountInUSD
-        } - userEarnings
-
-        val payment:IPayment = PayStack(paymentCard, amountToChargeInUSD, requireActivity(),  json, getPayStackPaymentCallBack())
-
-        val payStackPublicKey = if (BuildConfig.DEBUG){
-            getString(R.string.paystack_test_public_key)
-        }else{
-            payStackProdPublicKey
-        }
-
-        payment.chargeCard(payStackPublicKey, Payment.USER_DATA.KEY, userData)
-
-    }
-*/
-
-    /* private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
-
-        return object : Paystack.TransactionCallback{
-
-            override fun onSuccess(transaction: Transaction?) {
-
-                transaction?.let {
-                    val length = paymentTransaction.size -1
-
-                    //Pass transaction reference to all the transaction record that is created
-                    for (i in 0..length){
-                        paymentTransaction[i].transactionReference = it.reference
-                    }
-
-                    lifecycleScope.launch(IO){
-                        //Add transaction to local database
-                        localDb.addPaymentTransactions(paymentTransaction)
-
-                        //Start a worker that further process the transaction
-                        withContext(Main){
-                            val oneTimeVerifyPaymentTrans =
-                                OneTimeWorkRequestBuilder<UploadTransactions>()
-                                    .setConstraints(Constraint.getConnected())
-                                    .build()
-
-                            WorkManager.getInstance(requireContext()).enqueue(oneTimeVerifyPaymentTrans)
-                        }
-                    }
-                    uploadTransactions{
-                         showPaymentProcessingMsg()
-
-                    }
-
-                }
-
-            }
-
-            override fun beforeValidate(transaction: Transaction?) {}
-
-            override fun onError(error: Throwable?, transaction: Transaction?) {
-                error?.let {
-                    //Show user error transaction message
-                  showTransactionFailedMsg
-                }
-            }
-
-        }
-    }*/
-
 
 }

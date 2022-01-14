@@ -12,10 +12,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
 @HiltWorker
-class UploadTransactions @AssistedInject constructor (
+class UploadPaymentTransactions @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userAuth:IUserAuth, private val localDb: ILocalDb,
+    private val userAuth:IUserAuth,
+    private val localDb: ILocalDb,
     private val cloudDb: ICloudDb
 ) : CoroutineWorker(context,
     workerParams
@@ -23,7 +24,7 @@ class UploadTransactions @AssistedInject constructor (
 
     override suspend fun doWork(): Result {
 
-        if (userAuth.getIsUserAuthenticated()){
+        if (!userAuth.getIsUserAuthenticated()){
             return  Result.success()
         }
 

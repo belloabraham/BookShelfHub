@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.services.database.Util
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -55,6 +56,13 @@ object ApplicationModule {
     fun provideDatabaseUtil(json:Json): Util {
         return Util(json)
     }
+
+    @Singleton
+    @Provides
+    fun provideWork(@ApplicationContext context: Context): Worker {
+        return Worker(context)
+    }
+
 
     @Singleton
     @Provides
@@ -102,8 +110,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext context: Context, localDb: ILocalDb): Database {
-        return Database(context, localDb)
+    fun provideDatabase(localDb: ILocalDb, worker: Worker): Database {
+        return Database(localDb, worker)
     }
 
     @Singleton
