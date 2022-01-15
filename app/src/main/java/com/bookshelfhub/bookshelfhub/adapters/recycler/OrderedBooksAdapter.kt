@@ -29,9 +29,8 @@ import java.io.File
  */
 
 class OrderedBooksAdapter(
-    private val applicationContext: Context,
-    private val lifecycleOwner: LifecycleOwner,
-    private val activity:Activity) {
+    private val activity: Activity,
+    private val lifecycleOwner: LifecycleOwner) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>> {
 
@@ -46,7 +45,7 @@ class OrderedBooksAdapter(
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, applicationContext, lifecycleOwner, activity)
+                    vh.bindToView(model, activity, lifecycleOwner, activity)
                 }
             )
         }
