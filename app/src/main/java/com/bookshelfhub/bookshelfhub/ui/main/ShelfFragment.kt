@@ -53,7 +53,7 @@ class ShelfFragment : Fragment() {
          val userId = userAuth.getUserId()
 
         val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
-         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity(), viewLifecycleOwner).getOrderedBooksAdapter()
+         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity().applicationContext, viewLifecycleOwner, requireActivity()).getOrderedBooksAdapter()
 
         shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
@@ -193,8 +193,9 @@ class ShelfFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
+
 }

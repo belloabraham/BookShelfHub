@@ -88,9 +88,9 @@ class OnBoardingFragment:Fragment() {
             }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
 

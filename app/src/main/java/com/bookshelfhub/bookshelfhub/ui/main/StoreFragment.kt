@@ -464,14 +464,13 @@ class StoreFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
-
     private fun showErrorMsg(errorMsg:Int, layout: FragmentStoreBinding){
         layout.progressBar.visibility=GONE
-        layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireContext(), R.drawable.ic_network_alert))
+        layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireActivity().applicationContext, R.drawable.ic_network_alert))
         layout.errorMsgText.text = getString(errorMsg)
         layout.errorLayout.visibility=VISIBLE
     }

@@ -64,10 +64,12 @@ class BookInfoFragment : Fragment() {
         return layout.root
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
+
+
     private fun openLink(link:String){
       val url =  if (!link.contains("http")){
           "https://$link"

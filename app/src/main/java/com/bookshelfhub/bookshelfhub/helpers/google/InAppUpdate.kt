@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.google
 
 import android.app.Activity
+import android.content.Context
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallState
@@ -10,9 +11,10 @@ import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.ktx.clientVersionStalenessDays
 
+
 class InAppUpdate(private val activity: Activity) {
 
-    private val appUpdateManager = AppUpdateManagerFactory.create(activity.baseContext)
+    private val appUpdateManager = AppUpdateManagerFactory.create(activity)
     private val daysForImmediateUpdate = 90
     private val daysForFlexibleUpdate = 30
     private val highUpdatePriority = 4

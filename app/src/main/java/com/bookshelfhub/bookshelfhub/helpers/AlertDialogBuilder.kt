@@ -1,10 +1,11 @@
 package com.bookshelfhub.bookshelfhub.helpers
 
 import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
 import android.text.Html
 
-class AlertDialogBuilder private constructor(private val activity: Activity, private val message: String){
+class AlertDialogBuilder private constructor(private val message: String){
 
     private lateinit var positiveActionText:String
     private var positiveAction: (() -> Unit)? = null
@@ -15,20 +16,12 @@ class AlertDialogBuilder private constructor(private val activity: Activity, pri
     private var cancelable:Boolean = false
 
     companion object{
-        fun with(activity:Activity, message: String): AlertDialogBuilder {
-            return AlertDialogBuilder(activity, message)
-        }
-        fun with(activity:Activity, message: Int): AlertDialogBuilder {
-            return AlertDialogBuilder(activity, activity.getString(message))
+        fun with(message: String): AlertDialogBuilder {
+            return AlertDialogBuilder(message)
         }
     }
     fun setCancelable(value:Boolean): AlertDialogBuilder {
         cancelable = value
-        return this
-    }
-
-    fun setPositiveAction(actionText:Int, action:()->Unit): AlertDialogBuilder {
-        setPositiveAction(getString(actionText), action)
         return this
     }
 
@@ -38,10 +31,6 @@ class AlertDialogBuilder private constructor(private val activity: Activity, pri
         return this
     }
 
-    fun setNegativeAction(actionText:Int, action:()->Unit): AlertDialogBuilder {
-        setNegativeAction(getString(actionText), action)
-        return this
-    }
 
     fun setNegativeAction(actionText:String, action:()->Unit): AlertDialogBuilder {
         this.negativeActionText = actionText
@@ -49,17 +38,9 @@ class AlertDialogBuilder private constructor(private val activity: Activity, pri
         return this
     }
 
+    inner class Builder(val activity: Activity){
 
-    private fun getString(value:Int): String {
-        return activity.getString(value)
-    }
-
-    fun build(): Builder {
-        return Builder(this, activity)
-    }
-
-   class Builder(private val alertDialogBuilder: AlertDialogBuilder, val activity: Activity){
-
+        private val alertDialogBuilder = this@AlertDialogBuilder
 
         fun showDialog(title:Int){
             showDialog(activity.getString(title))

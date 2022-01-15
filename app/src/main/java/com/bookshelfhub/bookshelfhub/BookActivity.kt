@@ -235,7 +235,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   private fun shareBookLink(){
     if (bookShareUrl!=null){
-      ShareUtil(this).shareText(bookShareUrl.toString())
+      startActivity(ShareUtil.getShareIntent(bookShareUrl.toString(), publishedBook!!.name))
     }else if (!connectionUtil.isConnected()){
       showToast(R.string.internet_connection_required)
     }else if(publishedBook!=null){
@@ -247,7 +247,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         ){ uri->
           uri?.let {
             bookShareUrl = uri
-            ShareUtil(this).shareText(it.toString())
+            startActivity(ShareUtil.getShareIntent(it.toString(), publishedBook!!.name))
           }
         }
     }else{

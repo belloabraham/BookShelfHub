@@ -62,14 +62,14 @@ class BookInterestFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if(oldBookInterest!=bookInterestObservable.getBookInterestRecord()){
-                AlertDialogBuilder.with(requireActivity(),  R.string.unsaved_interest_msg)
+                AlertDialogBuilder.with(getString(R.string.unsaved_interest_msg))
                     .setCancelable(true)
-                    .setPositiveAction(R.string.save){
+                    .setPositiveAction(getString(R.string.save)){
                         saveBookInterest(layout.saveBtn, layout)
                     }
-                    .setNegativeAction(R.string.cancel){
+                    .setNegativeAction(getString(R.string.cancel)){
                         requireActivity().finish()
-                    }.build()
+                    }.Builder(requireActivity())
                     .showDialog(R.string.unsaved_interest_title)
             }else{
                 requireActivity().finish()
@@ -108,9 +108,9 @@ class BookInterestFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
 }

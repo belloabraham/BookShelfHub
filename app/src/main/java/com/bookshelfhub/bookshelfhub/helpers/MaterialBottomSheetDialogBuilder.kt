@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers
 
-import android.content.Context
+import android.app.Activity
 import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.LifecycleOwner
@@ -11,7 +11,7 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 
-class MaterialBottomSheetDialogBuilder(private val context:Context, private val lifecycleOwner: LifecycleOwner) {
+class MaterialBottomSheetDialogBuilder(private val activity:Activity, private val lifecycleOwner: LifecycleOwner) {
 
     private var positiveActionText:Int =0
     private var positiveAction: (() -> Unit)? = null
@@ -45,7 +45,7 @@ class MaterialBottomSheetDialogBuilder(private val context:Context, private val 
         layoutMode:LayoutMode = LayoutMode.WRAP_CONTENT,
     scrollable:Boolean=true){
 
-        MaterialDialog(context, BottomSheet(layoutMode)).show {
+        MaterialDialog(activity, BottomSheet(layoutMode)).show {
             customView(viewRes, view,  scrollable, true, false)
             cornerRadius(cornerRadius)
             negativeAction?.let {

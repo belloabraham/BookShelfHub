@@ -181,9 +181,14 @@ class VerificationFragment:Fragment(){
                 return layout.root
     }
 
+
+    override fun onDestroyView() {
+        binding=null
+        super.onDestroyView()
+    }
+
     override fun onDestroy() {
         verificationViewModel.setInProgress(false)
-        binding=null
         super.onDestroy()
     }
 

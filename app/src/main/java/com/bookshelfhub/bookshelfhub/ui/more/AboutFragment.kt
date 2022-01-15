@@ -98,9 +98,9 @@ class AboutFragment : Fragment() {
         return view
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
 }

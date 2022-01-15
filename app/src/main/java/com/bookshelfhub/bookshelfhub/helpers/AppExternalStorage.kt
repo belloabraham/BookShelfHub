@@ -6,35 +6,36 @@ import android.os.Environment
 import java.io.File
 import android.os.storage.StorageManager.ACTION_MANAGE_STORAGE
 import android.content.Intent
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 object AppExternalStorage {
     
-    fun isAudioFileExist(context: Context, fileName:String, fileFormat:String=".mp3", folderName:String = fileName): Boolean {
+    fun isAudioFileExist(applicationContext: Context, fileName:String, fileFormat:String=".mp3", folderName:String = fileName): Boolean {
         val path = "$folderName${File.separator}$fileName$fileFormat"
         val storagePath =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            File(context.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), path)
+            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), path)
         }else{
-            File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), path)
+            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC), path)
         }
         return  storagePath.exists()
     }
 
-    fun isDocumentFileExist(context: Context, dirPath:String, fileName:String): Boolean {
+    fun isDocumentFileExist( applicationContext: Context, dirPath:String, fileName:String): Boolean {
         val path = "$dirPath${File.separator}$fileName"
-        val storagePath = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
+        val storagePath = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
         return  storagePath.exists()
     }
 
-    fun getDocumentFilePath(context: Context, folderName: String): String {
-        return File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName).absolutePath
+    fun getDocumentFilePath( applicationContext: Context, folderName: String): String {
+        return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName).absolutePath
     }
 
-    fun getAudioFilePath(context: Context, folderName: String): String {
+    fun getAudioFilePath( applicationContext: Context, folderName: String): String {
       return  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            File(context.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), folderName).absolutePath
+            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), folderName).absolutePath
         }else{
-            File(context.getExternalFilesDir(Environment.DIRECTORY_MUSIC), folderName).absolutePath
+            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC), folderName).absolutePath
         }
     }
 
@@ -43,9 +44,9 @@ object AppExternalStorage {
     }
 
 
-    fun requestClearStorage(context:Context){
+    fun requestClearStorage(applicationContext:Context){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            context.startActivity(Intent(ACTION_MANAGE_STORAGE))
+            applicationContext.startActivity(Intent(ACTION_MANAGE_STORAGE))
         }
     }
 

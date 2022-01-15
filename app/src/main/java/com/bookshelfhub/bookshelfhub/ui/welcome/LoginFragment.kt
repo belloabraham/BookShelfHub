@@ -194,9 +194,9 @@ class LoginFragment:Fragment() {
         return layout.root
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     private fun startPhoneNumberVerification(){

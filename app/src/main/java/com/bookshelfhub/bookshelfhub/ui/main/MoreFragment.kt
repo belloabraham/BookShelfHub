@@ -146,10 +146,10 @@ class MoreFragment : Fragment() {
 
         signOutBtn.setOnClickListener {
 
-             AlertDialogBuilder.with(requireActivity(), R.string.sign_out_message)
+             AlertDialogBuilder.with(getString(R.string.sign_out_message))
                  .setCancelable(true)
-                 .setNegativeAction(R.string.cancel){}
-                 .setPositiveAction(R.string.sign_out){
+                 .setNegativeAction(getString(R.string.cancel)){}
+                 .setPositiveAction(getString(R.string.sign_out)){
                      if (authType== AuthType.GOOGLE.ID){
                          userAuth.signOut {
                                  googleAuth.signOut {
@@ -167,8 +167,8 @@ class MoreFragment : Fragment() {
                      }
 
                  }
-                 .build()
-                 .showDialog(R.string.sign_out)
+                 .Builder(requireActivity())
+                 .showDialog(getString(R.string.sign_out))
 
         }
 
@@ -229,16 +229,16 @@ class MoreFragment : Fragment() {
                                     userAuth.getUserId()
                                 ){
                                     if (it!=null){
-                                        getReferralLink(it.toString(), activity)
+                                        getReferralLink(it.toString())
                                     }
                                 }
                             }else{
-                                getReferralLink(link!!, activity)
+                                getReferralLink(link!!)
                             }
                         }
                     }
                 }else{
-                    getReferralLink(link!!, activity)
+                    getReferralLink(link!!)
                 }
             }
         }
@@ -246,16 +246,16 @@ class MoreFragment : Fragment() {
         layout.publishBookCard.setOnClickListener {
             val link = getString(R.string.publishers_link)
 
-            AlertDialogBuilder.with(requireActivity(), R.string.publish_book_msg)
-                .setPositiveAction(R.string.copy_link){
+            AlertDialogBuilder.with(getString(R.string.publish_book_msg))
+                .setPositiveAction(getString(R.string.copy_link)){
                     clipboardHelper.copyToClipBoard(link)
                     activity?.let {
                         showToast(R.string.link_copied)
                     }
                 }
-                .setNegativeAction(R.string.ok){}
-                .build()
-                .showDialog(R.string.publish_book)
+                .setNegativeAction(getString(R.string.ok)){}
+                .Builder(requireActivity())
+                .showDialog(getString(R.string.publish_book))
         }
 
 
@@ -302,7 +302,7 @@ class MoreFragment : Fragment() {
             earningsText.text = String.format(getString(R.string.total_earnings), totalEarnings)
         }
 
-        MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
+        MaterialBottomSheetDialogBuilder(requireActivity(), viewLifecycleOwner)
             .setPositiveAction(R.string.ok){}
             .showBottomSheet(view)
 
@@ -338,8 +338,9 @@ class MoreFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun getReferralLink(text:String, activity: Activity){
-        ShareUtil(activity).shareText(text)
+    private fun getReferralLink(text:String){
+        val title = getString(R.string.app_name)
+        startActivity(ShareUtil.getShareIntent(text,title))
     }
 
     companion object {
@@ -349,9 +350,9 @@ class MoreFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
 }

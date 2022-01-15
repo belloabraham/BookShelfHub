@@ -20,6 +20,8 @@
     <string name="payment_unsuccessful_title">Error processing your transaction</string>
 
     <string name="location_not_supported">You can not purchase book from this location at the moment.</string>
+    <string name="unsupported_region">Unsupported region</string>
+
 
     <string name="payment_successful">Yay, your payment transaction was successful and books you are in your book shelf ready to be downloaded.</string>
     <string name="payment_successful_title">Payment transaction was successful</string>
@@ -47,7 +49,11 @@
     <string name="by">By: %s</string>
     <string name="undo">UNDO</string>
     <string name="transaction_processing">Your payment transaction is being verified, you will get a notification about your payment transaction status in a short time, please do not repeat book purchase, while verifying your payment.</string>
+    <string name="processing_transaction">Processing payment transaction</string>
+
     <string name="transaction_error">Unable to complete your payment transaction as a result of "%s"</string>
+    <string name="transaction_failed">Transaction failed</string>
+
     <string name="item_in_cart_removed_msg">Book removed from cart</string>
     <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
 

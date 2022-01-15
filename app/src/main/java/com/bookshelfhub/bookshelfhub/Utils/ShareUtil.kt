@@ -3,18 +3,16 @@ package com.bookshelfhub.bookshelfhub.Utils
 import android.app.Activity
 import android.content.Intent
 
-class ShareUtil(private val activity:Activity) {
+object ShareUtil {
 
-
-    fun shareText(text:String){
+    fun getShareIntent(text:String, title:String): Intent? {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, text)
             type = "text/plain"
         }
 
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        activity.startActivity(shareIntent)
+        return  Intent.createChooser(sendIntent, title)
     }
 
 }

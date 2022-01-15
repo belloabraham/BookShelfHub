@@ -10,6 +10,7 @@ data class Cart(
      val isbn: String,
     val title: String,
     val author:String,
+    val pubId:String,
     val coverUrl: String,
     val referrerId:String?,
     val price: Double=0.0,

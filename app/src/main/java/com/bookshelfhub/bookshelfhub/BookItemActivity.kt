@@ -227,8 +227,12 @@ class BookItemActivity : AppCompatActivity() {
                 }
                 val cart = Cart(
                     userId, book.isbn,
-                    book.name, book.author,
-                    book.coverUrl, referrer, book.price,
+                    book.name,
+                    book.author,
+                    book.pubId,
+                    book.coverUrl,
+                    referrer,
+                    book.price,
                     buyerVisibleCurrency, priceInUSD
                 )
                 bookItemActivityViewModel.addToCart(cart)
@@ -243,7 +247,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.shareBookBtn.setOnClickListener {
-            shareBook(this)
+            shareBook()
         }
 
         layout.downloadBtn.setOnClickListener {
@@ -412,7 +416,7 @@ class BookItemActivity : AppCompatActivity() {
             // if book exist on user device make open book button visible
             val filName = "$isbn.pdf"
             val dirPath = "${book.pubId}${File.separator}$isbn"
-            if(AppExternalStorage.isDocumentFileExist(this, dirPath, filName)){
+            if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, filName)){
                 showOpenBookButton()
             }else{
                 // Else make download button visible
@@ -473,7 +477,7 @@ class BookItemActivity : AppCompatActivity() {
             // If book  exist on user device
             val fileName = "$isbn.pdf"
             val dirPath = "${book.pubId}${File.separator}$isbn"
-            if(AppExternalStorage.isDocumentFileExist(this, dirPath, fileName)){
+            if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, fileName)){
                 showOpenBookButton()
             }else{
                 showDownloadBookButton()
@@ -523,9 +527,9 @@ class BookItemActivity : AppCompatActivity() {
         layout.userImage.visibility = GONE
     }
 
-    private fun shareBook(activity: Activity){
+    private fun shareBook(){
         bookShareUrl?.let {
-            ShareUtil(activity).shareText(it.toString())
+            startActivity(ShareUtil.getShareIntent(it.toString(), bookOnlineVersion!!.name))
         }
     }
 

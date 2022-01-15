@@ -131,7 +131,7 @@ class CartFragment : Fragment() {
             isbns = ""
             var localCurrency = ""
 
-            val countryCode = Location.getCountryCode(requireContext())
+            val countryCode = Location.getCountryCode(requireActivity().applicationContext)
 
             //If any book in Cart
             if (cartList.isNotEmpty()){
@@ -143,7 +143,7 @@ class CartFragment : Fragment() {
                     //If price in USD is null return cart.price else return cart.priceInUsd as the local price must be in USD
                     val priceInUSD = cart.priceInUsd ?: cart.price
 
-                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, userId,cart.coverUrl, cart.referrerId, countryCode))
+                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, cart.pubId, userId,cart.coverUrl,  cart.referrerId, countryCode))
 
                     totalAmountInUSD.plus(priceInUSD)
                     localCurrency = cart.currency
@@ -212,7 +212,7 @@ class CartFragment : Fragment() {
 
     private fun showSavedPaymentCardList(){
 
-        val country = Location.getCountryCode(requireContext())
+        val country = Location.getCountryCode(requireActivity().applicationContext)
 
         //Get country code value that will not change irrespective of it is is null or not as country code is a reference type
         country.let { countryCode ->
@@ -259,10 +259,13 @@ class CartFragment : Fragment() {
             //If their is no payment service available for the user
             if (paymentSDKType==null){
 
-                AlertDialogBuilder.with(requireActivity(), R.string.location_not_supported)
+                val message = getString(R.string.location_not_supported)
+                val title = getString(R.string.unsupported_region)
+                AlertDialogBuilder.with(message)
                     .setCancelable(false)
-                    .setPositiveAction(R.string.ok){}
-                    .build()
+                    .setPositiveAction(getString(R.string.ok)){}
+                    .Builder(requireActivity())
+                    .showDialog(title)
             }
         }
 
@@ -326,21 +329,26 @@ class CartFragment : Fragment() {
 
     private fun showPaymentProcessingMsg(){
         //Show user a message that their transaction is processing and close Cart activity when the click ok
-        AlertDialogBuilder.with(requireActivity(), R.string.transaction_processing)
+        val message = getString(R.string.transaction_processing)
+        val title = getString(R.string.processing_transaction)
+        AlertDialogBuilder.with(message)
             .setCancelable(false)
-            .setPositiveAction(R.string.ok){
+            .setPositiveAction(getString(R.string.ok)){
                 requireActivity().finish()
             }
-            .build()
+            .Builder(requireActivity())
+            .showDialog(title)
     }
 
     private fun showTransactionFailedMsg(sdkErrorMsg:String?){
         sdkErrorMsg?.let {
             val errorMsg = String.format(getString(R.string.transaction_error), it)
-            AlertDialogBuilder.with(requireActivity(), errorMsg)
+            val title = getString(R.string.transaction_failed)
+            AlertDialogBuilder.with( errorMsg)
                 .setCancelable(false)
-                .setPositiveAction(R.string.ok){}
-                .build()
+                .setPositiveAction(getString(R.string.ok)){}
+                .Builder(requireActivity())
+                .showDialog(title)
         }
 
     }
@@ -402,9 +410,9 @@ class CartFragment : Fragment() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
         binding=null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     private fun showRemoveCartItemMsg():Boolean{

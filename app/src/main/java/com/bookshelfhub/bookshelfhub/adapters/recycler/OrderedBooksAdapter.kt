@@ -2,14 +2,13 @@ package com.bookshelfhub.bookshelfhub.adapters.recycler
 
 import android.app.Activity
 import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.BookDownloadService
@@ -20,13 +19,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.downloadmanager.*
-import com.bookshelfhub.downloadmanager.database.DownloadModel
 import com.bookshelfhub.downloadmanager.request.DownloadRequest
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import java.io.File
@@ -35,7 +28,10 @@ import java.io.File
  * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
  */
 
-class OrderedBooksAdapter(private val activity: Activity, private val lifecycleOwner: LifecycleOwner) {
+class OrderedBooksAdapter(
+    private val applicationContext: Context,
+    private val lifecycleOwner: LifecycleOwner,
+    private val activity:Activity) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>> {
 
@@ -50,7 +46,7 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, activity, lifecycleOwner)
+                    vh.bindToView(model, applicationContext, lifecycleOwner, activity)
                 }
             )
         }
@@ -61,7 +57,7 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
         private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         private var downloadRequest: DownloadRequest? = null
 
-        fun bindToView(model: OrderedBooks, activity: Activity, lifecycleOwner: LifecycleOwner) {
+        fun bindToView(model: OrderedBooks, context: Context, lifecycleOwner: LifecycleOwner, activity: Activity) {
 
             val url = model.downloadUrl!!
             title.text = model.title
@@ -70,7 +66,7 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
             val pubId = model.pubId
             val fileName = "$isbn.pdf"
             val dirPath = "$pubId${File.separator}$isbn"
-            val isFileExist = isFileExist(activity, dirPath, fileName)
+            val isFileExist = isFileExist(context, dirPath, fileName)
 
             //If file does not exist, user is yet to download book
             if (!isFileExist){
@@ -81,17 +77,17 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
                 val downloadId = downloadRequest?.getDownloadId()
                 val downloadStatus = getDownloadStatus(downloadId)
                 when {
-                    isFileExist(activity, dirPath, fileName) -> {
+                    isFileExist(context, dirPath, fileName) -> {
                         openBook(activity, model)
                     }
                     downloadStatus == Status.PAUSED -> {
-                        resumeBookDownloading(activity, url)
+                        resumeBookDownloading(context, url)
                     }
                     downloadStatus == Status.RUNNING || downloadStatus == Status.QUEUED -> {
-                        pauseBookDownloading(activity, url)
+                        pauseBookDownloading(context, url)
                     }
                     else -> {
-                        startBookDownloading(activity, url, dirPath, fileName)
+                        startBookDownloading(context, url, dirPath, fileName)
                     }
                 }
             }
@@ -128,7 +124,7 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
                         //Show error controls
                     }
 
-                    if(it.isComplete && isFileExist(activity, dirPath, fileName)){
+                    if(it.isComplete && isFileExist(context, dirPath, fileName)){
                         //Hide all download controls
                     }
                 }
@@ -143,36 +139,36 @@ class OrderedBooksAdapter(private val activity: Activity, private val lifecycleO
             return DownloadManager.getStatus(downloadId)
         }
 
-        private fun pauseBookDownloading(activity: Activity, url: String) {
-            val intent = Intent(activity, BookDownloadService::class.java)
+        private fun pauseBookDownloading(context: Context, url: String) {
+            val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_PAUSE
             intent.putExtra(Download.URL, url)
-            activity.startService(intent)
+            context.startService(intent)
         }
 
-        private fun isFileExist(activity:Activity, dirPath:String, fileName:String): Boolean {
-            return AppExternalStorage.isDocumentFileExist(activity, dirPath, fileName)
+        private fun isFileExist(context:Context, dirPath:String, fileName:String): Boolean {
+            return AppExternalStorage.isDocumentFileExist(context, dirPath, fileName)
         }
 
-        private fun resumeBookDownloading(activity: Activity, url: String) {
-            val intent = Intent(activity, BookDownloadService::class.java)
+        private fun resumeBookDownloading(context: Context, url: String) {
+            val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_RESUME
             intent.putExtra(Download.URL, url)
-            activity.startService(intent)
+            context.startService(intent)
         }
 
         private fun startBookDownloading(
-            activity: Activity,
+            context: Context,
             url: String,
             dirPath: String,
             fileName: String
         ) {
-            val intent = Intent(activity, BookDownloadService::class.java)
+            val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_START
             intent.putExtra(Download.URL, url)
             intent.putExtra(Download.FILE_NAME, fileName)
             intent.putExtra(Download.DIR_PATH, dirPath)
-            activity.startService(intent)
+            context.startService(intent)
         }
 
         private fun openBook(activity: Activity, model: OrderedBooks) {
