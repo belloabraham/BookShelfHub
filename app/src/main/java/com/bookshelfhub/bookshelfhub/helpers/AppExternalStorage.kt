@@ -8,7 +8,7 @@ import android.os.storage.StorageManager.ACTION_MANAGE_STORAGE
 import android.content.Intent
 
 
-class Storage() {
+object AppExternalStorage {
     
     fun isAudioFileExist(context: Context, fileName:String, fileFormat:String=".mp3", folderName:String = fileName): Boolean {
         val path = "$folderName${File.separator}$fileName$fileFormat"
@@ -20,8 +20,8 @@ class Storage() {
         return  storagePath.exists()
     }
 
-    fun isDocumentFileExist(context: Context, fileName:String, fileFormat:String=".pdf", folderName:String = fileName): Boolean {
-        val path = "$folderName${File.separator}$fileName$fileFormat"
+    fun isDocumentFileExist(context: Context, dirPath:String, fileName:String): Boolean {
+        val path = "$dirPath${File.separator}$fileName"
         val storagePath = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
         return  storagePath.exists()
     }

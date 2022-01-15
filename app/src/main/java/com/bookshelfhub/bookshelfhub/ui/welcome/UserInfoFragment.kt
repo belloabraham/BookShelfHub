@@ -38,7 +38,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 @WithFragmentBindings
 class UserInfoFragment : Fragment() {
-    private lateinit var layout:FragmentUserInfoBinding
+    private var binding:FragmentUserInfoBinding?=null
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
@@ -60,7 +60,9 @@ class UserInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        layout= FragmentUserInfoBinding.inflate(inflater, container, false);
+        binding = FragmentUserInfoBinding.inflate(inflater, container, false)
+
+        val layout = binding!!
 
         val isNewUser = args.isNewUser
         val userId = userAuth.getUserId()
@@ -133,7 +135,7 @@ class UserInfoFragment : Fragment() {
                 val referrer = userAuthViewModel.getUserReferrerId()
                 var referrerId:String?=null
                 if (isNewUser){
-                    //TODO if an individual user refer this user get that user id
+                    //If an individual user refer this user get that user id
                     referrer?.let {
                         if (it.length==userId.length){
                             referrerId = it
@@ -148,7 +150,7 @@ class UserInfoFragment : Fragment() {
                     user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone = phone
-                    //TODO save the user ID to database
+                    //Save the user ID to database
                     user.referrerId = referrerId
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
@@ -161,6 +163,13 @@ class UserInfoFragment : Fragment() {
 
         return layout.root
     }
+
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
+
 
 }
 

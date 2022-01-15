@@ -14,6 +14,8 @@
 
     <color name="dark_overlay">#8C000000</color>
 
+    <color name="book_cover_overlay">#4D000000</color>
+
     <color name="white_overlay">#8CFFFFFF</color>
 
     <color name="purple_700">#FF320066</color>

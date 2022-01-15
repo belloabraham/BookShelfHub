@@ -41,7 +41,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class VerificationFragment:Fragment(){
 
-    private lateinit var layout: FragmentVerificationBinding;
+    private var binding: FragmentVerificationBinding?=null
     private val args:VerificationFragmentArgs by navArgs()
     private var otpCode:String? = null
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
@@ -67,7 +67,8 @@ class VerificationFragment:Fragment(){
     ): View {
 
 
-        layout = FragmentVerificationBinding.inflate(inflater, container, false)
+        binding = FragmentVerificationBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
                 layout.phoneNumberTxt.text = args.phoneNumber
 
@@ -182,6 +183,7 @@ class VerificationFragment:Fragment(){
 
     override fun onDestroy() {
         verificationViewModel.setInProgress(false)
+        binding=null
         super.onDestroy()
     }
 

@@ -1,9 +1,9 @@
 package com.bookshelfhub.downloadmanager.database
 
 data class DownloadModel(
-  val id:Int
+  val id:Int=0
 ){
-  lateinit var url:String
+  var url:String=""
   var eTag:String? = null
   lateinit var dirPath:String
   lateinit var fileName:String

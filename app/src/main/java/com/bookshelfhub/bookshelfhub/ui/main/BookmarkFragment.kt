@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.recycler.BookmarkListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentBookmarkBinding
+import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,19 +25,19 @@ import dagger.hilt.android.WithFragmentBindings
 @WithFragmentBindings
 class BookmarkFragment : Fragment() {
 
-    private lateinit var layout: FragmentBookmarkBinding
+    private var binding: FragmentBookmarkBinding?=null
     private val bookmarkViewModel:BookmarkViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentBookmarkBinding.inflate(inflater, container, false)
-
+        binding= FragmentBookmarkBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         val adapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
-            //TODO Show users a hint on how to remove an added bookmark
-            showRemoveBookmarkHint()
+            //Show users a hint on how to remove an added bookmark
+            showRemoveBookmarkHint(layout)
         }
 
         layout.bookmarkListRecView.adapter = adapter
@@ -95,8 +96,12 @@ class BookmarkFragment : Fragment() {
         return layout.root
     }
 
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
 
-    private fun showRemoveBookmarkHint():Boolean{
+    private fun showRemoveBookmarkHint(layout:FragmentBookmarkBinding):Boolean{
         Snackbar.make(layout.rootCoordinateLayout, R.string.remove_bookmark_msg, Snackbar.LENGTH_LONG)
             .show()
         return true

@@ -48,9 +48,6 @@ class Application: android.app.Application(), Configuration.Provider {
         setupFirebaseRemoteConfig()
 
 
-        // Initializing PayStack
-       // PaystackSdk.initialize(applicationContext)
-
         // ***Creating Notification Channel required by Android 8+ ***//
         NotificationChannelBuilder(this,getString(R.string.notif_channel_id))
             .createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)

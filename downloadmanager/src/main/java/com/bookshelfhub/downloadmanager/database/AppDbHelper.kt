@@ -17,9 +17,8 @@ class AppDbHelper(private val context: Context):DbHelper {
 
     init {
         val databaseOpenHelper = DatabaseOpenHelper(context)
-        db = databaseOpenHelper.getWritableDatabase()
+        db = databaseOpenHelper.writableDatabase
     }
-
 
     @SuppressLint("Range")
     override fun find(id: Int): DownloadModel? {
@@ -31,7 +30,7 @@ class AppDbHelper(private val context: Context):DbHelper {
                         DownloadModel.ID + " = " + id, null
             )
             if (cursor != null && cursor.moveToFirst()) {
-                model = DownloadModel(id)
+                model = DownloadModel()
                 model.url = cursor.getString(cursor.getColumnIndex(DownloadModel.URL))
                 model.eTag = cursor.getString(cursor.getColumnIndex(DownloadModel.ETAG))
                 model.dirPath = cursor.getString(cursor.getColumnIndex(DownloadModel.DIR_PATH))

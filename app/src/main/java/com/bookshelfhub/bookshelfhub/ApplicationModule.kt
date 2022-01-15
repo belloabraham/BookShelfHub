@@ -15,7 +15,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.Storage
+import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
@@ -39,11 +39,6 @@ object ApplicationModule {
         return Firebase()
     }
 
-    @Singleton
-    @Provides
-    fun provideStorage(): Storage {
-        return Storage()
-    }
 
     @Singleton
     @Provides

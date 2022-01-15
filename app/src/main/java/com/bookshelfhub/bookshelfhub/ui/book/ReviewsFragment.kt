@@ -23,13 +23,14 @@ import javax.inject.Inject
 class ReviewsFragment : Fragment() {
 
     private val reviewsViewModel: ReviewsViewModel by viewModels()
-    private lateinit var layout: ReviewsFragmentBinding
+    private var binding: ReviewsFragmentBinding?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout = ReviewsFragmentBinding.inflate(inflater, container, false)
+        binding = ReviewsFragmentBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         reviewsViewModel.getUserReviews().observe(viewLifecycleOwner, Observer { reviews ->
 
@@ -54,4 +55,8 @@ class ReviewsFragment : Fragment() {
         return layout.root
     }
 
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
 }

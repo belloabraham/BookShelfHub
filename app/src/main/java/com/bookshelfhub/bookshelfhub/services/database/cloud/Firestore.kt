@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub.services.database.cloud
 
 import android.app.Activity
-import android.util.Log
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json

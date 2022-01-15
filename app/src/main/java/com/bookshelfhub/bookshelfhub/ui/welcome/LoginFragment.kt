@@ -40,7 +40,9 @@ import javax.inject.Inject
 @WithFragmentBindings
 class LoginFragment:Fragment() {
 
-    private lateinit var layout: FragmentLoginBinding;
+    private var binding: FragmentLoginBinding?=null
+    private lateinit var layout: FragmentLoginBinding
+
     private val args:LoginFragmentArgs by navArgs()
     private lateinit var phoneNumber:String
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
@@ -68,9 +70,11 @@ class LoginFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentLoginBinding.inflate(inflater, container, false)
+        binding= FragmentLoginBinding.inflate(inflater, container, false)
+        layout = binding!!
 
-        //TODO Populate UI controls with data based on User login or Sign up
+
+        //Populate UI controls with data based on User login or Sign up
         layout.title.text = args.loginSignup
         val description= String.format(getString(R.string.login_signup_desicription), args.loginSignup)
         val loginSignupText= String.format(getString(R.string.with_phone), args.loginSignup)
@@ -190,6 +194,10 @@ class LoginFragment:Fragment() {
         return layout.root
     }
 
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
 
     private fun startPhoneNumberVerification(){
         val phone = layout.phoneNumEditText.text.toString().replace(" ","").trim()

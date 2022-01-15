@@ -20,7 +20,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
@@ -44,7 +43,7 @@ import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.Storage
+import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
@@ -58,6 +57,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.Response
+import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -79,8 +79,6 @@ class BookItemActivity : AppCompatActivity() {
     lateinit var privateKeys: PrivateKeys
     @Inject
     lateinit var worker: Worker
-    @Inject
-    lateinit var storage: Storage
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
@@ -412,7 +410,9 @@ class BookItemActivity : AppCompatActivity() {
 
             val book = orderedBook.get()
             // if book exist on user device make open book button visible
-            if(storage.isDocumentFileExist(this, book.isbn)){
+            val filName = "$isbn.pdf"
+            val dirPath = "${book.pubId}${File.separator}$isbn"
+            if(AppExternalStorage.isDocumentFileExist(this, dirPath, filName)){
                 showOpenBookButton()
             }else{
                 // Else make download button visible
@@ -471,7 +471,9 @@ class BookItemActivity : AppCompatActivity() {
 
         if(book.price == 0.0){
             // If book  exist on user device
-            if(storage.isDocumentFileExist(this, book.isbn)){
+            val fileName = "$isbn.pdf"
+            val dirPath = "${book.pubId}${File.separator}$isbn"
+            if(AppExternalStorage.isDocumentFileExist(this, dirPath, fileName)){
                 showOpenBookButton()
             }else{
                 showDownloadBookButton()

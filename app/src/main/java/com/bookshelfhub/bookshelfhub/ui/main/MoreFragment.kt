@@ -79,12 +79,14 @@ class MoreFragment : Fragment() {
     private val moreViewModel:MoreViewModel by viewModels()
     private lateinit var userId:String
 
-    private lateinit var layout: FragmentMoreBinding
+    private var binding: FragmentMoreBinding?=null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentMoreBinding.inflate(inflater, container, false)
+        binding= FragmentMoreBinding.inflate(inflater, container, false)
+        val layout = binding!!
         val signOutBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.signOutCard)
         val profileBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.profileCard)
         val deletePaymentCardsBtn = layout.accountDropDownView.findViewById<MaterialCardView>(R.id.deletePaymentCards)
@@ -345,6 +347,11 @@ class MoreFragment : Fragment() {
         fun newInstance(): MoreFragment {
             return MoreFragment()
         }
+    }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
     }
 
 }

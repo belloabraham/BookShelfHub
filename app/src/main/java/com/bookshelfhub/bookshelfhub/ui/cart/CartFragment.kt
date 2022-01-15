@@ -55,6 +55,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class CartFragment : Fragment() {
 
+    private var binding: FragmentCartBinding?=null
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
@@ -83,7 +84,8 @@ class CartFragment : Fragment() {
     ): View {
 
         userId = userAuth.getUserId()
-        layout = FragmentCartBinding.inflate(inflater, container, false)
+        binding = FragmentCartBinding.inflate(inflater, container, false)
+        layout = binding!!
 
         val cartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
             showRemoveCartItemMsg()
@@ -398,6 +400,11 @@ class CartFragment : Fragment() {
             showSavedPaymentCardList()
             cartViewModel.setIsNewCard(false)
         }
+    }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
     }
 
     private fun showRemoveCartItemMsg():Boolean{

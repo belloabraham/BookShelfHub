@@ -41,13 +41,15 @@ class ProfileFragment : Fragment() {
     private var gender:String?=null
     private var dateOfBirth:String?=null
     private val profileViewModel:ProfileViewModel by viewModels()
+    private var binding: FragmentProfileBinding?=null
     private lateinit var layout: FragmentProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentProfileBinding.inflate(inflater, container, false)
+        binding= FragmentProfileBinding.inflate(inflater, container, false)
+        layout = binding!!
 
         var user:User? = null
 
@@ -132,6 +134,11 @@ class ProfileFragment : Fragment() {
         }
 
         return layout.root
+    }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
     }
 
     override fun onResume() {

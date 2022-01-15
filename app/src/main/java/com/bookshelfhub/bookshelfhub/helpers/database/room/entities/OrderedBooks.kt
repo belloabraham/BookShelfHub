@@ -13,10 +13,11 @@ data class OrderedBooks(
     override val userId:String,
     override val title:String,
     override val coverUrl:String,
+    override val pubId: String,
     override val referrerId:String?,
     override val orderedCountryCode:String?,
     override var transactionReference:String?,
     override val password:String?=null,
     override val downloadUrl:String?=null,
-    override val dateTime:Timestamp?=null
-    ): ISearchResult, IOrderedBooks
+    override val dateTime:Timestamp?=null,
+): ISearchResult, IOrderedBooks

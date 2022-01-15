@@ -26,7 +26,7 @@ import javax.inject.Inject
 class BookInfoFragment : Fragment() {
 
     private val bookInfoViewModel: BookInfoViewModel by viewModels()
-    private lateinit var layout: BookInfoFragmentBinding
+    private var binding: BookInfoFragmentBinding? =null
     @Inject
     lateinit var intentUtil: IntentUtil
     @Inject
@@ -38,7 +38,8 @@ class BookInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        layout = BookInfoFragmentBinding.inflate(inflater, container, false)
+        binding = BookInfoFragmentBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
             bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { pubBook->
                 val book = pubBook.get()
@@ -63,6 +64,10 @@ class BookInfoFragment : Fragment() {
         return layout.root
     }
 
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
     private fun openLink(link:String){
       val url =  if (!link.contains("http")){
           "https://$link"

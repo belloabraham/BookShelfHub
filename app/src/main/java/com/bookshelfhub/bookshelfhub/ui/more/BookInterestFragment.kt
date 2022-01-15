@@ -39,14 +39,15 @@ class BookInterestFragment : Fragment() {
     @Inject
     lateinit var worker: Worker
     private lateinit var oldBookInterest:BookInterest
-    private lateinit var layout: FragmentInterestBinding
+    private var binding: FragmentInterestBinding?=null
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentInterestBinding.inflate(inflater, container, false)
+        binding= FragmentInterestBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         bookInterestViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
             bookInterestObservable = if(bookInterest.isPresent && bookInterest.get().added){
@@ -64,7 +65,7 @@ class BookInterestFragment : Fragment() {
                 AlertDialogBuilder.with(requireActivity(),  R.string.unsaved_interest_msg)
                     .setCancelable(true)
                     .setPositiveAction(R.string.save){
-                        saveBookInterest(layout.saveBtn)
+                        saveBookInterest(layout.saveBtn, layout)
                     }
                     .setNegativeAction(R.string.cancel){
                         requireActivity().finish()
@@ -77,12 +78,12 @@ class BookInterestFragment : Fragment() {
         }
 
         layout.saveBtn.setOnClickListener {
-            saveBookInterest(it)
+            saveBookInterest(it, layout)
         }
         return layout.root
     }
 
-    private fun saveBookInterest(view:View){
+    private fun saveBookInterest(view:View, layout:FragmentInterestBinding){
        if (layout.chipGroup.checkedChipIds.size<4){
            Snackbar.make(view, R.string.select_more_than_3_msg, Snackbar.LENGTH_LONG)
                .show()
@@ -105,6 +106,11 @@ class BookInterestFragment : Fragment() {
                         it.finish()
                     }
         }
+    }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
     }
 
 }

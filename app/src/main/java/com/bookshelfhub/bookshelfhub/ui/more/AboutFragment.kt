@@ -33,14 +33,14 @@ class AboutFragment : Fragment() {
     lateinit var remoteConfig: IRemoteConfig
     private val EMAIL="email"
     private val PHONE="phone"
-    private lateinit var layout: FragmentAboutBinding
+    private var binding: FragmentAboutBinding?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentAboutBinding.inflate(inflater, container, false)
-
+        binding= FragmentAboutBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         layout.versionText.text = String.format(getString(R.string.version), appUtil.getAppVersionName())
         layout.copyrightText.text = String.format(getString(R.string.copyright), DateTimeUtil.getYear())
@@ -97,4 +97,10 @@ class AboutFragment : Fragment() {
         holder.addView(view)
         return view
     }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
+
 }

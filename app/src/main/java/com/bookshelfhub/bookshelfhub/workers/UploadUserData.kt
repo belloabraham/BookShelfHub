@@ -47,7 +47,7 @@ class UploadUserData  @AssistedInject constructor (
              }
 
             }else{
-             Result.success()
+                Result.success()
             }
 
     }

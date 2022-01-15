@@ -85,9 +85,9 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-    fun build(notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)): Builder {
+   /* fun build(notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)): Builder {
         return Builder(this, context, notificationStyle)
-    }
+    }*/
 
     fun setActionText(value:Int): NotificationBuilder {
         setActionText(getString(value))
@@ -114,8 +114,12 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     }
 
 
-    class Builder(private val notificationBuilder: NotificationBuilder, val context: Context, private val notificationStyle:NotificationCompat.Style){
+   inner class Builder(
+       val context: Context,
+       private val notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)
+       ){
 
+        private val notificationBuilder = this@NotificationBuilder
 
         fun getNotificationBuiler(): NotificationCompat.Builder {
             return NotificationCompat.Builder(context, notificationBuilder.notifChannelId)

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.onboarding.SliderAdapter
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.onboarding.SliderItem
+import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
 import com.bookshelfhub.bookshelfhub.databinding.FragmentOnboardingBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType
@@ -25,7 +26,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class OnBoardingFragment:Fragment() {
 
-    private lateinit var layout: FragmentOnboardingBinding;
+    private var binding: FragmentOnboardingBinding?=null
     lateinit var sliderAdapter:SliderAdapter
     @Inject
     lateinit var userAuth: IUserAuth
@@ -37,7 +38,8 @@ class OnBoardingFragment:Fragment() {
             findNavController().navigate(actionUserInfo)
         }
 
-        layout = FragmentOnboardingBinding.inflate(inflater, container, false)
+        binding = FragmentOnboardingBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         layout.terms.movementMethod = LinkMovementMethod.getInstance()
 
@@ -85,5 +87,11 @@ class OnBoardingFragment:Fragment() {
                 sliderAdapter.addItem(sliderItem)
             }
     }
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
+
 
 }

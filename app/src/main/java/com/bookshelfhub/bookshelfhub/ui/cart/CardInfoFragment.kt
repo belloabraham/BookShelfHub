@@ -28,7 +28,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class CardInfoFragment : Fragment() {
 
-    private lateinit var layout: FragmentCardInfoBinding
+    private var binding: FragmentCardInfoBinding?=null
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
     lateinit var localDb: ILocalDb
@@ -40,8 +40,8 @@ class CardInfoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        layout = FragmentCardInfoBinding.inflate(inflater, container, false)
-
+        binding = FragmentCardInfoBinding.inflate(inflater, container, false)
+        val layout = binding!!
 
         layout.cardNoTxt.addTextChangedListener(EditTextCreditCardNumberFormatterWatcher(maxUserInputLength = 16,
             inputChuckDividerChar = cardNoSeparator, inputChunkLen = 4){
@@ -134,5 +134,10 @@ class CardInfoFragment : Fragment() {
         return layout.root
     }
 
+
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
 
 }

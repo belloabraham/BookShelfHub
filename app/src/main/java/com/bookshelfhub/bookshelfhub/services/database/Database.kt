@@ -28,14 +28,7 @@ class Database @Inject constructor(
                 .setConstraints(connected)
                 .build()
 
-        val periodicUserDataUpload =
-            PeriodicWorkRequestBuilder<UploadUserData>(12, TimeUnit.HOURS)
-                .setConstraints(connected)
-                .build()
-
         worker.enqueue(oneTimeUserDataUpload)
-        worker.enqueueUniquePeriodicWork(Tag.periodicUserDataUpload, periodicUserDataUpload, ExistingPeriodicWorkPolicy.REPLACE)
-
     }
 
     suspend fun addBookInterest(bookInterest: BookInterest){

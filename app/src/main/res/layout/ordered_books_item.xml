@@ -1,28 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-  <androidx.appcompat.widget.LinearLayoutCompat
-            xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/size_16"
+    android:layout_marginTop="@dimen/size_16">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/itemImageView"
+            style="@style/BookItemImageView"
             android:layout_width="100dp"
+            android:layout_height="125dp"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/SearchItemAuthor"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_16"
-            android:layout_marginTop="@dimen/size_16"
-            android:orientation="vertical">
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_4"
+            android:paddingHorizontal="2dp"
+            android:textSize="12sp" />
 
-          <com.google.android.material.imageview.ShapeableImageView
-              android:layout_width="100dp"
-              android:layout_height="125dp"
-              style="@style/BookItemImageView"
-              android:contentDescription="@null"
-              android:id="@+id/itemImageView"/>
+    </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/title"
-                android:layout_marginTop="@dimen/size_4"
-                android:paddingHorizontal="2dp"
-                android:layout_gravity="center"
-                android:textSize="12sp"
-                style="@style/SearchItemAuthor"/>
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/book_cover_overlay"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        tools:ignore="ContentDescription" />
+
+</FrameLayout>
 

@@ -43,17 +43,17 @@ class ShelfFragment : Fragment() {
     @Inject
     lateinit var cloudDb: ICloudDb
 
-    private lateinit var layout: FragmentShelfBinding
+    private var binding: FragmentShelfBinding?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentShelfBinding.inflate(inflater, container, false)
+        binding = FragmentShelfBinding.inflate(inflater, container, false)
+        val layout = binding!!
          val userId = userAuth.getUserId()
 
-
         val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
-         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity()).getOrderedBooksAdapter()
+         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity(), viewLifecycleOwner).getOrderedBooksAdapter()
 
         shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
@@ -193,4 +193,8 @@ class ShelfFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
 }

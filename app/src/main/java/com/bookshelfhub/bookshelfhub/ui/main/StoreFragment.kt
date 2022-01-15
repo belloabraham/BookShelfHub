@@ -40,7 +40,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class StoreFragment : Fragment() {
 
-    private lateinit var layout: FragmentStoreBinding
+    private var binding: FragmentStoreBinding?=null
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val storeViewModel: StoreViewModel by viewModels()
     private var allBooksLive = emptyList<PublishedBook>()
@@ -53,21 +53,21 @@ class StoreFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        layout= FragmentStoreBinding.inflate(inflater, container, false)
-
+        binding= FragmentStoreBinding.inflate(inflater, container, false)
+        val layout = binding!!
         storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
 
         storeViewModel.getIsNoConnection().observe(viewLifecycleOwner, Observer { isNoConnection ->
            if (isNoConnection){
-               showErrorMsg(R.string.no_connection_err_msg)
+               showErrorMsg(R.string.no_connection_err_msg, layout)
            }
         })
 
         storeViewModel.getIsNetworkError().observe(viewLifecycleOwner, Observer { isNetworkError ->
             if (isNetworkError){
-                showErrorMsg(R.string.bad_connection_err_msg)
+                showErrorMsg(R.string.bad_connection_err_msg, layout)
             }
         })
 
@@ -94,7 +94,7 @@ class StoreFragment : Fragment() {
         val fictionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
         val entertainmentBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
 
-        setRecyclerViewLayoutManager()
+        setRecyclerViewLayoutManager(layout)
 
         layout.recommendedRecView.adapter = recommendBooksAdapter
         layout.trendingRecView.adapter=trendingBooksAdapter
@@ -416,7 +416,7 @@ class StoreFragment : Fragment() {
         return layout.root
     }
 
-    private fun setRecyclerViewLayoutManager(){
+    private fun setRecyclerViewLayoutManager(layout:FragmentStoreBinding){
         layout.recommendedRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         layout.trendingRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         layout.artAndCraftRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -464,7 +464,12 @@ class StoreFragment : Fragment() {
         }
     }
 
-    private fun showErrorMsg(errorMsg:Int){
+    override fun onDestroy() {
+        binding=null
+        super.onDestroy()
+    }
+
+    private fun showErrorMsg(errorMsg:Int, layout: FragmentStoreBinding){
         layout.progressBar.visibility=GONE
         layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireContext(), R.drawable.ic_network_alert))
         layout.errorMsgText.text = getString(errorMsg)

@@ -2,7 +2,7 @@ package com.bookshelfhub.downloadmanager
 
 import java.io.Serializable
 
-class Progress(private var currentBytes: Long, private var totalBytes: Long): Serializable {
+class Progress( var currentBytes: Long,  var totalBytes: Long): Serializable {
 
 
     override fun toString(): String {

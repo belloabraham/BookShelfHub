@@ -2,6 +2,7 @@ package com.bookshelfhub.downloadmanager
 
 import android.content.Context;
 import com.bookshelfhub.downloadmanager.core.Core
+import com.bookshelfhub.downloadmanager.database.DownloadModel
 
 import com.bookshelfhub.downloadmanager.internal.ComponentHolder
 import com.bookshelfhub.downloadmanager.internal.DownloadRequestQueue

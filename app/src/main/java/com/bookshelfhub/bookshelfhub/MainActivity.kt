@@ -19,7 +19,7 @@ import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.Storage
+import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
@@ -61,8 +61,6 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
-    lateinit var storage: Storage
-    @Inject
     lateinit var worker: Worker
     @Inject
     lateinit var dynamicLink: IDynamicLink
@@ -80,7 +78,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //TODO Load secret keys from realtime firebase
+        //Load secret keys from realtime firebase
         privateKeys.loadPrivateKeys(lifecycleScope)
 
         userId=userAuth.getUserId()
@@ -88,11 +86,11 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        //TODO Check if there is an update for this app using In App update
+        //Check if there is an update for this app using In App update
         inAppUpdate =  InAppUpdate(this)
         inAppUpdate.checkForNewAppUpdate{ isImmediateUpdate, appUpdateInfo ->
 
-          //TODO Notify the more fragment update button of new update
+          //Notify the more fragment update button of new update
           mainActivityViewModel.setIsNewUpdate()
 
              if (isImmediateUpdate){
@@ -106,7 +104,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
              }
           }
 
-        //TODO Get Nullable referral userID or PubIdAndISBN
+        //Get Nullable referral userID or PubIdAndISBN
          referrer = mainActivityViewModel.getReferrer()
 
         openReferrerLinkInStore(referrer)
@@ -123,7 +121,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             openReferrerLinkInStore(referrer)
         }*/
 
-        //***TODO Pre generate dynamic link before user request on app share to decrease share sheet load time
+        //Pre generate dynamic link before user request on app share to decrease share sheet load time
         getBookShareReferralLink(userId){
             it?.let {
                 val link = it.toString()
@@ -135,7 +133,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
         }
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
-            //TODO Navigate to a particular tab based on set value
+            //Navigate to a particular tab based on set value
            layout.bottomBar.selectTabAt(it, true)
         })
 
@@ -144,10 +142,10 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             val notifNumber = mainActivityViewModel.getTotalMoreTabNotification()
 
             if (notifNumber>0){
-                //TODO there is a notification, set notification bubble for the bottom tab of more with the number of notification
+                //there is a notification, set notification bubble for the bottom tab of more with the number of notification
                 layout.bottomBar.setBadgeAtTabIndex(moreTabIndex, AnimatedBottomBar.Badge("$notifNumber"))
             }else{
-                //TODO there are no notification remove any notification badge if there is one
+                //there are no notification remove any notification badge if there is one
                 layout.bottomBar.clearBadgeAtTabIndex(moreTabIndex)
             }
 
@@ -160,17 +158,16 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(1)
             }
         })*/
-
-
+        
 
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
-            //TODO Check if user already added book interest
+            //Check if user already added book interest
             if(bookInterest.isPresent && bookInterest.get().added){
 
-                //TODO remove book interest button notification bubble
+                //remove book interest button notification bubble
                 mainActivityViewModel.setBookInterestNotifNo(0)
 
-                //TODO Generate recommended books to be shown in book store
+                //Generate recommended books to be shown in book store
                 val recommendedBooksWorker =
                     OneTimeWorkRequestBuilder<RecommendedBooks>()
                         .build()
@@ -180,7 +177,6 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
                 mainActivityViewModel.setBookInterestNotifNo(1)
             }
         })
-
 
         setUpShelfStoreViewPager()
         setUpCartMoreViewPager()
@@ -194,10 +190,10 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             ) {
 
                 if (newIndex>1){
-                    //TODO if user navigates to bookmark or more fragment
+                    //if user navigates to bookmark or more fragment
                     layout.shelfStoreViewPager.visibility=View.INVISIBLE
                     layout.cartMoreViewPager.visibility=VISIBLE
-                    //TODO set active visible view pager to get the last active view pager in the case of activity recreate when theme changes
+                    //set active visible view pager to get the last active view pager in the case of activity recreate when theme changes
                     mainActivityViewModel.setActiveViewPager(1)
                 }else{
                     layout.shelfStoreViewPager.visibility=VISIBLE
@@ -207,7 +203,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
 
                 when(newIndex){
                     0-> {
-                        //TODO set active page to get the last active page in the case of activity recreate when theme changes
+                        //set active page to get the last active page in the case of activity recreate when theme changes
                         mainActivityViewModel.setActivePage(0)
                         layout.shelfStoreViewPager.setCurrentItem(0, true)
                     }
@@ -232,7 +228,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
 
         mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
 
-            // TODO change activity theme when user switch the theme in more fragment
+            //change activity theme when user switch the theme in more fragment
             val mode = if (isNightMode){
                 AppCompatDelegate.MODE_NIGHT_YES
             }else{
@@ -260,7 +256,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     override fun onResume() {
         super.onResume()
 
-        //TODO Check if user has a completed download to prompt them for install
+        //Check if user has a completed download to prompt them for install
         inAppUpdate.checkForDownloadedOrDownloadingUpdate(IN_APP_UPDATE_ACTIVITY_REQUEST_CODE){
             newUpdateInstallUpdateMessage()
         }
@@ -292,7 +288,7 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        //TODO Don not open referral link in the case of new user sign up until user grants storage permission
+        //Don not open referral link in the case of new user sign up until user grants storage permission
         openReferrerLinkInStore(referrer)
     }
 
@@ -364,9 +360,9 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
 
     private fun openReferrerLinkInStore(referrer:String?){
         referrer?.let {
-            //TODO referrer will not be null if referrer exist
+            //referrer will not be null if referrer exist
             val ref = it
-            //TODO Check if a publisher refer the user
+            //Check if a publisher refer the user
             if (ref.length>userId.length){
 
                 val pubIdAndIsbn = ref.split(Referrer.SEPARATOR.KEY)
@@ -375,9 +371,9 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
                 val intent = Intent(this, BookItemActivity::class.java)
                 intent.putExtra(Referrer.BOOK_REFERRED.KEY,isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
-                //TODO Add publisher ID that refer the user to the database
+                //Add publisher ID that refer the user to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
-                //TODO opened the book that the publisher refer in Book Store
+                //opened the book that the publisher refer in Book Store
                 startActivity(intent)
             }
         }

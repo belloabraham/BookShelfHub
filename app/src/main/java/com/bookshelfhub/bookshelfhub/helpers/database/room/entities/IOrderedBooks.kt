@@ -11,6 +11,7 @@ interface IOrderedBooks {
     val title: String
     val coverUrl: String
     val referrerId: String?
+    val pubId:String
     val orderedCountryCode: String?
     var transactionReference: String?
     val password: String?

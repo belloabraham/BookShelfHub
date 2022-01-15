@@ -12,6 +12,7 @@ data class PaymentTransaction(
     override val userId: String,
     override val title: String,
     override val coverUrl: String,
+    override val pubId: String,
     override val referrerId:String?,
     override val orderedCountryCode: String?,
     override var transactionReference: String?=null,
