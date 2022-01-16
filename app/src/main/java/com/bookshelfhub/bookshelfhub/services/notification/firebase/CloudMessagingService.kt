@@ -18,14 +18,6 @@ class CloudMessagingService : FirebaseMessagingService() {
 
     private val URL="url"
     private val ACTION="action"
-    @Inject
-    lateinit var notificationBuilder: NotificationBuilder
-    @Inject
-    lateinit var settingsUtil: SettingsUtil
-    @Inject
-    lateinit var worker:Worker
-    @Inject
-    lateinit var userAuth: IUserAuth
 
 
     override fun onMessageReceived(cloudMesage: RemoteMessage) {
@@ -49,7 +41,7 @@ class CloudMessagingService : FirebaseMessagingService() {
                 .setConstraints(Constraint.getConnected())
                 .setInputData(data.build())
                 .build()
-        worker.enqueue(uploadNotificationToken)
+        WorkManager.getInstance(this).enqueue(uploadNotificationToken)
 
     }
 

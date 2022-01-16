@@ -132,6 +132,8 @@ dependencies {
     implementation 'com.github.Flutterwave.rave-android:rave_presentation:2.1.38'
 
 
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
+
 
     //UI Libraries
     //--Bottom Sheet Dialog
