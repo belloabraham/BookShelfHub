@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -11,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
@@ -25,17 +25,18 @@ import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Tasks
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -45,35 +46,45 @@ class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var signInErrorMsg: String
     private lateinit var layout: ActivityWelcomeBinding
-    private lateinit var phoneAuth:IPhoneAuth
+    private lateinit var phoneAuth: IPhoneAuth
     private lateinit var googleAuth: IGoogleAuth
     private val phoneAuthViewModel: PhoneAuthViewModel by viewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by viewModels()
     private val userAuthViewModel: UserAuthViewModel by viewModels()
     private val welcomeActivityViewModel: WelcomeActivityViewModel by viewModels()
-    private lateinit var resultLauncher:ActivityResultLauncher<Intent>
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+    private var phoneAuthCallbacks:  PhoneAuthProvider.OnVerificationStateChangedCallbacks?=null
 
     //***Get Nullable referral userID or PubIdAndISBN
-    private var referrer:String?=null
+    private var referrer: String? = null
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
+
     @Inject
     lateinit var worker: Worker
+
     @Inject
     lateinit var userAuth: IUserAuth
+
+    private var resendToken: PhoneAuthProvider.ForceResendingToken?=null
+    private var storedVerificationId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        phoneAuthCallbacks = getAuthCallBack(  R.string.otp_error_msg,
+            R.string.too_many_request_error,
+            R.string.phone_sign_in_error)
+
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        referrer=welcomeActivityViewModel.getReferrer()
+        referrer = welcomeActivityViewModel.getReferrer()
 
         //Set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
-        referrer?.let { referrerId->
-            if (!referrerId.contains(Referrer.SEPARATOR.KEY)){
+        referrer?.let { referrerId ->
+            if (!referrerId.contains(Referrer.SEPARATOR.KEY)) {
                 //An individual refer this user
                 userAuthViewModel.setUserReferrerId(referrerId)
             }
@@ -87,10 +98,12 @@ class WelcomeActivity : AppCompatActivity() {
         GooglePlayServices(this).checkForGooglePlayServices()
 
         //Initialize Firebase Phone Verification and Auth
-        phoneAuth= PhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
+        phoneAuth = PhoneAuth(
+            this,
+        )
 
         //Initialize Firebase Google Auth
-        googleAuth = GoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
+        googleAuth = GoogleAuth(this, R.string.gcp_web_client)
 
         //Start an activity for result callback
         resultLauncher =
@@ -98,16 +111,42 @@ class WelcomeActivity : AppCompatActivity() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
                     //Sign in with Google
-                    GoogleSignIn.getSignedInAccountFromIntent(data).addOnSuccessListener(this){
-                        //Google Sign In was successful, authenticate with Firebase
-                        googleAuth.authWithGoogle(it.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
+                    lifecycleScope.launch(IO) {
+                        try {
+                            val googleSignIn =
+                                GoogleSignIn.getSignedInAccountFromIntent(data).await()
+                            try {
+                                //Google Sign In was successful, authenticate with Firebase
+                                val authResult =
+                                    googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
+                                withContext(Main) {
+                                    googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
+                                    googleAuthViewModel.setIsAuthenticatedSuccessful(true)
+                                }
+                            } catch (e: Exception) {
+                                val authErrorMsg =
+                                    getString(R.string.authentication) + ": " + signInErrorMsg
+                                withContext(Main) {
+                                    googleAuthViewModel.setAuthenticationError(authErrorMsg)
+                                }
+                            } finally {
+                                withContext(Main) {
+                                    googleAuthViewModel.setIsAuthenticationComplete(true)
+                                }
+                            }
+
+                        } catch (e: Exception) {
+                            withContext(Main) {
+                                //Google Sign In failed, update UI appropriately
+                                hideAnimation()
+                                googleAuthViewModel.setSignInError(signInErrorMsg)
+                            }
+                        }
+
                     }
-                    .addOnFailureListener {
-                        //Google Sign In failed, update UI appropriately
-                        hideAnimation()
-                        googleAuthViewModel.setSignInError(signInErrorMsg)
-                    }
-                }else{
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+                } else {
                     hideAnimation()
                 }
             }
@@ -118,25 +157,25 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         phoneAuthViewModel.getIsCodeSent().observe(this, Observer { isCodeSent ->
-                hideAnimation()
+            hideAnimation()
         })
 
         phoneAuthViewModel.getSignInStarted().observe(this, Observer { signInStarted ->
-            if (signInStarted){
+            if (signInStarted) {
                 showAnimation(R.raw.loading)
             }
         })
 
         phoneAuthViewModel.getSignInCompleted().observe(this, Observer {
             //If Phone sign in attempt failed hide animation
-            if (!userAuth.getIsUserAuthenticated()){
+            if (!userAuth.getIsUserAuthenticated()) {
                 hideAnimation()
             }
         })
 
         googleAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
             //once sign in operation successful
-            if(isNewUser){
+            if (isNewUser) {
                 hideAnimation()
             }
             restoreBookmarks(isNewUser)
@@ -145,20 +184,20 @@ class WelcomeActivity : AppCompatActivity() {
 
         googleAuthViewModel.getIsAuthenticationComplete().observe(this, Observer {
             //if Google authentication failed hide animation
-            if (!userAuth.getIsUserAuthenticated()){
+            if (!userAuth.getIsUserAuthenticated()) {
                 hideAnimation()
             }
         })
 
         userAuthViewModel.getIsAddingUser().observe(this, Observer { isAddingUser ->
             //user data is being added to the cloud
-            if (isAddingUser){
+            if (isAddingUser) {
                 showAnimation()
-            }else{
+            } else {
                 //User data is added completely or is not beign added bcos user data alredy exist
                 hideAnimation()
-                if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
-                   showConfettiAnim()
+                if (googleAuthViewModel.getIsNewUser().value == true || phoneAuthViewModel.getIsNewUser().value == true) {
+                    showConfettiAnim()
 
                     //***Delay for 1.7sec for confetti animation to complete showing ***
                     lifecycleScope.launch(IO) {
@@ -167,7 +206,7 @@ class WelcomeActivity : AppCompatActivity() {
                             showSignUpCompletedDialog(intent)
                         }
                     }
-                }else{
+                } else {
                     finish()
                     startMainActivity(intent)
                 }
@@ -176,7 +215,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         userAuthViewModel.getIsExistingUser().observe(this, Observer { isExistingUser ->
             //Confirmed that user data exist on the cloud
-            if (!isExistingUser){
+            if (!isExistingUser) {
                 hideAnimation()
             }
         })
@@ -184,7 +223,8 @@ class WelcomeActivity : AppCompatActivity() {
         googleAuthViewModel.getAuthenticationError().observe(this, Observer { authErrorMsg ->
             Snackbar.make(layout.rootView, authErrorMsg, Snackbar.LENGTH_LONG)
                 .setAction(R.string.try_again) {
-                    val errorMsg = authErrorMsg.replace(getString(R.string.authentication)+": ", "")
+                    val errorMsg =
+                        authErrorMsg.replace(getString(R.string.authentication) + ": ", "")
                     signInOrSignUpWithGoogle(errorMsg)
                 }
                 .show()
@@ -200,30 +240,30 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-     private fun showAnimation(animation: Int = R.raw.loading){
+    private fun showAnimation(animation: Int = R.raw.loading) {
         layout.lottieAnimView.setAnimation(animation)
         layout.lottieContainerView.visibility = View.VISIBLE
         layout.lottieAnimView.playAnimation()
     }
 
-     private fun showConfettiAnim(){
+    private fun showConfettiAnim() {
         layout.confettiAnimView.setAnimation(R.raw.confetti)
         layout.confettiContainer.visibility = View.VISIBLE
         layout.confettiAnimView.playAnimation()
     }
 
-    private fun hideAnimation(){
+    private fun hideAnimation() {
         layout.lottieContainerView.visibility = View.GONE
         layout.lottieAnimView.cancelAnimation()
     }
 
 
-    fun startPhoneNumberVerification(phoneNumber: String){
-        if (!layout.lottieAnimView.isAnimating){
-            if (connectionUtil.isConnected()){
+    fun startPhoneNumberVerification(phoneNumber: String) {
+        if (!layout.lottieAnimView.isAnimating) {
+            if (connectionUtil.isConnected()) {
                 showAnimation()
-                phoneAuth.startPhoneNumberVerification(phoneNumber)
-            }else{
+                phoneAuth.startPhoneNumberVerification(phoneNumber, phoneAuthCallbacks!!)
+            } else {
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
                     .show()
             }
@@ -231,58 +271,90 @@ class WelcomeActivity : AppCompatActivity() {
 
     }
 
-    fun resendVerificationCode(number:String, animation: Int){
-        if (!layout.lottieAnimView.isAnimating ){
-            if (connectionUtil.isConnected()){
+    fun resendVerificationCode(number: String, animation: Int) {
+        if (!layout.lottieAnimView.isAnimating) {
+            if (connectionUtil.isConnected()) {
                 showAnimation(animation)
-                phoneAuth.resendVerificationCode(number)
-            }else{
-                Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
+                phoneAuth.resendVerificationCode(number, resendToken!!, phoneAuthCallbacks!!)
+            } else {
+                Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
+                    .show()
             }
         }
     }
 
-    fun verifyPhoneNumberWithCode(code:String){
-        phoneAuth.verifyPhoneNumberWithCode(code, R.string.otp_error_msg)
+    fun verifyPhoneNumberWithCode(code: String) {
+        phoneAuthViewModel.setSignInStarted(true)
+        lifecycleScope.launch(IO){
+            try {
+                val authResult = phoneAuth.verifyPhoneNumberWithCode(code, storedVerificationId!!).await()
+                withContext(Main){
+                    phoneAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
+                    phoneAuthViewModel.setIsSignedInSuccessfully(true)
+                }
+
+            }catch (e:Exception){
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    withContext(Main){
+                        phoneAuthViewModel.setSignedInFailedError(getString(R.string.otp_error_msg))
+                    }
+                }
+            }finally {
+                withContext(Main) {
+                    phoneAuthViewModel.setSignInCompleted(true)
+                }
+            }
+        }
     }
 
     override fun onBackPressed() {
-        if (!layout.lottieAnimView.isAnimating){
-            super.onBackPressed()
-        }
-    }
-
-    fun signInOrSignUpWithGoogle(signInErrorMsg:String){
-        this.signInErrorMsg= signInErrorMsg
         if (!layout.lottieAnimView.isAnimating) {
-            if (connectionUtil.isConnected()){
-                showAnimation(R.raw.google_sign_in)
-                googleAuth.signInOrSignUpWithGoogle(resultLauncher)
-            }else{
-                Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG).show()
+            //Workaround to android 10 leak when user press back button on main activity
+            //This code prevents the leak
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+                    super.onBackPressed()
+                } else {
+                    finishAfterTransition()
+                }
+            } else {
+                super.onBackPressed()
             }
         }
     }
 
-    private fun showSignUpCompletedDialog(intent:Intent){
+    fun signInOrSignUpWithGoogle(signInErrorMsg: String) {
+        this.signInErrorMsg = signInErrorMsg
+        if (!layout.lottieAnimView.isAnimating) {
+            if (connectionUtil.isConnected()) {
+                showAnimation(R.raw.google_sign_in)
+                googleAuth.signInOrSignUpWithGoogle(resultLauncher)
+            } else {
+                Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
+                    .show()
+            }
+        }
+    }
+
+    private fun showSignUpCompletedDialog(intent: Intent) {
         MaterialAlertDialogBuilder(this)
-            .setPositiveBtnId(R.id.getStartedBtn){
+            .setPositiveBtnId(R.id.getStartedBtn) {
                 finish()
                 startMainActivity(intent)
             }
             .build(this)
-            .showDialog(R.layout.sign_up_completed, R.dimen.signup_completed_dialog_max_width )
+            .showDialog(R.layout.sign_up_completed, R.dimen.signup_completed_dialog_max_width)
 
     }
 
-    private fun startMainActivity(intent: Intent){
+    private fun startMainActivity(intent: Intent) {
         hideAnimation()
         startActivity(intent)
     }
 
-    private fun restoreBookmarks(isNewUser:Boolean){
+    private fun restoreBookmarks(isNewUser: Boolean) {
         //restore bookmark if user is existing user
-        if(!isNewUser){
+        if (!isNewUser) {
             val downLoadBookmarksWorker =
                 OneTimeWorkRequestBuilder<DownloadBookmarks>()
                     .setConstraints(Constraint.getConnected())
@@ -290,6 +362,42 @@ class WelcomeActivity : AppCompatActivity() {
             worker.enqueue(downLoadBookmarksWorker)
         }
     }
+
+    private fun getAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
+        return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                phoneAuthViewModel.setOTPCode("000000")
+                phoneAuth.signInWithCredential(credential)
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+
+                when (e) {
+                    is FirebaseAuthInvalidCredentialsException -> {
+                        phoneAuthViewModel.setSignedInFailedError(getString(wrongOTPErrorMsg))
+                    }
+                    is FirebaseTooManyRequestsException -> {
+                        phoneAuthViewModel.setSignedInFailedError(getString(tooManyReqErrorMsg))
+                    }
+                    else -> {
+                        phoneAuthViewModel.setSignedInFailedError(getString(otherAuthErrorMsg))
+                    }
+                }
+            }
+
+            override fun onCodeSent(
+                verificationId: String,
+                token: PhoneAuthProvider.ForceResendingToken
+            ) {
+                // Save verification ID and resending token so we can use them later
+                storedVerificationId = verificationId
+                resendToken = token
+                phoneAuthViewModel.setIsCodeSent(true)
+            }
+        }
+    }
+
 
 
 }

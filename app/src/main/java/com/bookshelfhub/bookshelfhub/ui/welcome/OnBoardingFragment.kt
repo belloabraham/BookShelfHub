@@ -52,7 +52,6 @@ class OnBoardingFragment:Fragment() {
         layout.sliderView.autoCycleDirection = SliderView.AUTO_CYCLE_DIRECTION_RIGHT
         layout.sliderView.isAutoCycle = true
         layout.sliderView.startAutoCycle()
-        layout.sliderView.sliderPager.adapter = null
         layout.sliderView.setOnIndicatorClickListener(ClickListener { position ->
             layout.sliderView.currentPagePosition = position
         })
@@ -90,8 +89,10 @@ class OnBoardingFragment:Fragment() {
     }
 
     override fun onDestroyView() {
+       // binding!!.sliderView.sliderPager.adapter = null
+        binding!!.sliderView.stopAutoCycle()
         sliderAdapter = null
-        binding =null
+        binding = null
         super.onDestroyView()
     }
 

@@ -304,14 +304,17 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
 
     override fun onBackPressed() {
 
+        //Workaround to android 10 leak when user press back button on main activity
+        //This code prvents the leak
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             if (onBackPressedDispatcher.hasEnabledCallbacks()) {
                 super.onBackPressed()
             } else {
                 finishAfterTransition()
             }
+        }else{
+            super.onBackPressed()
         }
-
     }
 
 

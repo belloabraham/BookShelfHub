@@ -8,11 +8,13 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-open class GoogleAuth(private val activity: Activity, private val googleAuthViewModel: GoogleAuthViewModel?, private val gcpWebClient:Int) :
+open class GoogleAuth(private val activity: Activity, private val gcpWebClient:Int) :
     IGoogleAuth {
 
 
@@ -28,18 +30,9 @@ open class GoogleAuth(private val activity: Activity, private val googleAuthView
 
     }
 
-    override fun authWithGoogle(idToken: String, authErrorMsg:String) {
+    override fun authWithGoogle(idToken: String): Task<AuthResult> {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
-        firebaseAuth.signInWithCredential(credential)
-            .addOnCompleteListener(activity) { task ->
-                if (task.isSuccessful) {
-                    googleAuthViewModel?.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
-                    googleAuthViewModel?.setIsAuthenticatedSuccessful(true)
-                } else {
-                    googleAuthViewModel?.setAuthenticationError(authErrorMsg)
-                }
-                googleAuthViewModel?.setIsAuthenticationComplete(true)
-            }
+      return  firebaseAuth.signInWithCredential(credential)
     }
 
     override fun signInOrSignUpWithGoogle(resultLauncher: ActivityResultLauncher<Intent>){
@@ -47,11 +40,7 @@ open class GoogleAuth(private val activity: Activity, private val googleAuthView
         resultLauncher.launch(signInIntent)
     }
 
-    override fun signOut(signOutCompleted: () -> Unit){
-        googleSignInClient.signOut().addOnCompleteListener(activity) {
-            if (it.isSuccessful){
-                signOutCompleted()
-            }
-        }
+    override fun signOut(): Task<Void> {
+       return googleSignInClient.signOut()
     }
 }

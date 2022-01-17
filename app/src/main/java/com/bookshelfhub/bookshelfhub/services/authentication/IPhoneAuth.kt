@@ -1,7 +1,14 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
+import android.app.Activity
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
+
 interface IPhoneAuth {
-     fun startPhoneNumberVerification(phoneNumber: String)
-     fun verifyPhoneNumberWithCode(code: String, wrongOTPErrorMsg: Int)
-     fun resendVerificationCode(phoneNumber: String)
+     fun startPhoneNumberVerification(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
+     fun verifyPhoneNumberWithCode(code: String, storedVerificationId: String): Task<AuthResult>
+     fun resendVerificationCode(phoneNumber: String, resendToken: PhoneAuthProvider.ForceResendingToken, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
+     fun signInWithCredential(credential: PhoneAuthCredential)
 }

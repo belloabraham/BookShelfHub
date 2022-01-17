@@ -14,7 +14,7 @@ open class UserAuth() : IUserAuth {
 
     override fun getPhotoUrl(): String? {
         val photoUrl = auth.currentUser!!.photoUrl
-      return photoUrl?.toString()?.replace("s96-c", "s492-c")
+        return photoUrl?.toString()?.replace("s96-c", "s492-c")
     }
 
     override fun getIsUserAuthenticated(): Boolean {
@@ -30,15 +30,15 @@ open class UserAuth() : IUserAuth {
     }
 
     override fun getAuthType(): String {
-        var id=""
-        for (i in auth.currentUser?.providerData!!){
+        var id = ""
+        for (i in auth.currentUser?.providerData!!) {
             id = i.providerId
         }
         return id
     }
 
     override fun getName(): String? {
-       return auth.currentUser?.displayName?.capitalize()
+        return auth.currentUser?.displayName?.capitalize()
     }
 
     override fun getPhone(): String? {

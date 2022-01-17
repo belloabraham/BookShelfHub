@@ -1,5 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
+import com.google.android.gms.tasks.Task
+
 interface IUserAuth {
      fun getPhotoUrl(): String?
      fun getIsUserAuthenticated(): Boolean

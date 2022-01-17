@@ -39,6 +39,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
+import com.google.android.gms.tasks.Tasks
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -49,6 +50,7 @@ import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -98,24 +100,6 @@ class MoreFragment : Fragment() {
         val darkModeToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.darkModeToggle)
 
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
-
-        val authStateListener =
-            FirebaseAuth.AuthStateListener { _ ->
-                if (!userAuth.getIsUserAuthenticated()){
-                    if (authType == AuthType.GOOGLE.ID){
-                        googleAuth.signOut {
-                            deleteUserData {
-                                startSplashActivity()
-                            }
-                        }
-                    }else{
-                        deleteUserData {
-                            startSplashActivity()
-                        }
-                    }
-                }
-            }
-        Firebase.auth.addAuthStateListener(authStateListener)
 
 
         authType= userAuth.getAuthType()
@@ -172,6 +156,21 @@ class MoreFragment : Fragment() {
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
                      userAuth.signOut()
+                     if (authType == AuthType.GOOGLE.ID){
+                         viewLifecycleOwner.lifecycleScope.launch(IO){
+                             try {
+                                 googleAuth.signOut().await()
+                                 withContext(Main){
+                                     moreViewModel.deleteUserData()
+                                     startSplashActivity()
+                                 }
+                             }catch (e:Exception){}
+                         }
+                     }else{
+                         moreViewModel.deleteUserData()
+                         startSplashActivity()
+                     }
+
                  }.build()
                  .showDialog(R.string.sign_out)
 
@@ -320,10 +319,6 @@ class MoreFragment : Fragment() {
         }
     }
 
-   private fun deleteUserData(onComplete:()->Unit){
-       moreViewModel.deleteUserData()
-       onComplete()
-   }
 
     private fun startWebActivity(title:Int, rmcUrlKey:String){
         val url = remoteConfig.getString(rmcUrlKey)
