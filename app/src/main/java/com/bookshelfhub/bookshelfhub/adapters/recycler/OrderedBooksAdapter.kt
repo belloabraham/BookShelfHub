@@ -5,7 +5,10 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -13,6 +16,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.BookDownloadService
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.Utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Download
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
@@ -32,7 +36,7 @@ class OrderedBooksAdapter(
     private val activity: Activity,
     private val lifecycleOwner: LifecycleOwner
 
-    ) {
+) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>> {
 
@@ -56,11 +60,16 @@ class OrderedBooksAdapter(
     private class OrderedBookViewHolder(view: View) : RecyclerViewHolder<OrderedBooks>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val imageView: ImageView = view.findViewById(R.id.itemImageView)
+        private val progressBar: ProgressBar = view.findViewById(R.id.progress)
+        private val actionIcon: ImageView = view.findViewById(R.id.actionAction)
+        private val darkOverLay: View = view.findViewById(R.id.darkOverlay)
+
+
         private var downloadRequest: DownloadRequest? = null
 
         fun bindToView(model: OrderedBooks, activity: Activity, lifecycleOwner: LifecycleOwner) {
 
-            val url = "https://google.com" //model.downloadUrl!!
+            val url = model.downloadUrl
             title.text = model.title
             imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
             val isbn = model.isbn
@@ -70,8 +79,11 @@ class OrderedBooksAdapter(
             val isFileExist = isFileExist(activity, dirPath, fileName)
 
             //If file does not exist, user is yet to download book
-            if (!isFileExist){
+            if (!isFileExist) {
                 //Show all download controls
+                progressBar.visibility = VISIBLE
+                actionIcon.visibility = VISIBLE
+                darkOverLay.visibility = VISIBLE
             }
 
             imageView.setOnClickListener {
@@ -81,6 +93,7 @@ class OrderedBooksAdapter(
                     isFileExist(activity, dirPath, fileName) -> {
                         openBook(activity, model)
                     }
+
                     downloadStatus == Status.PAUSED -> {
                         resumeBookDownloading(activity, url)
                     }
@@ -101,16 +114,27 @@ class OrderedBooksAdapter(
                     downloadRequest?.setOnPauseListener(object : OnPauseListener {
                         override fun onPause() {
                             //Show Play Icon
+                           val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.reload)
+                            actionIcon.setImageDrawable(pauseDrawable)
+
                         }
 
                     })?.setOnProgressListener(object : OnProgressListener {
                         override fun onProgress(progress: Progress?) {
                             //Show progress on control
+                            progress?.let { mProgress->
+                                if(mProgress.currentBytes>0){
+                                    val percentage = (mProgress.currentBytes/mProgress.totalBytes)*100
+                                    progressBar.progress = percentage.toInt()
+                                }
+                            }
                         }
 
                     })?.setOnStartOrResumeListener(object : OnStartOrResumeListener {
                         override fun onStartOrResume() {
-                            //Show Pause Icon
+                            //Show pause Icon
+                            val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.pause)
+                            actionIcon.setImageDrawable(pauseDrawable)
                         }
 
                     })
@@ -119,14 +143,19 @@ class OrderedBooksAdapter(
             })
 
             BookDownloadService.getLiveDownloadResult().observe(lifecycleOwner, Observer {
-                if(it.id==downloadRequest?.getDownloadId()){
+                if (it.id == downloadRequest?.getDownloadId()) {
 
                     it.error?.let {
                         //Show error controls
+                        val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
+                        actionIcon.setImageDrawable(pauseDrawable)
                     }
 
-                    if(it.isComplete && isFileExist(activity, dirPath, fileName)){
+                    if (it.isComplete && isFileExist(activity, dirPath, fileName)) {
                         //Hide all download controls
+                        progressBar.visibility = GONE
+                        actionIcon.visibility = GONE
+                        darkOverLay.visibility = GONE
                     }
                 }
             })
@@ -140,18 +169,18 @@ class OrderedBooksAdapter(
             return DownloadManager.getStatus(downloadId)
         }
 
-        private fun pauseBookDownloading(context: Context, url: String) {
+        private fun pauseBookDownloading(context: Context, url: String?) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_PAUSE
             intent.putExtra(Download.URL, url)
             context.startService(intent)
         }
 
-        private fun isFileExist(context:Context, dirPath:String, fileName:String): Boolean {
+        private fun isFileExist(context: Context, dirPath: String, fileName: String): Boolean {
             return AppExternalStorage.isDocumentFileExist(context, dirPath, fileName)
         }
 
-        private fun resumeBookDownloading(context: Context, url: String) {
+        private fun resumeBookDownloading(context: Context, url: String?) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_RESUME
             intent.putExtra(Download.URL, url)
@@ -160,7 +189,7 @@ class OrderedBooksAdapter(
 
         private fun startBookDownloading(
             context: Context,
-            url: String,
+            url: String?,
             dirPath: String,
             fileName: String
         ) {

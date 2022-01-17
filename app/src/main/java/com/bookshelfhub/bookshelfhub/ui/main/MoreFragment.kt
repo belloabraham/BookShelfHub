@@ -99,7 +99,7 @@ class MoreFragment : Fragment() {
         val progressPopupToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.darkModeToggle)
 
-        val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
+        val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), R.string.gcp_web_client)
 
 
         authType= userAuth.getAuthType()
