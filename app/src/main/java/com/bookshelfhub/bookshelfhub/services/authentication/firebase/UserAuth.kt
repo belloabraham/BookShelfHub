@@ -45,12 +45,7 @@ open class UserAuth() : IUserAuth {
         return auth.currentUser?.phoneNumber
     }
 
-    override fun signOut(signOutCompleted: () -> Unit) {
-        val authStateListener =
-            AuthStateListener { _ ->
-                signOutCompleted()
-            }
-        auth.addAuthStateListener(authStateListener)
+    override fun signOut() {
         auth.signOut()
     }
 

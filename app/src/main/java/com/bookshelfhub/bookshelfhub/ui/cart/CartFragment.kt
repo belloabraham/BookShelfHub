@@ -13,16 +13,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.Utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
-import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
@@ -49,6 +48,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -77,6 +77,10 @@ class CartFragment : Fragment() {
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
     private var userEarnings =0.0
+    private var mCartListAdapter:ListAdapter<Cart, RecyclerViewHolder<Cart>>?=null
+    private var paymentCardsAdapter:ListAdapter<PaymentCard, RecyclerViewHolder<PaymentCard>>?=null
+    private var mView:View?=null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,9 +91,10 @@ class CartFragment : Fragment() {
         binding = FragmentCartBinding.inflate(inflater, container, false)
         layout = binding!!
 
-        val cartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
+        mCartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
             showRemoveCartItemMsg()
         }
+        val cartListAdapter = mCartListAdapter!!
 
         layout.cartItemsRecView.adapter = cartListAdapter
 
@@ -223,14 +228,14 @@ class CartFragment : Fragment() {
             //If their is a payment service for user location proceed with Payment
             paymentSDKType?.let { paymentSdk->
 
-                val view = View.inflate(requireContext(), R.layout.saved_cards, layout.root)
-                val addCardBtn = view.findViewById<MaterialButton>(R.id.addNewCardBtn)
+                 mView = View.inflate(requireContext(), R.layout.saved_cards, layout.root)
+                val addCardBtn = mView!!.findViewById<MaterialButton>(R.id.addNewCardBtn)
 
                 if (savedPaymentCards.isNotEmpty()){
 
-                    val recyclerView = view.findViewById<RecyclerView>(R.id.paymentCardsRecView)
+                    val recyclerView = mView!!.findViewById<RecyclerView>(R.id.paymentCardsRecView)
 
-                    val paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
+                     paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
                         //Callback for when user click on any of the payment cards on the list
                         chargeCard(paymentSdk, paymentCard)
 
@@ -242,8 +247,8 @@ class CartFragment : Fragment() {
                             DividerItemDecoration.VERTICAL
                         )
                     )
-                    recyclerView.adapter = paymentCardsAdapter
-                    paymentCardsAdapter.submitList(savedPaymentCards)
+                    recyclerView.adapter = paymentCardsAdapter!!
+                    paymentCardsAdapter!!.submitList(savedPaymentCards)
                 }
 
                 addCardBtn.setOnClickListener {
@@ -253,19 +258,17 @@ class CartFragment : Fragment() {
 
                 MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
                     .setPositiveAction(R.string.dismiss){}
-                    .showBottomSheet(view)
+                    .showBottomSheet(mView)
             }
 
             //If their is no payment service available for the user
             if (paymentSDKType==null){
 
-                val message = getString(R.string.location_not_supported)
-                val title = getString(R.string.unsupported_region)
-                AlertDialogBuilder.with(message)
+                AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
                     .setCancelable(false)
-                    .setPositiveAction(getString(R.string.ok)){}
-                    .Builder(requireActivity())
-                    .showDialog(title)
+                    .setPositiveAction(R.string.ok){}
+                    .build()
+                    .showDialog(R.string.unsupported_region)
             }
         }
 
@@ -329,26 +332,23 @@ class CartFragment : Fragment() {
 
     private fun showPaymentProcessingMsg(){
         //Show user a message that their transaction is processing and close Cart activity when the click ok
-        val message = getString(R.string.transaction_processing)
-        val title = getString(R.string.processing_transaction)
-        AlertDialogBuilder.with(message)
+        AlertDialogBuilder.with(R.string.transaction_processing, requireActivity())
             .setCancelable(false)
-            .setPositiveAction(getString(R.string.ok)){
+            .setPositiveAction(R.string.ok){
                 requireActivity().finish()
             }
-            .Builder(requireActivity())
-            .showDialog(title)
+            .build()
+            .showDialog(R.string.processing_transaction)
     }
 
     private fun showTransactionFailedMsg(sdkErrorMsg:String?){
         sdkErrorMsg?.let {
             val errorMsg = String.format(getString(R.string.transaction_error), it)
-            val title = getString(R.string.transaction_failed)
-            AlertDialogBuilder.with( errorMsg)
+            AlertDialogBuilder.with(errorMsg, requireActivity())
                 .setCancelable(false)
-                .setPositiveAction(getString(R.string.ok)){}
-                .Builder(requireActivity())
-                .showDialog(title)
+                .setPositiveAction(R.string.ok){}
+                .build()
+                .showDialog(R.string.transaction_failed)
         }
 
     }
@@ -412,6 +412,9 @@ class CartFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
+        mView=null
+        mCartListAdapter = null
+        paymentCardsAdapter =null
         super.onDestroyView()
     }
 

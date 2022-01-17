@@ -19,7 +19,7 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar
  * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
  */
 
-class ReviewListAdapter () {
+class ReviewListAdapter {
 
     fun getAdapter(): ListAdapter<UserReview, RecyclerViewHolder<UserReview>> {
 

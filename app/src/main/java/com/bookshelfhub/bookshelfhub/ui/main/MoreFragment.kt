@@ -41,6 +41,9 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -96,6 +99,24 @@ class MoreFragment : Fragment() {
 
         val googleAuth:IGoogleAuth =  GoogleAuth(requireActivity(), null, R.string.gcp_web_client)
 
+        val authStateListener =
+            FirebaseAuth.AuthStateListener { _ ->
+                if (!userAuth.getIsUserAuthenticated()){
+                    if (authType == AuthType.GOOGLE.ID){
+                        googleAuth.signOut {
+                            deleteUserData {
+                                startSplashActivity()
+                            }
+                        }
+                    }else{
+                        deleteUserData {
+                            startSplashActivity()
+                        }
+                    }
+                }
+            }
+        Firebase.auth.addAuthStateListener(authStateListener)
+
 
         authType= userAuth.getAuthType()
         userId = userAuth.getUserId()
@@ -146,29 +167,13 @@ class MoreFragment : Fragment() {
 
         signOutBtn.setOnClickListener {
 
-             AlertDialogBuilder.with(getString(R.string.sign_out_message))
+             AlertDialogBuilder.with(R.string.sign_out_message, requireActivity())
                  .setCancelable(true)
-                 .setNegativeAction(getString(R.string.cancel)){}
-                 .setPositiveAction(getString(R.string.sign_out)){
-                     if (authType== AuthType.GOOGLE.ID){
-                         userAuth.signOut {
-                                 googleAuth.signOut {
-                                     deleteUserData {
-                                         startSplashActivity()
-                                     }
-                                 }
-                         }
-                     }else{
-                         userAuth.signOut {
-                             deleteUserData {
-                                 startSplashActivity()
-                             }
-                         }
-                     }
-
-                 }
-                 .Builder(requireActivity())
-                 .showDialog(getString(R.string.sign_out))
+                 .setNegativeAction(R.string.cancel){}
+                 .setPositiveAction(R.string.sign_out){
+                     userAuth.signOut()
+                 }.build()
+                 .showDialog(R.string.sign_out)
 
         }
 
@@ -246,16 +251,16 @@ class MoreFragment : Fragment() {
         layout.publishBookCard.setOnClickListener {
             val link = getString(R.string.publishers_link)
 
-            AlertDialogBuilder.with(getString(R.string.publish_book_msg))
-                .setPositiveAction(getString(R.string.copy_link)){
+            AlertDialogBuilder.with(R.string.publish_book_msg, requireActivity())
+                .setPositiveAction(R.string.copy_link){
                     clipboardHelper.copyToClipBoard(link)
                     activity?.let {
                         showToast(R.string.link_copied)
                     }
                 }
-                .setNegativeAction(getString(R.string.ok)){}
-                .Builder(requireActivity())
-                .showDialog(getString(R.string.publish_book))
+                .setNegativeAction(R.string.ok){}
+                .build()
+                .showDialog(R.string.publish_book)
         }
 
 

@@ -48,7 +48,7 @@ open class GoogleAuth(private val activity: Activity, private val googleAuthView
     }
 
     override fun signOut(signOutCompleted: () -> Unit){
-        googleSignInClient.signOut().addOnCompleteListener {
+        googleSignInClient.signOut().addOnCompleteListener(activity) {
             if (it.isSuccessful){
                 signOutCompleted()
             }

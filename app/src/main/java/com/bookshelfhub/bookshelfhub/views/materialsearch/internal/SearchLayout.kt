@@ -657,6 +657,7 @@ abstract class SearchLayout @JvmOverloads constructor(
         }
     }
 
+
     override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
         val ss = SearchViewSavedState(superState!!)

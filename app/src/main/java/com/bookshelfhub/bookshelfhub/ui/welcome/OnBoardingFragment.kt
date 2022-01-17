@@ -27,7 +27,7 @@ import javax.inject.Inject
 class OnBoardingFragment:Fragment() {
 
     private var binding: FragmentOnboardingBinding?=null
-    lateinit var sliderAdapter:SliderAdapter
+    private var sliderAdapter:SliderAdapter?=null
     @Inject
     lateinit var userAuth: IUserAuth
 
@@ -46,16 +46,17 @@ class OnBoardingFragment:Fragment() {
         sliderAdapter = SliderAdapter()
 
         //Setting up Slider view for Onboarding
-        layout.sliderView.setSliderAdapter(sliderAdapter)
+        layout.sliderView.setSliderAdapter(sliderAdapter!!)
         layout.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM)
         layout.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
-        layout.sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT)
-        layout.sliderView.setAutoCycle(true)
+        layout.sliderView.autoCycleDirection = SliderView.AUTO_CYCLE_DIRECTION_RIGHT
+        layout.sliderView.isAutoCycle = true
         layout.sliderView.startAutoCycle()
+        layout.sliderView.sliderPager.adapter = null
         layout.sliderView.setOnIndicatorClickListener(ClickListener { position ->
             layout.sliderView.currentPagePosition = position
         })
-        addSliderItems(sliderAdapter)
+        addSliderItems(sliderAdapter!!)
 
 
         //Navigate to Login Fragment
@@ -80,7 +81,7 @@ class OnBoardingFragment:Fragment() {
             val subTitles = resources.getStringArray(R.array.subTitles)
             val description = resources.getStringArray(R.array.description)
             val resourceIds:IntArray = intArrayOf(R.drawable.shelf,R.drawable.upload, R.drawable.group )
-            val length:Int = titles.size-1;
+            val length:Int = titles.size-1
 
             for (i in 0..length ){
                 val sliderItem = SliderItem(titles[i], subTitles[i], description[i], resourceIds[i]);
@@ -89,7 +90,8 @@ class OnBoardingFragment:Fragment() {
     }
 
     override fun onDestroyView() {
-        binding=null
+        sliderAdapter = null
+        binding =null
         super.onDestroyView()
     }
 

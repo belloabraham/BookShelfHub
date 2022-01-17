@@ -117,8 +117,6 @@ class BookCategoryActivity : AppCompatActivity() {
         bookCategoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
             listOfBooks = books
         })
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -126,6 +124,11 @@ class BookCategoryActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onDestroy() {
+        layout.categoryBookRecView.adapter=null
+        layout.materialSearchView.setAdapter(null)
+        super.onDestroy()
+    }
 
     override fun onBackPressed() {
         if (layout.materialSearchView.hasFocus()) {

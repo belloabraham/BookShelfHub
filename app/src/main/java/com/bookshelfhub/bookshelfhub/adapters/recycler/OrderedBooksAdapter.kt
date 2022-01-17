@@ -29,9 +29,9 @@ import java.io.File
  */
 
 class OrderedBooksAdapter(
-    private val applicationContext:Context,
-    private val lifecycleOwner: LifecycleOwner,
-    private val activity: Activity
+    private val activity: Activity,
+    private val lifecycleOwner: LifecycleOwner
+
     ) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>> {
@@ -47,7 +47,7 @@ class OrderedBooksAdapter(
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, applicationContext, lifecycleOwner, activity)
+                    vh.bindToView(model, activity, lifecycleOwner)
                 }
             )
         }
@@ -58,7 +58,7 @@ class OrderedBooksAdapter(
         private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         private var downloadRequest: DownloadRequest? = null
 
-        fun bindToView(model: OrderedBooks, applicationContext: Context, lifecycleOwner: LifecycleOwner, activity: Activity) {
+        fun bindToView(model: OrderedBooks, activity: Activity, lifecycleOwner: LifecycleOwner) {
 
             val url = "https://google.com" //model.downloadUrl!!
             title.text = model.title
@@ -67,7 +67,7 @@ class OrderedBooksAdapter(
             val pubId = model.pubId
             val fileName = "$isbn.pdf"
             val dirPath = "$pubId${File.separator}$isbn"
-            val isFileExist = isFileExist(applicationContext, dirPath, fileName)
+            val isFileExist = isFileExist(activity, dirPath, fileName)
 
             //If file does not exist, user is yet to download book
             if (!isFileExist){
@@ -78,17 +78,17 @@ class OrderedBooksAdapter(
                 val downloadId = downloadRequest?.getDownloadId()
                 val downloadStatus = getDownloadStatus(downloadId)
                 when {
-                    isFileExist(applicationContext, dirPath, fileName) -> {
+                    isFileExist(activity, dirPath, fileName) -> {
                         openBook(activity, model)
                     }
                     downloadStatus == Status.PAUSED -> {
-                        resumeBookDownloading(applicationContext, url)
+                        resumeBookDownloading(activity, url)
                     }
                     downloadStatus == Status.RUNNING || downloadStatus == Status.QUEUED -> {
-                        pauseBookDownloading(applicationContext, url)
+                        pauseBookDownloading(activity, url)
                     }
                     else -> {
-                        startBookDownloading(applicationContext, url, dirPath, fileName)
+                        startBookDownloading(activity, url, dirPath, fileName)
                     }
                 }
             }
@@ -125,7 +125,7 @@ class OrderedBooksAdapter(
                         //Show error controls
                     }
 
-                    if(it.isComplete && isFileExist(applicationContext, dirPath, fileName)){
+                    if(it.isComplete && isFileExist(activity, dirPath, fileName)){
                         //Hide all download controls
                     }
                 }

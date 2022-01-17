@@ -17,7 +17,6 @@ import com.bookshelfhub.bookshelfhub.extensions.load
 
 class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, SimilarBooksAdapter.ViewHolder>(diffCallBack){
 
-
     override fun onBindViewHolder(vh: ViewHolder, position: Int) {
         val model = getItem(position)
         model?.let {

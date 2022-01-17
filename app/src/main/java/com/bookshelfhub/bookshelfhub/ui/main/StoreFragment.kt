@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.Utils.IconUtil
@@ -34,6 +35,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -45,6 +47,30 @@ class StoreFragment : Fragment() {
     private val storeViewModel: StoreViewModel by viewModels()
     private var allBooksLive = emptyList<PublishedBook>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
+    private var mSearchListAdapter: ListAdapter<Any, RecyclerViewHolder<Any>>?=null
+
+
+    private var mRecommendBooksAdapter:StoreListAdapter?=null
+    private var mTrendingBooksAdapter:StoreListAdapter?=null
+    private var mScienceAndTechBooksAdapter : StoreListAdapter?=null
+    private var mComicBooksAdapter : StoreListAdapter?=null
+    private var mReligionBooksAdapter : StoreListAdapter?=null
+    private var mArtAndCraftBooksAdapter : StoreListAdapter?=null
+    private var mLawBooksAdapter : StoreListAdapter?=null
+    private var mHistoryBooksAdapter : StoreListAdapter?=null
+    private var mHowToBooksAdapter : StoreListAdapter?=null
+    private var mLanguageAndRefBooksAdapter : StoreListAdapter?=null
+    private var mNewsBooksAdapter : StoreListAdapter?=null
+    private var mLoveAndPoetryBooksAdapter : StoreListAdapter?=null
+    private var mPoliticsBooksAdapter : StoreListAdapter?=null
+    private var mSportBooksAdapter : StoreListAdapter?=null
+    private var mBusinessBooksAdapter : StoreListAdapter?=null
+    private var mCooksBooksAdapter : StoreListAdapter?=null
+    private var mEducationBooksAdapter : StoreListAdapter?=null
+    private var mTravelBooksAdapter : StoreListAdapter?=null
+    private var mFictionBooksAdapter : StoreListAdapter?=null
+    private var mEntertainmentBooksAdapter : StoreListAdapter?=null
+    
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
@@ -53,8 +79,10 @@ class StoreFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        
         binding= FragmentStoreBinding.inflate(inflater, container, false)
         val layout = binding!!
+        
         storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
@@ -71,31 +99,76 @@ class StoreFragment : Fragment() {
             }
         })
 
-        val searchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
+        mSearchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
+        val searchListAdapter = mSearchListAdapter!!
 
-        val recommendBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val trendingBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val scienceAndTechBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val comicBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val religionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val artAndCraftBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val lawBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val historyBooksAdapter =StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val howToBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val languageAndRefBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val newsBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val loveAndPoetryBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val politicsBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val sportBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val businessBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val cooksBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val educationBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val travelBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val fictionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
-        val entertainmentBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        mRecommendBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val recommendBooksAdapter = mRecommendBooksAdapter!!
+
+        mTrendingBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val trendingBooksAdapter = mTrendingBooksAdapter!!
+
+        mScienceAndTechBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val scienceAndTechBooksAdapter = mScienceAndTechBooksAdapter!!
+
+        mComicBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val comicBooksAdapter = mComicBooksAdapter!!
+
+        mReligionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val religionBooksAdapter = mReligionBooksAdapter!!
+        
+        mArtAndCraftBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val artAndCraftBooksAdapter = mArtAndCraftBooksAdapter!!
+        
+        mLawBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val lawBooksAdapter = mLawBooksAdapter!!
+        
+        mHistoryBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val historyBooksAdapter = mHistoryBooksAdapter!!
+        
+        mHowToBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val howToBooksAdapter = mHowToBooksAdapter!!
+
+        mLanguageAndRefBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val languageAndRefBooksAdapter = mLanguageAndRefBooksAdapter!!
+
+        mNewsBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val newsBooksAdapter = mNewsBooksAdapter!!
+
+        mLoveAndPoetryBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val loveAndPoetryBooksAdapter = mLoveAndPoetryBooksAdapter!!
+
+        mPoliticsBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val politicsBooksAdapter = mPoliticsBooksAdapter!!
+
+        mSportBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val sportBooksAdapter = mSportBooksAdapter!!
+
+        mBusinessBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val businessBooksAdapter = mBusinessBooksAdapter!!
+
+        mCooksBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val cooksBooksAdapter = mCooksBooksAdapter!!
+
+        mEducationBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val educationBooksAdapter = mEducationBooksAdapter!!
+
+        mTravelBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val travelBooksAdapter = mTravelBooksAdapter!!
+
+        mFictionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val fictionBooksAdapter = mFictionBooksAdapter!!
+
+        mEntertainmentBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        val entertainmentBooksAdapter = mEntertainmentBooksAdapter!!
 
         setRecyclerViewLayoutManager(layout)
 
+        layout.entertainmentRecView.adapter = entertainmentBooksAdapter
+        layout.fictionRecView.adapter= fictionBooksAdapter
+        layout.travelRecView.adapter= travelBooksAdapter
+        layout.educationRecView.adapter= educationBooksAdapter
+        
         layout.recommendedRecView.adapter = recommendBooksAdapter
         layout.trendingRecView.adapter=trendingBooksAdapter
         layout.sciAndTechRecView.adapter=scienceAndTechBooksAdapter
@@ -192,7 +265,6 @@ class StoreFragment : Fragment() {
             storeViewModel.loadPublishedBooks()
         }
 
-
         storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { books ->
 
             allBooksLive = books
@@ -210,7 +282,6 @@ class StoreFragment : Fragment() {
                 layout.progressBar.visibility = VISIBLE
             }
         })
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getTrendingBooksPageSource().collectLatest { books ->
@@ -466,8 +537,12 @@ class StoreFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
+        
+        nullifyAllAdapters()
+        
         super.onDestroyView()
     }
+    
     private fun showErrorMsg(errorMsg:Int, layout: FragmentStoreBinding){
         layout.progressBar.visibility=GONE
         layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireActivity().applicationContext, R.drawable.ic_network_alert))
@@ -475,4 +550,28 @@ class StoreFragment : Fragment() {
         layout.errorLayout.visibility=VISIBLE
     }
 
+    private fun nullifyAllAdapters(){
+        mSearchListAdapter = null
+        mRecommendBooksAdapter = null
+        mTrendingBooksAdapter = null
+        mScienceAndTechBooksAdapter = null
+        mComicBooksAdapter = null
+        mReligionBooksAdapter = null
+        mArtAndCraftBooksAdapter = null
+        mLawBooksAdapter = null
+        mHistoryBooksAdapter = null
+        mHowToBooksAdapter =null
+        mLanguageAndRefBooksAdapter = null
+        mNewsBooksAdapter = null
+        mLoveAndPoetryBooksAdapter = null
+        mPoliticsBooksAdapter = null
+        mSportBooksAdapter = null
+        mBusinessBooksAdapter = null
+        mCooksBooksAdapter = null
+        mEducationBooksAdapter = null
+        mTravelBooksAdapter = null
+        mFictionBooksAdapter = null
+        mEntertainmentBooksAdapter = null
+    }
+    
 }

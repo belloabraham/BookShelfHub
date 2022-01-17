@@ -19,9 +19,7 @@ open class PhoneAuth(private  val activity: Activity, val phoneAuthViewModel: Ph
     private var storedVerificationId: String? = null
 
     init {
-
         callbacks = getAuthCallBack(wrongOTPErrorMsg, tooManyReqErrorMsg, otherAuthErrorMsg)
-
     }
 
      override fun startPhoneNumberVerification(phoneNumber: String) {

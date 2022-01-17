@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.recycler.BookmarkListAdapter
@@ -19,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 
 @AndroidEntryPoint
@@ -27,6 +29,7 @@ class BookmarkFragment : Fragment() {
 
     private var binding: FragmentBookmarkBinding?=null
     private val bookmarkViewModel:BookmarkViewModel by viewModels()
+    private var mAdapter:ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>>?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,10 +38,13 @@ class BookmarkFragment : Fragment() {
         binding= FragmentBookmarkBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-        val adapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
+         mAdapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
             //Show users a hint on how to remove an added bookmark
             showRemoveBookmarkHint(layout)
         }
+
+        val adapter = mAdapter!!
+
 
         layout.bookmarkListRecView.adapter = adapter
 
@@ -98,6 +104,7 @@ class BookmarkFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
+        mAdapter=null
         super.onDestroyView()
     }
 

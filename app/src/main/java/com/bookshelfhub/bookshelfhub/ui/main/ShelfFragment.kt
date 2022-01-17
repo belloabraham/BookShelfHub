@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.DummyData
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
@@ -21,6 +22,7 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.firestore.Query
@@ -28,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 
@@ -44,6 +47,9 @@ class ShelfFragment : Fragment() {
     lateinit var cloudDb: ICloudDb
 
     private var binding: FragmentShelfBinding?=null
+    private var mOrderedBooksAdapter: ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>?=null
+    private var mSearchListAdapter: ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>>?=null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,8 +58,10 @@ class ShelfFragment : Fragment() {
         val layout = binding!!
          val userId = userAuth.getUserId()
 
-        val searchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
-         val orderedBooksAdapter = OrderedBooksAdapter(requireActivity().applicationContext, viewLifecycleOwner, requireActivity()).getOrderedBooksAdapter()
+         mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
+        mOrderedBooksAdapter = OrderedBooksAdapter(requireActivity(), viewLifecycleOwner).getOrderedBooksAdapter()
+        val searchListAdapter = mSearchListAdapter!!
+        val orderedBooksAdapter = mOrderedBooksAdapter!!
 
         shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
@@ -195,6 +203,8 @@ class ShelfFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
+        mSearchListAdapter = null
+        mOrderedBooksAdapter=null
         super.onDestroyView()
     }
 

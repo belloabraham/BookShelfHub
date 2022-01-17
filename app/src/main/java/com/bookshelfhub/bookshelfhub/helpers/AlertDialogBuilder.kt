@@ -2,10 +2,9 @@ package com.bookshelfhub.bookshelfhub.helpers
 
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.text.Html
 
-class AlertDialogBuilder private constructor(private val message: String){
+class AlertDialogBuilder private constructor(private val message: String, private val activity: Activity){
 
     private lateinit var positiveActionText:String
     private var positiveAction: (() -> Unit)? = null
@@ -16,8 +15,11 @@ class AlertDialogBuilder private constructor(private val message: String){
     private var cancelable:Boolean = false
 
     companion object{
-        fun with(message: String): AlertDialogBuilder {
-            return AlertDialogBuilder(message)
+        fun with(message: String, activity: Activity): AlertDialogBuilder {
+            return AlertDialogBuilder(message, activity)
+        }
+        fun with(message: Int, activity: Activity): AlertDialogBuilder {
+            return AlertDialogBuilder(activity.getString(message), activity)
         }
     }
     fun setCancelable(value:Boolean): AlertDialogBuilder {
@@ -31,6 +33,10 @@ class AlertDialogBuilder private constructor(private val message: String){
         return this
     }
 
+    fun setPositiveAction(actionText:Int, action:()->Unit): AlertDialogBuilder {
+        setPositiveAction(getString(actionText), action)
+        return this
+    }
 
     fun setNegativeAction(actionText:String, action:()->Unit): AlertDialogBuilder {
         this.negativeActionText = actionText
@@ -38,16 +44,28 @@ class AlertDialogBuilder private constructor(private val message: String){
         return this
     }
 
-    inner class Builder(val activity: Activity){
+    fun setNegativeAction(actionText:Int, action:()->Unit): AlertDialogBuilder {
+        setNegativeAction(getString(actionText), action)
+        return this
+    }
 
-        private val alertDialogBuilder = this@AlertDialogBuilder
+    fun build(): Builder {
+        return Builder(this)
+    }
+
+    private fun getString(value:Int): String {
+        return activity.getString(value)
+    }
+
+
+     class Builder(private val alertDialogBuilder:AlertDialogBuilder){
 
         fun showDialog(title:Int){
-            showDialog(activity.getString(title))
+            showDialog(alertDialogBuilder.getString(title))
         }
 
         fun showDialog(title: String){
-            val builder = android.app.AlertDialog.Builder(activity)
+            val builder = android.app.AlertDialog.Builder(alertDialogBuilder.activity)
             builder.setMessage( Html.fromHtml(alertDialogBuilder.message))
                 .setTitle(title)
                 .setCancelable(alertDialogBuilder.cancelable)

@@ -10,11 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ReviewsFragmentBinding
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
 
@@ -24,6 +27,7 @@ class ReviewsFragment : Fragment() {
 
     private val reviewsViewModel: ReviewsViewModel by viewModels()
     private var binding: ReviewsFragmentBinding?=null
+    private var reviewsAdapter: ListAdapter<UserReview, RecyclerViewHolder<UserReview>>?=null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,9 +48,9 @@ class ReviewsFragment : Fragment() {
                     )
                 )
                 layout.reviewRecView.visibility = VISIBLE
-                val reviewsAdapter = ReviewListAdapter().getAdapter()
+                reviewsAdapter = ReviewListAdapter().getAdapter()
                 layout.reviewRecView.adapter = reviewsAdapter
-                reviewsAdapter.submitList(reviews)
+                reviewsAdapter!!.submitList(reviews)
 
             }
 
@@ -57,6 +61,7 @@ class ReviewsFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
+        reviewsAdapter=null
         super.onDestroyView()
     }
 }

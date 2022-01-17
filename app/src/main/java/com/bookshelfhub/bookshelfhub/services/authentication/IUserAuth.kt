@@ -8,5 +8,5 @@ interface IUserAuth {
      fun getAuthType(): String
      fun getName(): String?
      fun getPhone(): String?
-     fun signOut(signOutCompleted: () -> Unit)
+     fun signOut()
 }

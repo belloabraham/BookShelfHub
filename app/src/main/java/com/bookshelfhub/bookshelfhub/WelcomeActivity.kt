@@ -71,39 +71,39 @@ class WelcomeActivity : AppCompatActivity() {
 
         referrer=welcomeActivityViewModel.getReferrer()
 
-        //TODO Set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
+        //Set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId->
             if (!referrerId.contains(Referrer.SEPARATOR.KEY)){
-                //Todo An individual refer this user
+                //An individual refer this user
                 userAuthViewModel.setUserReferrerId(referrerId)
             }
         }
 
-        //TODO Pass Nullable referral userID or PubIdAndISBN and set to Main Activity to be opened in store immediately if PubISBN
+        //Pass Nullable referral userID or PubIdAndISBN and set to Main Activity to be opened in store immediately if PubISBN
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra(Referrer.ID.KEY, referrer)
 
-        //TODO Check if user Device have Google Play services installed as it is required for proper functioning of application
+        //Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
 
-        //TODO Initialize Firebase Phone Verification and Auth
+        //Initialize Firebase Phone Verification and Auth
         phoneAuth= PhoneAuth(this, phoneAuthViewModel, R.string.otp_error_msg, R.string.too_many_request_error, R.string.phone_sign_in_error)
 
-        //TODO Initialize Firebase Google Auth
+        //Initialize Firebase Google Auth
         googleAuth = GoogleAuth(this, googleAuthViewModel, R.string.gcp_web_client)
 
-        //TODO Start an activity for result callback
+        //Start an activity for result callback
         resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data: Intent? = result.data
-                    //TODO Sign in with Google
+                    //Sign in with Google
                     GoogleSignIn.getSignedInAccountFromIntent(data).addOnSuccessListener(this){
-                        //TODO Google Sign In was successful, authenticate with Firebase
+                        //Google Sign In was successful, authenticate with Firebase
                         googleAuth.authWithGoogle(it.idToken!!, getString(R.string.authentication)+": "+signInErrorMsg)
                     }
                     .addOnFailureListener {
-                        //TODO Google Sign In failed, update UI appropriately
+                        //Google Sign In failed, update UI appropriately
                         hideAnimation()
                         googleAuthViewModel.setSignInError(signInErrorMsg)
                     }
@@ -128,14 +128,14 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         phoneAuthViewModel.getSignInCompleted().observe(this, Observer {
-            //TODO If Phone sign in attempt failed hide animation
+            //If Phone sign in attempt failed hide animation
             if (!userAuth.getIsUserAuthenticated()){
                 hideAnimation()
             }
         })
 
         googleAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
-            //TODO once sign in operation successful
+            //once sign in operation successful
             if(isNewUser){
                 hideAnimation()
             }
@@ -144,23 +144,23 @@ class WelcomeActivity : AppCompatActivity() {
 
 
         googleAuthViewModel.getIsAuthenticationComplete().observe(this, Observer {
-            //TODO if Google authentication failed hide animation
+            //if Google authentication failed hide animation
             if (!userAuth.getIsUserAuthenticated()){
                 hideAnimation()
             }
         })
 
         userAuthViewModel.getIsAddingUser().observe(this, Observer { isAddingUser ->
-            //TODO user data is being added to the cloud
+            //user data is being added to the cloud
             if (isAddingUser){
                 showAnimation()
             }else{
-                //TODO User data is added completely or is not beign added bcos user data alredy exist
+                //User data is added completely or is not beign added bcos user data alredy exist
                 hideAnimation()
                 if (googleAuthViewModel.getIsNewUser().value==true||phoneAuthViewModel.getIsNewUser().value == true){
                    showConfettiAnim()
 
-                    //TODO ***Delay for 1.7sec for confetti animation to complete showing ***
+                    //***Delay for 1.7sec for confetti animation to complete showing ***
                     lifecycleScope.launch(IO) {
                         delay(1700)
                         withContext(Main) {
@@ -175,7 +175,7 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         userAuthViewModel.getIsExistingUser().observe(this, Observer { isExistingUser ->
-            //TODO Confirmed that user data exist on the cloud
+            //Confirmed that user data exist on the cloud
             if (!isExistingUser){
                 hideAnimation()
             }
@@ -281,7 +281,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun restoreBookmarks(isNewUser:Boolean){
-        //TODO restore bookmark if user is existing user
+        //restore bookmark if user is existing user
         if(!isNewUser){
             val downLoadBookmarksWorker =
                 OneTimeWorkRequestBuilder<DownloadBookmarks>()
