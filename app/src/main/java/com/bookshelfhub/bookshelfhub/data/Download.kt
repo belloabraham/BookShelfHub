@@ -8,4 +8,5 @@ object Download {
     const val DIR_PATH="dir_path"
     const val FILE_NAME="file_name"
     const val DOWNLOAD_ID="download_id"
+    const val BOOK_NAME="book_name"
 }

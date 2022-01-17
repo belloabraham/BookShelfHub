@@ -81,7 +81,6 @@ class OrderedBooksAdapter(
             //If file does not exist, user is yet to download book
             if (!isFileExist) {
                 //Show all download controls
-                progressBar.visibility = VISIBLE
                 actionIcon.visibility = VISIBLE
                 darkOverLay.visibility = VISIBLE
             }
@@ -123,6 +122,7 @@ class OrderedBooksAdapter(
                         override fun onProgress(progress: Progress?) {
                             //Show progress on control
                             progress?.let { mProgress->
+                                progressBar.visibility = VISIBLE
                                 if(mProgress.currentBytes>0){
                                     val percentage = (mProgress.currentBytes/mProgress.totalBytes)*100
                                     progressBar.progress = percentage.toInt()
