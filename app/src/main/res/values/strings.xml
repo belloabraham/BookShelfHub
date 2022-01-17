@@ -311,10 +311,6 @@
         click retry button below to try again or contact your network provider.</string>
 
 
-    <string name="title_activity_book">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
     <!-- TODO: Category Activity -->
     <string name="search">Search</string>
     <string name="valid_full_name">Enter a valid full name</string>
@@ -326,5 +322,6 @@
     <string name="downloading_paused">Downloading paused</string>
     <string name="downloading_resuming">Download resuming....</string>
     <string name="download_starting">Download starting</string>
+    <string name="download_complete">Download complete!</string>
 
 </resources>

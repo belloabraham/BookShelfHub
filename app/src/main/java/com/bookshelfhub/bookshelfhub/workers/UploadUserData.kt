@@ -33,13 +33,11 @@ class UploadUserData  @AssistedInject constructor (
          return   if (user.isPresent && !userData.uploaded){
 
              try {
-                 val task =  cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY).await()
+                 cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY).await()
 
-                 task.run {
                      userData.uploaded = true
                      localDb.addUser(userData)
                      Result.success()
-                 }
 
              }catch (e:Exception){
                  Logger.log("Worker:UploadUserData", e)

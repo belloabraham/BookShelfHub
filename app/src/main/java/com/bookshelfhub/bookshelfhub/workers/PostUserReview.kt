@@ -47,25 +47,25 @@ class PostUserReview @AssistedInject constructor(
 
         val apiKey:String
 
-        //TODO no worries about null exception as this worker is one time and will be triggered on book item activity, so api is certain to be available
+        // no worries about null exception as this worker is one time and will be triggered on book item activity, so api is certain to be available
             runBlocking {
                 apiKey = settingsUtil.getString(Settings.PERSPECTIVE_API.KEY)!!
             }
 
 
         val userReview:UserReview
-        //TODO Get the user review
+        // Get the user review
         runBlocking {
             userReview = localDb.getUserReview(isbn).get()
         }
 
 
-        //TODO Check if the review have been posted before
+        // Check if the review have been posted before
         val bookTotalReview: Long = if (userReview.postedBefore) {
-            //TODO If user is updating a previously posted review
+            // If user is updating a previously posted review
             0
         } else {
-            //TODO If user is posting a review for the first time
+            // If user is posting a review for the first time
             1
         }
         val userRatingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
@@ -75,14 +75,14 @@ class PostUserReview @AssistedInject constructor(
         if (userReview.verified) {
             dynamicBookAttr = if (bookTotalReview > 0) { //If user is posting for the first time
                 hashMapOf(
-                    //TODO Add to book total review
+                    // Add to book total review
                     DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
-                    //TODO Add userRatingDiff to total ratings that can be + or -
+                    // Add userRatingDiff to total ratings that can be + or -
                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             } else {
                 hashMapOf(
-                    //TODO Has user has posted before only upload userRatingDiff
+                    // Has user has posted before only upload userRatingDiff
                     DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             }
@@ -110,7 +110,7 @@ class PostUserReview @AssistedInject constructor(
 
                         if(task.isSuccessful){
                             if (userReview.verified){
-                                //TODO Update user review locally
+                                // Update user review locally
                                 userReview.postedBefore = true
                                 runBlocking {
                                     localDb.addUserReview(userReview)

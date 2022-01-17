@@ -10,49 +10,56 @@ import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.tasks.await
 
 @HiltWorker
-class UploadPaymentTransactions @AssistedInject constructor (
+class UploadPaymentTransactions @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val userAuth:IUserAuth,
+    private val userAuth: IUserAuth,
     private val localDb: ILocalDb,
     private val cloudDb: ICloudDb
-) : CoroutineWorker(context,
+) : CoroutineWorker(
+    context,
     workerParams
 ) {
 
     override suspend fun doWork(): Result {
 
-        if (!userAuth.getIsUserAuthenticated()){
-            return  Result.success()
+        if (!userAuth.getIsUserAuthenticated()) {
+            return Result.success()
         }
 
-            val paymentTrans  = localDb.getAllPaymentTransactions()
-            val userId = userAuth.getUserId()
+        val paymentTrans = localDb.getAllPaymentTransactions()
+        val userId = userAuth.getUserId()
 
-      return   if (paymentTrans.isNotEmpty()) {
+        return if (paymentTrans.isNotEmpty()) {
 
-               val task =  cloudDb.addListOfDataAsync(DbFields.USERS.KEY, userId, DbFields.TRANSACTIONS.KEY, paymentTrans)
+            try {
+                cloudDb.addListOfDataAsync(
+                    DbFields.USERS.KEY,
+                    userId,
+                    DbFields.TRANSACTIONS.KEY,
+                    paymentTrans
+                ).await()
 
-               if (task.isSuccessful){
-                       //Get ISBN of all books in transaction
-                       val transactionBooksISBNs = emptyList<String>()
-                       for (trans in paymentTrans){
-                           transactionBooksISBNs.plus(trans.isbn)
-                       }
-                       //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
-                       localDb.deleteFromCart(transactionBooksISBNs)
-                       localDb.deleteAllPaymentTransactions()
+                //Get ISBN of all books in transaction
+                val transactionBooksISBNs = mutableListOf<String>()
+                for (trans in paymentTrans) {
+                    transactionBooksISBNs.add(trans.isbn)
+                }
+                //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
+                localDb.deleteFromCart(transactionBooksISBNs)
+                localDb.deleteAllPaymentTransactions()
 
-                   Result.success()
-               }else{
-                   return Result.retry()
-               }
-           }else{
-               Result.success()
-           }
+                Result.success()
+            } catch (e: Exception) {
+                return Result.retry()
+            }
 
+        } else {
+            Result.success()
+        }
 
 
     }

@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
-import com.bookshelfhub.bookshelfhub.DummyData
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
@@ -107,15 +106,13 @@ class ShelfFragment : Fragment() {
 
         shelfViewModel.getLiveOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
 
-            val books = DummyData.getOrderedBooks(userId)
-
-            if (books.isNotEmpty()){
+            if (orderedBooks.isNotEmpty()) {
                 layout.orderedBooksRecView.visibility = VISIBLE
                 layout.emptyShelf.visibility = GONE
                 layout.appbarLayout.visibility = VISIBLE
-                orderedBooksAdapter.submitList(books)
-                orderedBookList = books
-            }else{
+                orderedBooksAdapter.submitList(orderedBooks)
+                orderedBookList = orderedBooks
+            } else {
                 layout.progressBar.visibility = VISIBLE
                 layout.appbarLayout.visibility = INVISIBLE
                 layout.orderedBooksRecView.visibility = GONE

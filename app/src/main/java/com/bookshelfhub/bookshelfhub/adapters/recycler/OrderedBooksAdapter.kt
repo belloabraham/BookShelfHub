@@ -73,6 +73,7 @@ class OrderedBooksAdapter(
             title.text = model.title
             imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
             val isbn = model.isbn
+            val bookName = model.title
             val pubId = model.pubId
             val fileName = "$isbn.pdf"
             val dirPath = "$pubId${File.separator}$isbn"
@@ -94,13 +95,13 @@ class OrderedBooksAdapter(
                     }
 
                     downloadStatus == Status.PAUSED -> {
-                        resumeBookDownloading(activity, url)
+                        resumeBookDownloading(activity, url, bookName)
                     }
                     downloadStatus == Status.RUNNING || downloadStatus == Status.QUEUED -> {
-                        pauseBookDownloading(activity, url)
+                        pauseBookDownloading(activity, url, bookName)
                     }
                     else -> {
-                        startBookDownloading(activity, url, dirPath, fileName)
+                        startBookDownloading(activity, url, dirPath, fileName, bookName)
                     }
                 }
             }
@@ -169,10 +170,11 @@ class OrderedBooksAdapter(
             return DownloadManager.getStatus(downloadId)
         }
 
-        private fun pauseBookDownloading(context: Context, url: String?) {
+        private fun pauseBookDownloading(context: Context, url: String?, bookName:String) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_PAUSE
             intent.putExtra(Download.URL, url)
+            intent.putExtra(Download.BOOK_NAME, bookName)
             context.startService(intent)
         }
 
@@ -180,10 +182,11 @@ class OrderedBooksAdapter(
             return AppExternalStorage.isDocumentFileExist(context, dirPath, fileName)
         }
 
-        private fun resumeBookDownloading(context: Context, url: String?) {
+        private fun resumeBookDownloading(context: Context, url: String?, bookName:String) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_RESUME
             intent.putExtra(Download.URL, url)
+            intent.putExtra(Download.BOOK_NAME, bookName)
             context.startService(intent)
         }
 
@@ -191,13 +194,15 @@ class OrderedBooksAdapter(
             context: Context,
             url: String?,
             dirPath: String,
-            fileName: String
+            fileName: String,
+            bookName:String
         ) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_START
             intent.putExtra(Download.URL, url)
             intent.putExtra(Download.FILE_NAME, fileName)
             intent.putExtra(Download.DIR_PATH, dirPath)
+            intent.putExtra(Download.BOOK_NAME, bookName)
             context.startService(intent)
         }
 

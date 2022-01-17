@@ -36,12 +36,11 @@ class UploadBookInterest @AssistedInject constructor (
             val bookInterestData = bookInterest.get()
 
           try {
-              val task =  cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY).await()
-              task.run {
-                  bookInterestData.uploaded=true
-                  localDb.addBookInterest(bookInterestData)
-                  Result.success()
-              }
+              cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY).await()
+
+              bookInterestData.uploaded=true
+              localDb.addBookInterest(bookInterestData)
+              Result.success()
 
           }catch (e:Exception){
               Logger.log("Worker:UploadBkInterest", e)
