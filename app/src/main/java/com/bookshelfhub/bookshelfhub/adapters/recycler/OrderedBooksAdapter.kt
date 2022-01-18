@@ -95,10 +95,10 @@ class OrderedBooksAdapter(
                     }
 
                     downloadStatus == Status.PAUSED -> {
-                        resumeBookDownloading(activity, url, bookName)
+                        resumeBookDownloading(activity, bookName, downloadId)
                     }
                     downloadStatus == Status.RUNNING || downloadStatus == Status.QUEUED -> {
-                        pauseBookDownloading(activity, url, bookName)
+                        pauseBookDownloading(activity, bookName, downloadId)
                     }
                     else -> {
                         startBookDownloading(activity, url, dirPath, fileName, bookName)
@@ -170,10 +170,10 @@ class OrderedBooksAdapter(
             return DownloadManager.getStatus(downloadId)
         }
 
-        private fun pauseBookDownloading(context: Context, url: String?, bookName:String) {
+        private fun pauseBookDownloading(context: Context, bookName:String, downloadId: Int?) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_PAUSE
-            intent.putExtra(Download.URL, url)
+            intent.putExtra(Download.DOWNLOAD_ID, downloadId)
             intent.putExtra(Download.BOOK_NAME, bookName)
             context.startService(intent)
         }
@@ -182,10 +182,10 @@ class OrderedBooksAdapter(
             return AppExternalStorage.isDocumentFileExist(context, dirPath, fileName)
         }
 
-        private fun resumeBookDownloading(context: Context, url: String?, bookName:String) {
+        private fun resumeBookDownloading(context: Context, bookName:String, downloadId: Int?) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_RESUME
-            intent.putExtra(Download.URL, url)
+            intent.putExtra(Download.DOWNLOAD_ID, downloadId)
             intent.putExtra(Download.BOOK_NAME, bookName)
             context.startService(intent)
         }

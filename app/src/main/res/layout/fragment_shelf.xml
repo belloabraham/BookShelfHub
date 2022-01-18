@@ -40,6 +40,7 @@
         android:layout_gravity="bottom"
         android:visibility="gone"
         android:id="@+id/emptyShelf"
+        android:layout_marginBottom="@dimen/size_50"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/size_25">
 

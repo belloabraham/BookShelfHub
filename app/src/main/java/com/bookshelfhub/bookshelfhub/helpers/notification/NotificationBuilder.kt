@@ -28,11 +28,9 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
 
 
     private fun getPendingIntent(intent:Intent, context: Context): PendingIntent? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getActivity(context, 0, intent,  FLAG_UPDATE_CURRENT or FLAG_IMMUTABLE)
-        } else {
-            getActivity(context, 0, intent, FLAG_UPDATE_CURRENT)
-        }
+
+        return  getActivity(context, 0, intent,  getIntentFlag())
+
     }
 
     fun setPriority(value:Int): NotificationBuilder {
@@ -149,8 +147,6 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
             var pendingIntent: PendingIntent? = null
             notificationBuilder.url?.let {
                 val intent = getUrlIntent(it)
-                intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
-
                 pendingIntent = notificationBuilder.getPendingIntent(intent, context)
             }
 
@@ -163,6 +159,16 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
             val notificationManager = NotificationManagerCompat.from(context)
             notificationManager.notify(notificationId, builder.build())
         }
-
     }
+
+    companion object{
+         fun getIntentFlag(): Int {
+            var flag  = FLAG_UPDATE_CURRENT
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                flag = FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
+            }
+            return flag
+        }
+    }
+
 }

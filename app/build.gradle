@@ -8,12 +8,17 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android-extensions'
-//apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 32
     buildToolsVersion "30.0.3"
     def javaVersion = JavaVersion.VERSION_1_8
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
 
     buildFeatures {
         viewBinding true
@@ -26,8 +31,8 @@ android {
         targetSdkVersion 32
         versionCode 1
         versionName "1.0"
-        multiDexEnabled = true
         resConfigs "en"
+        multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -44,6 +49,8 @@ android {
             exclude 'META-INF/NOTICE.txt'
         }
     }
+
+
     compileOptions {
         sourceCompatibility javaVersion
         targetCompatibility javaVersion
@@ -188,7 +195,7 @@ dependencies {
     //--Realtime Db
     implementation 'com.google.firebase:firebase-database-ktx'
     //--Crashlytics
-    // implementation 'com.google.firebase:firebase-crashlytics-ktx'
+     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     //--Cloud Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 
