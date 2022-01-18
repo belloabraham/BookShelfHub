@@ -12,7 +12,5 @@ enum class Settings(val KEY:String) {
 
      API_KEYS("api_keys"),
      FIXER_ENDPOINT("fixerEndpoint"),
-     PAYSTACK_LIVE_PUB("payStackLivePublicKey"),
-     PAYSTACK_LIVE_PRIVATE("payStackLivePrivateKey"),
      PERSPECTIVE_API("perspectiveKey")
 }

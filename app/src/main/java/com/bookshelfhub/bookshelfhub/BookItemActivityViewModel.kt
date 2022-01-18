@@ -13,8 +13,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
-import com.bookshelfhub.bookshelfhub.models.ApiKeys
-import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -40,7 +38,7 @@ class BookItemActivityViewModel @Inject constructor(
 
 
   private val userId = userAuth.getUserId()
-  private val title = savedState.get<String>(Book.TITLE.KEY)!!
+  private val title = savedState.get<String>(Book.NAME.KEY)!!
   private val author = savedState.get<String>(Book.AUTHOR.KEY)!!
   private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM.KEY)?:false

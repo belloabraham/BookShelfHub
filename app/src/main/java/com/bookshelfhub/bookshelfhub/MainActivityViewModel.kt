@@ -1,6 +1,8 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
@@ -17,6 +19,7 @@ class MainActivityViewModel @Inject constructor(
     val cloudDb: ICloudDb,
     val localDb: ILocalDb,
     val savedState: SavedStateHandle,
+    val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth
     ):ViewModel() {
 
@@ -33,6 +36,7 @@ class MainActivityViewModel @Inject constructor(
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
+
     private val referrer = savedState.get<String>(Referrer.ID.KEY)
     private val ACTIVE_VIEW_PAGER="active_view_pager"
     private val ACTIVE_PAGE="active_page"
@@ -44,7 +48,6 @@ class MainActivityViewModel @Inject constructor(
         user=localDb.getLiveUser(userId)
         bookInterest = localDb.getLiveBookInterest(userId)
         storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
-
     }
 
     fun setActivePage(value:Int){

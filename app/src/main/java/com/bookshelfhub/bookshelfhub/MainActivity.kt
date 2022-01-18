@@ -20,7 +20,8 @@ import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.History
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
@@ -36,10 +37,10 @@ import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.Worker
-import com.bookshelfhub.downloadmanager.DownloadManager
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
+import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -51,7 +52,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallbacks
+class MainActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityMainBinding
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
@@ -122,16 +123,6 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
 
         openReferrerLinkInStore(referrer)
 
-        /* if(isStoragePermissionRequired()){
-             if(Permission.hasPermission(this, storagePermission)){
-                 openReferrerLinkInStore(referrer)
-             }else{
-                 requestStoragePermission()
-             }
-         }else{
-             openReferrerLinkInStore(referrer)
-         }*/
-
         //Pre generate dynamic link before user request on app share to decrease share sheet load time
         getBookShareReferralLink(userId) {
             it?.let {
@@ -153,7 +144,8 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             val notifNumber = mainActivityViewModel.getTotalMoreTabNotification()
 
             if (notifNumber > 0) {
-                //there is a notification, set notification bubble for the bottom tab of more with the number of notification
+                //there is a notification, set notification bubble for the
+                // bottom tab of more with the number of notification
                 layout.bottomBar.setBadgeAtTabIndex(
                     moreTabIndex,
                     AnimatedBottomBar.Badge("$notifNumber")
@@ -162,38 +154,11 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
                 //there are no notification remove any notification badge if there is one
                 layout.bottomBar.clearBadgeAtTabIndex(moreTabIndex)
             }
-
         })
-
-        /*mainActivityViewModel.getUserRecord().observe(this, Observer { userRecord ->
-             if (userRecord.mailOrPhoneVerified){
-                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(0)
-             }else{
-                 mainActivityViewModel.setVerifyPhoneOrEmailNotif(1)
-             }
-         })*/
-
 
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
             //Check if user already added book interest
-            if (bookInterest.isPresent && bookInterest.get().added) {
-
-                //remove book interest button notification bubble
-                mainActivityViewModel.setBookInterestNotifNo(0)
-
-                //Generate recommended books to be shown in book store
-                val recommendedBooksWorker =
-                    OneTimeWorkRequestBuilder<RecommendedBooks>()
-                        .build()
-                worker.enqueueUniqueWork(
-                    Tag.recommendedBooksWorker,
-                    ExistingWorkPolicy.REPLACE,
-                    recommendedBooksWorker
-                )
-
-            } else {
-                mainActivityViewModel.setBookInterestNotifNo(1)
-            }
+            updateRecommendedBooks(bookInterest)
         })
 
         setUpShelfStoreViewPager()
@@ -245,18 +210,20 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             }
         })
 
-        mainActivityViewModel.getIsNightMode().observe(this, Observer { isNightMode ->
-
-            //change activity theme when user switch the theme in more fragment
-            val mode = if (isNightMode) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-            AppCompatDelegate.setDefaultNightMode(mode)
+        mainActivityViewModel.getIsNightMode().observe(this, Observer { isDarkTheme ->
+            setAppThem(isDarkTheme)
         })
 
-        showReadProgressDialog()
+    }
+
+    private fun setAppThem(isDarkTheme: Boolean) {
+        //change activity theme when user switch the theme in more fragment
+        val mode = if (isDarkTheme) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun newUpdateInstallUpdateMessage() {
@@ -280,6 +247,11 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             newUpdateInstallUpdateMessage()
         }
 
+        setActiveViewPagerAndPageAfterMainActivityThemeChange()
+
+    }
+
+    private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {
         //Set active view pager and page based on what was last set by bottom nav on select change  to saved state Instance as a result of activity recreated from theme change, as activity recreated create the effect of when resource get reclaimed by the OS
         if (mainActivityViewModel.getActiveViewPager() == 0) {
             //Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
@@ -301,100 +273,38 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
         }
     }
 
-
     override fun onBackPressed() {
-
         //Workaround to android 10 leak when user press back button on main activity
-        //This code prvents the leak
+        //This code prevents the leak
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             if (onBackPressedDispatcher.hasEnabledCallbacks()) {
                 super.onBackPressed()
             } else {
                 finishAfterTransition()
             }
-        }else{
+        } else {
             super.onBackPressed()
         }
     }
 
+    private fun updateRecommendedBooks(bookInterest: Optional<BookInterest>) {
+        if (bookInterest.isPresent && bookInterest.get().added) {
 
-    /*   override fun onRequestPermissionsResult(
-           requestCode: Int,
-           permissions: Array<out String>,
-           grantResults: IntArray
-       ) {
-           super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-           Permission.setPermissionResult(requestCode, permissions, grantResults)
-       }
+            //remove book interest button notification bubble
+            mainActivityViewModel.setBookInterestNotifNo(0)
 
-       override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-           //Don not open referral link in the case of new user sign up until user grants storage permission
-           openReferrerLinkInStore(referrer)
-       }
+            //Generate recommended books to be shown in book store
+            val recommendedBooksWorker =
+                OneTimeWorkRequestBuilder<RecommendedBooks>()
+                    .build()
+            worker.enqueueUniqueWork(
+                Tag.recommendedBooksWorker,
+                ExistingWorkPolicy.REPLACE,
+                recommendedBooksWorker
+            )
 
-       private fun reRequestNeverAskAgainPermission(){
-           val  resultLauncher =
-               registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                   if (result.resultCode == 0) {
-                       if (!Permission.hasPermission(this, storagePermission)){
-                           finish()
-                       }
-                   }
-               }
-
-           AlertDialogBuilder.with(this, R.string.storage_perm_disabled_msg)
-               .setPositiveAction(R.string.ok){
-                   resultLauncher.launch(Intent(android.provider.Settings.ACTION_SETTINGS))
-               }.build().showDialog(R.string.storage_perm_title)
-       }
-
-       override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-           if(Permission.isPermissionPermanentlyDenied(this, perms) && !Permission.hasPermission(this, storagePermission)){
-               reRequestNeverAskAgainPermission()
-           }else{
-               finish()
-           }
-       }*/
-
-    private fun showReadProgressDialog() {
-        lifecycleScope.launch(IO) {
-            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
-            val lastBookRedTile = settingsUtil.getString(Settings.LAST_BOOK_RED_TITLE.KEY)
-            val lastBookRedISBN = settingsUtil.getString(Settings.LAST_BOOK_RED_ISBN.KEY)
-            val lastBookPercentage = settingsUtil.getInt(Settings.LAST_BOOK_PERCENTAGE.KEY, 0)
-            val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
-            withContext(Main) {
-                if (showPopup) {
-                    lastBookRedTile?.let {
-                        val view = View.inflate(this@MainActivity, R.layout.continue_reading, null)
-                        view.findViewById<TextView>(R.id.bookName).text = it
-                        view.findViewById<TextView>(R.id.percentageText).text =
-                            String.format(getString(R.string.percent), lastBookPercentage)
-                        view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =
-                            lastBookPercentage
-
-                        MaterialBottomSheetDialogBuilder(this@MainActivity, this@MainActivity)
-                            .setOnDismissListener {
-                                if (noOfDismiss < 2) {
-                                    showToast(R.string.dismiss_msg)
-                                    runBlocking {
-                                        settingsUtil.setInt(
-                                            Settings.NO_OF_TIME_DISMISSED.KEY,
-                                            noOfDismiss + 1
-                                        )
-                                    }
-                                }
-                            }
-                            .setPositiveAction(R.string.dismiss) {}
-                            .setNegativeAction(R.string.continue_reading) {
-                                val intent = Intent(this@MainActivity, BookActivity::class.java)
-                                intent.putExtra(Settings.LAST_BOOK_RED_ISBN.KEY, lastBookRedISBN)
-                                startActivity(intent)
-                            }
-                            .showBottomSheet(view)
-                    }
-                }
-            }
+        } else {
+            mainActivityViewModel.setBookInterestNotifNo(1)
         }
     }
 
@@ -427,20 +337,6 @@ class MainActivity : AppCompatActivity() {  //EasyPermissions.PermissionCallback
             onComplete(it)
         }
     }
-
-    /* private fun isStoragePermissionRequired(): Boolean {
-         return Build.VERSION.SDK_INT > Build.VERSION_CODES.M && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P
-     }
-
-     private fun requestStoragePermission(){
-                 if(Permission.isPermissionPermanentlyDenied(this, listOf(storagePermission))){
-                     reRequestNeverAskAgainPermission()
-                 }else {
-                     val rational = getString(R.string.storage_perm_msg)
-                     Permission.requestPermission(this, rational, Permission.WRITE_STORAGE_RC, storagePermission)
-                 }
-     }*/
-
 
     private fun setUpShelfStoreViewPager() {
         val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())

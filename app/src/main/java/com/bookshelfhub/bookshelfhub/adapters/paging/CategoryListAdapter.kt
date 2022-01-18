@@ -45,7 +45,7 @@ class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.
             imageView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
                     with(intent){
-                        putExtra(Book.TITLE.KEY, model.name)
+                        putExtra(Book.NAME.KEY, model.name)
                         putExtra(Book.AUTHOR.KEY, model.author)
                         putExtra(Book.ISBN.KEY, model.isbn)
                     }

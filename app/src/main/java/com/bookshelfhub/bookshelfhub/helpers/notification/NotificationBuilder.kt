@@ -29,7 +29,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
 
     private fun getPendingIntent(intent:Intent, context: Context): PendingIntent? {
 
-        return  getActivity(context, 0, intent,  getIntentFlag())
+        return  getActivity(context, 0, intent, getIntentFlag())
 
     }
 

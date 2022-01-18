@@ -11,7 +11,7 @@ import javax.inject.Inject
 class BookInfoActivityViewModel @Inject constructor(
     val savedState: SavedStateHandle,
 ): ViewModel() {
-    private val title = savedState.get<String>(Book.TITLE.KEY)!!
+    private val title = savedState.get<String>(Book.NAME.KEY)!!
     private val fragmentId = savedState.get<Int>(Fragment.ID.KEY)!!
     private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
 

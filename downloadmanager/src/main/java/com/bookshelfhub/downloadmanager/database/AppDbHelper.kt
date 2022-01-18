@@ -7,7 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 
 
-class AppDbHelper(private val context: Context):DbHelper {
+class AppDbHelper( context: Context):DbHelper {
 
     private var db: SQLiteDatabase
 

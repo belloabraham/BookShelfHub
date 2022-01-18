@@ -101,7 +101,7 @@ class OrderedBooksAdapter(
                         pauseBookDownloading(activity, bookName, downloadId)
                     }
                     else -> {
-                        startBookDownloading(activity, url, dirPath, fileName, bookName)
+                        startBookDownloading(activity, url, dirPath, fileName, bookName, model.isbn)
                     }
                 }
             }
@@ -195,7 +195,8 @@ class OrderedBooksAdapter(
             url: String?,
             dirPath: String,
             fileName: String,
-            bookName:String
+            bookName:String,
+            isbn:String
         ) {
             val intent = Intent(context, BookDownloadService::class.java)
             intent.action = Download.ACTION_START
@@ -203,13 +204,14 @@ class OrderedBooksAdapter(
             intent.putExtra(Download.FILE_NAME, fileName)
             intent.putExtra(Download.DIR_PATH, dirPath)
             intent.putExtra(Download.BOOK_NAME, bookName)
+            intent.putExtra(Book.ISBN.KEY, isbn)
             context.startService(intent)
         }
 
         private fun openBook(activity: Activity, model: OrderedBooks) {
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
-                putExtra(Book.TITLE.KEY, model.title)
+                putExtra(Book.NAME.KEY, model.title)
                 putExtra(Book.ISBN.KEY, model.isbn)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(

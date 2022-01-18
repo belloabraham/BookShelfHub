@@ -21,14 +21,14 @@ object AppExternalStorage {
         return  storagePath.exists()
     }
 
-    fun isDocumentFileExist( applicationContext: Context, dirPath:String, fileName:String): Boolean {
+    fun isDocumentFileExist(applicationContext: Context, dirPath:String, fileName:String): Boolean {
         val path = "$dirPath${File.separator}$fileName"
         val storagePath = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
         return  storagePath.exists()
     }
 
-    fun getDocumentFilePath( applicationContext: Context, folderName: String): String {
-        return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName).absolutePath
+    fun getDocumentFilePath( applicationContext: Context, folderName: String, pathToFile:String): String {
+        return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName+File.separator+pathToFile).absolutePath
     }
 
     fun getAudioFilePath( applicationContext: Context, folderName: String): String {
@@ -39,7 +39,7 @@ object AppExternalStorage {
         }
     }
 
-    fun getFileName(fileName:String, fileFormat:String=".pdf"): String {
+    fun getFilePath(fileName:String, fileFormat:String=".pdf"): String {
         return "$fileName$fileFormat"
     }
 

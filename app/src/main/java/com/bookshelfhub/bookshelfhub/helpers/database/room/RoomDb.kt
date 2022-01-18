@@ -11,7 +11,7 @@ import javax.inject.Inject
 open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb {
 
 
-    //TODO Payment card
+    //Payment card
     override suspend fun addPaymentCard(paymentCard: PaymentCard) {
         userDao.addPaymentCard(paymentCard)
     }
@@ -34,27 +34,31 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
     }
 
 
-    //TODO Book Videos
+    //Book Videos
     override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>> {
         return  userDao.getLiveListOfBookVideos(isbn)
     }
 
-    //Todo Book Videos
+    //Book Videos
     override suspend fun addBookVideos(bookVideos: List<BookVideos>) {
         userDao.addBookVideos(bookVideos)
     }
 
 
-    //TODO Read History
+    //Read History
     override suspend fun addReadHistory(history: History) {
         userDao.addReadHistory(history)
+    }
+
+    override fun getLiveReadHistory(id:Int): LiveData<Optional<History>> {
+       return userDao.getLiveReadHistory(id)
     }
 
     override suspend fun deleteAllHistory() {
         userDao.deleteAllHistory()
     }
 
-    //TODO Payment transactions
+    //Payment transactions
     override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {
         userDao.addPaymentTransactions(paymentTransactions)
     }
@@ -72,7 +76,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
     }
 
 
-    //TODO User Review
+    //User Review
     override fun getLiveUserReview(isbn: String): LiveData<Optional<UserReview>> {
         return  userDao.getLiveUserReview(isbn)
     }
@@ -98,7 +102,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
         userDao.addUserReview(userReview)
     }
 
-    //Todo Bookmarks
+    //Bookmarks
     override suspend fun getBookmarks(deleted: Boolean): List<Bookmark> {
         return  userDao.getBookmarks(deleted)
     }
@@ -142,7 +146,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
         return  userDao.getLiveBookmarks( deleted)
     }
 
-    //Todo Cart
+    //Cart
     override suspend fun getListOfCartItems(userId: String): List<Cart> {
         return  userDao.getListOfCartItems(userId)
     }
@@ -172,7 +176,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
     }
 
 
-    //Todo User
+    //User
 
     override suspend fun deleteUserRecord() {
         return  userDao.deleteUserRecord()
@@ -190,7 +194,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
         userDao.addUser(user)
     }
 
-    //Todo Book Interest
+    //Book Interest
     override suspend fun getBookInterest(userId:String): Optional<BookInterest> {
         return  userDao.getBookInterest(userId)
     }
@@ -203,7 +207,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
         userDao.addBookInterest(bookInterest)
     }
 
-    //Todo Ordered Books
+    //Ordered Books
 
     override suspend fun getAnOrderedBook(isbn: String): OrderedBooks {
         return  userDao.getAnOrderedBook(isbn)
@@ -232,7 +236,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
        return  userDao.getLiveBooksOrdered(userId)
     }
 
-    //TODO Search History
+    //Search History
     override suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
         userDao.addStoreSearchHistory(searchHistory)
     }
@@ -249,7 +253,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
        return userDao.getLiveStoreSearchHistory(userId)
     }
 
-    //TODO Referrer
+    //Referrer
     override fun getLivePubReferrer(isbn:String): LiveData<Optional<PubReferrers>> {
         return  userDao.getLivePubReferrer(isbn)
     }
@@ -258,7 +262,7 @@ open class RoomDb @Inject constructor (private val userDao: UserDao) : ILocalDb 
         userDao.addPubReferrer(pubReferrers)
     }
 
-    //TODO Published Books
+    //Published Books
 
     override fun getLivePublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
         return userDao.getLivePublishedBook(isbn)

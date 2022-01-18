@@ -11,7 +11,7 @@ import com.google.common.base.Optional
 interface UserDao {
 
 
-    //Todo Payment Card
+    //Payment Card
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPaymentCard(paymentCard: PaymentCard)
 
@@ -27,21 +27,24 @@ interface UserDao {
     @Query("SELECT * FROM PaymentCard")
     suspend fun getPaymentCards(): List<PaymentCard>
 
-    //TODO Book videos
+    //Book videos
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookVideos(bookVideos: List<BookVideos>)
 
     @Query("SELECT * FROM BookVideos WHERE isbn = :isbn")
     fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>>
 
-    //Todo Book read history
+    //Book read history
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addReadHistory(history: History)
+
+    @Query("SELECT * FROM History WHERE id =:id")
+    fun getLiveReadHistory(id:Int):LiveData<Optional<History>>
 
     @Query("DELETE FROM History")
     suspend fun deleteAllHistory()
 
-    //Todo Payment Transaction
+    //Payment Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
 
@@ -51,7 +54,7 @@ interface UserDao {
     @Query("DELETE FROM PaymentTransaction")
     suspend fun deleteAllPaymentTransactions()
 
-    //Todo User Review
+    //User Review
     @Query("SELECT * FROM UserReview WHERE isbn = :isbn")
     fun getLiveUserReview(isbn:String): LiveData<Optional<UserReview>>
 
@@ -74,7 +77,7 @@ interface UserDao {
     suspend fun addUserReview(userReview: UserReview)
 
 
-    //Todo Bookmarks
+    //Bookmarks
     @Query("SELECT * FROM Bookmark WHERE deleted = :deleted")
     suspend fun getBookmarks(deleted: Boolean):List<Bookmark>
 
@@ -105,7 +108,7 @@ interface UserDao {
     @Delete
     suspend fun deleteBookmarks(bookmarks: List<Bookmark>)
 
-    //Todo Cart
+    //Cart
     @Query("SELECT COUNT(*) FROM Cart WHERE userId =:userId")
     fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
@@ -128,7 +131,7 @@ interface UserDao {
     @Query("SELECT * FROM Cart WHERE userId =:userId")
     suspend fun getListOfCartItems(userId: String):List<Cart>
 
-    //Todo User Record
+    //User Record
     @Query("DELETE FROM User")
     suspend fun deleteUserRecord()
 
@@ -142,7 +145,7 @@ interface UserDao {
     fun getLiveUser(userId:String): LiveData<User>
 
 
-    //Todo Book Interest
+    //Book Interest
     @Query("SELECT * FROM BookInterest WHERE userId = :userId")
     suspend fun getBookInterest(userId:String): Optional<BookInterest>
 
@@ -152,7 +155,7 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addBookInterest(bookInterest: BookInterest)
 
-    //Todo Ordered Books
+    //Ordered Books
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     fun getLiveBooksOrdered(userId:String): LiveData<List<OrderedBooks>>
 
@@ -175,7 +178,7 @@ interface UserDao {
     suspend fun addOrderedBooks(OrderedBooks: List<OrderedBooks>)
 
 
-    //Todo Search History
+    //Search History
     @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY dateTime DESC LIMIT 4")
     fun getLiveShelfSearchHistory(userId:String): LiveData<List<ShelfSearchHistory>>
 
@@ -188,7 +191,7 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addShelfSearchHistory(shelfSearchHistory:ShelfSearchHistory)
 
-    //Todo Referral
+    //Referral
     @Query("SELECT * FROM PubReferrers WHERE isbn = :isbn")
     fun getLivePubReferrer(isbn:String): LiveData<Optional<PubReferrers>>
 
@@ -196,7 +199,7 @@ interface UserDao {
     suspend fun addPubReferrer(pubReferrers: PubReferrers)
 
 
-    //Todo PublishedBook
+    //PublishedBook
     @Query("SELECT * FROM PublishedBook WHERE isbn = :isbn")
     suspend fun getPublishedBook(isbn: String): Optional<PublishedBook>
 

@@ -7,6 +7,7 @@ import com.google.common.base.Optional
 
 interface ILocalDb {
 
+     fun getLiveReadHistory(id:Int=0):LiveData<Optional<History>>
      suspend fun deletePaymentCard(card: PaymentCard)
      suspend fun getPaymentCards(): List<PaymentCard>
      fun getLivePaymentCards(): LiveData<List<PaymentCard>>

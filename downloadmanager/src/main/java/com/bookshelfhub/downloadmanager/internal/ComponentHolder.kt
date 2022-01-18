@@ -31,7 +31,7 @@ class ComponentHolder {
         httpClient = config.getHttpClient()
         dbHelper = if (config.isDatabaseEnabled())  AppDbHelper(context) else  NoOpsDbHelper()
         if (config.isDatabaseEnabled()) {
-            DownloadManager.cleanUp(30)
+            DownloadManager.cleanUp(10)
         }
     }
 

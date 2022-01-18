@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -597,7 +596,7 @@ class BookItemActivity : AppCompatActivity() {
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
-            putExtra(Book.TITLE.KEY,title)
+            putExtra(Book.NAME.KEY,title)
             putExtra(Fragment.ID.KEY, fragmentID)
             putExtra(Book.ISBN.KEY, isbn)
         }
@@ -652,7 +651,7 @@ class BookItemActivity : AppCompatActivity() {
         val book = orderedBook.get()
         val intent = Intent(this, BookActivity::class.java)
         with(intent){
-            putExtra(Book.TITLE.KEY, book.title)
+            putExtra(Book.NAME.KEY, book.title)
             putExtra(Book.ISBN.KEY, book.isbn)
         }
         startActivity(intent)

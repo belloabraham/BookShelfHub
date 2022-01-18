@@ -324,4 +324,5 @@
     <string name="download_starting">Download starting</string>
     <string name="download_complete">Download complete!</string>
 
+    <string name="download_error_msg">Download error %s</string>
 </resources>

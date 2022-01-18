@@ -6,12 +6,12 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -27,20 +27,26 @@ import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.Utils.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 
@@ -64,8 +70,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private var videoLink: String? = null
   private var bookVideos = listOf<BookVideos>()
   private val hideHandler = Handler()
-  private lateinit var isbn: String
-  private lateinit var title: String
+  @Inject
+  lateinit var settingsUtil: SettingsUtil
 
 
   @SuppressLint("ClickableViewAccessibility")
@@ -75,8 +81,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     EnableWakeLock(this, lifecycle)
 
     userId = userAuth.getUserId()
-    isbn = bookActivityViewModel.getIsbnNo()
-    title = bookActivityViewModel.getBookTitle()
+    title = bookActivityViewModel.getBookName()
 
     layout = ActivityBookBinding.inflate(layoutInflater)
     setContentView(layout.root)
@@ -88,6 +93,12 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         isDarkMode = true
       }
     }
+
+    bookActivityViewModel.getLiveReadHistory().observe(this, Observer { readHistory ->
+      if (readHistory.isPresent) {
+        showReadProgressDialog(readHistory.get())
+      }
+    })
 
     layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
 
@@ -127,7 +138,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         val aboutBook = view.findViewById<MaterialCardView>(R.id.aboutBook)
 
         aboutBook.setOnClickListener {
-            startBookInfoActivity(isbn, title, R.id.bookInfoFragment)
+            startBookInfoActivity(R.id.bookInfoFragment)
         }
 
         shareBtn.setOnClickListener {
@@ -143,7 +154,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     layout.audioBtn.setOnClickListener {
 
     }
-
 
     bookActivityViewModel.getLivePublishedBook().observe(this, Observer { book ->
       book?.let {
@@ -162,13 +172,31 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
       }
       })
 
+    bookActivityViewModel.getLiveOrderedBook().observe(this, Observer { orderedBook ->
+      loadBook(isDarkMode, orderedBook)
+    })
+
     bookActivityViewModel.getLiveListOfBookVideos().observe(this, Observer { bookVideos ->
      this.bookVideos = bookVideos
     })
 
-    layout.pdfView.fromAsset("welcome.pdf")
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+    isFullscreen = true
+
+    // Set up the user interaction to manually show or hide the system UI.
+    layout.pdfView.setOnClickListener { toggle() }
+
+    bottomNavigationLayout = layout.fullscreenContentControls
+  }
+
+  private  fun loadBook(isDarkMode:Boolean, orderedBook:OrderedBooks){
+    val isbn=orderedBook.isbn
+    val filePath = "$isbn${File.separator}$isbn.pdf"
+    val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
+    layout.pdfView.fromAsset(dirPath)
       .nightMode(isDarkMode)
-      //TODO .password(orderedBook.password!!)
+      .password(orderedBook.password!!)
       .fitEachPage(true)
       .defaultPage(0)
       .onPageChange(object:OnPageChangeListener{
@@ -187,25 +215,59 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
       })
       .enableAnnotationRendering(true)
-      .enableSwipe(true).load()
-
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-    isFullscreen = true
-
-    // Set up the user interaction to manually show or hide the system UI.
-    layout.pdfView.setOnClickListener { toggle() }
-
-    bottomNavigationLayout = layout.fullscreenContentControls
-   /* layout.menuBtn.setOnTouchListener(delayHideTouchListener)*/
+      .enableSwipe(true)
+      .load()
   }
 
-  private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
+
+  override fun onNewIntent(intent: Intent?) {
+    super.onNewIntent(intent)
+    intent?.let {
+      val isbn = it.getStringExtra(Book.ISBN.KEY)
+      val name = it.getStringExtra(Book.NAME.KEY)
+      bookActivityViewModel.loadLiveOrderedBook(isbn!!, name!!)
+    }
+  }
+
+  private fun showReadProgressDialog(readHistory: History) {
+    lifecycleScope.launch(IO) {
+      val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
+      withContext(Main) {
+        val view = View.inflate(this@BookActivity, R.layout.continue_reading, null)
+        view.findViewById<TextView>(R.id.bookName).text = readHistory.bookName
+        view.findViewById<TextView>(R.id.percentageText).text =
+          String.format(getString(R.string.percent), readHistory.readPercentage)
+        view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =
+          readHistory.readPercentage
+
+        MaterialBottomSheetDialogBuilder(this@BookActivity, this@BookActivity)
+          .setOnDismissListener {
+            //Stop showing users the option to disable progress popup after two times of showing them
+            if (noOfDismiss < 2) {
+              showToast(R.string.dismiss_msg)
+              runBlocking {
+                settingsUtil.setInt(
+                  Settings.NO_OF_TIME_DISMISSED.KEY,
+                  noOfDismiss + 1
+                )
+              }
+            }
+          }
+          .setPositiveAction(R.string.dismiss) {}
+          .setNegativeAction(R.string.continue_reading) {
+            layout.pdfView.showPage(readHistory.lastPageNumber)
+          }
+          .showBottomSheet(view)
+      }
+    }
+  }
+
+  private fun startBookInfoActivity(fragmentID:Int){
     val intent = Intent(this, BookInfoActivity::class.java)
     with(intent){
-      putExtra(Book.TITLE.KEY,title)
+      putExtra(Book.NAME.KEY,bookActivityViewModel.getBookName())
       putExtra(Fragment.ID.KEY, fragmentID)
-      putExtra(Book.ISBN.KEY, isbn)
+      putExtra(Book.ISBN.KEY, bookActivityViewModel.getIsbnNo())
     }
     startActivity(intent)
   }
@@ -292,18 +354,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     setTopMargin(0f, layout.pageNumLabel)
   }
 
-  private val delayHideTouchListener = View.OnTouchListener { view, motionEvent ->
-    when (motionEvent.action) {
-      MotionEvent.ACTION_DOWN -> if (AUTO_HIDE) {
-        delayedHide(AUTO_HIDE_DELAY_MILLIS)
-      }
-      MotionEvent.ACTION_UP -> view.performClick()
-      else -> {
-      }
-    }
-    false
-  }
-
   private fun toggle() {
     if (isFullscreen) {
       hide()
@@ -362,11 +412,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   override fun onDestroy() {
-    val percentage = (currentPage/totalPages)*100
-    lifecycleScope.launch(IO){
-      bookActivityViewModel.addReadHistory(currentPage.toInt(), percentage.toInt())
-    }
-
+   bookActivityViewModel.addReadHistory(currentPage.toInt(), totalPages.toInt())
     super.onDestroy()
   }
 
