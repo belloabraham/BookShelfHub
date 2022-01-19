@@ -23,7 +23,6 @@ import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.services.database.Database
 import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,10 +40,6 @@ class UserInfoFragment : Fragment() {
     private var binding:FragmentUserInfoBinding?=null
     @Inject
     lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var database: Database
-    @Inject
-    lateinit var cloudDb: ICloudDb
     @Inject
     lateinit var appUtil:AppUtil
     @Inject
@@ -70,38 +65,6 @@ class UserInfoFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
         }
 
-        if (!isNewUser) {
-            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true) { docSnapShot,_ ->
-                docSnapShot?.let {
-                    try {
-                        val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
-                        val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
-                        bookInterest.uploaded = true
-                        viewLifecycleOwner.lifecycleScope.launch(IO) {
-                            database.addBookInterest(bookInterest)
-                        }
-                    } catch (e: Exception) {
-                    }
-
-                    try {
-                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
-                        val userData = json.fromAny(userJsonString!!, User::class.java)
-                        layout.nameEditTxt.setText(userData.name)
-                        layout.phoneEditTxt.setText(userData.phone)
-                        layout.emailEditTxt.setText(userData.email)
-                        userData.uploaded = true
-                        viewLifecycleOwner.lifecycleScope.launch(IO) {
-                            withContext(Main) {
-                                userAuthViewModel.setIsAddingUser(false, userData)
-                            }
-                        }
-                    } catch (e: Exception) {
-                    }
-
-                }
-
-            }
-        }
 
         if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE

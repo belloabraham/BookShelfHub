@@ -103,7 +103,7 @@ class BookItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Retry getting private API keys if they do not already exist
-        privateKeys.loadPrivateKeys(lifecycleScope)
+        privateKeys.loadPrivateKeys(lifecycleScope, this)
 
         layout =  ActivityBookItemBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -161,7 +161,7 @@ class BookItemActivity : AppCompatActivity() {
         bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
 
             // try getting private AI Keys again if it does not exist as there is an assured network connection by now
-            privateKeys.loadPrivateKeys(lifecycleScope)
+            privateKeys.loadPrivateKeys(lifecycleScope, this)
 
             bookOnlineVersion =  book
 

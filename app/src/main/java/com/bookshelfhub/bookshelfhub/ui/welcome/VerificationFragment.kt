@@ -131,42 +131,6 @@ class VerificationFragment:Fragment(){
                         if (isNewUser){
                             val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(true)
                             findNavController().navigate(actionUserInfo)
-                        }else{
-
-                            cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
-
-                                if(docSnapShot!=null && docSnapShot.exists()){
-                                    try {
-                                        val jsonString = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
-                                        val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
-
-                                        bookInterest.uploaded=true
-                                        viewLifecycleOwner.lifecycleScope.launch(IO){
-                                            database.addBookInterest(bookInterest)
-                                        }
-                                    }catch (e:Exception){
-                                    }
-
-                                    try {
-                                        val userJsonString = docSnapShot.get(DbFields.USER.KEY)
-                                        val user = json.fromAny(userJsonString!!, User::class.java)
-                                        if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!=DeviceUtil.getDeviceOSVersionInfo(
-                                                Build.VERSION.SDK_INT)){
-                                            user.device =   DeviceUtil.getDeviceBrandAndModel()
-                                            user.deviceOs=DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
-                                        }else {
-                                            user.uploaded = true
-                                        }
-                                        userAuthViewModel.setIsAddingUser(false, user)
-                                    }catch (ex:Exception){
-                                        userAuthViewModel.setIsExistingUser(false)
-                                    }
-
-                                }else{
-                                    userAuthViewModel.setIsExistingUser(false)
-                                }
-                            }
-
                         }
                     }
                 })

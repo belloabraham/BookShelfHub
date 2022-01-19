@@ -56,13 +56,7 @@ class LoginFragment:Fragment() {
     @Inject
     lateinit var settingsUtil: SettingsUtil
     @Inject
-    lateinit var cloudDb: ICloudDb
-    @Inject
     lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var database: Database
-    @Inject
-    lateinit var json: Json
 
 
     override fun onCreateView(
@@ -146,40 +140,6 @@ class LoginFragment:Fragment() {
                 if (isNewUser){
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
-                }else{
-
-                    cloudDb.getLiveDataAsync(requireActivity(), DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
-
-                        if(docSnapShot!=null && docSnapShot.exists()){
-                            try {
-                                val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
-                                val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
-                                bookInterest.uploaded=true
-                                viewLifecycleOwner.lifecycleScope.launch(IO){
-                                    database.addBookInterest(bookInterest)
-                                }
-                            }catch (e:Exception){
-
-                            }
-
-                            try {
-                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
-                                val user = json.fromAny(userJsonString!!, User::class.java)
-                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!=DeviceUtil.getDeviceOSVersionInfo(
-                                        Build.VERSION.SDK_INT)){
-                                    user.device = DeviceUtil.getDeviceBrandAndModel()
-                                    user.deviceOs=DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
-                                }else {
-                                    user.uploaded = true
-                                }
-                                userAuthViewModel.setIsAddingUser(false, user)
-                            }catch (ex:Exception){
-                                userAuthViewModel.setIsExistingUser(false)
-                            }
-                        }else{
-                            userAuthViewModel.setIsExistingUser(false)
-                        }
-                    }
                 }
             }
         })

@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Load secret keys from realtime firebase
-        privateKeys.loadPrivateKeys(lifecycleScope)
+        privateKeys.loadPrivateKeys(lifecycleScope, this)
 
         userId = userAuth.getUserId()
 

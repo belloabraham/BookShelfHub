@@ -1,5 +1,4 @@
 include ':app'
 rootProject.name = "BookShelfHub"
-include ':app:redapt'
 include ':pdfviewer'
 include ':downloadmanager'

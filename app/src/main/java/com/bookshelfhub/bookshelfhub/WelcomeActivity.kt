@@ -11,17 +11,27 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
+import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
+import com.bookshelfhub.bookshelfhub.services.database.Database
+import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.ui.welcome.LoginFragmentDirections
+import com.bookshelfhub.bookshelfhub.ui.welcome.VerificationFragmentDirections
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -54,6 +64,14 @@ class WelcomeActivity : AppCompatActivity() {
     private val welcomeActivityViewModel: WelcomeActivityViewModel by viewModels()
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private var phoneAuthCallbacks:  PhoneAuthProvider.OnVerificationStateChangedCallbacks?=null
+
+    @Inject
+    lateinit var cloudDb: ICloudDb
+    @Inject
+    lateinit var json: Json
+
+    @Inject
+    lateinit var database: Database
 
     //***Get Nullable referral userID or PubIdAndISBN
     private var referrer: String? = null
@@ -92,6 +110,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         //Pass Nullable referral userID or PubIdAndISBN and set to Main Activity to be opened in store immediately if PubISBN
         val intent = Intent(this, MainActivity::class.java)
+        intent.flags =  Intent.FLAG_ACTIVITY_SINGLE_TOP
         intent.putExtra(Referrer.ID.KEY, referrer)
 
         //Check if user Device have Google Play services installed as it is required for proper functioning of application
@@ -144,7 +163,6 @@ class WelcomeActivity : AppCompatActivity() {
                         }
 
                     }
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
                 } else {
                     hideAnimation()
@@ -237,6 +255,89 @@ class WelcomeActivity : AppCompatActivity() {
                 }
                 .show()
         })
+
+        phoneAuthViewModel.getIsSignedInSuccessfully().observe(this, Observer { isSignedInSuccessfully ->
+            if (isSignedInSuccessfully){
+                val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
+                if (!isNewUser){
+                    cloudDb.getLiveDataAsync(this, DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+
+                        if(docSnapShot!=null && docSnapShot.exists()){
+                            try {
+                                val jsonString = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
+
+                                bookInterest.uploaded=true
+                                lifecycleScope.launch(IO){
+                                    database.addBookInterest(bookInterest)
+                                }
+                            }catch (e:Exception){
+                            }
+
+                            try {
+                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                val user = json.fromAny(userJsonString!!, User::class.java)
+                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!=DeviceUtil.getDeviceOSVersionInfo(
+                                        Build.VERSION.SDK_INT)){
+                                    user.device =   DeviceUtil.getDeviceBrandAndModel()
+                                    user.deviceOs=DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
+                                }else {
+                                    user.uploaded = true
+                                }
+                                userAuthViewModel.setIsAddingUser(false, user)
+                            }catch (ex:Exception){
+                                userAuthViewModel.setIsExistingUser(false)
+                            }
+
+                        }else{
+                            userAuthViewModel.setIsExistingUser(false)
+                        }
+                    }
+                }
+            }
+        })
+
+        googleAuthViewModel.getIsAuthenticatedSuccessful().observe(this, Observer { isAuthSuccessful ->
+
+            if (isAuthSuccessful){
+                val isNewUser = googleAuthViewModel.getIsNewUser().value!!
+                if (!isNewUser){
+                    cloudDb.getLiveDataAsync(this, DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+
+                        if(docSnapShot!=null && docSnapShot.exists()){
+                            try {
+                                val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
+                                bookInterest.uploaded=true
+                                lifecycleScope.launch(IO){
+                                    database.addBookInterest(bookInterest)
+                                }
+                            }catch (e:Exception){
+
+                            }
+
+                            try {
+                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                val user = json.fromAny(userJsonString!!, User::class.java)
+                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
+                                        Build.VERSION.SDK_INT)){
+                                    user.device = DeviceUtil.getDeviceBrandAndModel()
+                                    user.deviceOs= DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
+                                }else {
+                                    user.uploaded = true
+                                }
+                                userAuthViewModel.setIsAddingUser(false, user)
+                            }catch (ex:Exception){
+                                userAuthViewModel.setIsExistingUser(false)
+                            }
+                        }else{
+                            userAuthViewModel.setIsExistingUser(false)
+                        }
+                    }
+                }
+            }
+        })
+
     }
 
 

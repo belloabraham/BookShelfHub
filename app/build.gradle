@@ -11,6 +11,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    signingConfigs {
+        release {
+            storePassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
+            keyPassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
+            keyAlias 'BookshelfHub'
+            storeFile file('C:\\Users\\Idevellopapps\\Desktop\\bsh.jks')
+        }
+    }
     compileSdkVersion 32
     buildToolsVersion "30.0.3"
     def javaVersion = JavaVersion.VERSION_1_8
@@ -41,6 +49,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            multiDexEnabled true
         }
 
         packagingOptions {
@@ -195,7 +208,7 @@ dependencies {
     //--Realtime Db
     implementation 'com.google.firebase:firebase-database-ktx'
     //--Crashlytics
-     implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
     //--Cloud Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 

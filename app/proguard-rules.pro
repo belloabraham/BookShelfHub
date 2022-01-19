@@ -24,11 +24,14 @@
  -keepattributes Signature
 
 #Data Entities
--keep class com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
--keep class com.bookshelfhub.bookshelfhub.models.*
+-keep class com.bookshelfhub.bookshelfhub.helpers.database.room.entities.**{
+    *;
+}
 
-#Custom Views
--keep class com.bookshelfhub.bookshelfhub.views.*
+-keep class com.bookshelfhub.bookshelfhub.models.**{
+    *;
+}
+
 
 #PDFViewer
 -keep class com.shockwave.**

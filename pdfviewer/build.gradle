@@ -4,6 +4,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\Idevellopapps\\Desktop\\bsh.jks')
+            storePassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
+            keyPassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
+            keyAlias 'BookshelfHub'
+        }
+    }
     compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
