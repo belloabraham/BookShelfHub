@@ -48,19 +48,19 @@ class PrivateKeys(private val settingsUtil: SettingsUtil) {
                             lifecycleScope.launch(IO) {
                                 settingsUtil.setString(
                                     Settings.PERSPECTIVE_API.KEY,
-                                    it.perspectiveKey
+                                    it.perspectiveKey!!
                                 )
                                 settingsUtil.setString(
                                     Settings.FIXER_ENDPOINT.KEY,
-                                    it.fixerEndpoint
+                                    it.fixerEndpoint!!
                                 )
                                 settingsUtil.setString(
                                     Settings.FLUTTER_ENCRYPTION.KEY,
-                                    it.flutterEncKey
+                                    it.flutterEncKey!!
                                 )
                                 settingsUtil.setString(
                                     Settings.FLUTTER_PUBLIC.KEY,
-                                    it.flutterPublicKey
+                                    it.flutterPublicKey!!
                                 )
                             }
                         }

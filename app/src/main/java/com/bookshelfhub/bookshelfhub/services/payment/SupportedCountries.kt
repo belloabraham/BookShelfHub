@@ -5,5 +5,4 @@ enum class SupportedCountries(val COUNTRY_CODE:String) {
     GHANA("GH"),
     UGANDA("UG"),
     TANZANIA("TZ")
-
 }
