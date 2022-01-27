@@ -125,6 +125,7 @@ class VerificationFragment:Fragment(){
                     }
                 })
 
+                //This gets triggered if user is new user from firebase authentication
                 phoneAuthViewModel.getIsSignedInSuccessfully().observe(viewLifecycleOwner, Observer { isSignedInSuccessfully ->
                     if (isSignedInSuccessfully){
                         val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
@@ -135,9 +136,11 @@ class VerificationFragment:Fragment(){
                     }
                 })
 
+                //This gets triggered if user is not new user from firebase authenetication but user data does not exist
+                //On firestire
                 userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
                     if (!isExistingUser){
-                        val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)
+                        val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(false)
                         findNavController().navigate(actionUserInfo)
                     }
                 })

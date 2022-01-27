@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.ui.welcome
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -133,8 +132,8 @@ class LoginFragment:Fragment() {
             }
         })
 
+        //This gets triggered if user is new user from firebase authentication
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
-
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser().value!!
                 if (isNewUser){
@@ -144,6 +143,8 @@ class LoginFragment:Fragment() {
             }
         })
 
+        //This gets triggered if user is not new user from firebase authenetication but user data does not exist
+        //On firestore
         userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
             if (!isExistingUser){
                 val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.Utils.AppUtil
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.*
 import com.google.firebase.dynamiclinks.ktx.socialMetaTagParameters
@@ -72,8 +73,8 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
     override fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
             Firebase.dynamicLinks
                 .getDynamicLink(activity.intent)
-                .addOnSuccessListener(activity) {pendingDynamicLinkData ->
-                    onComplete(pendingDynamicLinkData.link)
+                .addOnSuccessListener(activity) { pendingDynamicLinkData:PendingDynamicLinkData? ->
+                    onComplete(pendingDynamicLinkData?.link)
                 }
                 .addOnFailureListener(activity) {
                     onComplete(null)
