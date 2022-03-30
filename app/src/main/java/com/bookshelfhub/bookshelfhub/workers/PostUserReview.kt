@@ -5,20 +5,19 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.Logger
-import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.MediaType
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
-import com.bookshelfhub.bookshelfhub.models.perspective.response.ResponseBody
-import com.bookshelfhub.bookshelfhub.services.PrivateKeys
+import com.bookshelfhub.bookshelfhub.domain.models.entities.UserReview
+import com.bookshelfhub.bookshelfhub.domain.models.apis.perspective.response.ResponseBody
 import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
@@ -53,7 +52,7 @@ class PostUserReview @AssistedInject constructor(
             }
 
 
-        val userReview:UserReview
+        val userReview: UserReview
         // Get the user review
         runBlocking {
             userReview = localDb.getUserReview(isbn).get()

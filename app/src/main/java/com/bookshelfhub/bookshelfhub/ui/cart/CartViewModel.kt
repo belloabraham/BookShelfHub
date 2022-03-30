@@ -1,14 +1,14 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
-import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.domain.models.entities.User
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -16,10 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-  private val localDb: ILocalDb,
-  val cloudDb: ICloudDb,
-  val settingsUtil: SettingsUtil,
-  userAuth: IUserAuth): ViewModel(){
+    private val localDb: ILocalDb,
+    val cloudDb: ICloudDb,
+    val settingsUtil: SettingsUtil,
+    userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private val userId = userAuth.getUserId()

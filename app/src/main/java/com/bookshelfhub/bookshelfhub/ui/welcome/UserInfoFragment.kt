@@ -12,19 +12,19 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
 import com.bookshelfhub.bookshelfhub.extensions.isPhoneNumber
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
+import com.bookshelfhub.bookshelfhub.domain.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -41,7 +41,7 @@ class UserInfoFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var appUtil:AppUtil
+    lateinit var appUtil: AppUtil
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
     @Inject

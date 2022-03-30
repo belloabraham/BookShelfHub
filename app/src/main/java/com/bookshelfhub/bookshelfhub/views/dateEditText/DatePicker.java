@@ -17,8 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bookshelfhub.bookshelfhub.R;
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil;
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat;
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil;
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat;
 import java.util.Date;
 
 

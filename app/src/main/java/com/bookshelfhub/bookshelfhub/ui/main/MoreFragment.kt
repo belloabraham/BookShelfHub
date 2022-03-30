@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -17,11 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.bookshelfhub.*
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
-import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
-import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
@@ -31,20 +30,16 @@ import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
-import com.bookshelfhub.bookshelfhub.models.Earnings
+import com.bookshelfhub.bookshelfhub.domain.models.Earnings
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
-import com.google.android.gms.tasks.Tasks
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO

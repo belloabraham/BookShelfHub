@@ -9,11 +9,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.payment.CardUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
-import com.bookshelfhub.bookshelfhub.Utils.Regex
+import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.helpers.EditTextCreditCardNumberFormatterWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

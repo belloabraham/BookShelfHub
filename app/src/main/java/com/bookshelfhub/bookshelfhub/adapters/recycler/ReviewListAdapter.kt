@@ -5,10 +5,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.domain.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.views.LetterIcon
 import com.github.ivbaranov.mli.MaterialLetterIcon
 import me.ibrahimyilmaz.kiel.adapterOf
@@ -49,7 +49,7 @@ class ReviewListAdapter {
         private val userRatingBar: MaterialRatingBar = itemView.findViewById(R.id.userRatingBar)
         private val userReviewTxt: TextView = itemView.findViewById(R.id.userReviewTxt)
 
-        fun bindToView(model:UserReview, pos:Int){
+        fun bindToView(model: UserReview, pos:Int){
            userNameText.text = model.userName
             userRatingBar.rating = model.userRating.toFloat()
             userReviewTxt.text = model.review

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 
 class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, StoreListAdapter.ViewHolder>(diffCallBack){
@@ -36,7 +36,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
        private val title: TextView = itemView.findViewById(R.id.title)
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
-        fun bindToView(model:PublishedBook, activity: Activity){
+        fun bindToView(model: PublishedBook, activity: Activity){
                     imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder){
                         title.background = null
                         title.text = model.name

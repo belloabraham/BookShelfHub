@@ -7,9 +7,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.view.View
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.ColorUtil
-import com.bookshelfhub.bookshelfhub.Utils.IconUtil
-import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ColorUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.views.about.Item
 import java.util.*
 

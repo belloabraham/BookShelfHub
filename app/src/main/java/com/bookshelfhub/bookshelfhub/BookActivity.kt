@@ -18,17 +18,21 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.DisplayUtil
-import com.bookshelfhub.bookshelfhub.Utils.ShareUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.DisplayUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.Utils.EnableWakeLock
-import com.bookshelfhub.bookshelfhub.Utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.domain.models.entities.BookVideos
+import com.bookshelfhub.bookshelfhub.domain.models.entities.History
+import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
@@ -65,7 +69,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   @Inject
   lateinit var connectionUtil: ConnectionUtil
   private var bookShareUrl: Uri? = null
-  private var publishedBook:PublishedBook? = null
+  private var publishedBook: PublishedBook? = null
   private lateinit var userId:String
   private var videoLink: String? = null
   private var bookVideos = listOf<BookVideos>()
@@ -190,7 +194,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     bottomNavigationLayout = layout.fullscreenContentControls
   }
 
-  private  fun loadBook(isDarkMode:Boolean, orderedBook:OrderedBooks){
+  private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBooks){
     val isbn=orderedBook.isbn
     val filePath = "$isbn${File.separator}$isbn.pdf"
     val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)

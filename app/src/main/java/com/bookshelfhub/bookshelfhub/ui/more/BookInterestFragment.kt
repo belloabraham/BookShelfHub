@@ -10,14 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentInterestBinding
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.observables.BookInterestObservable
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.UploadBookInterest
@@ -32,13 +30,13 @@ import javax.inject.Inject
 @WithFragmentBindings
 class BookInterestFragment : Fragment() {
 
-    private lateinit var bookInterestObservable:BookInterestObservable
+    private lateinit var bookInterestObservable: BookInterestObservable
     private val bookInterestViewModel: BookInterestViewModel by viewModels()
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var worker: Worker
-    private lateinit var oldBookInterest:BookInterest
+    private lateinit var oldBookInterest: BookInterest
     private var binding: FragmentInterestBinding?=null
 
 

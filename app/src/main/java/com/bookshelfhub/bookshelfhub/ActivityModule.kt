@@ -1,11 +1,10 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.IntentUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
 import dagger.Module
 import dagger.Provides

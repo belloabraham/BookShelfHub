@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
 
 object DummyData {
 

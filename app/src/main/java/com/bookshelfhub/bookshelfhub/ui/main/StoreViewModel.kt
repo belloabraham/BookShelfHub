@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class StoreViewModel @Inject constructor(
     private val localDb: ILocalDb,
     val connectionUtil: ConnectionUtil,
-    private val cloudDb:ICloudDb,
+    private val cloudDb: ICloudDb,
     val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()

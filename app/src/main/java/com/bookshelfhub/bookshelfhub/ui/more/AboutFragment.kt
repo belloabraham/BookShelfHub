@@ -8,9 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.AnimUtil
-import com.bookshelfhub.bookshelfhub.Utils.AppUtil
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateTimeUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.AnimUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.FragmentAboutBinding
 import com.bookshelfhub.bookshelfhub.views.about.builder.AboutPageBuilder

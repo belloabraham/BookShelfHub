@@ -1,8 +1,7 @@
 package com.bookshelfhub.bookshelfhub.services.payment
 
 import com.bookshelfhub.bookshelfhub.BuildConfig
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
 import com.flutterwave.raveandroid.rave_java_commons.Meta
 import com.flutterwave.raveandroid.rave_presentation.RaveNonUIManager
 import com.flutterwave.raveandroid.rave_presentation.card.Card
@@ -20,7 +19,7 @@ class FlutterWave(private val encryptionKey:String,
                   private val isDebugMode:Boolean = BuildConfig.DEBUG
 ):IPayment {
 
-    override fun chargeCard(publicKey:String, paymentCard:PaymentCard, amount:Double, currency:String){
+    override fun chargeCard(publicKey:String, paymentCard: PaymentCard, amount:Double, currency:String){
 
         val raveNonUIManager = RaveNonUIManager()
             .setCurrency(currency)

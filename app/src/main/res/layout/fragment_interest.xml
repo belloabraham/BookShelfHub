@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bookInterest"
-            type="com.bookshelfhub.bookshelfhub.observables.BookInterestObservable" />
+            type="com.bookshelfhub.bookshelfhub.ui.more.BookInterestObservable" />
     </data>
 
 

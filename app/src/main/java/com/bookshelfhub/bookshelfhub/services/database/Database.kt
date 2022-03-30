@@ -1,16 +1,12 @@
 package com.bookshelfhub.bookshelfhub.services.database
 
-import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.work.*
+import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.domain.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.bookshelfhub.bookshelfhub.workers.Worker
-import com.google.common.base.Optional
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class Database @Inject constructor(
@@ -18,7 +14,7 @@ class Database @Inject constructor(
     private val worker:Worker
 ) {
 
-    suspend fun addUser(user:User){
+    suspend fun addUser(user: User){
 
         localDb.addUser(user)
 

@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.IconUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
 class NotificationBuilder(private val context:Context, private val notifChannelId:String = context.getString(
     R.string.notif_channel_id), private val notificationColor:Int=R.color.notf_color, private val smallIcon:Int = R.drawable.ic_stat_bookshelfhub) {

@@ -15,8 +15,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.recycler.BookmarkListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentBookmarkBinding
-import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Bookmark
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

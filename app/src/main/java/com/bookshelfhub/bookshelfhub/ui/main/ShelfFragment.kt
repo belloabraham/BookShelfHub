@@ -16,12 +16,12 @@ import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.ShelfSearchHistory
-import com.bookshelfhub.bookshelfhub.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.domain.models.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.domain.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.firestore.Query

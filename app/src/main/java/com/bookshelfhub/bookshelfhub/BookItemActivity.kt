@@ -19,25 +19,23 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import com.bookshelfhub.bookshelfhub.Utils.*
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.Utils.Regex
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.Category
 import com.bookshelfhub.bookshelfhub.enums.WebView
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.UserReview
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.domain.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
@@ -45,10 +43,11 @@ import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.models.convertion.Fixer
+import com.bookshelfhub.bookshelfhub.domain.models.apis.convertion.Fixer
+import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
@@ -85,13 +84,13 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var userAuth: IUserAuth
     private val bookItemActivityViewModel:BookItemActivityViewModel by viewModels()
-    private var userReview:UserReview?=null
+    private var userReview: UserReview?=null
     private var isVerifiedReview:Boolean = false
     private var referrer:String?=null
     private var onlineBookPriceInUSD:Double? =null
     private var visibilityAnimDuration:Long=0
-    private var bookOnlineVersion:PublishedBook? = null
-    private var localBook:PublishedBook?=null
+    private var bookOnlineVersion: PublishedBook? = null
+    private var localBook: PublishedBook?=null
     private lateinit var buyerVisibleCurrency:String
     private lateinit var userId: String
     private var bookShareUrl: Uri? = null
@@ -444,7 +443,7 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun showBookDetails(book:PublishedBook, buyerVisibleCurrency:String, priceInUSD:Double?=null){
+    private fun showBookDetails(book: PublishedBook, buyerVisibleCurrency:String, priceInUSD:Double?=null){
 
         layout.progressBar.visibility = GONE
 

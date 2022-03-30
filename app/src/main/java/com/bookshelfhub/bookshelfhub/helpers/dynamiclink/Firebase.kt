@@ -2,10 +2,8 @@ package com.bookshelfhub.bookshelfhub.helpers.dynamiclink
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.AppUtil
 import com.google.firebase.dynamiclinks.PendingDynamicLinkData
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.*

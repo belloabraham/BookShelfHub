@@ -1,10 +1,9 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
-import com.bookshelfhub.bookshelfhub.views.ToolTip
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +17,7 @@ object FragmentModule {
 
     @FragmentScoped
     @Provides
-    fun getKeyboardUtil():KeyboardUtil{
+    fun getKeyboardUtil(): KeyboardUtil {
         return KeyboardUtil()
     }
 

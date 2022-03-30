@@ -1,21 +1,18 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
-import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.Utils.Logger
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
+import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
-import com.bookshelfhub.bookshelfhub.services.database.Util
-import com.google.android.gms.tasks.Tasks
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 
 @HiltWorker

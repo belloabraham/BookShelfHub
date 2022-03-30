@@ -1,11 +1,8 @@
 package com.bookshelfhub.bookshelfhub.services.authentication
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bookshelfhub.bookshelfhub.Utils.TimerUtil
-import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

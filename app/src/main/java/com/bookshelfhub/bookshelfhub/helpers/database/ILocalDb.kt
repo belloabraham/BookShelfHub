@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.helpers.database
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
+import com.bookshelfhub.bookshelfhub.domain.models.entities.*
 import com.google.common.base.Optional
 
 interface ILocalDb {
@@ -45,7 +45,7 @@ interface ILocalDb {
      suspend fun getDeletedBookmarks(deleted: Boolean, uploaded: Boolean):List<Bookmark>
      suspend fun deleteAllBookmarks()
      suspend fun addBookmarkList(bookmarks: List<Bookmark>)
-     suspend fun addToCart(cart:Cart)
+     suspend fun addToCart(cart: Cart)
      suspend fun deleteFromCart(cart: Cart)
      suspend fun addBookmark(bookmark: Bookmark)
      suspend fun deleteBookmarks(bookmarks: List<Bookmark>)

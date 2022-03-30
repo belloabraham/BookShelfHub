@@ -6,7 +6,7 @@ import co.paystack.android.Paystack
 import co.paystack.android.PaystackSdk
 import co.paystack.android.model.Charge
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
 
 class PayStack(
     private val userDataKey:String,

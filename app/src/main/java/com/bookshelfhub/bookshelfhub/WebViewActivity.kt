@@ -9,10 +9,10 @@ import android.webkit.WebViewClient
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWebViewBinding
 import com.bookshelfhub.bookshelfhub.extensions.capitalize
-import com.bookshelfhub.bookshelfhub.Utils.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.helpers.utils.EnableWakeLock
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

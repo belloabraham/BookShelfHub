@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Cart
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Cart
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -43,7 +43,7 @@ class CartItemsListAdapter(private val context: Context) {
         private val author: TextView = view.findViewById(R.id.author)
         private val cover: ImageView = view.findViewById(R.id.cover)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:Cart, context: Context, onLongClickListener:()->Boolean) {
+        fun bindToView(model: Cart, context: Context, onLongClickListener:()->Boolean) {
             title.text =  model.title
 
             if (model.priceInUsd==null){

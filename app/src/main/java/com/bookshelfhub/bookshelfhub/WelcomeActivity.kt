@@ -11,16 +11,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.work.OneTimeWorkRequestBuilder
-import com.bookshelfhub.bookshelfhub.Utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.Utils.DeviceUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
+import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.domain.models.entities.User
 import com.bookshelfhub.bookshelfhub.services.authentication.*
 import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
@@ -28,10 +27,8 @@ import com.bookshelfhub.bookshelfhub.services.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.DbFields
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
-import com.bookshelfhub.bookshelfhub.ui.welcome.LoginFragmentDirections
-import com.bookshelfhub.bookshelfhub.ui.welcome.VerificationFragmentDirections
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -277,10 +274,10 @@ class WelcomeActivity : AppCompatActivity() {
                             try {
                                 val userJsonString = docSnapShot.get(DbFields.USER.KEY)
                                 val user = json.fromAny(userJsonString!!, User::class.java)
-                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!=DeviceUtil.getDeviceOSVersionInfo(
+                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){
                                     user.device =   DeviceUtil.getDeviceBrandAndModel()
-                                    user.deviceOs=DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
+                                    user.deviceOs= DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
                                 }else {
                                     user.uploaded = true
                                 }

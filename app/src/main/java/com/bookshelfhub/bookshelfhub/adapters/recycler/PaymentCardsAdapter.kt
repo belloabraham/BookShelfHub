@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.IconUtil
-import com.bookshelfhub.bookshelfhub.Utils.payment.CardUtil
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

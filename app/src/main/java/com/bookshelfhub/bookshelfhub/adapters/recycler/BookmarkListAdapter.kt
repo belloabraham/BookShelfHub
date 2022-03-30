@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.domain.models.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -38,7 +38,7 @@ class BookmarkListAdapter( private val context: Context) {
         private val title: TextView = view.findViewById(R.id.title)
         private val pageNum: TextView = view.findViewById(R.id.pageNumb)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:Bookmark, context: Context, onLongClickListener:()->Boolean) {
+        fun bindToView(model: Bookmark, context: Context, onLongClickListener:()->Boolean) {
             title.text =  model.title
             pageNum.text =  String.format(context.getString(R.string.pageNum), model.pageNumb)
             itemCardView.setOnClickListener {

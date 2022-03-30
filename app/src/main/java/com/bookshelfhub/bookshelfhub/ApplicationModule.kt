@@ -1,25 +1,24 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.Utils.*
-import com.bookshelfhub.bookshelfhub.Utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.Firebase
 import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.services.authentication.firebase.UserAuth
 import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.services.database.cloud.Firestore
-import com.bookshelfhub.bookshelfhub.services.database.cloud.ICloudDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.Firestore
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomDb
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.local.RoomDb
 import com.bookshelfhub.bookshelfhub.services.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.services.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.database.room.RoomInstance
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.services.PrivateKeys
-import com.bookshelfhub.bookshelfhub.services.database.Util
+import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.Util
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.gson.Gson
 import dagger.Module
@@ -81,7 +80,7 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideLocalDb(roomInstance:RoomInstance): ILocalDb {
+    fun provideLocalDb(roomInstance: RoomInstance): ILocalDb {
         return RoomDb(roomInstance.userDao())
     }
 

@@ -12,16 +12,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.Utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.Utils.Regex
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
-import com.bookshelfhub.bookshelfhub.Utils.datetime.DateFormat
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.User
+import com.bookshelfhub.bookshelfhub.domain.models.entities.User
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -51,7 +51,7 @@ class ProfileFragment : Fragment() {
         binding= FragmentProfileBinding.inflate(inflater, container, false)
         layout = binding!!
 
-        var user:User? = null
+        var user: User? = null
 
         profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
             user = liveUser

@@ -11,9 +11,9 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.WebViewActivity
 import com.bookshelfhub.bookshelfhub.enums.Book
 import com.bookshelfhub.bookshelfhub.enums.WebView
-import com.bookshelfhub.bookshelfhub.models.BookRequest
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.domain.models.BookRequest
+import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.domain.models.entities.StoreSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -67,7 +67,7 @@ class StoreSearchResultAdapter (private val context:Context) {
        private val title: TextView = view.findViewById(R.id.title)
         private val author: TextView = view.findViewById(R.id.author)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:StoreSearchHistory, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
+        fun bindToView(model: StoreSearchHistory, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
             title.text = model.title
             author.text = model.author
             itemCardView.setOnClickListener {
@@ -80,7 +80,7 @@ class StoreSearchResultAdapter (private val context:Context) {
         private val title: TextView = view.findViewById(R.id.title)
         private val author: TextView = view.findViewById(R.id.author)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:PublishedBook, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
+        fun bindToView(model: PublishedBook, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
             title.text = model.name
             author.text = model.author
             itemCardView.setOnClickListener {
@@ -92,7 +92,7 @@ class StoreSearchResultAdapter (private val context:Context) {
     private class FindABookViewHolder(view: View) : RecyclerViewHolder<BookRequest>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model:BookRequest, context: Context){
+        fun bindToView(model: BookRequest, context: Context){
             title.text = model.title
             itemCardView.setOnClickListener {
                 val intent = Intent(context, WebViewActivity::class.java)
