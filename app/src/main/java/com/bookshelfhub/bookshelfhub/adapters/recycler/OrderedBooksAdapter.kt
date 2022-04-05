@@ -17,9 +17,9 @@ import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.BookDownloadService
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
-import com.bookshelfhub.bookshelfhub.domain.data.Download
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.Download
+import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.downloadmanager.*

@@ -5,7 +5,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.services.wordtoxicity.Perspective
+import com.bookshelfhub.bookshelfhub.helpers.wordtoxicity.Perspective
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

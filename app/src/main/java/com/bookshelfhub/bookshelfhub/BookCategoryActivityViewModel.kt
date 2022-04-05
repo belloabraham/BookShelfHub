@@ -8,10 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.enums.Category
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow

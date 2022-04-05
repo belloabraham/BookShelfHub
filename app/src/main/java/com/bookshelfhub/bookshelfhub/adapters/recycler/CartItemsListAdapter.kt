@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.domain.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

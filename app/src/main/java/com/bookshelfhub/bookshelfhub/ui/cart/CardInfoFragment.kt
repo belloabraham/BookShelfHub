@@ -13,7 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.helpers.EditTextCreditCardNumberFormatterWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings

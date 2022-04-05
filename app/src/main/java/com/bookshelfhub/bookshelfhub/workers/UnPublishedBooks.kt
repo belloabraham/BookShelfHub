@@ -5,12 +5,12 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.Util
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await

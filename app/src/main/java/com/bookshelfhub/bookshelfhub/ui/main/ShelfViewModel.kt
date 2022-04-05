@@ -1,11 +1,11 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import androidx.lifecycle.*
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.domain.models.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

@@ -15,11 +15,11 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.PhoneAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
-import com.bookshelfhub.bookshelfhub.services.database.Database
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.domain.usecases.Database
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks

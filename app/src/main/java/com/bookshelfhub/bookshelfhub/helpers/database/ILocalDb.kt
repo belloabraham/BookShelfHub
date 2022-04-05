@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.helpers.database
 
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
-import com.bookshelfhub.bookshelfhub.domain.models.entities.*
+import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.google.common.base.Optional
 
 interface ILocalDb {

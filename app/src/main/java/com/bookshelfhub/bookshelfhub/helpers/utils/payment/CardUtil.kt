@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.helpers.utils.payment
 
 import co.paystack.android.model.Card
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 
 class CardUtil(paymentCard: PaymentCard) {
 

@@ -16,12 +16,12 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
-import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
+import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.showToast
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.models.entities.User
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO

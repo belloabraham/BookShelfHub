@@ -25,10 +25,10 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
-import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.domain.models.BookRequest
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.domain.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.enums.Category
+import com.bookshelfhub.bookshelfhub.data.models.BookRequest
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint

@@ -7,11 +7,11 @@ import androidx.paging.PagingData
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.domain.models.entities.*
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.models.entities.*
+import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel

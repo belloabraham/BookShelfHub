@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 
 class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, CategoryListAdapter.ViewHolder>(diffCallBack){

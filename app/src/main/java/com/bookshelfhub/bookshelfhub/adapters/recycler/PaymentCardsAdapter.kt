@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 

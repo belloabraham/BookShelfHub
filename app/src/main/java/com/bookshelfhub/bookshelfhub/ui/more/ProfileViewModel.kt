@@ -3,17 +3,17 @@ package com.bookshelfhub.bookshelfhub.ui.more
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.database.Database
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.domain.usecases.Database
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     val localDb: ILocalDb,
-    private val database:Database,
+    private val database: Database,
     val userAuth: IUserAuth): ViewModel(){
 
     private val userId:String = userAuth.getUserId()

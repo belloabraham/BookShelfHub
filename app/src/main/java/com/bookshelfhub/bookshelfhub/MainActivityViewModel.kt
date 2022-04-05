@@ -2,13 +2,13 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.domain.models.entities.StoreSearchHistory
-import com.bookshelfhub.bookshelfhub.domain.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
+import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel

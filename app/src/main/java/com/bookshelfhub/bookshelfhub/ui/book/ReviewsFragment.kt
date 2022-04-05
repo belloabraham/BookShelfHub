@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ReviewsFragmentBinding
-import com.bookshelfhub.bookshelfhub.domain.models.entities.UserReview
+import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder

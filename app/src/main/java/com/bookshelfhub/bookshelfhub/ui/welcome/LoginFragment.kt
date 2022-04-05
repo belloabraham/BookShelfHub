@@ -17,9 +17,12 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentLoginBinding
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.GoogleAuthViewModel
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.extensions.showErrorToolTip
 import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.services.authentication.*
+import com.bookshelfhub.bookshelfhub.helpers.authentication.*
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO

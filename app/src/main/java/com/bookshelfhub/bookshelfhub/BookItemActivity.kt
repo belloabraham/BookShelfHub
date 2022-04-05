@@ -25,30 +25,30 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
-import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.enums.Book
-import com.bookshelfhub.bookshelfhub.enums.Category
-import com.bookshelfhub.bookshelfhub.enums.WebView
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
-import com.bookshelfhub.bookshelfhub.domain.models.entities.Cart
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.domain.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.enums.Fragment
+import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.enums.Category
+import com.bookshelfhub.bookshelfhub.data.enums.WebView
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
+import com.bookshelfhub.bookshelfhub.data.enums.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
-import com.bookshelfhub.bookshelfhub.domain.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.domain.models.apis.convertion.Fixer
+import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
-import com.bookshelfhub.bookshelfhub.services.PrivateKeys
+import com.bookshelfhub.bookshelfhub.helpers.SecreteKeys
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,7 +74,7 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var cloudDb: ICloudDb
     @Inject
-    lateinit var privateKeys: PrivateKeys
+    lateinit var secreteKeys: SecreteKeys
     @Inject
     lateinit var worker: Worker
     @Inject
@@ -102,7 +102,7 @@ class BookItemActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Retry getting private API keys if they do not already exist
-        privateKeys.loadPrivateKeys(lifecycleScope, this)
+        secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
         layout =  ActivityBookItemBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -160,7 +160,7 @@ class BookItemActivity : AppCompatActivity() {
         bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
 
             // try getting private AI Keys again if it does not exist as there is an assured network connection by now
-            privateKeys.loadPrivateKeys(lifecycleScope, this)
+            secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
             bookOnlineVersion =  book
 

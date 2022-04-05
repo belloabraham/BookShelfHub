@@ -4,7 +4,7 @@ package com.bookshelfhub.bookshelfhub.ui.more
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
-import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 
 /**
  * Used for two way data binding in BookInterestFragment

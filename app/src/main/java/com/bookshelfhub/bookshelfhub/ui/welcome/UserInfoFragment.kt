@@ -16,10 +16,10 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
 import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
 import com.bookshelfhub.bookshelfhub.extensions.isPhoneNumber
-import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.UserAuthViewModel
-import com.bookshelfhub.bookshelfhub.domain.models.entities.User
+import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil

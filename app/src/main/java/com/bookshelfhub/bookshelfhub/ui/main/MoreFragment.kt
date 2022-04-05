@@ -22,7 +22,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
-import com.bookshelfhub.bookshelfhub.enums.WebView
+import com.bookshelfhub.bookshelfhub.data.enums.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
@@ -30,14 +30,14 @@ import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
-import com.bookshelfhub.bookshelfhub.domain.models.Earnings
-import com.bookshelfhub.bookshelfhub.services.authentication.AuthType
-import com.bookshelfhub.bookshelfhub.services.authentication.IGoogleAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.services.authentication.firebase.GoogleAuth
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.domain.data.repos.sources.remote.ICloudDb
-import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.data.models.Earnings
+import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -328,7 +328,7 @@ class MoreFragment : Fragment() {
     private fun startMoreActivity(fragmentID:Int){
         val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.bookshelfhub.enums.Fragment.ID.KEY, fragmentID)
+            putExtra(com.bookshelfhub.bookshelfhub.data.enums.Fragment.ID.KEY, fragmentID)
         }
         startActivity(intent)
     }

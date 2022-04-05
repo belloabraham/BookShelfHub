@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.currencyconverter
 
-import com.bookshelfhub.bookshelfhub.services.payment.GPaySupportedCountries
-import com.bookshelfhub.bookshelfhub.services.payment.SupportedCountries
+import com.bookshelfhub.bookshelfhub.helpers.payment.GPaySupportedCountries
+import com.bookshelfhub.bookshelfhub.helpers.payment.SupportedCountries
 
 
 object Currency {

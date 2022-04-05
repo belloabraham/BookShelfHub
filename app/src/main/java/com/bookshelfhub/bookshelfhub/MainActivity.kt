@@ -16,15 +16,15 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.domain.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
-import com.bookshelfhub.bookshelfhub.services.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.domain.models.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.services.PrivateKeys
-import com.bookshelfhub.bookshelfhub.services.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
+import com.bookshelfhub.bookshelfhub.helpers.SecreteKeys
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var remoteConfig: IRemoteConfig
 
     @Inject
-    lateinit var privateKeys: PrivateKeys
+    lateinit var secreteKeys: SecreteKeys
 
     @Inject
     lateinit var settingsUtil: SettingsUtil
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         //Load secret keys from realtime firebase
-        privateKeys.loadPrivateKeys(lifecycleScope, this)
+        secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
         userId = userAuth.getUserId()
 
