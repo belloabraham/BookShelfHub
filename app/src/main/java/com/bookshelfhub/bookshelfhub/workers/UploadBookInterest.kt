@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 class UploadBookInterest @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth:IUserAuth):
+    private val localDb: ILocalDb, private val remoteDataSource: IRemoteDataSource, private val userAuth:IUserAuth):
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
@@ -34,7 +34,7 @@ class UploadBookInterest @AssistedInject constructor (
             val bookInterestData = bookInterest.get()
 
           try {
-              cloudDb.addDataAsync(bookInterestData, DbFields.USERS.KEY, userId, DbFields.BOOK_INTEREST.KEY).await()
+              remoteDataSource.addDataAsync(bookInterestData, RemoteDataFields.USERS.KEY, userId, RemoteDataFields.BOOK_INTEREST.KEY).await()
 
               bookInterestData.uploaded=true
               localDb.addBookInterest(bookInterestData)

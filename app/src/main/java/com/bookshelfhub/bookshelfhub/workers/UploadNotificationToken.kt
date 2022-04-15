@@ -6,8 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.workers.Tag.NOTIFICATION_TOKEN
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -18,7 +18,7 @@ class UploadNotificationToken @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
-    private val cloudDb: ICloudDb
+    private val remoteDataSource: IRemoteDataSource
 ): CoroutineWorker(context,
     workerParams) {
 
@@ -33,8 +33,8 @@ class UploadNotificationToken @AssistedInject constructor(
         return if(notificationToken!=null){
 
             try {
-                val task = cloudDb.addDataAsync(notificationToken,
-                    DbFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN).await()
+                val task = remoteDataSource.addDataAsync(notificationToken,
+                    RemoteDataFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN).await()
 
                 task.run {
                     Result.success()

@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SettingsUtil @Inject constructor  (private val context: Context) {
@@ -21,14 +23,16 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
             .map { preferences ->
                 preferences[prefKey] ?: defaultValue
             }
-        return exampleCounterFlow.first()
+        return withContext(IO){
+             exampleCounterFlow.first()
+        }
     }
 
     suspend fun setLong(key: String, value: Long){
         val prefKey = longPreferencesKey(key)
-        context.dataStore.edit { preferences ->
+        withContext(IO){ context.dataStore.edit { preferences ->
             preferences[prefKey] = value
-        }
+        }}
     }
 
     suspend fun getInt(key:String, defaultValue:Int):Int{
@@ -37,14 +41,14 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
             .map { preferences ->
                preferences[prefKey] ?: defaultValue
             }
-       return exampleCounterFlow.first()
+       return withContext(IO){exampleCounterFlow.first()}
     }
 
     suspend fun setInt(key: String, value: Int){
         val prefKey = intPreferencesKey(key)
-        context.dataStore.edit { preferences ->
+        withContext(IO){ context.dataStore.edit { preferences ->
             preferences[prefKey] = value
-        }
+        }}
     }
 
     suspend fun getString(key:String):String?{
@@ -53,14 +57,14 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
             .map { preferences ->
                 preferences[prefKey]
             }
-        return exampleCounterFlow.first()
+        return withContext(IO){exampleCounterFlow.first()}
     }
 
     suspend fun setString(key: String, value: String){
         val prefKey = stringPreferencesKey(key)
-        context.dataStore.edit { preferences ->
+        withContext(IO){ context.dataStore.edit { preferences ->
             preferences[prefKey] = value
-        }
+        }}
     }
 
     suspend fun getBoolean(key:String, defaultValue: Boolean):Boolean{
@@ -69,14 +73,14 @@ class SettingsUtil @Inject constructor  (private val context: Context) {
             .map { preferences ->
                 preferences[prefKey]
             }
-        return exampleCounterFlow.first()?:defaultValue
+        return withContext(IO){exampleCounterFlow.first()?:defaultValue}
     }
 
     suspend fun setBoolean(key: String, value: Boolean){
         val prefKey = booleanPreferencesKey(key)
-        context.dataStore.edit { preferences ->
+        withContext(IO){context.dataStore.edit { preferences ->
             preferences[prefKey] = value
-        }
+        }}
     }
 
 }

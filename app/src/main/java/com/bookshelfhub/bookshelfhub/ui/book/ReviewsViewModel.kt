@@ -5,16 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ReviewsViewModel @Inject constructor(
-    val cloudDb: ICloudDb,
+    val remoteDataSource: IRemoteDataSource,
     val savedState: SavedStateHandle,
     val userAuth:IUserAuth ): ViewModel(){
 
@@ -23,7 +23,7 @@ class ReviewsViewModel @Inject constructor(
     val isbn = savedState.get<String>(Book.ISBN.KEY)!!
 
     init {
-        cloudDb.getListOfDataWhereAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, limit = 300){ reviews, _->
+        remoteDataSource.getListOfDataWhereAsync(RemoteDataFields.PUBLISHED_BOOKS.KEY, isbn, RemoteDataFields.REVIEWS_COLL.KEY, UserReview::class.java, RemoteDataFields.VERIFIED.KEY, whereValue = true, userId, limit = 300){ reviews, _->
             userReviews.value = reviews
         }
     }

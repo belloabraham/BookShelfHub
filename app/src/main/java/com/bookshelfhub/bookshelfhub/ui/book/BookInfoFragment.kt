@@ -53,7 +53,7 @@ class BookInfoFragment : Fragment() {
                 }
 
                 layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-                layout.isbnTxt.text = String.format(getString(R.string.isbn),book.isbn)
+                layout.isbnTxt.text = String.format(getString(R.string.isbn),book.bookId)
                 layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
 
                 layout.descriptionTxt.text =  book.description

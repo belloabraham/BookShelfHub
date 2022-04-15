@@ -6,10 +6,10 @@ import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 
 @Entity(tableName= "StoreSearchHistory")
 data class StoreSearchHistory(
-     @PrimaryKey
-     override val isbn:String,
-     override val title:String,
-     val userId:String,
-     val author:String,
-     val dateTime:String
+    @PrimaryKey
+     override val bookId:String,
+    override val name:String,
+    val userId:String,
+    val author:String,
+    val dateTime:String
 ): ISearchResult

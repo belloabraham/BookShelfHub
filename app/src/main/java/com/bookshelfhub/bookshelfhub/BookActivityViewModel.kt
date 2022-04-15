@@ -7,8 +7,8 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookActivityViewModel @Inject constructor(
-    val cloudDb: ICloudDb,
+    val remoteDataSource: IRemoteDataSource,
     val userAuth: IUserAuth,
     private val settingsUtil: SettingsUtil,
     private val localDb: ILocalDb,
@@ -51,10 +51,10 @@ class BookActivityViewModel @Inject constructor(
             orderedBook = localDb.getAnOrderedBook(isbn)
         }
 
-        cloudDb.getLiveListOfDataWhereAsync(
-            DbFields.PUBLISHED_BOOKS.KEY,
+        remoteDataSource.getLiveListOfDataWhereAsync(
+            RemoteDataFields.PUBLISHED_BOOKS.KEY,
             isbn,
-            DbFields.VIDEO_LIST.KEY,
+            RemoteDataFields.VIDEO_LIST.KEY,
             BookVideos::class.java,
             true
         ) {

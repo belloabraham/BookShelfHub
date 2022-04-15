@@ -34,8 +34,8 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.payment.*
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.flutterwave.raveandroid.rave_java_commons.Meta
@@ -65,7 +65,7 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var worker: Worker
     @Inject
-    lateinit var cloudDb: ICloudDb
+    lateinit var remoteDataSource: IRemoteDataSource
     @Inject
     lateinit var userAuth: IUserAuth
 
@@ -157,7 +157,7 @@ class CartFragment : Fragment() {
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                cloudDb.getLiveListOfDataAsync(requireActivity(), DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
+                remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS.KEY, RemoteDataFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
 
                     userEarnings = 0.0
 

@@ -11,6 +11,18 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 abstract class RoomInstance: RoomDatabase() {
 
     abstract fun userDao(): UserDao
+    abstract fun orderedBooksDao(): OrderedBooksDao
+    abstract fun bookInterestDao(): BookInterestDao
+    abstract fun cartItemsDao(): CartItemsDao
+    abstract fun paymentCardDao(): PaymentCardDao
+    abstract fun paymentTransDao(): PaymentTransactionDao
+    abstract fun publishedBooksDao(): PublishedBooksDao
+    abstract fun readHistoryDao(): ReadHistoryDao
+    abstract fun referralDao(): ReferralDao
+    abstract fun userReviewsDao(): UserReviewDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
+    abstract fun bookVideosDao(): BookVideosDao
+    abstract fun bookmarksDao(): BookmarksDao
 
     companion object{
         @Volatile

@@ -16,9 +16,9 @@ import com.bookshelfhub.bookshelfhub.MainActivityViewModel
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
@@ -43,7 +43,7 @@ class ShelfFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var cloudDb: ICloudDb
+    lateinit var remoteDataSource: IRemoteDataSource
 
     private var binding: FragmentShelfBinding?=null
     private var mOrderedBooksAdapter: ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>?=null
@@ -71,9 +71,9 @@ class ShelfFragment : Fragment() {
             val orderedBooks = shelfViewModel.getOrderedBooks()
             if (orderedBooks.isEmpty()){
                 //Get all available ordered books the user have
-                cloudDb.getLiveOrderedBooks(
+                remoteDataSource.getLiveOrderedBooks(
                     requireActivity(),
-                    DbFields.ORDERED_BOOKS.KEY,
+                    RemoteDataFields.ORDERED_BOOKS.KEY,
                     userId,
                     OrderedBooks::class.java
                 ) {
@@ -87,12 +87,12 @@ class ShelfFragment : Fragment() {
                 }
             }else{
                 orderedBooks[0].dateTime?.let { timestamp->
-                    cloudDb.getLiveOrderedBooks(
+                    remoteDataSource.getLiveOrderedBooks(
                         requireActivity(),
-                        DbFields.ORDERED_BOOKS.KEY,
+                        RemoteDataFields.ORDERED_BOOKS.KEY,
                         userId,
                         OrderedBooks::class.java,
-                        orderBy = DbFields.ORDER_DATE_TIME.KEY,
+                        orderBy = RemoteDataFields.ORDER_DATE_TIME.KEY,
                         Query.Direction.DESCENDING,
                         startAfter = timestamp
                     ) {
@@ -164,7 +164,7 @@ class ShelfFragment : Fragment() {
             setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
                     val result = orderedBookList.filter {
-                        it.title.contains(newText, true)
+                        it.name.contains(newText, true)
                     }
                     searchListAdapter.submitList(result)
                     return true

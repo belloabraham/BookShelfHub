@@ -8,10 +8,10 @@ import com.google.firebase.Timestamp
 @Entity(tableName= "OrderedBooks")
 data class OrderedBooks(
     @PrimaryKey
-    override val isbn:String,
+    override val bookId:String,
     override val priceInUSD: Double,
     override val userId:String,
-    override val title:String,
+    override val name:String,
     override val coverUrl:String,
     override val pubId: String,
     override val referrerId:String?,
@@ -20,4 +20,7 @@ data class OrderedBooks(
     override val password:String?=null,
     override val downloadUrl:String?=null,
     override val dateTime:Timestamp?=null,
+    override val month: Int,
+    override val year: Int,
+    override val additionInfo: String?
 ): ISearchResult, IOrderedBooks

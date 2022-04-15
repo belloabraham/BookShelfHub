@@ -7,13 +7,11 @@ import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDLink
+import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -25,7 +23,7 @@ import javax.inject.Inject
 class SplashActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var localDb: ILocalDb
+    lateinit var userRepo: UserRepo
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
@@ -38,17 +36,17 @@ class SplashActivity : AppCompatActivity() {
         // Enable full screen display ***/
         hideSystemUI(window)
 
-
         // Check if user signed in ***/
         if (userAuth.getIsUserAuthenticated()){
-            lifecycleScope.launch(IO) {
+            val userId = userAuth.getUserId()
 
+            lifecycleScope.launch {
                 // Get user data***/
-                val user = localDb.getUser(userAuth.getUserId())
+                val user = userRepo.getUser(userId)
 
                 withContext(Main){
                     // Check if user data exist as user may not complete sign up which requires user data***/
-                    val intent = if (user.isPresent && userAuth.getUserId() == user.get().userId){
+                    val intent = if (user.isPresent && userId == user.get().userId){
                         Intent(this@SplashActivity, MainActivity::class.java)
                     }else{
                         // If user data does not exist but user signed in take user to Welcome screen to complete ***
@@ -80,8 +78,7 @@ class SplashActivity : AppCompatActivity() {
         // This App could've been opened by a dynamic link and not the from the app icon
         var referrer:String?=null
 
-        val fbDLink = FirebaseDLink()
-        fbDLink.getDeepLinkAsync(this){
+        dynamicLink.getDeepLinkAsync(this){
             if(it!=null){
                 // Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()

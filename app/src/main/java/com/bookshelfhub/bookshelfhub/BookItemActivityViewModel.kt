@@ -9,10 +9,9 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,11 +21,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookItemActivityViewModel @Inject constructor(
-  private val localDb: ILocalDb,
-  val cloudDb: ICloudDb,
-  val settingsUtil: SettingsUtil,
-  val savedState: SavedStateHandle,
-  userAuth: IUserAuth): ViewModel(){
+    val settingsUtil: SettingsUtil,
+    val savedState: SavedStateHandle,
+    private val publishedBooksRepo: PublishedBooksRepo,
+    private  val userReviewRepo: UserReviewRepo,
+    orderedBooksRepo: OrderedBooksRepo,
+    private val cartItemsRepo:CartItemsRepo,
+    referralRepo: ReferralRepo,
+    private val searchHistoryRepo: SearchHistoryRepo,
+    userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
@@ -40,7 +43,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val userId = userAuth.getUserId()
   private val title = savedState.get<String>(Book.NAME.KEY)!!
   private val author = savedState.get<String>(Book.AUTHOR.KEY)!!
-  private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
+  private val bookId = savedState.get<String>(Book.ISBN.KEY)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM.KEY)?:false
   private var conversionEndPoint:String?=null
 
@@ -52,34 +55,32 @@ class BookItemActivityViewModel @Inject constructor(
   )
 
   init {
-    localLivePublishedBook = localDb.getLivePublishedBook(isbn)
+    localLivePublishedBook = publishedBooksRepo.getLivePublishedBook(bookId)
 
-    liveUserReview = localDb.getLiveUserReview(isbn)
+    liveUserReview = userReviewRepo.getLiveUserReview(bookId)
 
-    publisherReferrer = localDb.getLivePubReferrer(isbn)
+    publisherReferrer = referralRepo.getLivePubReferrer(bookId)
 
-    liveCartItems = localDb.getLiveListOfCartItems(userId)
+    liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
 
-    orderedBook = localDb.getALiveOrderedBook(isbn)
+    orderedBook = orderedBooksRepo.getALiveOrderedBook(bookId)
 
-    viewModelScope.launch(IO) {
+    viewModelScope.launch{
        conversionEndPoint =  settingsUtil.getString(Settings.FIXER_ENDPOINT.KEY)
     }
 
-    cloudDb.getLiveDataAsync(
-      DbFields.PUBLISHED_BOOKS.KEY, isbn,
-      PublishedBook::class.java){
+    publishedBooksRepo.getALiveRemotePublishedBook(bookId){
       publishedBook.value = it
     }
 
-    cloudDb.getListOfDataWhereAsync(DbFields.PUBLISHED_BOOKS.KEY, isbn, DbFields.REVIEWS.KEY, UserReview::class.java, DbFields.VERIFIED.KEY, whereValue = true, userId, limit = 3){ reviews, e->
-      userReviews.value = reviews
+    publishedBooksRepo.getTopThreeRemoteBookReviews(bookId, userId){ userReviews, e->
+      this.userReviews.value = userReviews
     }
 
     //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
     //for store fragment search result
     if (isSearchItem){
-      addStoreSearchHistory(StoreSearchHistory(isbn, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
+      addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }
 
   }
@@ -89,7 +90,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun getIsbn():String{
-    return  isbn
+    return  bookId
   }
 
   fun getALiveOrderedBook(): LiveData<Optional<OrderedBooks>> {
@@ -101,8 +102,8 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun addToCart(cart: Cart){
-    viewModelScope.launch(IO){
-      localDb.addToCart(cart)
+    viewModelScope.launch{
+      cartItemsRepo.addToCart(cart)
     }
   }
 
@@ -111,14 +112,14 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun addUserReview(userReview: UserReview){
-    viewModelScope.launch(IO){
-      localDb.addUserReview(userReview)
+    viewModelScope.launch{
+      userReviewRepo.addUserReview(userReview)
     }
   }
 
   private fun addStoreSearchHistory(storeSearchHistory: StoreSearchHistory){
-    viewModelScope.launch(IO) {
-      localDb.addStoreSearchHistory(storeSearchHistory)
+    viewModelScope.launch {
+      searchHistoryRepo.addStoreSearchHistory(storeSearchHistory)
     }
   }
 
@@ -141,7 +142,7 @@ class BookItemActivityViewModel @Inject constructor(
 
   fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
    return Pager(config){
-      localDb.getBooksByCategoryPageSource(category)
+      publishedBooksRepo.getBooksByCategoryPageSource(category)
     }.flow
   }
 

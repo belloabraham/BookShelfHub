@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
@@ -20,7 +20,7 @@ class UpdatePublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val cloudDb: ICloudDb,
+    private val remoteDataSource: IRemoteDataSource,
     private val util: Util,
     private val localDb: ILocalDb
 ) : CoroutineWorker(context,
@@ -34,9 +34,9 @@ class UpdatePublishedBooks @AssistedInject constructor (
 
        return try {
 
-           val querySnapshot =  cloudDb.getListOfDataWhereAsync(
-               DbFields.PUBLISHED_BOOKS.KEY,
-               DbFields.PUBLISHED.KEY, true,
+           val querySnapshot =  remoteDataSource.getListOfDataWhereAsync(
+               RemoteDataFields.PUBLISHED_BOOKS.KEY,
+               RemoteDataFields.PUBLISHED.KEY, true,
            ).await()
 
            val publishedBooks = util.queryToListType(querySnapshot, PublishedBook::class.java)

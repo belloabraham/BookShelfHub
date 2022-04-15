@@ -68,10 +68,10 @@ class StoreSearchResultAdapter (private val context:Context) {
         private val author: TextView = view.findViewById(R.id.author)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(model: StoreSearchHistory, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
-            title.text = model.title
+            title.text = model.name
             author.text = model.author
             itemCardView.setOnClickListener {
-                 storeSearchResultAdapter.startBookItemActivity(model.title, model.isbn, model.author, context)
+                 storeSearchResultAdapter.startBookItemActivity(model.name, model.bookId, model.author, context)
             }
         }
     }
@@ -84,7 +84,7 @@ class StoreSearchResultAdapter (private val context:Context) {
             title.text = model.name
             author.text = model.author
             itemCardView.setOnClickListener {
-                storeSearchResultAdapter.startBookItemActivity(model.name, model.isbn, model.author, context)
+                storeSearchResultAdapter.startBookItemActivity(model.name, model.bookId, model.author, context)
             }
         }
     }

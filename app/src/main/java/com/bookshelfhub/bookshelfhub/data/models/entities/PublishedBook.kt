@@ -7,7 +7,7 @@ import com.google.firebase.Timestamp
 @Entity(tableName= "PublishedBook")
 data class PublishedBook(
     @PrimaryKey
-    val isbn: String,
+    val bookId: String,
     val name: String="",
     val author: String="",
     val coverUrl: String="",

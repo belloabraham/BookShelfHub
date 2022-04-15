@@ -43,8 +43,8 @@ class OrderedBooksAdapter(
         return adapterOf {
 
             diff(
-                areContentsTheSame = { old, new -> old.isbn == new.isbn },
-                areItemsTheSame = { old, new -> old.isbn == new.isbn }
+                areContentsTheSame = { old, new -> old.bookId == new.bookId },
+                areItemsTheSame = { old, new -> old.bookId == new.bookId }
             )
 
             register(
@@ -70,10 +70,10 @@ class OrderedBooksAdapter(
         fun bindToView(model: OrderedBooks, activity: Activity, lifecycleOwner: LifecycleOwner) {
 
             val url = model.downloadUrl
-            title.text = model.title
+            title.text = model.name
             imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
-            val isbn = model.isbn
-            val bookName = model.title
+            val isbn = model.bookId
+            val bookName = model.name
             val pubId = model.pubId
             val fileName = "$isbn.pdf"
             val dirPath = "$pubId${File.separator}$isbn"
@@ -101,7 +101,7 @@ class OrderedBooksAdapter(
                         pauseBookDownloading(activity, bookName, downloadId)
                     }
                     else -> {
-                        startBookDownloading(activity, url, dirPath, fileName, bookName, model.isbn)
+                        startBookDownloading(activity, url, dirPath, fileName, bookName, model.bookId)
                     }
                 }
             }
@@ -211,8 +211,8 @@ class OrderedBooksAdapter(
         private fun openBook(activity: Activity, model: OrderedBooks) {
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
-                putExtra(Book.NAME.KEY, model.title)
-                putExtra(Book.ISBN.KEY, model.isbn)
+                putExtra(Book.NAME.KEY, model.name)
+                putExtra(Book.ISBN.KEY, model.bookId)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 activity,

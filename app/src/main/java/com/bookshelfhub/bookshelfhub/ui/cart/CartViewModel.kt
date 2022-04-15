@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val localDb: ILocalDb,
-    val cloudDb: ICloudDb,
+    val remoteDataSource: IRemoteDataSource,
     val settingsUtil: SettingsUtil,
     userAuth: IUserAuth): ViewModel(){
 

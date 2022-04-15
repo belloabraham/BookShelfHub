@@ -126,7 +126,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
           val orderedBook = bookActivityViewModel.getAnOrderedBook()
           val intent = Intent(this, WebViewActivity::class.java)
           with(intent){
-            putExtra(WebView.TITLE.KEY,orderedBook.title)
+            putExtra(WebView.TITLE.KEY,orderedBook.name)
             putExtra(WebView.URL.KEY, videoLink)
           }
           startActivity(intent)
@@ -195,7 +195,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBooks){
-    val isbn=orderedBook.isbn
+    val isbn=orderedBook.bookId
     val filePath = "$isbn${File.separator}$isbn.pdf"
     val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
     layout.pdfView.fromAsset(dirPath)

@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -19,7 +19,7 @@ class UploadUserData  @AssistedInject constructor (
     @Assisted workerParams: WorkerParameters,
     private val localDb: ILocalDb,
     private val userAuth:IUserAuth,
-    private val cloudDb: ICloudDb
+    private val remoteDataSource: IRemoteDataSource
 ): CoroutineWorker(context,
     workerParams
 ) {
@@ -33,7 +33,7 @@ class UploadUserData  @AssistedInject constructor (
          return   if (user.isPresent && !userData.uploaded){
 
              try {
-                 cloudDb.addDataAsync(userData, DbFields.USERS.KEY, userId, DbFields.USER.KEY).await()
+                 remoteDataSource.addDataAsync(userData, RemoteDataFields.USERS.KEY, userId, RemoteDataFields.USER.KEY).await()
 
                      userData.uploaded = true
                      localDb.addUser(userData)

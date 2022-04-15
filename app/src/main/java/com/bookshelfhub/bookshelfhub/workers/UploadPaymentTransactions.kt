@@ -5,8 +5,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -18,7 +18,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
     private val localDb: ILocalDb,
-    private val cloudDb: ICloudDb
+    private val remoteDataSource: IRemoteDataSource
 ) : CoroutineWorker(
     context,
     workerParams
@@ -36,17 +36,17 @@ class UploadPaymentTransactions @AssistedInject constructor(
         return if (paymentTrans.isNotEmpty()) {
 
             try {
-                cloudDb.addListOfDataAsync(
-                    DbFields.USERS.KEY,
+                remoteDataSource.addListOfDataAsync(
+                    RemoteDataFields.USERS.KEY,
                     userId,
-                    DbFields.TRANSACTIONS.KEY,
+                    RemoteDataFields.TRANSACTIONS.KEY,
                     paymentTrans
                 ).await()
 
                 //Get ISBN of all books in transaction
                 val transactionBooksISBNs = mutableListOf<String>()
                 for (trans in paymentTrans) {
-                    transactionBooksISBNs.add(trans.isbn)
+                    transactionBooksISBNs.add(trans.bookId)
                 }
                 //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
                 localDb.deleteFromCart(transactionBooksISBNs)

@@ -31,8 +31,8 @@ import com.bookshelfhub.bookshelfhub.data.enums.Book
 import com.bookshelfhub.bookshelfhub.data.enums.Category
 import com.bookshelfhub.bookshelfhub.data.enums.WebView
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
@@ -72,7 +72,7 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var json: Json
     @Inject
-    lateinit var cloudDb: ICloudDb
+    lateinit var remoteDataSource: IRemoteDataSource
     @Inject
     lateinit var secreteKeys: SecreteKeys
     @Inject
@@ -224,7 +224,7 @@ class BookItemActivity : AppCompatActivity() {
                     it
                 }
                 val cart = Cart(
-                    userId, book.isbn,
+                    userId, book.bookId,
                     book.name,
                     book.author,
                     book.pubId,
@@ -533,7 +533,7 @@ class BookItemActivity : AppCompatActivity() {
 
 
     private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
-        cloudDb.getLiveDataAsync(this, DbFields.PUBLISHED_BOOKS.KEY,isbn, DbFields.REVIEWS.KEY, userId){ documentSnapshot, _ ->
+        remoteDataSource.getLiveDataAsync(this, RemoteDataFields.PUBLISHED_BOOKS.KEY,isbn, RemoteDataFields.REVIEWS_COLL.KEY, userId){ documentSnapshot, _ ->
             documentSnapshot?.let {
                 if (it.exists()){
                     val doc = it.data
@@ -650,8 +650,8 @@ class BookItemActivity : AppCompatActivity() {
         val book = orderedBook.get()
         val intent = Intent(this, BookActivity::class.java)
         with(intent){
-            putExtra(Book.NAME.KEY, book.title)
-            putExtra(Book.ISBN.KEY, book.isbn)
+            putExtra(Book.NAME.KEY, book.name)
+            putExtra(Book.ISBN.KEY, book.bookId)
         }
         startActivity(intent)
     }

@@ -5,9 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
@@ -19,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 class DownloadBookmarks @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
     private val localDb: ILocalDb,
-    private val cloudDb: ICloudDb,
+    private val remoteDataSource: IRemoteDataSource,
     private val util: Util,
     private val userAuth: IUserAuth
 ): CoroutineWorker(context,
@@ -32,10 +32,10 @@ workerParams
 
      return   try {
             //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
-            val querySnapShot = cloudDb.getListOfDataAsync(
-                DbFields.USERS.KEY,
+            val querySnapShot = remoteDataSource.getListOfDataAsync(
+                RemoteDataFields.USERS.KEY,
                 userId,
-                DbFields.BOOKMARKS.KEY
+                RemoteDataFields.BOOKMARKS.KEY
             ).await()
 
             val bookmarks = util.queryToListType(querySnapShot, Bookmark::class.java)

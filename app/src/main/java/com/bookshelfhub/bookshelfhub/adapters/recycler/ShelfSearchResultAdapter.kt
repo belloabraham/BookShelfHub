@@ -28,7 +28,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 layoutResource = R.layout.shelf_history_search_item,
                 viewHolder = ::SearchHistoryViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model.isbn, model.title, context)
+                    vh.bindToView(model.bookId, model.name, context)
                 }
             )
 
@@ -36,7 +36,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
                 layoutResource = R.layout.shelf_result_search_item,
                 viewHolder = ::SearchResultViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model.isbn, model.title, context)
+                    vh.bindToView(model.bookId, model.name, context)
                 }
             )
 

@@ -10,7 +10,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 class DiffUtilItemCallback: DiffUtil.ItemCallback<PublishedBook>() {
 
     override fun areItemsTheSame(oldItem: PublishedBook, newItem: PublishedBook): Boolean {
-         return oldItem.isbn == newItem.isbn
+         return oldItem.bookId == newItem.bookId
     }
 
     override fun areContentsTheSame(oldItem: PublishedBook, newItem: PublishedBook): Boolean {

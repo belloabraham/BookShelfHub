@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
- class Firestore @Inject constructor(val json: Json): ICloudDb {
+ class Firestore @Inject constructor(val json: Json): IRemoteDataSource {
     private val db:FirebaseFirestore = Firebase.firestore
      
      init {
@@ -320,7 +320,7 @@ import javax.inject.Inject
              val bookDynamicAttrDocRef = db.collection(collection).document(document)
 
              val reviewDate = hashMapOf(
-                 DbFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
+                 RemoteDataFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
              )
 
              batch.set(reviewDocRef, userReview)

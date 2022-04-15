@@ -12,9 +12,9 @@ import com.bookshelfhub.bookshelfhub.data.enums.Book
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.MediaType
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.models.apis.perspective.response.ResponseBody
@@ -31,7 +31,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class PostUserReview @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
     private val localDb: ILocalDb,
-    private val cloudDb: ICloudDb,
+    private val remoteDataSource: IRemoteDataSource,
     private val webApi:WebApi,
     private val settingsUtil: SettingsUtil,
     private val json: Json,
@@ -75,14 +75,14 @@ class PostUserReview @AssistedInject constructor(
             dynamicBookAttr = if (bookTotalReview > 0) { //If user is posting for the first time
                 hashMapOf(
                     // Add to book total review
-                    DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
+                    RemoteDataFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
                     // Add userRatingDiff to total ratings that can be + or -
-                    DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+                    RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             } else {
                 hashMapOf(
                     // Has user has posted before only upload userRatingDiff
-                    DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+                    RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
                 )
             }
         }
@@ -100,10 +100,10 @@ class PostUserReview @AssistedInject constructor(
                 val body = response.body!!.string()
                 val responseBody = json.fromJson(body, ResponseBody::class.java)
                 if (responseBody.attributeScores.TOXICITY.summaryScore.value<=0.5){
-                    val task =  cloudDb.updateUserReview(
+                    val task =  remoteDataSource.updateUserReview(
                         dynamicBookAttr, userReview,
-                        DbFields.PUBLISHED_BOOKS.KEY, isbn,
-                        DbFields.REVIEWS.KEY, userId)
+                        RemoteDataFields.PUBLISHED_BOOKS.KEY, isbn,
+                        RemoteDataFields.REVIEWS_COLL.KEY, userId)
 
                     Tasks.await(task)
 

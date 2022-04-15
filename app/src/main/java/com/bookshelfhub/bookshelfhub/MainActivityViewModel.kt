@@ -6,10 +6,10 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -18,11 +18,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    val cloudDb: ICloudDb,
-    val localDb: ILocalDb,
+    val remoteDataSource: IRemoteDataSource,
     val savedState: SavedStateHandle,
     val settingsUtil: SettingsUtil,
-    val userAuth: IUserAuth
+    val userAuth: IUserAuth,
+    userRepo:UserRepo,
+    bookInterestRepo: BookInterestRepo,
+    searchHistoryRepo: SearchHistoryRepo,
+    private val referralRepo: ReferralRepo
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
@@ -47,9 +50,9 @@ class MainActivityViewModel @Inject constructor(
         verifyPhoneOrEmailNotifNo.value=0
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
-        user=localDb.getLiveUser(userId)
-        bookInterest = localDb.getLiveBookInterest(userId)
-        storeSearchHistory = localDb.getLiveStoreSearchHistory(userId)
+        user=userRepo.getLiveUser(userId)
+        bookInterest = bookInterestRepo.getLiveBookInterest(userId)
+        storeSearchHistory = searchHistoryRepo.getLiveStoreSearchHistory(userId)
     }
 
     fun setActivePage(value:Int){
@@ -88,11 +91,10 @@ class MainActivityViewModel @Inject constructor(
         return userReferralLink
     }
 
-
     fun addPubReferrer(pubReferrer: PubReferrers){
-       viewModelScope.launch(IO){
-           localDb.addPubReferrer(pubReferrer)
-       }
+        viewModelScope.launch {
+            referralRepo.addPubReferrer(pubReferrer)
+        }
     }
 
     fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{

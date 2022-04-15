@@ -8,8 +8,8 @@ import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class StoreViewModel @Inject constructor(
     private val localDb: ILocalDb,
     val connectionUtil: ConnectionUtil,
-    private val cloudDb: ICloudDb,
+    private val remoteDataSource: IRemoteDataSource,
     val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()
@@ -47,17 +47,17 @@ class StoreViewModel @Inject constructor(
            publishedBooks = localDb.getPublishedBooks()
 
             if (publishedBooks.isEmpty()){
-                cloudDb.getListOfDataAsync(
-                    DbFields.PUBLISHED_BOOKS.KEY,
+                remoteDataSource.getListOfDataAsync(
+                    RemoteDataFields.PUBLISHED_BOOKS.KEY,
                     PublishedBook::class.java,
-                    DbFields.DATE_TIME_PUBLISHED.KEY
+                    RemoteDataFields.DATE_TIME_PUBLISHED.KEY
                 ) {
                     addAllBooks(it)
                 }
             }else{
                 publishedBooks[0].publishedDate?.let { timestamp->
-                    cloudDb.getLiveListOfDataAsyncFrom(
-                        DbFields.PUBLISHED_BOOKS.KEY,
+                    remoteDataSource.getLiveListOfDataAsyncFrom(
+                        RemoteDataFields.PUBLISHED_BOOKS.KEY,
                         PublishedBook::class.java,
                         timestamp
                     ){

@@ -5,11 +5,10 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
@@ -20,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 @HiltWorker
 class PostPendingUserReview @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb, private val cloudDb: ICloudDb, private val userAuth: IUserAuth
+    private val localDb: ILocalDb, private val remoteDataSource: IRemoteDataSource, private val userAuth: IUserAuth
 ): CoroutineWorker(context,
     workerParams
 ){
@@ -38,7 +37,7 @@ class PostPendingUserReview @AssistedInject constructor(
            if (unVerifiedUserReviews.isNotEmpty()){
                for (review in unVerifiedUserReviews){
                    for (book in orderedBooks){
-                       if (review.isbn == book.isbn){
+                       if (review.isbn == book.bookId){
                            review.verified = true
                            review.postedBefore =true
                        }
@@ -58,16 +57,16 @@ class PostPendingUserReview @AssistedInject constructor(
 
                        val dynamicBookAttr =  hashMapOf(
                            //Add to book total review
-                           DbFields.TOTAL_REVIEWS.KEY to FieldValue.increment(1),
+                           RemoteDataFields.TOTAL_REVIEWS.KEY to FieldValue.increment(1),
                            //Add userRatingDiff to total ratings that can be + or -
-                           DbFields.TOTAL_RATINGS.KEY to FieldValue.increment(review.userRating)
+                           RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(review.userRating)
                        )
                         listOfBookAttr.plus(dynamicBookAttr)
                    }
 
                    try {
-                       val task = cloudDb.updateUserReview(
-                           verifiedReviews, DbFields.PUBLISHED_BOOKS.KEY, DbFields.REVIEWS.KEY, userId, listOfBookAttr).await()
+                       val task = remoteDataSource.updateUserReview(
+                           verifiedReviews, RemoteDataFields.PUBLISHED_BOOKS.KEY, RemoteDataFields.REVIEWS_COLL.KEY, userId, listOfBookAttr).await()
 
                        task.run {
                            localDb.addUserReviews(verifiedReviews)

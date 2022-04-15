@@ -1,50 +1,50 @@
 package com.bookshelfhub.bookshelfhub.data.repos.sources.remote
 
-enum class DbFields(val KEY:String) {
+object RemoteDataFields{
 
-    VIDEO_LIST("video_list"),
+    const val VIDEO_LIST = "video_list"
 
     //Collections
-    USERS("users"),
-    PUBLISHED_BOOKS("published_books"),
-    ORDERED_BOOKS("ordered_books"),
-    EARNINGS("earnings"),
+    const val USERS = "users"
+    const val PUBLISHED_BOOKS = "published_books"
+    const val ORDERED_BOOKS = "ordered_books"
+    const val EARNINGS = "earnings"
 
     //Sub Collections
-    BOOKMARKS("bookmarks"),
-    REVIEWS("reviews"),
-    TRANSACTIONS("transactions"),
+    const val BOOKMARKS = "bookmarks"
+    const val REVIEWS_COLL = "reviews"
+    const val TRANSACTIONS = "transactions"
 
     //Fields
     //Must be same as .services.database.local.room.entities.UserReview.verified
-    VERIFIED("verified"),
+    const val VERIFIED = "verified"
 
-    REFERRER_ID("referrerId"),
+    const val REFERRER_ID = "referrerId"
 
     //Must be same as .services.database.local.room.entities.PublishedBook.totalReviews and totalRatings
-    TOTAL_REVIEWS("totalReviews"),
-    TOTAL_RATINGS("totalRatings"),
+    const val TOTAL_REVIEWS = "totalReviews"
+    const val TOTAL_RATINGS = "totalRatings"
 
-    USER("user"),
-    BOOK_INTEREST("book_interest"),
+    const val USER = "user"
+    const val BOOK_INTEREST = "book_interest"
 
     //Must be same as .services.database.local.room.entities.OrderedBooks.downloadUrl
-    DOWNLOAD_URL("downloadUrl"),
+    const val DOWNLOAD_URL = "downloadUrl"
 
     //Must be same as .services.database.local.room.entities.PublishedBook.published
-    PUBLISHED("published"),
+    const val PUBLISHED = "published"
 
     //Must be same as .services.database.local.room.entities.PublishedBook.dateTime
-    DATE_TIME_PUBLISHED("dateTime"),
+    const val DATE_TIME_PUBLISHED = "dateTime"
 
     //Must be same as .services.database.local.room.entities.OrderedBooks.userId
-    USER_ID("userId"),
+    const val USER_ID = "userId"
 
     //Used Must be same as .services.database.local.room.entities.OrderedBooks.dateTime
-    ORDER_DATE_TIME("dateTime"),
+    const val ORDER_DATE_TIME = "dateTime"
 
     //Used Must be same as .services.database.local.room.entities.OrderedBooks.dateTime
-    REVIEW_DATE_TIME("dateTime")
+    const val REVIEW_DATE_TIME = "dateTime"
 
 
 

@@ -1,16 +1,14 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
+import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.UserAuth
-import com.bookshelfhub.bookshelfhub.domain.usecases.Database
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Firestore
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.data.repos.sources.local.RoomDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -53,10 +51,21 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideWork(@ApplicationContext context: Context): Worker {
-        return Worker(context)
+    fun providePublishedBooksRepo(roomInstance: RoomInstance): PublishedBooksRepo {
+        return PublishedBooksRepo(roomInstance.publishedBooksDao())
     }
 
+    @Singleton
+    @Provides
+    fun provideUserReviewRepo(roomInstance: RoomInstance, remoteDataSource:IRemoteDataSource): UserReviewRepo {
+        return UserReviewRepo(roomInstance.userReviewsDao(), remoteDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideWorker(@ApplicationContext context: Context): Worker {
+        return Worker(context)
+    }
 
     @Singleton
     @Provides
@@ -76,12 +85,36 @@ object ApplicationModule {
     fun provideRoomInstance(@ApplicationContext context: Context): RoomInstance {
         return RoomInstance.getDatabase(context)
     }
-    
 
     @Singleton
     @Provides
-    fun provideLocalDb(roomInstance: RoomInstance): ILocalDb {
-        return RoomDb(roomInstance.userDao())
+    fun provideUserRepo(roomInstance: RoomInstance, worker:Worker): UserRepo {
+        return UserRepo(roomInstance.userDao(), worker)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCartRepo(roomInstance: RoomInstance): CartItemsRepo {
+        return CartItemsRepo(roomInstance.cartItemsDao())
+    }
+
+    @Singleton
+    @Provides
+    fun providePaymentTransactionRepo(roomInstance: RoomInstance, worker: Worker): PaymentTransactionRepo {
+        return PaymentTransactionRepo(roomInstance.paymentTransDao(), worker)
+    }
+
+    @Singleton
+    @Provides
+    fun provideBookmarkRepo(roomInstance: RoomInstance, worker:Worker, remoteDataSource: IRemoteDataSource): BookmarksRepo {
+        return BookmarksRepo(roomInstance.bookmarksDao(), worker, remoteDataSource)
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideBookInterestRepo(roomInstance: RoomInstance, worker:Worker): BookInterestRepo {
+        return BookInterestRepo(roomInstance.bookInterestDao(), worker)
     }
 
     @Singleton
@@ -98,14 +131,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideCloudDb(json: Json): ICloudDb {
+    fun provideCloudDb(json: Json): IRemoteDataSource {
         return Firestore(json)
-    }
-
-    @Singleton
-    @Provides
-    fun provideDatabase(localDb: ILocalDb, worker: Worker): Database {
-        return Database(localDb, worker)
     }
 
     @Singleton

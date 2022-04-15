@@ -35,8 +35,8 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
@@ -71,7 +71,7 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var cloudDb: ICloudDb
+    lateinit var remoteDataSource: IRemoteDataSource
     @Inject
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
@@ -292,7 +292,7 @@ class MoreFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
 
-        cloudDb.getLiveListOfDataAsync(requireActivity(), DbFields.EARNINGS.KEY, DbFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) { earnings ->
+        remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS.KEY, RemoteDataFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) { earnings ->
             progressBar.visibility = GONE
             val totalEarnings = 0.0
             for (earning in earnings){

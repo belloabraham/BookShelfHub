@@ -5,16 +5,19 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
  * to the cloud for payment verification but downloaded as ordered books to the device
  */
 interface IOrderedBooks {
-    val isbn: String
+    val bookId: String
     val priceInUSD: Double
     val userId: String
-    val title: String
+    val name: String
     val coverUrl: String
     val referrerId: String?
+    val month:Int
+    val year:Int
     val pubId:String
     val orderedCountryCode: String?
     var transactionReference: String?
     val password: String?
     val downloadUrl: String?
+    val additionInfo:String?
     val dateTime: Any?
 }

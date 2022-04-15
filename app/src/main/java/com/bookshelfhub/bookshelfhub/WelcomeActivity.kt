@@ -27,8 +27,8 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.domain.usecases.Database
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.DbFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
@@ -66,7 +66,7 @@ class WelcomeActivity : AppCompatActivity() {
     private var phoneAuthCallbacks:  PhoneAuthProvider.OnVerificationStateChangedCallbacks?=null
 
     @Inject
-    lateinit var cloudDb: ICloudDb
+    lateinit var remoteDataSource: IRemoteDataSource
     @Inject
     lateinit var json: Json
 
@@ -260,11 +260,11 @@ class WelcomeActivity : AppCompatActivity() {
             if (isSignedInSuccessfully){
                 val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
                 if (!isNewUser){
-                    cloudDb.getLiveDataAsync(this, DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+                    remoteDataSource.getLiveDataAsync(this, RemoteDataFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                         if(docSnapShot!=null && docSnapShot.exists()){
                             try {
-                                val jsonString = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                val jsonString = docSnapShot.get(RemoteDataFields.BOOK_INTEREST.KEY)
                                 val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
 
                                 bookInterest.uploaded=true
@@ -275,7 +275,7 @@ class WelcomeActivity : AppCompatActivity() {
                             }
 
                             try {
-                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                val userJsonString = docSnapShot.get(RemoteDataFields.USER.KEY)
                                 val user = json.fromAny(userJsonString!!, User::class.java)
                                 if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){
@@ -302,11 +302,11 @@ class WelcomeActivity : AppCompatActivity() {
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser().value!!
                 if (!isNewUser){
-                    cloudDb.getLiveDataAsync(this, DbFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
+                    remoteDataSource.getLiveDataAsync(this, RemoteDataFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
 
                         if(docSnapShot!=null && docSnapShot.exists()){
                             try {
-                                val jsonObj = docSnapShot.get(DbFields.BOOK_INTEREST.KEY)
+                                val jsonObj = docSnapShot.get(RemoteDataFields.BOOK_INTEREST.KEY)
                                 val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
                                 bookInterest.uploaded=true
                                 lifecycleScope.launch(IO){
@@ -317,7 +317,7 @@ class WelcomeActivity : AppCompatActivity() {
                             }
 
                             try {
-                                val userJsonString = docSnapShot.get(DbFields.USER.KEY)
+                                val userJsonString = docSnapShot.get(RemoteDataFields.USER.KEY)
                                 val user = json.fromAny(userJsonString!!, User::class.java)
                                 if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
                                         Build.VERSION.SDK_INT)){

@@ -2,7 +2,7 @@ package com.bookshelfhub.bookshelfhub.ui.main
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.ICloudDb
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShelfViewModel @Inject constructor(
-    val cloudDb: ICloudDb, val userAuth:IUserAuth, val localDb: ILocalDb, ): ViewModel(){
+    val remoteDataSource: IRemoteDataSource, val userAuth:IUserAuth, val localDb: ILocalDb, ): ViewModel(){
     private var liveOrderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
     private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
 

@@ -47,7 +47,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
                     with(intent){
                         putExtra(Book.NAME.KEY, model.name)
                         putExtra(Book.AUTHOR.KEY, model.author)
-                        putExtra(Book.ISBN.KEY, model.isbn)
+                        putExtra(Book.ISBN.KEY, model.bookId)
                     }
                     activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
             }
