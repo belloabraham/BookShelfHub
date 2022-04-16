@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.WebViewActivity
-import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.enums.WebView
+import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory

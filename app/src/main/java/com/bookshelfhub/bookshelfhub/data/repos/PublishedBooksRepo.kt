@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub.data.repos
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.PublishedBooksDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
@@ -22,15 +21,9 @@ class PublishedBooksRepo @Inject constructor(
 
     fun getALiveRemotePublishedBook(bookId:String, onNewData:(data:PublishedBook)->Unit){
         remoteDataSource.getLiveDataAsync(
-            RemoteDataFields.PUBLISHED_BOOKS, bookId,
+            RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
             PublishedBook::class.java){
             onNewData(it)
-        }
-    }
-
-    fun getTopThreeRemoteBookReviews(bookId:String, userId:String, onComplete:(listOfReviews:List<UserReview>, e:Exception?)->Unit){
-        remoteDataSource.getListOfDataWhereAsync(RemoteDataFields.PUBLISHED_BOOKS, bookId, RemoteDataFields.REVIEWS_COLL, UserReview::class.java, RemoteDataFields.VERIFIED, whereValue = true, userId, limit = 3){ reviews, e->
-            onComplete(reviews, e)
         }
     }
 

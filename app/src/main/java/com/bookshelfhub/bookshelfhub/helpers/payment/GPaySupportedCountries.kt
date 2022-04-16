@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.payment
 
-enum class GPaySupportedCountries(val COUNTRY_CODE:String) {
-    KENYA("KE"),
-    SOUTH_AFRICA("ZA")
+object GPaySupportedCountries{
+const val KENYA = "KE"
+const val SOUTH_AFRICA = "ZA"
 
 }

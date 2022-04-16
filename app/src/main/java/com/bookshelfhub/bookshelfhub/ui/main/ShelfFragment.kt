@@ -73,7 +73,7 @@ class ShelfFragment : Fragment() {
                 //Get all available ordered books the user have
                 remoteDataSource.getLiveOrderedBooks(
                     requireActivity(),
-                    RemoteDataFields.ORDERED_BOOKS.KEY,
+                    RemoteDataFields.ORDERED_BOOKS_COLL,
                     userId,
                     OrderedBooks::class.java
                 ) {
@@ -89,10 +89,10 @@ class ShelfFragment : Fragment() {
                 orderedBooks[0].dateTime?.let { timestamp->
                     remoteDataSource.getLiveOrderedBooks(
                         requireActivity(),
-                        RemoteDataFields.ORDERED_BOOKS.KEY,
+                        RemoteDataFields.ORDERED_BOOKS_COLL,
                         userId,
                         OrderedBooks::class.java,
-                        orderBy = RemoteDataFields.ORDER_DATE_TIME.KEY,
+                        orderBy = RemoteDataFields.ORDER_DATE_TIME,
                         Query.Direction.DESCENDING,
                         startAfter = timestamp
                     ) {

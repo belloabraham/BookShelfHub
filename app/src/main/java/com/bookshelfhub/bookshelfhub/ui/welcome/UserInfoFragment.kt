@@ -63,6 +63,7 @@ class UserInfoFragment : Fragment() {
         val userId = userAuth.getUserId()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+
         }
 
 

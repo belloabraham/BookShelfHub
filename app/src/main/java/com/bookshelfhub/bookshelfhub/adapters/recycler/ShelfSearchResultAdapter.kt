@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory

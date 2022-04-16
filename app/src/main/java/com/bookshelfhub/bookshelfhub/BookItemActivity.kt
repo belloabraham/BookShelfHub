@@ -27,16 +27,16 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.enums.Category
-import com.bookshelfhub.bookshelfhub.data.enums.WebView
+import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.Category
+import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.data.enums.Fragment
+import com.bookshelfhub.bookshelfhub.data.Fragment
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -263,7 +263,7 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.similarBooksCard.setOnClickListener {
             val intent = Intent(this, BookCategoryActivity::class.java)
-            intent.putExtra(Category.TITLE.KEY, bookOnlineVersion!!.category)
+            intent.putExtra(Category.TITLE, bookOnlineVersion!!.category)
             startActivity(intent)
         }
 
@@ -307,8 +307,8 @@ class BookItemActivity : AppCompatActivity() {
                 if (!review.containsUrl(Regex.WEB_LINK_IN_TEXT)){
                     //Put data to be passed to the review worker, data of the ISBN(Book that was reviewed) and Rating diff
                     val data = Data.Builder()
-                    data.putString(Book.ISBN.KEY, isbn)
-                    data.putDouble(Book.RATING_DIFF.KEY, ratingDiff)
+                    data.putString(Book.ISBN, isbn)
+                    data.putDouble(Book.RATING_DIFF, ratingDiff)
 
                     val userReviewPostWorker =
                         OneTimeWorkRequestBuilder<PostUserReview>()
@@ -533,7 +533,7 @@ class BookItemActivity : AppCompatActivity() {
 
 
     private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
-        remoteDataSource.getLiveDataAsync(this, RemoteDataFields.PUBLISHED_BOOKS.KEY,isbn, RemoteDataFields.REVIEWS_COLL.KEY, userId){ documentSnapshot, _ ->
+        remoteDataSource.getLiveDataAsync(this, RemoteDataFields.PUBLISHED_BOOKS_COLL,isbn, RemoteDataFields.REVIEWS_COLL, userId){ documentSnapshot, _ ->
             documentSnapshot?.let {
                 if (it.exists()){
                     val doc = it.data
@@ -595,9 +595,9 @@ class BookItemActivity : AppCompatActivity() {
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
-            putExtra(Book.NAME.KEY,title)
-            putExtra(Fragment.ID.KEY, fragmentID)
-            putExtra(Book.ISBN.KEY, isbn)
+            putExtra(Book.NAME,title)
+            putExtra(Fragment.ID, fragmentID)
+            putExtra(Book.ISBN, isbn)
         }
         startActivity(intent)
     }
@@ -635,8 +635,8 @@ class BookItemActivity : AppCompatActivity() {
             val url = remoteConfig.getString(BOOK_REPORT_URL)
             val intent = Intent(this, WebViewActivity::class.java)
             with(intent){
-                putExtra(WebView.TITLE.KEY, getString(R.string.report_book))
-                putExtra(WebView.URL.KEY, url)
+                putExtra(WebView.TITLE, getString(R.string.report_book))
+                putExtra(WebView.URL, url)
             }
             startActivity(intent)
         }else if (item.itemId != R.id.reportBook){
@@ -650,8 +650,8 @@ class BookItemActivity : AppCompatActivity() {
         val book = orderedBook.get()
         val intent = Intent(this, BookActivity::class.java)
         with(intent){
-            putExtra(Book.NAME.KEY, book.name)
-            putExtra(Book.ISBN.KEY, book.bookId)
+            putExtra(Book.NAME, book.name)
+            putExtra(Book.ISBN, book.bookId)
         }
         startActivity(intent)
     }

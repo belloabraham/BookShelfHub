@@ -4,6 +4,7 @@ plugins {
 }
 
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
@@ -86,7 +87,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
 
-    def lifecycle_version = "2.4.0"
+    def lifecycle_version = "2.4.1"
     //--Service
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
     //--Live Data
@@ -100,7 +101,7 @@ dependencies {
     //--Data Store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     //--Android - Room
-    def room_version = "2.4.1"
+    def room_version = "2.4.2"
     implementation("androidx.room:room-runtime:$room_version")
     //---Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
@@ -121,7 +122,7 @@ dependencies {
     kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
     //---Test helpers
     androidTestImplementation("androidx.work:work-testing:$work_version")
-    def paging_version = "3.1.0"
+    def paging_version = "3.1.1"
     implementation("androidx.paging:paging-runtime-ktx:$paging_version") // For Kotlin use paging-runtime-ktx
     // alternatively - without Android dependencies for testing
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
@@ -198,8 +199,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx'
 
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta04'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta04'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta06'
 
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
@@ -215,16 +216,20 @@ dependencies {
 
     //Google Play Services
     //--Google Sign in auth
-    implementation 'com.google.android.gms:play-services-auth:20.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
     //---In App Update
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
 
     //---Task
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0-native-mt'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
 kapt {
     correctErrorTypes = true
+}
+repositories {
+    mavenCentral()
 }

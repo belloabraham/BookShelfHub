@@ -25,7 +25,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
-import com.bookshelfhub.bookshelfhub.data.enums.Category
+import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
@@ -524,7 +524,7 @@ class StoreFragment : Fragment() {
 
     private fun startBookCategoryActivity(category: String){
         val intent = Intent(requireActivity(), BookCategoryActivity::class.java)
-        intent.putExtra(Category.TITLE.KEY,category)
+        intent.putExtra(Category.TITLE,category)
         startActivity(intent)
     }
 

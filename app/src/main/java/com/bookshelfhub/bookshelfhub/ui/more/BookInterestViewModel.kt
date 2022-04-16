@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -14,18 +14,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class BookInterestViewModel @Inject constructor(val localDb: ILocalDb, val userAuth: IUserAuth): ViewModel(){
+class BookInterestViewModel @Inject constructor(private val bookInterestRepo: BookInterestRepo, val userAuth: IUserAuth): ViewModel(){
 
     private var bookInterest: LiveData<Optional<BookInterest>> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
 
     init {
-        bookInterest = localDb.getLiveBookInterest(userId)
+        bookInterest = bookInterestRepo.getLiveBookInterest(userId)
     }
 
     fun addBookInterest(bookInterest: BookInterest){
-        viewModelScope.launch(IO) {
-            localDb.addBookInterest(bookInterest)
+        viewModelScope.launch {
+            bookInterestRepo.addBookInterest(bookInterest)
         }
     }
 

@@ -1,8 +1,8 @@
 package com.bookshelfhub.bookshelfhub.helpers.payment
 
-enum class SupportedCountries(val COUNTRY_CODE:String) {
-    NIGERIA("NG"),
-    GHANA("GH"),
-    UGANDA("UG"),
-    TANZANIA("TZ")
+object SupportedCountries{
+const val NIGERIA = "NG"
+const val GHANA = "GH"
+const val UGANDA = "UG"
+const val TANZANIA = "TZ"
 }

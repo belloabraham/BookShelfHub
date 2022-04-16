@@ -2,8 +2,8 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.enums.Fragment
+import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.Fragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -11,9 +11,9 @@ import javax.inject.Inject
 class BookInfoActivityViewModel @Inject constructor(
     val savedState: SavedStateHandle,
 ): ViewModel() {
-    private val title = savedState.get<String>(Book.NAME.KEY)!!
-    private val fragmentId = savedState.get<Int>(Fragment.ID.KEY)!!
-    private val isbn = savedState.get<String>(Book.ISBN.KEY)!!
+    private val title = savedState.get<String>(Book.NAME)!!
+    private val fragmentId = savedState.get<Int>(Fragment.ID)!!
+    private val isbn = savedState.get<String>(Book.ISBN)!!
 
     fun getIsbn(): String {
         return isbn

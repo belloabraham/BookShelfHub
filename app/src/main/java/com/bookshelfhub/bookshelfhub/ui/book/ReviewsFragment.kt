@@ -34,7 +34,7 @@ class ReviewsFragment : Fragment() {
         binding = ReviewsFragmentBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-        reviewsViewModel.getUserReviews().observe(viewLifecycleOwner, Observer { reviews ->
+        reviewsViewModel.getTop300UserReviews().observe(viewLifecycleOwner, Observer { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.progressBar.visibility = GONE

@@ -96,7 +96,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun startNextActivity(intent:Intent, referrerId:String?){
-        intent.putExtra(Referrer.ID.KEY, referrerId)
+        intent.putExtra(Referrer.ID, referrerId)
         finish()
         startActivity(intent)
     }

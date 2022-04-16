@@ -30,8 +30,6 @@ class CardInfoFragment : Fragment() {
 
     private var binding: FragmentCardInfoBinding?=null
     private val cartViewModel: CartViewModel by activityViewModels()
-    @Inject
-    lateinit var localDb: ILocalDb
     private val cardNoSeparator = "-"
     private val cardExpDateSeparator = "/"
 

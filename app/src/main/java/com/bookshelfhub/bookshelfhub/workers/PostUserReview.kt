@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.rest.MediaType
 import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
@@ -42,13 +42,13 @@ class PostUserReview @AssistedInject constructor(
 
     override fun doWork(): Result {
 
-        val isbn = inputData.getString(Book.ISBN.KEY)!!
+        val isbn = inputData.getString(Book.ISBN)!!
 
         val apiKey:String
 
         // no worries about null exception as this worker is one time and will be triggered on book item activity, so api is certain to be available
             runBlocking {
-                apiKey = settingsUtil.getString(Settings.PERSPECTIVE_API.KEY)!!
+                apiKey = settingsUtil.getString(Settings.PERSPECTIVE_API)!!
             }
 
 
@@ -67,7 +67,7 @@ class PostUserReview @AssistedInject constructor(
             // If user is posting a review for the first time
             1
         }
-        val userRatingDiff = inputData.getDouble(Book.RATING_DIFF.KEY, 0.0)
+        val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
         val userId = userAuth.getUserId()
         var dynamicBookAttr: HashMap<String, FieldValue>? = null
 
@@ -75,14 +75,14 @@ class PostUserReview @AssistedInject constructor(
             dynamicBookAttr = if (bookTotalReview > 0) { //If user is posting for the first time
                 hashMapOf(
                     // Add to book total review
-                    RemoteDataFields.TOTAL_REVIEWS.KEY to FieldValue.increment(bookTotalReview),
+                    RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(bookTotalReview),
                     // Add userRatingDiff to total ratings that can be + or -
-                    RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+                    RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             } else {
                 hashMapOf(
                     // Has user has posted before only upload userRatingDiff
-                    RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(userRatingDiff)
+                    RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             }
         }
@@ -102,8 +102,8 @@ class PostUserReview @AssistedInject constructor(
                 if (responseBody.attributeScores.TOXICITY.summaryScore.value<=0.5){
                     val task =  remoteDataSource.updateUserReview(
                         dynamicBookAttr, userReview,
-                        RemoteDataFields.PUBLISHED_BOOKS.KEY, isbn,
-                        RemoteDataFields.REVIEWS_COLL.KEY, userId)
+                        RemoteDataFields.PUBLISHED_BOOKS_COLL, isbn,
+                        RemoteDataFields.REVIEWS_COLL, userId)
 
                     Tasks.await(task)
 

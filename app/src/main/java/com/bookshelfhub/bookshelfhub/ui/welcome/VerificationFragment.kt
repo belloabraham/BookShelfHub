@@ -43,8 +43,6 @@ class VerificationFragment:Fragment(){
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var database: Database
-    @Inject
     lateinit var json: Json
     @Inject
     lateinit var textLinkBuilder: TextLinkBuilder

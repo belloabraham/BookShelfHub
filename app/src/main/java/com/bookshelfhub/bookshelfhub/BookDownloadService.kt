@@ -7,7 +7,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.bookshelfhub.bookshelfhub.data.Download
-import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.downloadmanager.*
 import com.bookshelfhub.downloadmanager.request.DownloadRequest

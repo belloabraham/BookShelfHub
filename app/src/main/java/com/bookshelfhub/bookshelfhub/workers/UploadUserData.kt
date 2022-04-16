@@ -33,7 +33,7 @@ class UploadUserData  @AssistedInject constructor (
          return   if (user.isPresent && !userData.uploaded){
 
              try {
-                 remoteDataSource.addDataAsync(userData, RemoteDataFields.USERS.KEY, userId, RemoteDataFields.USER.KEY).await()
+                 remoteDataSource.addDataAsync(userData, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.USER).await()
 
                      userData.uploaded = true
                      localDb.addUser(userData)

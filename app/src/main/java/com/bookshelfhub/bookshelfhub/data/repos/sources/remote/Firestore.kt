@@ -25,8 +25,8 @@ import javax.inject.Inject
      }
 
 
-    override fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit ){
-         db.collection(collection).document(document).collection(subCollection)
+    override fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit ): ListenerRegistration {
+     val subscription = db.collection(collection).document(document).collection(subCollection)
              .addSnapshotListener{ querySnapShot, e ->
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
@@ -44,6 +44,7 @@ import javax.inject.Inject
                  }
                  onComplete(dataList)
              }
+        return subscription
      }
 
 
@@ -57,8 +58,8 @@ import javax.inject.Inject
 
     }
 
-     override fun <T: Any> getListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
-         db.collection(collection)
+     override fun <T: Any> getLiveListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
+         val subscription = db.collection(collection)
              .orderBy(orderBy)
              .addSnapshotListener { querySnapShot, e ->
 
@@ -80,13 +81,14 @@ import javax.inject.Inject
                  }
                  onComplete(dataList)
              }
+         return subscription
      }
 
 
      override fun <T: Any>  getLiveDataAsync(collection:String, document: String, type:Class<T>,  retry:Boolean, onComplete:
-         (data:T)->Unit){
-         
-         db.collection(collection).document(document)
+         (data:T)->Unit): ListenerRegistration {
+
+         val subscription = db.collection(collection).document(document)
              .addSnapshotListener { documentSnapShot, error ->
                  if (retry && error!=null){
                      return@addSnapshotListener
@@ -99,41 +101,43 @@ import javax.inject.Inject
                     }
                  }
              }
+         return subscription
      }
 
 
    // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
-   override fun getLiveDataAsync(activity: Activity, collection:String, document: String, retry:Boolean, onComplete:
-     (data:DocumentSnapshot?, e:Exception?)->Unit){
-       
-        db.collection(collection)
+   override fun getLiveDataAsync(collection:String, document: String, retry:Boolean, onComplete:
+     (data:DocumentSnapshot?, e:Exception?)->Unit): ListenerRegistration {
+
+       val subscription = db.collection(collection)
             .document(document)
-            .addSnapshotListener(activity) { documentSnapShot, error ->
+            .addSnapshotListener{ documentSnapShot, error ->
 
                 if (retry && error!=null){
                     return@addSnapshotListener
                 }
                 onComplete(documentSnapShot, error)
             }
+       return subscription
     }
 
 
-     override fun getLiveDataAsync(activity: Activity, collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean, onComplete:
-         (data:DocumentSnapshot?, error:FirebaseFirestoreException?)->Unit){
-         
-         db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .addSnapshotListener(activity){ documentSnapShot, error ->
+     override fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean, onComplete:
+         (data:DocumentSnapshot?, error:FirebaseFirestoreException?)->Unit): ListenerRegistration {
+
+         val subscription = db.collection(collection).document(document).collection(subCollection).document(subDocument)
+             .addSnapshotListener{ documentSnapShot, error ->
                  if (shouldRetry && error!=null){
                      return@addSnapshotListener
                  }
                      onComplete(documentSnapShot, error)
              }
+         return subscription
      }
 
-     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, direction: Query.Direction, orderBy:String, shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, direction: Query.Direction, orderBy:String, shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit): ListenerRegistration {
 
-         
-         db.collection(collection)
+         val subscription = db.collection(collection)
              .orderBy(orderBy, direction)
              .startAfter(startAt)
              .addSnapshotListener { querySnapShot, e ->
@@ -155,6 +159,7 @@ import javax.inject.Inject
                  }
                  onComplete(dataList)
              }
+        return subscription
      }
 
 
@@ -165,9 +170,9 @@ import javax.inject.Inject
 
 
 
-     override fun <T: Any> getLiveListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit){
+     override fun <T: Any> getLiveListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
 
-         db.collection(collection)
+         val subscription = db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
              .addSnapshotListener { querySnapShot, error  ->
 
@@ -191,6 +196,7 @@ import javax.inject.Inject
                      onComplete(dataList)
                  }
              }
+         return subscription
      }
 
      override fun getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any): Task<QuerySnapshot> {
@@ -202,14 +208,14 @@ import javax.inject.Inject
 
 
      //TODO Sub Collections
-     override fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
-         
-         db.collection(collection)
+     override fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
+
+         val subscription = db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
              .orderBy(orderBy, direction)
              .startAfter(startAfter)
-             .addSnapshotListener(activity) { querySnapShot, e ->
+             .addSnapshotListener{ querySnapShot, e ->
 
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
@@ -229,14 +235,15 @@ import javax.inject.Inject
                  }
                  onComplete(dataList)
              }
+         return subscription
      }
 
 
-     override fun <T: Any> getLiveOrderedBooks(activity: Activity, collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit){
-         db.collection(collection)
+     override fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
+         val subscription = db.collection(collection)
              .whereNotEqualTo(downloadUrlKey, null)
              .whereEqualTo(userIdKey, userId)
-             .addSnapshotListener(activity) { querySnapShot, e ->
+             .addSnapshotListener{ querySnapShot, e ->
 
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
@@ -256,18 +263,20 @@ import javax.inject.Inject
                  }
                  onComplete(dataList)
              }
+         return subscription
      }
 
 
-     override fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction,  onComplete: (dataList:List<T>, Exception?)->Unit){
+     override fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction,  onComplete: (dataList:List<T>, Exception?)->Unit): Task<QuerySnapshot> {
 
-         var dataList = emptyList<T>()
-         db.collection(collection).document(document).collection(subCollection)
+        // var dataList = emptyList<T>()
+         return db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
              .limit(limit)
              .get()
-             .addOnSuccessListener {
+
+             /*.addOnSuccessListener {
                      if (!it.isEmpty){
                          for (doc in it) {
                              if (doc.exists()){
@@ -282,14 +291,15 @@ import javax.inject.Inject
              }
              .addOnFailureListener {
                  onComplete(dataList, it)
-             }
+             }*/
+
      }
 
 
-     override fun <T: Any> getLiveListOfDataAsync(activity:Activity, collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit) {
-        
-     db.collection(collection).document(document).collection(subCollection)
-            .addSnapshotListener(activity) { querySnapShot, error ->
+     override fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
+
+         val subscription = db.collection(collection).document(document).collection(subCollection)
+            .addSnapshotListener{ querySnapShot, error ->
                 if (error!=null && shouldRetry){
                     return@addSnapshotListener
                 }
@@ -309,7 +319,7 @@ import javax.inject.Inject
                     onComplete(dataList)
                 }
             }
-
+        return subscription
     }
 
 
@@ -320,7 +330,7 @@ import javax.inject.Inject
              val bookDynamicAttrDocRef = db.collection(collection).document(document)
 
              val reviewDate = hashMapOf(
-                 RemoteDataFields.REVIEW_DATE_TIME.KEY to FieldValue.serverTimestamp()
+                 RemoteDataFields.REVIEW_DATE_TIME to FieldValue.serverTimestamp()
              )
 
              batch.set(reviewDocRef, userReview)

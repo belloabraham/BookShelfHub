@@ -3,21 +3,25 @@ package com.bookshelfhub.bookshelfhub.ui.cart
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.PaymentCardRepo
+import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val localDb: ILocalDb,
     val remoteDataSource: IRemoteDataSource,
+    val cardRepo: PaymentCardRepo,
+    paymentCardRepo: PaymentCardRepo,
+    private val cartItemsRepo: CartItemsRepo, 
+     userRepo: UserRepo,
     val settingsUtil: SettingsUtil,
     userAuth: IUserAuth): ViewModel(){
 
@@ -30,14 +34,14 @@ class CartViewModel @Inject constructor(
   private lateinit var user: User
 
   init {
-    liveCartItems = localDb.getLiveListOfCartItems(userId)
-    livePaymentCards = localDb.getLivePaymentCards()
+    liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
+    livePaymentCards = paymentCardRepo.getLivePaymentCards()
 
-    viewModelScope.launch(IO){
-      flutterPublicKey = settingsUtil.getString(Settings.FLUTTER_PUBLIC.KEY)
-      flutterEncKey = settingsUtil.getString(Settings.FLUTTER_ENCRYPTION.KEY)
+    viewModelScope.launch{
+      flutterPublicKey = settingsUtil.getString(Settings.FLUTTER_PUBLIC)
+      flutterEncKey = settingsUtil.getString(Settings.FLUTTER_ENCRYPTION)
 
-      user =  localDb.getUser(userId).get()
+      user =  userRepo.getUser(userId).get()
     }
   }
 
@@ -66,14 +70,14 @@ class CartViewModel @Inject constructor(
   }
 
   fun deleteFromCart(cart: Cart){
-    viewModelScope.launch(IO){
-      localDb.deleteFromCart(cart)
+    viewModelScope.launch{
+      cartItemsRepo.deleteFromCart(cart)
     }
   }
 
   fun addToCart(cart: Cart){
-    viewModelScope.launch(IO) {
-      localDb.addToCart(cart)
+    viewModelScope.launch {
+      cartItemsRepo.addToCart(cart)
     }
   }
 

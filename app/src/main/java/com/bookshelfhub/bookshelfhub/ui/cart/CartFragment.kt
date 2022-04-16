@@ -59,8 +59,6 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
-    lateinit var localDb: ILocalDb
-    @Inject
     lateinit var json: Json
     @Inject
     lateinit var worker: Worker
@@ -157,7 +155,7 @@ class CartFragment : Fragment() {
                     bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
                 }
 
-                remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS.KEY, RemoteDataFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true){
+                remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS, RemoteDataFields.REFERRER_ID, userId, Earnings::class.java, shouldRetry = true){
 
                     userEarnings = 0.0
 
@@ -364,13 +362,13 @@ class CartFragment : Fragment() {
 
         if (paymentSDKType == SDKType.FLUTTER_WAVE){
             //Meta data containing who bought book and who the referrer for the each book is
-            val metaList = listOf(Meta(Payment.USER_ID.KEY, userId), Meta(Payment.BOOKS_AND_REF.KEY, bookIsbnsAndReferrerIds.trim()))
+            val metaList = listOf(Meta(Payment.USER_ID, userId), Meta(Payment.BOOKS_AND_REF, bookIsbnsAndReferrerIds.trim()))
             chargeCardWithFlutter(paymentCard, amountToChargeInUSD, metaList)
         }else{
             //Meta data containing who bought book and  and who the referrer for the book is
             val userData = hashMapOf(
-                Payment.USER_ID.KEY to userId,
-                Payment.BOOKS_AND_REF.KEY to bookIsbnsAndReferrerIds.trim()
+                Payment.USER_ID to userId,
+                Payment.BOOKS_AND_REF to bookIsbnsAndReferrerIds.trim()
             )
         }
     }

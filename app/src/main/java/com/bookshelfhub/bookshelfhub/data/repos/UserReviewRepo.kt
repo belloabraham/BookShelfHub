@@ -4,12 +4,13 @@ import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.UserReviewDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDao, private val remoteDataS: IRemoteDataSource) {
+class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDao, private val remoteDataSource: IRemoteDataSource) {
 
      fun getLiveUserReview(isbn: String): LiveData<Optional<UserReview>> {
         return  userReviewDao.getLiveUserReview(isbn)
@@ -17,6 +18,12 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
 
      suspend fun addUserReviews(userReviews: List<UserReview>) {
         withContext(IO){userReviewDao.addUserReviews(userReviews)}
+    }
+
+    fun getRemoteBookReviews(bookId:String, userId:String, limitBy:Long){
+        remoteDataSource.getListOfDataWhereAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId, RemoteDataFields.REVIEWS_COLL, UserReview::class.java, RemoteDataFields.VERIFIED, whereValue = true, userId, limit = limitBy){ reviews, e->
+
+        }
     }
 
 

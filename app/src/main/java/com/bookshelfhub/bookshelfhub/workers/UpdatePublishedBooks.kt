@@ -35,8 +35,8 @@ class UpdatePublishedBooks @AssistedInject constructor (
        return try {
 
            val querySnapshot =  remoteDataSource.getListOfDataWhereAsync(
-               RemoteDataFields.PUBLISHED_BOOKS.KEY,
-               RemoteDataFields.PUBLISHED.KEY, true,
+               RemoteDataFields.PUBLISHED_BOOKS_COLL,
+               RemoteDataFields.PUBLISHED, true,
            ).await()
 
            val publishedBooks = util.queryToListType(querySnapshot, PublishedBook::class.java)

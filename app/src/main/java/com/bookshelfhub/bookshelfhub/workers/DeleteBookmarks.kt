@@ -42,7 +42,7 @@ workerParams
      return  try {
             if (listOfDeletedBookmarks.isNotEmpty()){
                 //Delete them on the cloud using this path user/userId/bookmarks/id
-              val task = remoteDataSource.deleteListOfDataAsync(listOfDeletedBookmarks, RemoteDataFields.USERS.KEY, userId, RemoteDataFields.BOOKMARKS.KEY).await()
+              val task = remoteDataSource.deleteListOfDataAsync(listOfDeletedBookmarks, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL).await()
 
                 task.run {
                     localDb.deleteBookmarks(listOfDeletedBookmarks)

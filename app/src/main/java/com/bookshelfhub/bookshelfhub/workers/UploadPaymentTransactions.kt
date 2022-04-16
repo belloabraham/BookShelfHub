@@ -10,7 +10,6 @@ import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UploadPaymentTransactions @AssistedInject constructor(
@@ -37,9 +36,9 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
             try {
                 remoteDataSource.addListOfDataAsync(
-                    RemoteDataFields.USERS.KEY,
+                    RemoteDataFields.USERS_COLL,
                     userId,
-                    RemoteDataFields.TRANSACTIONS.KEY,
+                    RemoteDataFields.TRANSACTIONS_COLL,
                     paymentTrans
                 ).await()
 

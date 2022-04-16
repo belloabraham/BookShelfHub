@@ -21,6 +21,8 @@ class AppUtil @Inject constructor (private val context: Context) {
         }
     }
 
+
+
     fun getAppVersionName():String{
         return try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)

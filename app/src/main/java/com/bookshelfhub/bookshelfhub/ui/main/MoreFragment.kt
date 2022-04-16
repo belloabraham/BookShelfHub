@@ -22,7 +22,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
-import com.bookshelfhub.bookshelfhub.data.enums.WebView
+import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
@@ -101,7 +101,7 @@ class MoreFragment : Fragment() {
         userId = userAuth.getUserId()
 
         viewLifecycleOwner.lifecycleScope.launch(IO){
-            val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, true)
+            val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             withContext(Main){
                 progressPopupToggle.setChecked(isChecked, false)
             }
@@ -121,7 +121,7 @@ class MoreFragment : Fragment() {
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->
             lifecycleScope.launch(IO) {
-                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP.KEY, isChecked)
+                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP, isChecked)
             }
         }
 
@@ -218,13 +218,13 @@ class MoreFragment : Fragment() {
                 var link = mainActivityViewModel.getUserReferralLink()
                 if (link==null){
                     lifecycleScope.launch(IO){
-                      link =  settingsUtil.getString(Referrer.REF_LINK.KEY)
+                      link =  settingsUtil.getString(Referrer.REF_LINK)
                         withContext(Main){
                             if (link==null){
                                 dynamicLink.generateShortLinkAsync(
-                                    remoteConfig.getString(Social.TITLE.KEY),
-                                    remoteConfig.getString(Social.DESC.KEY),
-                                    remoteConfig.getString(Social.IMAGE_URL.KEY),
+                                    remoteConfig.getString(Social.TITLE),
+                                    remoteConfig.getString(Social.DESC),
+                                    remoteConfig.getString(Social.IMAGE_URL),
                                     userAuth.getUserId()
                                 ){
                                     if (it!=null){
@@ -292,7 +292,7 @@ class MoreFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
 
-        remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS.KEY, RemoteDataFields.REFERRER_ID.KEY, userId, Earnings::class.java, shouldRetry = true) { earnings ->
+        remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS, RemoteDataFields.REFERRER_ID, userId, Earnings::class.java, shouldRetry = true) { earnings ->
             progressBar.visibility = GONE
             val totalEarnings = 0.0
             for (earning in earnings){
@@ -319,8 +319,8 @@ class MoreFragment : Fragment() {
         val url = remoteConfig.getString(rmcUrlKey)
         val intent = Intent(activity, WebViewActivity::class.java)
         with(intent){
-            putExtra(WebView.TITLE.KEY,getString(title))
-            putExtra(WebView.URL.KEY, url)
+            putExtra(WebView.TITLE,getString(title))
+            putExtra(WebView.URL, url)
         }
         startActivity(intent)
     }
@@ -328,7 +328,7 @@ class MoreFragment : Fragment() {
     private fun startMoreActivity(fragmentID:Int){
         val intent = Intent(activity, MoreActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.bookshelfhub.data.enums.Fragment.ID.KEY, fragmentID)
+            putExtra(com.bookshelfhub.bookshelfhub.data.Fragment.ID, fragmentID)
         }
         startActivity(intent)
     }

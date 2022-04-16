@@ -5,15 +5,15 @@ object RemoteDataFields{
     const val VIDEO_LIST = "video_list"
 
     //Collections
-    const val USERS = "users"
-    const val PUBLISHED_BOOKS = "published_books"
-    const val ORDERED_BOOKS = "ordered_books"
+    const val USERS_COLL = "users"
+    const val PUBLISHED_BOOKS_COLL = "published_books"
+    const val ORDERED_BOOKS_COLL = "ordered_books"
     const val EARNINGS = "earnings"
 
     //Sub Collections
-    const val BOOKMARKS = "bookmarks"
+    const val BOOKMARKS_COLL = "bookmarks"
     const val REVIEWS_COLL = "reviews"
-    const val TRANSACTIONS = "transactions"
+    const val TRANSACTIONS_COLL = "transactions"
 
     //Fields
     //Must be same as .services.database.local.room.entities.UserReview.verified

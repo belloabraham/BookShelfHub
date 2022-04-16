@@ -34,7 +34,7 @@ class UploadBookInterest @AssistedInject constructor (
             val bookInterestData = bookInterest.get()
 
           try {
-              remoteDataSource.addDataAsync(bookInterestData, RemoteDataFields.USERS.KEY, userId, RemoteDataFields.BOOK_INTEREST.KEY).await()
+              remoteDataSource.addDataAsync(bookInterestData, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOK_INTEREST).await()
 
               bookInterestData.uploaded=true
               localDb.addBookInterest(bookInterestData)

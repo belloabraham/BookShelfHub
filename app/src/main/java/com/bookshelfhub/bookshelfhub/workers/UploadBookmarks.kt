@@ -11,7 +11,6 @@ import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class UploadBookmarks @AssistedInject constructor(
@@ -32,7 +31,7 @@ workerParams
              val userId = userAuth.getUserId()
 
              try {
-                 val  task =  remoteDataSource.addListOfDataAsync(listOfBookmarks, RemoteDataFields.USERS.KEY, userId,  RemoteDataFields.BOOKMARKS.KEY).await()
+                 val  task =  remoteDataSource.addListOfDataAsync(listOfBookmarks, RemoteDataFields.USERS_COLL, userId,  RemoteDataFields.BOOKMARKS_COLL).await()
 
                  task.run {
                      val length = listOfBookmarks.size-1

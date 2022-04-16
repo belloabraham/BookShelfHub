@@ -22,7 +22,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DisplayUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
-import com.bookshelfhub.bookshelfhub.data.enums.WebView
+import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
@@ -33,8 +33,8 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideos
 import com.bookshelfhub.bookshelfhub.data.models.entities.History
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.enums.Book
-import com.bookshelfhub.bookshelfhub.data.enums.Fragment
+import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.Fragment
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
@@ -126,8 +126,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
           val orderedBook = bookActivityViewModel.getAnOrderedBook()
           val intent = Intent(this, WebViewActivity::class.java)
           with(intent){
-            putExtra(WebView.TITLE.KEY,orderedBook.name)
-            putExtra(WebView.URL.KEY, videoLink)
+            putExtra(WebView.TITLE,orderedBook.name)
+            putExtra(WebView.URL, videoLink)
           }
           startActivity(intent)
         }else{
@@ -227,15 +227,15 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     intent?.let {
-      val isbn = it.getStringExtra(Book.ISBN.KEY)
-      val name = it.getStringExtra(Book.NAME.KEY)
+      val isbn = it.getStringExtra(Book.ISBN)
+      val name = it.getStringExtra(Book.NAME)
       bookActivityViewModel.loadLiveOrderedBook(isbn!!, name!!)
     }
   }
 
   private fun showReadProgressDialog(readHistory: History) {
     lifecycleScope.launch(IO) {
-      val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED.KEY, 0)
+      val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED, 0)
       withContext(Main) {
         val view = View.inflate(this@BookActivity, R.layout.continue_reading, null)
         view.findViewById<TextView>(R.id.bookName).text = readHistory.bookName
@@ -251,7 +251,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
               showToast(R.string.dismiss_msg)
               runBlocking {
                 settingsUtil.setInt(
-                  Settings.NO_OF_TIME_DISMISSED.KEY,
+                  Settings.NO_OF_TIME_DISMISSED,
                   noOfDismiss + 1
                 )
               }
@@ -269,9 +269,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private fun startBookInfoActivity(fragmentID:Int){
     val intent = Intent(this, BookInfoActivity::class.java)
     with(intent){
-      putExtra(Book.NAME.KEY,bookActivityViewModel.getBookName())
-      putExtra(Fragment.ID.KEY, fragmentID)
-      putExtra(Book.ISBN.KEY, bookActivityViewModel.getIsbnNo())
+      putExtra(Book.NAME,bookActivityViewModel.getBookName())
+      putExtra(Fragment.ID, fragmentID)
+      putExtra(Book.ISBN, bookActivityViewModel.getIsbnNo())
     }
     startActivity(intent)
   }

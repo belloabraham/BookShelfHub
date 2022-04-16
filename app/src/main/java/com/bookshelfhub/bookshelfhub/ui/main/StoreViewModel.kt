@@ -7,20 +7,21 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StoreViewModel @Inject constructor(
-    private val localDb: ILocalDb,
     val connectionUtil: ConnectionUtil,
+    private val publishedBooksRepo: PublishedBooksRepo,
+    cartItemsRepo: CartItemsRepo,
     private val remoteDataSource: IRemoteDataSource,
     val userAuth: IUserAuth): ViewModel() {
 
@@ -41,23 +42,23 @@ class StoreViewModel @Inject constructor(
 
     init {
         loadPublishedBooks()
-        totalCartItems = localDb.getLiveTotalCartItemsNo(userId)
+        totalCartItems = cartItemsRepo.getLiveTotalCartItemsNo(userId)
 
-        viewModelScope.launch(IO){
-           publishedBooks = localDb.getPublishedBooks()
+        viewModelScope.launch{
+           publishedBooks = publishedBooksRepo.getPublishedBooks()
 
             if (publishedBooks.isEmpty()){
-                remoteDataSource.getListOfDataAsync(
-                    RemoteDataFields.PUBLISHED_BOOKS.KEY,
+                remoteDataSource.getLiveListOfDataAsync(
+                    RemoteDataFields.PUBLISHED_BOOKS_COLL,
                     PublishedBook::class.java,
-                    RemoteDataFields.DATE_TIME_PUBLISHED.KEY
+                    RemoteDataFields.DATE_TIME_PUBLISHED
                 ) {
                     addAllBooks(it)
                 }
             }else{
                 publishedBooks[0].publishedDate?.let { timestamp->
                     remoteDataSource.getLiveListOfDataAsyncFrom(
-                        RemoteDataFields.PUBLISHED_BOOKS.KEY,
+                        RemoteDataFields.PUBLISHED_BOOKS_COLL,
                         PublishedBook::class.java,
                         timestamp
                     ){
@@ -74,14 +75,14 @@ class StoreViewModel @Inject constructor(
     }
 
     private fun addAllBooks(publishedBooks: List<PublishedBook>){
-        viewModelScope.launch(IO) {
-            localDb.addAllPubBooks(publishedBooks)
+        viewModelScope.launch {
+            publishedBooksRepo.addAllPubBooks(publishedBooks)
         }
     }
 
     fun loadPublishedBooks(){
         if (connectionUtil.isConnected()){
-            allPublishedBook = localDb.getLivePublishedBooks()
+            allPublishedBook = publishedBooksRepo.getLivePublishedBooks()
         }else{
             isNoConnection.value = true
         }
@@ -105,19 +106,19 @@ class StoreViewModel @Inject constructor(
 
     fun getTrendingBooksPageSource(): Flow<PagingData<PublishedBook>> {
         return Pager(config){
-            localDb.getTrendingBooksPageSource()
+            publishedBooksRepo.getTrendingBooksPageSource()
         }.flow
     }
 
     fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
         return Pager(config){
-            localDb.getBooksByCategoryPageSource(category)
+            publishedBooksRepo.getBooksByCategoryPageSource(category)
         }.flow
     }
 
     fun getRecommendedBooksPageSource(): Flow<PagingData<PublishedBook>> {
         return Pager(config){
-            localDb.getRecommendedBooksPageSource()
+            publishedBooksRepo.getRecommendedBooksPageSource()
         }.flow
     }
 

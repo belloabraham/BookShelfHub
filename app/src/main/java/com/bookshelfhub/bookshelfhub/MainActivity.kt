@@ -23,7 +23,6 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.helpers.SecreteKeys
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
@@ -52,13 +51,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var remoteConfig: IRemoteConfig
 
     @Inject
-    lateinit var secreteKeys: SecreteKeys
-
-    @Inject
     lateinit var settingsUtil: SettingsUtil
-
-    @Inject
-    lateinit var worker: Worker
 
     @Inject
     lateinit var dynamicLink: IDynamicLink
@@ -77,9 +70,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //Load secret keys from realtime firebase
-        secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
         userId = userAuth.getUserId()
 
@@ -120,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 val link = it.toString()
                 mainActivityViewModel.setUserReferralLink(link)
                 lifecycleScope.launch(IO) {
-                    settingsUtil.setString(Referrer.REF_LINK.KEY, link)
+                    settingsUtil.setString(Referrer.REF_LINK, link)
                 }
             }
         }
@@ -148,8 +138,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         mainActivityViewModel.getBookInterest().observe(this, Observer { bookInterest ->
-            //Check if user already added book interest
-            updateRecommendedBooks(bookInterest)
+            mainActivityViewModel.updatedRecommendedBooks(bookInterest)
         })
 
         setUpShelfStoreViewPager()
@@ -278,26 +267,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateRecommendedBooks(bookInterest: Optional<BookInterest>) {
-        if (bookInterest.isPresent && bookInterest.get().added) {
-
-            //remove book interest button notification bubble
-            mainActivityViewModel.setBookInterestNotifNo(0)
-
-            //Generate recommended books to be shown in book store
-            val recommendedBooksWorker =
-                OneTimeWorkRequestBuilder<RecommendedBooks>()
-                    .build()
-            worker.enqueueUniqueWork(
-                Tag.recommendedBooksWorker,
-                ExistingWorkPolicy.REPLACE,
-                recommendedBooksWorker
-            )
-
-        } else {
-            mainActivityViewModel.setBookInterestNotifNo(1)
-        }
-    }
 
     private fun openReferrerLinkInStore(referrer: String?) {
         referrer?.let {
@@ -306,11 +275,11 @@ class MainActivity : AppCompatActivity() {
             //Check if a publisher refer the user
             if (ref.length > userId.length) {
 
-                val pubIdAndIsbn = ref.split(Referrer.SEPARATOR.KEY)
+                val pubIdAndIsbn = ref.split(Referrer.SEPARATOR)
                 val publisherId = pubIdAndIsbn[0]
                 val isbn = pubIdAndIsbn[1]
                 val intent = Intent(this, BookItemActivity::class.java)
-                intent.putExtra(Referrer.BOOK_REFERRED.KEY, isbn)
+                intent.putExtra(Referrer.BOOK_REFERRED, isbn)
                 val pubRefRecord = PubReferrers(publisherId, isbn)
                 //Add publisher ID that refer the user to the database
                 mainActivityViewModel.addPubReferrer(pubRefRecord)
@@ -321,9 +290,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getBookShareReferralLink(userId: String, onComplete: (Uri?) -> Unit) {
-        val title = remoteConfig.getString(Social.TITLE.KEY)
-        val description = remoteConfig.getString(Social.DESC.KEY)
-        val imageUrl = remoteConfig.getString(Social.IMAGE_URL.KEY)
+        val title = remoteConfig.getString(Social.TITLE)
+        val description = remoteConfig.getString(Social.DESC)
+        val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
         dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId) {
             onComplete(it)
         }

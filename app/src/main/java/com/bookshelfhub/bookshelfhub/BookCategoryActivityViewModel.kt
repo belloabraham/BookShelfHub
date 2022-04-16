@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.bookshelfhub.bookshelfhub.data.enums.Category
+import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class BookCategoryActivityViewModel @Inject constructor(
   @ApplicationContext context: Context,
-  private val localDb: ILocalDb,
   val savedState: SavedStateHandle,
+  private val publishedBooksRepo: PublishedBooksRepo,
+  private  val cartItemsRepo: CartItemsRepo,
   val userAuth: IUserAuth) : ViewModel(){
 
   private var liveBookByCategory: LiveData<List<PublishedBook>> = MutableLiveData()
@@ -29,7 +31,7 @@ class BookCategoryActivityViewModel @Inject constructor(
 
   private val userId = userAuth.getUserId()
 
-  private val category = savedState.get<String>(Category.TITLE.KEY)!!
+  private val category = savedState.get<String>(Category.TITLE)!!
 
   private val config  = PagingConfig(
     pageSize = 10,
@@ -42,15 +44,15 @@ class BookCategoryActivityViewModel @Inject constructor(
 
      when (category) {
         context.getString(R.string.trending) -> {
-          liveBookByCategory = localDb.getLiveTrendingBooks()
+          liveBookByCategory = publishedBooksRepo.getLiveTrendingBooks()
           flowOfCategory = getTrendingBooks()
         }
         context.getString(R.string.recommended_for) -> {
-          liveBookByCategory =localDb.getLiveRecommendedBooks()
+          liveBookByCategory =publishedBooksRepo.getLiveRecommendedBooks()
           flowOfCategory = getRecommendedBooks()
         }
         else -> {
-          liveBookByCategory = localDb.getLiveBooksByCategory(category)
+          liveBookByCategory = publishedBooksRepo.getLiveBooksByCategory(category)
           flowOfCategory = getBooksByCategory()
         }
     }
@@ -66,24 +68,24 @@ class BookCategoryActivityViewModel @Inject constructor(
   }
 
   fun getLiveTotalCartItemsNo(): LiveData<Int> {
-    return localDb.getLiveTotalCartItemsNo(userId)
+    return cartItemsRepo.getLiveTotalCartItemsNo(userId)
   }
 
   private fun getTrendingBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
-      localDb.getTrendingBooksPageSource()
+      publishedBooksRepo.getTrendingBooksPageSource()
     }.flow
   }
 
   private fun getRecommendedBooks(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
-      localDb.getRecommendedBooksPageSource()
+      publishedBooksRepo.getRecommendedBooksPageSource()
     }.flow
   }
 
   private fun getBooksByCategory(): Flow<PagingData<PublishedBook>> {
     return  Pager(config){
-      localDb.getBooksByCategoryPageSource(category)
+      publishedBooksRepo.getBooksByCategoryPageSource(category)
     }.flow
   }
 

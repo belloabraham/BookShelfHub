@@ -26,9 +26,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.PhoneAuth
 import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
-import com.bookshelfhub.bookshelfhub.domain.usecases.Database
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
@@ -65,22 +63,12 @@ class WelcomeActivity : AppCompatActivity() {
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private var phoneAuthCallbacks:  PhoneAuthProvider.OnVerificationStateChangedCallbacks?=null
 
-    @Inject
-    lateinit var remoteDataSource: IRemoteDataSource
-    @Inject
-    lateinit var json: Json
-
-    @Inject
-    lateinit var database: Database
 
     //***Get Nullable referral userID or PubIdAndISBN
     private var referrer: String? = null
 
     @Inject
     lateinit var connectionUtil: ConnectionUtil
-
-    @Inject
-    lateinit var worker: Worker
 
     @Inject
     lateinit var userAuth: IUserAuth
@@ -102,7 +90,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         //Set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
         referrer?.let { referrerId ->
-            if (!referrerId.contains(Referrer.SEPARATOR.KEY)) {
+            if (!referrerId.contains(Referrer.SEPARATOR)) {
                 //An individual refer this user
                 userAuthViewModel.setUserReferrerId(referrerId)
             }
@@ -111,7 +99,7 @@ class WelcomeActivity : AppCompatActivity() {
         //Pass Nullable referral userID or PubIdAndISBN and set to Main Activity to be opened in store immediately if PubISBN
         val intent = Intent(this, MainActivity::class.java)
         intent.flags =  Intent.FLAG_ACTIVITY_SINGLE_TOP
-        intent.putExtra(Referrer.ID.KEY, referrer)
+        intent.putExtra(Referrer.ID, referrer)
 
         //Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
@@ -171,7 +159,6 @@ class WelcomeActivity : AppCompatActivity() {
 
         phoneAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
             hideAnimation()
-            restoreBookmarks(isNewUser)
         })
 
         phoneAuthViewModel.getIsCodeSent().observe(this, Observer { isCodeSent ->
@@ -196,7 +183,6 @@ class WelcomeActivity : AppCompatActivity() {
             if (isNewUser) {
                 hideAnimation()
             }
-            restoreBookmarks(isNewUser)
         })
 
 
@@ -258,88 +244,37 @@ class WelcomeActivity : AppCompatActivity() {
 
         phoneAuthViewModel.getIsSignedInSuccessfully().observe(this, Observer { isSignedInSuccessfully ->
             if (isSignedInSuccessfully){
-                val isNewUser = phoneAuthViewModel.getIsNewUser().value!!
-                if (!isNewUser){
-                    remoteDataSource.getLiveDataAsync(this, RemoteDataFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
-
-                        if(docSnapShot!=null && docSnapShot.exists()){
-                            try {
-                                val jsonString = docSnapShot.get(RemoteDataFields.BOOK_INTEREST.KEY)
-                                val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
-
-                                bookInterest.uploaded=true
-                                lifecycleScope.launch(IO){
-                                    database.addBookInterest(bookInterest)
-                                }
-                            }catch (e:Exception){
-                            }
-
-                            try {
-                                val userJsonString = docSnapShot.get(RemoteDataFields.USER.KEY)
-                                val user = json.fromAny(userJsonString!!, User::class.java)
-                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
-                                        Build.VERSION.SDK_INT)){
-                                    user.device =   DeviceUtil.getDeviceBrandAndModel()
-                                    user.deviceOs= DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
-                                }else {
-                                    user.uploaded = true
-                                }
-                                userAuthViewModel.setIsAddingUser(false, user)
-                            }catch (ex:Exception){
-                                userAuthViewModel.setIsExistingUser(false)
-                            }
-
-                        }else{
-                            userAuthViewModel.setIsExistingUser(false)
-                        }
-                    }
-                }
+                val isExistingUser = !phoneAuthViewModel.getIsNewUser().value!!
+                afterAuthCompletes(isExistingUser)
             }
         })
 
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(this, Observer { isAuthSuccessful ->
-
             if (isAuthSuccessful){
-                val isNewUser = googleAuthViewModel.getIsNewUser().value!!
-                if (!isNewUser){
-                    remoteDataSource.getLiveDataAsync(this, RemoteDataFields.USERS.KEY, userAuth.getUserId(), retry = true){ docSnapShot, _ ->
-
-                        if(docSnapShot!=null && docSnapShot.exists()){
-                            try {
-                                val jsonObj = docSnapShot.get(RemoteDataFields.BOOK_INTEREST.KEY)
-                                val bookInterest = json.fromAny(jsonObj!!, BookInterest::class.java)
-                                bookInterest.uploaded=true
-                                lifecycleScope.launch(IO){
-                                    database.addBookInterest(bookInterest)
-                                }
-                            }catch (e:Exception){
-
-                            }
-
-                            try {
-                                val userJsonString = docSnapShot.get(RemoteDataFields.USER.KEY)
-                                val user = json.fromAny(userJsonString!!, User::class.java)
-                                if (user.device != DeviceUtil.getDeviceBrandAndModel() || user.deviceOs!= DeviceUtil.getDeviceOSVersionInfo(
-                                        Build.VERSION.SDK_INT)){
-                                    user.device = DeviceUtil.getDeviceBrandAndModel()
-                                    user.deviceOs= DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
-                                }else {
-                                    user.uploaded = true
-                                }
-                                userAuthViewModel.setIsAddingUser(false, user)
-                            }catch (ex:Exception){
-                                userAuthViewModel.setIsExistingUser(false)
-                            }
-                        }else{
-                            userAuthViewModel.setIsExistingUser(false)
-                        }
-                    }
-                }
+                val isExistingUser = !googleAuthViewModel.getIsNewUser().value!!
+                afterAuthCompletes(isExistingUser)
             }
         })
 
     }
 
+    private fun afterAuthCompletes(isExistingUser:Boolean){
+        if (isExistingUser){
+            welcomeActivityViewModel.getLiveUserDataSnapShot().observe(this, Observer {userDataDocSnapShot->
+                val userDataExist = userDataDocSnapShot.exists()
+                if(userDataExist){
+                    welcomeActivityViewModel.addBookInterest(userDataDocSnapShot)
+                    welcomeActivityViewModel.updateUserDeviceType(userDataDocSnapShot)
+
+                    //Notify UI that user data adding to local Db is complete
+                    userAuthViewModel.setIsAddingUser(false)
+                }else{
+                    //Navigate to user form data
+                    userAuthViewModel.setIsExistingUser(false)
+                }
+            })
+        }
+    }
 
     private fun showAnimation(animation: Int = R.raw.loading) {
         layout.lottieAnimView.setAnimation(animation)
@@ -453,16 +388,6 @@ class WelcomeActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun restoreBookmarks(isNewUser: Boolean) {
-        //restore bookmark if user is existing user
-        if (!isNewUser) {
-            val downLoadBookmarksWorker =
-                OneTimeWorkRequestBuilder<DownloadBookmarks>()
-                    .setConstraints(Constraint.getConnected())
-                    .build()
-            worker.enqueue(downLoadBookmarksWorker)
-        }
-    }
 
     private fun getAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
         return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {

@@ -8,13 +8,11 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
-import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.repos.*
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -73,7 +71,7 @@ class BookItemActivityViewModel @Inject constructor(
       publishedBook.value = it
     }
 
-    publishedBooksRepo.getTopThreeRemoteBookReviews(bookId, userId){ userReviews, e->
+    userReviewRepo.getRemoteBookReviews(bookId, userId, limitBy = 3){ userReviews, e->
       this.userReviews.value = userReviews
     }
 

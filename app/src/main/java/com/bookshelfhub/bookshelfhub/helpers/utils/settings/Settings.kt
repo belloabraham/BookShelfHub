@@ -1,16 +1,16 @@
 package com.bookshelfhub.bookshelfhub.helpers.utils.settings
 
-enum class Settings(val KEY:String) {
-    SHOW_CONTINUE_POPUP("show_continue_popup"),
-    LAST_BOOK_RED_TITLE("last_book_red_title"),
-    LAST_BOOK_RED_ISBN("last_book_red_isbn"),
-    LAST_BOOK_PERCENTAGE("last_book_percentage"),
-    NO_OF_TIME_DISMISSED("no_of_time_dismissed"),
+object Settings {
+const val SHOW_CONTINUE_POPUP = "show_continue_popup"
+const val LAST_BOOK_RED_TITLE = "last_book_red_title"
+const val LAST_BOOK_RED_ISBN = "last_book_red_isbn"
+const val LAST_BOOK_PERCENTAGE = "last_book_percentage"
+const val NO_OF_TIME_DISMISSED = "no_of_time_dismissed"
 
-    FLUTTER_ENCRYPTION("flutterEncKey"),
-    FLUTTER_PUBLIC("flutterPublicKey"),
+const val FLUTTER_ENCRYPTION = "flutterEncKey"
+const val FLUTTER_PUBLIC = "flutterPublicKey"
 
-     API_KEYS("api_keys"),
-     FIXER_ENDPOINT("fixerEndpoint"),
-     PERSPECTIVE_API("perspectiveKey")
+const val  API_KEYS = "api_keys"
+const val  FIXER_ENDPOINT = "fixerEndpoint"
+const val  PERSPECTIVE_API = "perspectiveKey"
 }

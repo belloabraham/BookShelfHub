@@ -34,7 +34,7 @@ class UploadNotificationToken @AssistedInject constructor(
 
             try {
                 val task = remoteDataSource.addDataAsync(notificationToken,
-                    RemoteDataFields.USERS.KEY, userAuth.getUserId(), NOTIFICATION_TOKEN).await()
+                    RemoteDataFields.USERS_COLL, userAuth.getUserId(), NOTIFICATION_TOKEN).await()
 
                 task.run {
                     Result.success()

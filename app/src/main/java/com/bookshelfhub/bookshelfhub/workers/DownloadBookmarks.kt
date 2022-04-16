@@ -33,9 +33,9 @@ workerParams
      return   try {
             //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
             val querySnapShot = remoteDataSource.getListOfDataAsync(
-                RemoteDataFields.USERS.KEY,
+                RemoteDataFields.USERS_COLL,
                 userId,
-                RemoteDataFields.BOOKMARKS.KEY
+                RemoteDataFields.BOOKMARKS_COLL
             ).await()
 
             val bookmarks = util.queryToListType(querySnapShot, Bookmark::class.java)

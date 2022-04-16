@@ -1,6 +1,9 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import com.bookshelfhub.bookshelfhub.data.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
@@ -10,6 +13,10 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
+import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,6 +30,8 @@ class MainActivityViewModel @Inject constructor(
     val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth,
     userRepo:UserRepo,
+    private val worker: Worker,
+    private val privateKeysRepo: PrivateKeysRepo,
     bookInterestRepo: BookInterestRepo,
     searchHistoryRepo: SearchHistoryRepo,
     private val referralRepo: ReferralRepo
@@ -42,7 +51,7 @@ class MainActivityViewModel @Inject constructor(
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
 
-    private val referrer = savedState.get<String>(Referrer.ID.KEY)
+    private val referrer = savedState.get<String>(Referrer.ID)
     private val ACTIVE_VIEW_PAGER="active_view_pager"
     private val ACTIVE_PAGE="active_page"
 
@@ -53,6 +62,50 @@ class MainActivityViewModel @Inject constructor(
         user=userRepo.getLiveUser(userId)
         bookInterest = bookInterestRepo.getLiveBookInterest(userId)
         storeSearchHistory = searchHistoryRepo.getLiveStoreSearchHistory(userId)
+
+        getRemotePrivateKeys()
+
+    }
+
+    fun updatedRecommendedBooks(bookInterest: Optional<BookInterest>){
+        if (bookInterest.isPresent && bookInterest.get().added) {
+            setBookInterestNotifNo(0)
+            val recommendedBooksWorker =
+                OneTimeWorkRequestBuilder<RecommendedBooks>()
+                    .build()
+            worker.enqueueUniqueWork(
+                Tag.recommendedBooksWorker,
+                ExistingWorkPolicy.REPLACE,
+                recommendedBooksWorker
+            )
+        }else {
+            setBookInterestNotifNo(1)
+        }
+    }
+
+    private fun getRemotePrivateKeys(){
+        viewModelScope.launch {
+            try {
+                privateKeysRepo.getPrivateKeys(Settings.API_KEYS, ApiKeys::class.java)?.let {
+                    settingsUtil.setString(
+                        Settings.PERSPECTIVE_API,
+                        it.perspectiveKey!!
+                    )
+                    settingsUtil.setString(
+                        Settings.FIXER_ENDPOINT,
+                        it.fixerEndpoint!!
+                    )
+                    settingsUtil.setString(
+                        Settings.FLUTTER_ENCRYPTION,
+                        it.flutterEncKey!!
+                    )
+                    settingsUtil.setString(
+                        Settings.FLUTTER_PUBLIC,
+                        it.flutterPublicKey!!
+                    )
+                }
+            }catch (e:Exception){ }
+        }
     }
 
     fun setActivePage(value:Int){

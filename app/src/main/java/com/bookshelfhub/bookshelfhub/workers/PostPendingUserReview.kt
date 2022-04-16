@@ -57,16 +57,16 @@ class PostPendingUserReview @AssistedInject constructor(
 
                        val dynamicBookAttr =  hashMapOf(
                            //Add to book total review
-                           RemoteDataFields.TOTAL_REVIEWS.KEY to FieldValue.increment(1),
+                           RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(1),
                            //Add userRatingDiff to total ratings that can be + or -
-                           RemoteDataFields.TOTAL_RATINGS.KEY to FieldValue.increment(review.userRating)
+                           RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(review.userRating)
                        )
                         listOfBookAttr.plus(dynamicBookAttr)
                    }
 
                    try {
                        val task = remoteDataSource.updateUserReview(
-                           verifiedReviews, RemoteDataFields.PUBLISHED_BOOKS.KEY, RemoteDataFields.REVIEWS_COLL.KEY, userId, listOfBookAttr).await()
+                           verifiedReviews, RemoteDataFields.PUBLISHED_BOOKS_COLL, RemoteDataFields.REVIEWS_COLL, userId, listOfBookAttr).await()
 
                        task.run {
                            localDb.addUserReviews(verifiedReviews)

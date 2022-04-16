@@ -37,8 +37,8 @@ class UnPublishedBooks @AssistedInject constructor (
        return  try {
             //Get all Published books where published == false
             val querySnapshot =  remoteDataSource.getListOfDataWhereAsync(
-                RemoteDataFields.PUBLISHED_BOOKS.KEY,
-                RemoteDataFields.PUBLISHED.KEY,false,
+                RemoteDataFields.PUBLISHED_BOOKS_COLL,
+                RemoteDataFields.PUBLISHED,false,
             ).await()
 
             val unPublishedBooks =  util.queryToListType(querySnapshot, PublishedBook::class.java)

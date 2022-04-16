@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
-import com.bookshelfhub.bookshelfhub.data.enums.Book
+import com.bookshelfhub.bookshelfhub.data.Book
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -25,7 +25,7 @@ class BookInfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        layout = ActivityBookInfoBinding.inflate(layoutInflater)
+        layout = ActivityBookInfoBinding.inflate (layoutInflater)
         setContentView(layout.root)
 
 
@@ -43,7 +43,7 @@ class BookInfoActivity : AppCompatActivity() {
         navController.popBackStack()
 
         //Set value for the new fragment bundle to receive
-        val bundle = bundleOf(Book.ISBN.KEY to bookInfoActivityViewModel.getIsbn())
+        val bundle = bundleOf(Book.ISBN to bookInfoActivityViewModel.getIsbn())
 
         //Navigate to the new fragment
         navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)
