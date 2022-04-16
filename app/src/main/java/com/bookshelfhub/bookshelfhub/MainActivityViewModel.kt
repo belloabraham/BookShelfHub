@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetRemotePrivateKeysUseCase
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.Tag
@@ -31,7 +32,7 @@ class MainActivityViewModel @Inject constructor(
     val userAuth: IUserAuth,
     userRepo:UserRepo,
     private val worker: Worker,
-    private val privateKeysRepo: PrivateKeysRepo,
+    private val getRemotePrivateKeysUseCase: GetRemotePrivateKeysUseCase,
     bookInterestRepo: BookInterestRepo,
     searchHistoryRepo: SearchHistoryRepo,
     private val referralRepo: ReferralRepo
@@ -63,7 +64,9 @@ class MainActivityViewModel @Inject constructor(
         bookInterest = bookInterestRepo.getLiveBookInterest(userId)
         storeSearchHistory = searchHistoryRepo.getLiveStoreSearchHistory(userId)
 
-        getRemotePrivateKeys()
+        viewModelScope.launch {
+            getRemotePrivateKeysUseCase()
+        }
 
     }
 
@@ -80,31 +83,6 @@ class MainActivityViewModel @Inject constructor(
             )
         }else {
             setBookInterestNotifNo(1)
-        }
-    }
-
-    private fun getRemotePrivateKeys(){
-        viewModelScope.launch {
-            try {
-                privateKeysRepo.getPrivateKeys(Settings.API_KEYS, ApiKeys::class.java)?.let {
-                    settingsUtil.setString(
-                        Settings.PERSPECTIVE_API,
-                        it.perspectiveKey!!
-                    )
-                    settingsUtil.setString(
-                        Settings.FIXER_ENDPOINT,
-                        it.fixerEndpoint!!
-                    )
-                    settingsUtil.setString(
-                        Settings.FLUTTER_ENCRYPTION,
-                        it.flutterEncKey!!
-                    )
-                    settingsUtil.setString(
-                        Settings.FLUTTER_PUBLIC,
-                        it.flutterPublicKey!!
-                    )
-                }
-            }catch (e:Exception){ }
         }
     }
 
