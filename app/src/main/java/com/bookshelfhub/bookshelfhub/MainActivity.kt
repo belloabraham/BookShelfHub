@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.work.*
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
@@ -47,20 +46,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMainBinding
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
-    @Inject
-    lateinit var remoteConfig: IRemoteConfig
-
-    @Inject
-    lateinit var settingsUtil: SettingsUtil
-
-    @Inject
-    lateinit var dynamicLink: IDynamicLink
-
-    @Inject
-    lateinit var connectionUtil: ConnectionUtil
 
     @Inject
     lateinit var userAuth: IUserAuth
+
     private lateinit var inAppUpdate: InAppUpdate
     private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE = 700
     private var referrer: String? = null
@@ -103,17 +92,6 @@ class MainActivity : AppCompatActivity() {
         openReferrerLinkInStore(referrer)
 
         openReferrerLinkInStore(referrer)
-
-        //Pre generate dynamic link before user request on app share to decrease share sheet load time
-        getBookShareReferralLink(userId) {
-            it?.let {
-                val link = it.toString()
-                mainActivityViewModel.setUserReferralLink(link)
-                lifecycleScope.launch(IO) {
-                    settingsUtil.setString(Referrer.REF_LINK, link)
-                }
-            }
-        }
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             //Navigate to a particular tab based on set value
@@ -286,15 +264,6 @@ class MainActivity : AppCompatActivity() {
                 //opened the book that the publisher refer in Book Store
                 startActivity(intent)
             }
-        }
-    }
-
-    private fun getBookShareReferralLink(userId: String, onComplete: (Uri?) -> Unit) {
-        val title = remoteConfig.getString(Social.TITLE)
-        val description = remoteConfig.getString(Social.DESC)
-        val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
-        dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId) {
-            onComplete(it)
         }
     }
 

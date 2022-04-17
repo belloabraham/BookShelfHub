@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub
 import androidx.lifecycle.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import com.bookshelfhub.bookshelfhub.data.models.ApiKeys
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
@@ -14,13 +13,14 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.domain.usecases.GetRemotePrivateKeysUseCase
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,7 +31,9 @@ class MainActivityViewModel @Inject constructor(
     val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth,
     userRepo:UserRepo,
+    private val remoteConfig:IRemoteConfig,
     private val worker: Worker,
+    private val dynamicLink:IDynamicLink,
     private val getRemotePrivateKeysUseCase: GetRemotePrivateKeysUseCase,
     bookInterestRepo: BookInterestRepo,
     searchHistoryRepo: SearchHistoryRepo,
@@ -65,9 +67,24 @@ class MainActivityViewModel @Inject constructor(
         storeSearchHistory = searchHistoryRepo.getLiveStoreSearchHistory(userId)
 
         viewModelScope.launch {
+            getAndSaveAppShareDynamicLink()
             getRemotePrivateKeysUseCase()
         }
 
+    }
+
+    private suspend fun getAndSaveAppShareDynamicLink(){
+            if(settingsUtil.getString(Referrer.REF_LINK) == null){
+                val title = remoteConfig.getString(Social.TITLE)
+                val description = remoteConfig.getString(Social.DESC)
+                val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
+                try {
+                  dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId)?.let {
+                      settingsUtil.setString(Referrer.REF_LINK, it.toString())
+                  }
+                }catch (e:Exception){
+                }
+            }
     }
 
     fun updatedRecommendedBooks(bookInterest: Optional<BookInterest>){
