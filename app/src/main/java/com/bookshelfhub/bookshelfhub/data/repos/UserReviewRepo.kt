@@ -47,7 +47,10 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
         }
     }
 
-    fun getTop3UserReviews(){
+    fun getTop3UserReviewsForBook(){
+
+        remoteDataSource.getListOfDataWhereAsync()
+
     }
 
      suspend fun updateReview(isbn: String, isVerified: Boolean) {

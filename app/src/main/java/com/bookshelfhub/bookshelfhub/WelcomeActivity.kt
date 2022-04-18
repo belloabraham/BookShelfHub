@@ -10,27 +10,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
-import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.helpers.authentication.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.PhoneAuth
-import com.bookshelfhub.bookshelfhub.workers.DownloadBookmarks
 import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
-import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
@@ -257,27 +248,17 @@ class WelcomeActivity : AppCompatActivity() {
 
     }
 
-    override fun onStop() {
-        welcomeActivityViewModel.unsubscribeFromLiveUserData()
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-        welcomeActivityViewModel.unsubscribeFromLiveUserData()
-        super.onDestroy()
-    }
 
     private fun afterAuthCompletes(isExistingUser:Boolean){
         if (isExistingUser){
             lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    welcomeActivityViewModel.getLiveUserDataSnapShot().asFlow()
+                    welcomeActivityViewModel.getRemoteUserDataSnapshot()
+                        .asFlow()
                         .collect{ userDataDocSnapShot->
                             val userDataExist = userDataDocSnapShot.exists()
                             if(userDataExist){
                                 welcomeActivityViewModel.addBookInterest(userDataDocSnapShot)
                                 welcomeActivityViewModel.updateUserDeviceType(userDataDocSnapShot)
-
                                 //Notify UI that user data adding to local Db is complete
                                 userAuthViewModel.setIsAddingUser(false)
                             }else{
@@ -285,7 +266,6 @@ class WelcomeActivity : AppCompatActivity() {
                                 userAuthViewModel.setIsExistingUser(false)
                             }
                         }
-                }
             }
         }
     }

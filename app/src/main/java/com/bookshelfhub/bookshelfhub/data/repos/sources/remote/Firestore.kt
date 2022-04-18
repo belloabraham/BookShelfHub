@@ -65,6 +65,9 @@ import javax.inject.Inject
      }
 
 
+
+
+
      override fun <T: Any> getLiveDataAsync(collection:String, document: String, type:Class<T>,  retry:Boolean, onComplete:
          (data:T)->Unit): ListenerRegistration {
 
@@ -82,7 +85,13 @@ import javax.inject.Inject
      }
 
 
-   // open fun <T: Any> getDataAsync(collection:String, document: String, field:String, type:Class<T>, onComplete:
+     override suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot{
+         return  db.collection(collection)
+             .document(document).get().await()
+
+     }
+
+
    override fun getLiveDataAsync(collection:String, document: String, retry:Boolean, onComplete:
      (data:DocumentSnapshot?, e:Exception?)->Unit): ListenerRegistration {
 

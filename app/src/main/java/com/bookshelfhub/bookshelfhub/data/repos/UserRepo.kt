@@ -24,19 +24,9 @@ class UserRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
     private val worker: Worker) {
 
-    private var userDocSnapShot: MutableLiveData<DocumentSnapshot?> = MutableLiveData()
 
-    private var liveUserDataSubscription: ListenerRegistration? =null
-
-    fun getLiveRemoteUserDataSnapshot(userId:String):LiveData<DocumentSnapshot?>{
-        liveUserDataSubscription = remoteDataSource.getLiveDataAsync(RemoteDataFields.USERS_COLL, userId, retry = true){ docSnapShot, _ ->
-            userDocSnapShot.postValue(docSnapShot)
-        }
-        return userDocSnapShot
-    }
-
-    fun unsubscribeFromLiveUserData(){
-        liveUserDataSubscription?.remove()
+    suspend fun getRemoteUserDataSnapshot(userId:String):DocumentSnapshot{
+       return  remoteDataSource.getDataAsync(RemoteDataFields.USERS_COLL, userId)
     }
 
      suspend fun getUser(userId:String): Optional<User> {

@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub
 import android.os.Build
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
@@ -30,6 +29,7 @@ class WelcomeActivityViewModel @Inject constructor(
 
     private val referrer = savedState.get<String>(Referrer.ID)
     private val userId = userAuth.getUserId()
+    private var userDocSnapShot: MutableLiveData<DocumentSnapshot> = MutableLiveData()
 
     fun getReferrer(): String? {
         return referrer
@@ -71,15 +71,17 @@ class WelcomeActivityViewModel @Inject constructor(
         }catch (e:Exception){}
     }
 
-    fun getLiveUserDataSnapShot(): LiveData<DocumentSnapshot> {
-        val docSnapshot = userRepo.getLiveRemoteUserDataSnapshot(userId)
-        return Transformations.map(docSnapshot) { userDocData ->
-            userDocData
-        }
+     fun getRemoteUserDataSnapshot(): LiveData<DocumentSnapshot> {
+         viewModelScope.launch {
+             try {
+                 val docSnapshot = userRepo.getRemoteUserDataSnapshot(userId)
+                 userDocSnapShot.value = docSnapshot
+             }catch (e:Exception){
+                 return@launch
+             }
+         }
+       return userDocSnapShot
     }
 
-    fun unsubscribeFromLiveUserData(){
-        userRepo.unsubscribeFromLiveUserData()
-    }
 
 }

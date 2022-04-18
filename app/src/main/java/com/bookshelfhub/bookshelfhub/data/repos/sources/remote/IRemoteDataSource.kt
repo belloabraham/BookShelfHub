@@ -9,6 +9,8 @@ import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
 
+    suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot
+
     suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T?
 
     suspend fun <T: Any> getListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>): List<T>
