@@ -227,7 +227,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     intent?.let {
-      val isbn = it.getStringExtra(Book.ISBN)
+      val isbn = it.getStringExtra(Book.ID)
       val name = it.getStringExtra(Book.NAME)
       bookActivityViewModel.loadLiveOrderedBook(isbn!!, name!!)
     }
@@ -271,7 +271,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     with(intent){
       putExtra(Book.NAME,bookActivityViewModel.getBookName())
       putExtra(Fragment.ID, fragmentID)
-      putExtra(Book.ISBN, bookActivityViewModel.getIsbnNo())
+      putExtra(Book.ID, bookActivityViewModel.getIsbnNo())
     }
     startActivity(intent)
   }

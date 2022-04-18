@@ -50,7 +50,7 @@ class BookDownloadService : LifecycleService() {
         val fileName = intent?.getStringExtra(Download.FILE_NAME)
         val downloadId = intent?.getIntExtra(Download.DOWNLOAD_ID, 0)
         val bookName = intent?.getStringExtra(Download.BOOK_NAME)
-        val isbn = intent?.getStringExtra(Book.ISBN.KEY)
+        val isbn = intent?.getStringExtra(Book.ID.KEY)
 
 
 
@@ -268,7 +268,7 @@ class BookDownloadService : LifecycleService() {
 
     private fun getOpenBookActivityIntent(downloadId: Int, isbn: String, bookName: String): PendingIntent? {
         val intent = Intent(this, BookActivity::class.java)
-        intent.putExtra(Book.ISBN.KEY, isbn)
+        intent.putExtra(Book.ID.KEY, isbn)
         intent.putExtra(Book.NAME.KEY, bookName)
 
         return PendingIntent.getService(

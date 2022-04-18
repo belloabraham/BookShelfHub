@@ -9,6 +9,6 @@ import retrofit2.Response
 class WordAnalyzerAPI(private val perspectiveApi: PerspectiveWordAnalyzerAPI) {
 
     suspend fun analyze(postBody: PostBody, key:String):Response<ResponseBody>{
-        return withContext(IO){perspectiveApi.analyze(postBody, key)}
+        return perspectiveApi.analyze(postBody, key)
     }
 }

@@ -33,7 +33,7 @@ class PostUserReview @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        val bookId = inputData.getString(Book.ISBN)!!
+        val bookId = inputData.getString(Book.ID)!!
         val apiKey:String = settingsUtil.getString(Settings.PERSPECTIVE_API)!!
         val userReview  = userReviewRepo.getUserReview(bookId).get()
 

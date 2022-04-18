@@ -9,7 +9,7 @@ interface IDynamicLink {
     suspend fun generateShortLinkAsync(
         socialTitle: String,
         socialDescription: String,
-        imageLink: String,
+        imageUri: String,
         uniqueId: String,
         minimumVCode: Int = 0
      ): Uri?

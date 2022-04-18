@@ -30,7 +30,7 @@ class BookActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     val userId = userAuth.getUserId()
-    private var isbn = savedState.get<String>(Book.ISBN)!!
+    private var isbn = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
     private var liveOrderedBook: LiveData<OrderedBooks> = MutableLiveData()

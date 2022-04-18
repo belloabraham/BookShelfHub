@@ -8,9 +8,7 @@ import retrofit2.Response
 class CurrencyConversionAPI(private val fixerConversionAPI: FixerConversionAPI) {
 
       suspend fun convert(key:String, fromCurrency:String, toCurrency:String, amount:Double):Response<Fixer>{
-          return withContext(IO){
-                fixerConversionAPI.convert(key, fromCurrency, toCurrency, amount)
-          }
-    }
+          return fixerConversionAPI.convert(key, fromCurrency, toCurrency, amount)
+      }
 
 }

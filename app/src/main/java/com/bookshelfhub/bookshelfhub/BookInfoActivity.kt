@@ -43,7 +43,7 @@ class BookInfoActivity : AppCompatActivity() {
         navController.popBackStack()
 
         //Set value for the new fragment bundle to receive
-        val bundle = bundleOf(Book.ISBN to bookInfoActivityViewModel.getIsbn())
+        val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getIsbn())
 
         //Navigate to the new fragment
         navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)

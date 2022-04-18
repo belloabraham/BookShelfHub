@@ -49,7 +49,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
             val intent = Intent(context, BookActivity::class.java)
             with(intent){
                 putExtra(Book.NAME.KEY, title)
-                putExtra(Book.ISBN.KEY, isbn)
+                putExtra(Book.ID.KEY, isbn)
                 putExtra(Book.IS_SEARCH_ITEM.KEY, true)
             }
             context.startActivity(intent)

@@ -204,7 +204,7 @@ class OrderedBooksAdapter(
             intent.putExtra(Download.FILE_NAME, fileName)
             intent.putExtra(Download.DIR_PATH, dirPath)
             intent.putExtra(Download.BOOK_NAME, bookName)
-            intent.putExtra(Book.ISBN.KEY, isbn)
+            intent.putExtra(Book.ID.KEY, isbn)
             context.startService(intent)
         }
 
@@ -212,7 +212,7 @@ class OrderedBooksAdapter(
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
                 putExtra(Book.NAME.KEY, model.name)
-                putExtra(Book.ISBN.KEY, model.bookId)
+                putExtra(Book.ID.KEY, model.bookId)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 activity,

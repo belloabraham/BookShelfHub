@@ -81,9 +81,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     implementation 'androidx.cardview:cardview:1.0.0'
 
-    //Web API
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
     //Android Jetpack
     //--Navigation Component
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -152,7 +149,7 @@ dependencies {
     //Time and Date Util
     implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
     //Web API
-    implementation('com.squareup.okhttp3:okhttp:5.0.0-alpha.3')
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     //Payment
     implementation 'co.paystack.android:paystack:3.1.3'
     implementation 'com.github.Flutterwave.rave-android:rave_presentation:2.1.38'

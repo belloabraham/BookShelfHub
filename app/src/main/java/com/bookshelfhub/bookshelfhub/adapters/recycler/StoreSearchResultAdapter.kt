@@ -27,7 +27,7 @@ class StoreSearchResultAdapter (private val context:Context) {
         val intent = Intent(context, BookItemActivity::class.java)
         with(intent){
             putExtra(Book.NAME.KEY, name)
-            putExtra(Book.ISBN.KEY, isbn)
+            putExtra(Book.ID.KEY, isbn)
             putExtra(Book.AUTHOR.KEY, author)
             putExtra(Book.IS_SEARCH_ITEM.KEY, true)
         }

@@ -1,13 +1,21 @@
 package com.bookshelfhub.bookshelfhub.data.repos
 
 import androidx.lifecycle.LiveData
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.CartItemsDao
+import com.bookshelfhub.bookshelfhub.workers.ClearCart
+import com.bookshelfhub.bookshelfhub.workers.Tag
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class CartItemsRepo @Inject constructor(private val cartItemsDao: CartItemsDao) {
+class CartItemsRepo @Inject constructor(
+    private val cartItemsDao: CartItemsDao,
+    private val worker: Worker) {
 
      suspend fun getListOfCartItems(userId: String): List<Cart> {
         return  withContext(IO){cartItemsDao.getListOfCartItems(userId)}
@@ -23,6 +31,12 @@ class CartItemsRepo @Inject constructor(private val cartItemsDao: CartItemsDao) 
 
      suspend fun addToCart(cart: Cart) {
          withContext(IO){cartItemsDao.addToCart(cart)}
+         // Clear every Items in this cart in the next 15 hours
+         val clearCart =
+             OneTimeWorkRequestBuilder<ClearCart>()
+                 .setInitialDelay( 24, TimeUnit.HOURS)
+                 .build()
+         worker.enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE , clearCart)
     }
 
      suspend fun deleteAllCartItems() {

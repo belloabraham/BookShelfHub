@@ -1,9 +1,12 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.net.Uri
 import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
@@ -11,15 +14,18 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.CurrencyConversionAPI
-import com.bookshelfhub.bookshelfhub.helpers.webapi.FixerConversionAPI
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.PostUserReview
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -31,7 +37,9 @@ class BookItemActivityViewModel @Inject constructor(
   private  val userReviewRepo: UserReviewRepo,
   orderedBooksRepo: OrderedBooksRepo,
   private val cartItemsRepo:CartItemsRepo,
+  private val dynamicLink:IDynamicLink,
   private val currencyConversionAPI: CurrencyConversionAPI,
+  private val worker: Worker,
   referralRepo: ReferralRepo,
   private val searchHistoryRepo: SearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
@@ -48,10 +56,10 @@ class BookItemActivityViewModel @Inject constructor(
   private val userId = userAuth.getUserId()
   private val title = savedState.get<String>(Book.NAME)!!
   private val author = savedState.get<String>(Book.AUTHOR)!!
-  private val bookId = savedState.get<String>(Book.ISBN)!!
+  private val bookId = savedState.get<String>(Book.ID)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM)?:false
   private var conversionEndPoint:String?=null
-
+  private var bookShareUrl: Uri? = null
 
   private val config  = PagingConfig(
     pageSize = 5,
@@ -60,6 +68,9 @@ class BookItemActivityViewModel @Inject constructor(
   )
 
   init {
+
+    generateBookShareLink()
+
     localLivePublishedBook = publishedBooksRepo.getLivePublishedBook(bookId)
 
     publisherReferrer = referralRepo.getLivePubReferrer(bookId)
@@ -88,6 +99,23 @@ class BookItemActivityViewModel @Inject constructor(
     if (isSearchItem){
       addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }
+
+
+  }
+
+  private fun generateBookShareLink(){
+    viewModelScope.launch {
+      val book = publishedBooksRepo.getPublishedBook(bookId).get()
+      try {
+        val bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+      }catch (e:Exception){
+        return@launch
+      }
+    }
+  }
+
+  fun getBookShareLink(): Uri? {
+    return bookShareUrl
   }
 
   suspend fun convertCurrency(fromCurrency:String, toCurrency:String, amount:Double): Response<Fixer> {
@@ -125,9 +153,23 @@ class BookItemActivityViewModel @Inject constructor(
     return localLivePublishedBook
   }
 
-  fun addUserReview(userReview: UserReview){
+  fun addUserReview(userReview: UserReview, diffInRating:Double){
     viewModelScope.launch{
       userReviewRepo.addUserReview(userReview)
+      val isSpamUrlInReview = !userReview.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
+      if (isSpamUrlInReview){
+        //Put data to be passed to the review worker, data of the BOOK_ID(Book that was reviewed) and Rating diff
+        val data = Data.Builder()
+        data.putString(Book.ID, userReview.bookId)
+        data.putDouble(Book.RATING_DIFF, diffInRating)
+
+        val userReviewPostWorker =
+          OneTimeWorkRequestBuilder<PostUserReview>()
+            .setConstraints(Constraint.getConnected())
+            .setInputData(data.build())
+            .build()
+        worker.enqueue(userReviewPostWorker)
+      }
     }
   }
 
@@ -157,7 +199,6 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   override fun onCleared() {
-    userReviewRepo.unsubscribeFromLiveUserReview()
     super.onCleared()
   }
 

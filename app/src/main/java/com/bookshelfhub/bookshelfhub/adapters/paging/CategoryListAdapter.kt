@@ -47,7 +47,7 @@ class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.
                     with(intent){
                         putExtra(Book.NAME.KEY, model.name)
                         putExtra(Book.AUTHOR.KEY, model.author)
-                        putExtra(Book.ISBN.KEY, model.bookId)
+                        putExtra(Book.ID.KEY, model.bookId)
                     }
                     val options = ActivityOptions.makeSceneTransitionAnimation(activity, it, activity.getString(R.string.trans_book))
                     activity.startActivity(intent, options.toBundle())

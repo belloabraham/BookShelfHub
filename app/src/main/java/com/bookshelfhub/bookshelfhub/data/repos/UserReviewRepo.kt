@@ -23,7 +23,6 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
         withContext(IO){userReviewDao.addUserReviews(userReviews)}
     }
 
-
       suspend fun getLiveUserReview(bookId:String, userId:String): LiveData<Optional<UserReview>> {
            if(!userReviewDao.getUserReview(bookId).isPresent){
              getRemoteUserReview(bookId, userId)
@@ -46,11 +45,10 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
                 getRemoteUserReview(bookId, userId)
             }
         }
-
     }
 
-
-
+    fun getTop3UserReviews(){
+    }
 
      suspend fun updateReview(isbn: String, isVerified: Boolean) {
         return withContext(IO){ userReviewDao.updateReview(isbn, isVerified)}

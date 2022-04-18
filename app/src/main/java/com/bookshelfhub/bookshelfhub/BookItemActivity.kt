@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -16,44 +15,30 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
+import com.bookshelfhub.bookshelfhub.data.*
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
-import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.Category
-import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.data.Fragment
-import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.CurrencyConverter
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
-import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.Response
 import java.io.File
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -63,19 +48,10 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var layout:ActivityBookItemBinding
     private val BOOK_REPORT_URL = "book_report_url"
     @Inject
-    lateinit var dynamicLink: IDynamicLink
-    @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
-    lateinit var json: Json
-    @Inject
-    lateinit var worker: Worker
-    @Inject
-    lateinit var settingsUtil: SettingsUtil
-    @Inject
-    lateinit var connectionUtil: ConnectionUtil
-    @Inject
     lateinit var userAuth: IUserAuth
+
     private val bookItemActivityViewModel:BookItemActivityViewModel by viewModels()
     private var userReview: UserReview?=null
     private var isVerifiedReview:Boolean = false
@@ -86,8 +62,7 @@ class BookItemActivity : AppCompatActivity() {
     private var localBook: PublishedBook?=null
     private lateinit var userVisibleCurrency:String
     private lateinit var userId: String
-    private var bookShareUrl: Uri? = null
-    private lateinit var isbn:String
+    private lateinit var bookId:String
     private var orderedBook: Optional<OrderedBooks> = Optional.absent()
     private var cartItems = listOf<Cart>()
 
@@ -99,7 +74,7 @@ class BookItemActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = null
 
-        isbn = bookItemActivityViewModel.getIsbn()
+        bookId = bookItemActivityViewModel.getIsbn()
         visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         userId = userAuth.getUserId()
@@ -126,15 +101,6 @@ class BookItemActivity : AppCompatActivity() {
 
         bookItemActivityViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
             val book = pubBook.get()
-            dynamicLink.generateShortLinkAsync(
-                book.name,
-                book.description,
-                book.coverUrl,
-                userId
-            ){
-                bookShareUrl = it
-            }
-
                 localBook = book
 
                 // This value should remain the same and should not be changed with online book value to avoid surprises for the
@@ -220,13 +186,6 @@ class BookItemActivity : AppCompatActivity() {
                     userVisibleCurrency, priceInUSD
                 )
                 bookItemActivityViewModel.addToCart(cart)
-
-                // Clear every Items in this cart in the next 15 hours
-                val clearCart =
-                    OneTimeWorkRequestBuilder<ClearCart>()
-                        .setInitialDelay(15, TimeUnit.HOURS)
-                        .build()
-                worker.enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE , clearCart)
             }
         }
 
@@ -244,7 +203,7 @@ class BookItemActivity : AppCompatActivity() {
 
 
         layout.aboutBookCard.setOnClickListener {
-            startBookInfoActivity(isbn,  title = localBook!!.name, R.id.bookInfoFragment)
+            startBookInfoActivity(bookId,  title = localBook!!.name, R.id.bookInfoFragment)
         }
 
         layout.similarBooksCard.setOnClickListener {
@@ -254,7 +213,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.allReviewsBtn.setOnClickListener {
-            startBookInfoActivity(isbn, getString(R.string.ratings_reviews), R.id.reviewsFragment)
+            startBookInfoActivity(bookId, getString(R.string.ratings_reviews), R.id.reviewsFragment)
         }
         
         layout.viewCartButton.setOnClickListener {
@@ -284,25 +243,10 @@ class BookItemActivity : AppCompatActivity() {
                 postedBefore = it.postedBefore
             }
 
-            val newReview = UserReview(isbn, review, newRating, userName, isVerifiedReview, userPhotoUri, postedBefore)
+            val newReview = UserReview(bookId, review, newRating, userName, isVerifiedReview, userPhotoUri, postedBefore)
 
             // Save user review to local database
-               bookItemActivityViewModel.addUserReview(newReview)
-
-            // Post user review to the cloud if user review does not contain any form of url
-                if (!review.containsUrl(Regex.WEB_LINK_IN_TEXT)){
-                    //Put data to be passed to the review worker, data of the ISBN(Book that was reviewed) and Rating diff
-                    val data = Data.Builder()
-                    data.putString(Book.ISBN, isbn)
-                    data.putDouble(Book.RATING_DIFF, ratingDiff)
-
-                    val userReviewPostWorker =
-                        OneTimeWorkRequestBuilder<PostUserReview>()
-                            .setConstraints(Constraint.getConnected())
-                            .setInputData(data.build())
-                            .build()
-                    worker.enqueue(userReviewPostWorker)
-                }
+               bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
 
         }
 
@@ -397,8 +341,8 @@ class BookItemActivity : AppCompatActivity() {
 
             val book = orderedBook.get()
             // if book exist on user device make open book button visible
-            val filName = "$isbn.pdf"
-            val dirPath = "${book.pubId}${File.separator}$isbn"
+            val filName = "$bookId.pdf"
+            val dirPath = "${book.pubId}${File.separator}$bookId"
             if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, filName)){
                 showOpenBookButton()
             }else{
@@ -418,7 +362,7 @@ class BookItemActivity : AppCompatActivity() {
 
             // Check if this book is in cart
             val bookInCart = cartItems.filter {
-                it.isbn == isbn
+                it.isbn == bookId
             }
 
             // if this Book is in cart
@@ -454,12 +398,12 @@ class BookItemActivity : AppCompatActivity() {
 
         val rating = book.totalRatings/book.totalReviews
         layout.noRatingTxt.text = "$rating"
-        layout.noOfDownloadsText.text = getNoOfDownloads(book.totalDownloads)
+        layout.noOfDownloadsText.text = Downloads.getHumanReadable(book.totalDownloads)
 
         if(book.price == 0.0){
             // If book  exist on user device
-            val fileName = "$isbn.pdf"
-            val dirPath = "${book.pubId}${File.separator}$isbn"
+            val fileName = "$bookId.pdf"
+            val dirPath = "${book.pubId}${File.separator}$bookId"
             if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, fileName)){
                 showOpenBookButton()
             }else{
@@ -511,54 +455,18 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun shareBook(){
-        bookShareUrl?.let {
+        bookItemActivityViewModel.getBookShareLink()?.let {
             startActivity(ShareUtil.getShareIntent(it.toString(), bookOnlineVersion!!.name))
         }
     }
 
-
-    private fun getNoOfDownloads(value:Long): String {
-        val thousand = 1000
-        val billion = 1000000000
-        val million = 1000000
-        val remainder:Int
-        val main:Long
-
-      val unit:String = when {
-          value>=billion -> {
-              remainder = value.mod(billion)
-              main = (value - remainder)/billion
-              "B"
-          }
-          value >= million -> {
-              remainder = value.mod(million)
-              main = (value - remainder)/million
-              "M"
-          }
-          value >= thousand -> {
-              remainder = value.mod(thousand)
-              main = (value - remainder)/thousand
-              "K"
-          }
-          else -> {
-              main = value
-              ""
-          }
-      }
-        val unitPlus = if (unit.isNotBlank()){
-            "$unit+"
-        }else{
-            unit
-        }
-         return "$main"+unitPlus
-    }
 
     private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
             putExtra(Book.NAME,title)
             putExtra(Fragment.ID, fragmentID)
-            putExtra(Book.ISBN, isbn)
+            putExtra(Book.ID, isbn)
         }
         startActivity(intent)
     }
@@ -612,7 +520,7 @@ class BookItemActivity : AppCompatActivity() {
         val intent = Intent(this, BookActivity::class.java)
         with(intent){
             putExtra(Book.NAME, book.name)
-            putExtra(Book.ISBN, book.bookId)
+            putExtra(Book.ID, book.bookId)
         }
         startActivity(intent)
     }

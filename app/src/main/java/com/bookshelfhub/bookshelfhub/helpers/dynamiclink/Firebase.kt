@@ -22,7 +22,7 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
 
     override suspend fun generateShortLinkAsync(socialTitle:String,
                                         socialDescription:String,
-                                        imageLink:String,
+                                        imageUri:String,
                                         uniqueId: String,
                                         minimumVCode:Int): Uri? {
 
@@ -60,7 +60,7 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
             socialMetaTagParameters {
                 title = socialTitle
                 description = socialDescription
-                imageUrl = Uri.parse(imageLink)
+                imageUrl = Uri.parse(imageUri)
             }
         }.await()
          uri.shortLink}

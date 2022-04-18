@@ -19,7 +19,7 @@ class ReviewsViewModel @Inject constructor(
 
     val userId = userAuth.getUserId()
     private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
-    val bookId = savedState.get<String>(Book.ISBN)!!
+    val bookId = savedState.get<String>(Book.ID)!!
 
     init {
         userReviewRepo.getRemoteBookReviews(bookId, userId, limitBy = 300){  reviews, _->
