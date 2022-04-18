@@ -39,7 +39,7 @@ class UpdatePublishedBooks @AssistedInject constructor (
                RemoteDataFields.PUBLISHED, true,
            ).await()
 
-           val publishedBooks = util.queryToListType(querySnapshot, PublishedBook::class.java)
+           val publishedBooks = util.queryToListOfType(querySnapshot, PublishedBook::class.java)
 
            if(publishedBooks.isNotEmpty()){
                localDb.addAllPubBooks(publishedBooks)

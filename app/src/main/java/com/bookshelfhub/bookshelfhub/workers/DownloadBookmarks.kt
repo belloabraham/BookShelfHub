@@ -38,7 +38,7 @@ workerParams
                 RemoteDataFields.BOOKMARKS_COLL
             ).await()
 
-            val bookmarks = util.queryToListType(querySnapShot, Bookmark::class.java)
+            val bookmarks = util.queryToListOfType(querySnapShot, Bookmark::class.java)
 
             if (bookmarks.isNotEmpty()) {
                 val length = bookmarks.size - 1

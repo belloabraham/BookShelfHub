@@ -1,24 +1,20 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.content.Intent
 import androidx.lifecycle.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
-import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
 import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.domain.usecases.GetRemotePrivateKeysUseCase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
-import com.bookshelfhub.bookshelfhub.workers.Tag
-import com.bookshelfhub.bookshelfhub.workers.Worker
+import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -26,35 +22,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    val remoteDataSource: IRemoteDataSource,
     val savedState: SavedStateHandle,
-    val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth,
-    userRepo:UserRepo,
-    private val remoteConfig:IRemoteConfig,
     private val worker: Worker,
-    private val dynamicLink:IDynamicLink,
-    private val getRemotePrivateKeysUseCase: GetRemotePrivateKeysUseCase,
-    bookInterestRepo: BookInterestRepo,
-    searchHistoryRepo: SearchHistoryRepo,
+    private val remoteConfig: IRemoteConfig,
+    private val dynamicLink: IDynamicLink,
+    private val settingsUtil: SettingsUtil,
+    private val bookInterestRepo: BookInterestRepo,
     private val referralRepo: ReferralRepo
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
     private var isNewMoreTabNotif: MutableLiveData<Boolean> = MutableLiveData()
-    private var user: LiveData<User> = MutableLiveData()
-    private var bookInterest: LiveData<Optional<BookInterest>> = MutableLiveData()
     private var verifyPhoneOrEmailNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
-    private var storeSearchHistory: LiveData<List<StoreSearchHistory>> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
     private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
 
-    private val referrer = savedState.get<String>(Referrer.ID)
+    private val referrerId = savedState.get<String>(Referrer.ID)
     private val ACTIVE_VIEW_PAGER="active_view_pager"
     private val ACTIVE_PAGE="active_page"
 
@@ -62,30 +51,52 @@ class MainActivityViewModel @Inject constructor(
         verifyPhoneOrEmailNotifNo.value=0
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
-        user=userRepo.getLiveUser(userId)
-        bookInterest = bookInterestRepo.getLiveBookInterest(userId)
-        storeSearchHistory = searchHistoryRepo.getLiveStoreSearchHistory(userId)
-
-        viewModelScope.launch {
-            getAndSaveAppShareDynamicLink()
-            getRemotePrivateKeysUseCase()
-        }
+        getRemotePrivateKeys()
 
     }
 
-    private suspend fun getAndSaveAppShareDynamicLink(){
+    fun getCollaboratorReferralBookId(): String? {
+        if(referrerId != null && referrerId.length > userId.length){
+            val collaboratorAndBookId = referrerId.split(Referrer.SEPARATOR)
+            val collaboratorId = collaboratorAndBookId[0]
+            val bookId = collaboratorAndBookId[1]
+            val collaborator = Collaborator(collaboratorId, bookId)
+            //Add publisher ID that refer the user to the database
+            addCollaborator(collaborator)
+            return bookId
+        }
+        return null
+    }
+
+
+     fun getAndSaveAppShareDynamicLink(){
+        viewModelScope.launch {
             if(settingsUtil.getString(Referrer.REF_LINK) == null){
                 val title = remoteConfig.getString(Social.TITLE)
                 val description = remoteConfig.getString(Social.DESC)
                 val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
                 try {
-                  dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId)?.let {
-                      settingsUtil.setString(Referrer.REF_LINK, it.toString())
-                  }
+                    dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId)?.let {
+                        settingsUtil.setString(Referrer.REF_LINK, it.toString())
+                    }
                 }catch (e:Exception){
                 }
             }
+        }
     }
+
+    private fun getRemotePrivateKeys(){
+        val oneTimeRemotePrivateKeyWorker =
+            OneTimeWorkRequestBuilder<GetRemotePrivateKeys>()
+                .setConstraints(Constraint.getConnected())
+                .build()
+        worker.enqueueUniqueWork(
+            Tag.oneTimeRemotePrivateKeyWorker,
+            ExistingWorkPolicy.REPLACE,
+            oneTimeRemotePrivateKeyWorker
+        )
+    }
+
 
     fun updatedRecommendedBooks(bookInterest: Optional<BookInterest>){
         if (bookInterest.isPresent && bookInterest.get().added) {
@@ -120,7 +131,7 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getReferrer(): String? {
-        return referrer
+        return referrerId
     }
 
     fun getIsNightMode():LiveData<Boolean>{
@@ -139,15 +150,13 @@ class MainActivityViewModel @Inject constructor(
         return userReferralLink
     }
 
-    fun addPubReferrer(pubReferrer: PubReferrers){
+    fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {
-            referralRepo.addPubReferrer(pubReferrer)
+            referralRepo.addPubReferrer(collaborator)
         }
     }
 
-    fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
-        return storeSearchHistory
-    }
+
 
     fun getTotalMoreTabNotification(): Int {
         return newAppUpdateNotifNo.value!! + verifyPhoneOrEmailNotifNo.value!! + bookInterestNotifNo.value!!
@@ -175,12 +184,9 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getBookInterest():LiveData<Optional<BookInterest>>{
-        return bookInterest
+        return bookInterestRepo.getLiveBookInterest(userId)
     }
 
-    fun getUserRecord():LiveData<User>{
-        return user
-    }
 
     fun getIsNewMoreTabNotif():LiveData<Boolean>{
         return isNewMoreTabNotif

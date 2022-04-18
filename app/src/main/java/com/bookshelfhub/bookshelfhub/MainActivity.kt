@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -10,32 +9,19 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.work.*
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
-import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.models.entities.PubReferrers
-import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
 import com.bookshelfhub.bookshelfhub.ui.main.StoreFragment
-import com.bookshelfhub.bookshelfhub.workers.RecommendedBooks
-import com.bookshelfhub.bookshelfhub.workers.Tag
-import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
-import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import javax.inject.Inject
 
@@ -46,21 +32,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var layout: ActivityMainBinding
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
-
-    @Inject
-    lateinit var userAuth: IUserAuth
-
     private lateinit var inAppUpdate: InAppUpdate
     private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE = 700
     private var referrer: String? = null
 
-    private lateinit var userId: String
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        userId = userAuth.getUserId()
 
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -89,9 +67,14 @@ class MainActivity : AppCompatActivity() {
         //Get Nullable referral userID or PubIdAndISBN
         referrer = mainActivityViewModel.getReferrer()
 
-        openReferrerLinkInStore(referrer)
 
-        openReferrerLinkInStore(referrer)
+        mainActivityViewModel.getCollaboratorReferralBookId()?.let { bookId->
+            //Open book in book store
+            val intent = Intent(this, BookItemActivity::class.java)
+            intent.putExtra(Referrer.BOOK_REFERRED, bookId)
+            startActivity(intent)
+        }
+
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             //Navigate to a particular tab based on set value
@@ -200,12 +183,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        mainActivityViewModel.getAndSaveAppShareDynamicLink()
+
         //Check if user has a completed download to prompt them for install
         inAppUpdate.checkForDownloadedOrDownloadingUpdate(IN_APP_UPDATE_ACTIVITY_REQUEST_CODE) {
             newUpdateInstallUpdateMessage()
         }
 
         setActiveViewPagerAndPageAfterMainActivityThemeChange()
+
 
     }
 
@@ -245,27 +231,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun openReferrerLinkInStore(referrer: String?) {
-        referrer?.let {
-            //referrer will not be null if referrer exist
-            val ref = it
-            //Check if a publisher refer the user
-            if (ref.length > userId.length) {
-
-                val pubIdAndIsbn = ref.split(Referrer.SEPARATOR)
-                val publisherId = pubIdAndIsbn[0]
-                val isbn = pubIdAndIsbn[1]
-                val intent = Intent(this, BookItemActivity::class.java)
-                intent.putExtra(Referrer.BOOK_REFERRED, isbn)
-                val pubRefRecord = PubReferrers(publisherId, isbn)
-                //Add publisher ID that refer the user to the database
-                mainActivityViewModel.addPubReferrer(pubRefRecord)
-                //opened the book that the publisher refer in Book Store
-                startActivity(intent)
-            }
-        }
-    }
 
     private fun setUpShelfStoreViewPager() {
         val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())

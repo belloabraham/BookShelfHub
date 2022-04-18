@@ -31,8 +31,6 @@ import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
@@ -48,7 +46,6 @@ import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
-import com.bookshelfhub.bookshelfhub.helpers.SecreteKeys
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,10 +69,6 @@ class BookItemActivity : AppCompatActivity() {
     @Inject
     lateinit var json: Json
     @Inject
-    lateinit var remoteDataSource: IRemoteDataSource
-    @Inject
-    lateinit var secreteKeys: SecreteKeys
-    @Inject
     lateinit var worker: Worker
     @Inject
     lateinit var settingsUtil: SettingsUtil
@@ -91,7 +84,7 @@ class BookItemActivity : AppCompatActivity() {
     private var visibilityAnimDuration:Long=0
     private var bookOnlineVersion: PublishedBook? = null
     private var localBook: PublishedBook?=null
-    private lateinit var buyerVisibleCurrency:String
+    private lateinit var userVisibleCurrency:String
     private lateinit var userId: String
     private var bookShareUrl: Uri? = null
     private lateinit var isbn:String
@@ -100,9 +93,6 @@ class BookItemActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Retry getting private API keys if they do not already exist
-        secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
         layout =  ActivityBookItemBinding.inflate(layoutInflater)
         setContentView(layout.root)
@@ -160,7 +150,6 @@ class BookItemActivity : AppCompatActivity() {
         bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
 
             // try getting private AI Keys again if it does not exist as there is an assured network connection by now
-            secreteKeys.loadPrivateKeys(lifecycleScope, this)
 
             bookOnlineVersion =  book
 
@@ -171,7 +160,7 @@ class BookItemActivity : AppCompatActivity() {
 
                 val localCurrency = Currency.getLocalCurrency(countryCode = it)
 
-                buyerVisibleCurrency = if(book.sellerCurrency == localCurrency){
+                userVisibleCurrency = if(book.sellerCurrency == localCurrency){
                     // If seller currency is same as buyer's local return seller currency as buyer's visible currency in the case of a user buying a book that is sold in his or her home country, they don't want to see that book sold in another currency
                     book.sellerCurrency
                 }else{
@@ -180,36 +169,33 @@ class BookItemActivity : AppCompatActivity() {
                 }
 
                 // the book is not free
-                if (book.price >0.0) {
-
+                if (book.price >0.0 ) {
                     showAddToCartButton()
+                    if (userVisibleCurrency != Currency.USD){
+                        lifecycleScope.launch {
+                            try {
+                              val response =  bookItemActivityViewModel.convertCurrency(
+                                    fromCurrency =  userVisibleCurrency,
+                                    toCurrency = Currency.USD, amount = book.price)
 
-                    val conversionEndpoint =  bookItemActivityViewModel.getConversionEndPoint()!!
-                    val conversionSuccessfulCode = 200
-
-                    // If buyerVisibleCurrency is not in USD meaning the buyer is buying book sold in his/her country
-                    if (buyerVisibleCurrency != Currency.USD){
-                        // Then convert the buyerVisibleCurrency to USD (to show side by side with the local currency) as buyer will be charged in USD
-                        val toCurrency = Currency.USD
-                        val queryParameters = CurrencyConverter.getQueryParam(buyerVisibleCurrency, toCurrency, book.price)
-                        convertCurrency(conversionEndpoint, queryParameters){ response ->
-                            if (response.code==conversionSuccessfulCode){
-                                try {
-                                    val result  =  json.fromJson(response.body!!.string(), Fixer::class.java)
-                                    val priceInUSD = result.info.rate*book.price
-                                    showBookDetails(book, buyerVisibleCurrency, priceInUSD)
-                                }catch (e:Exception){
-
+                                if(response.isSuccessful && response.body()!=null){
+                                    val priceInUSD = response.body()!!.info.rate*book.price
+                                    showBookDetails(book, userVisibleCurrency, priceInUSD)
+                                }else{
+                                    return@launch //Retry
                                 }
+                            }catch (e:Exception){
+                                return@launch//Retry
                             }
                         }
                     }else{
                         // buyer is not buying book sold in his or her country
-                        showBookDetails(book, buyerVisibleCurrency)
+                        showBookDetails(book, userVisibleCurrency)
                     }
+
                 }else{
                     // This book is free
-                    showBookDetails(book, buyerVisibleCurrency)
+                    showBookDetails(book, userVisibleCurrency)
                 }
             }
         })
@@ -231,7 +217,7 @@ class BookItemActivity : AppCompatActivity() {
                     book.coverUrl,
                     referrer,
                     book.price,
-                    buyerVisibleCurrency, priceInUSD
+                    userVisibleCurrency, priceInUSD
                 )
                 bookItemActivityViewModel.addToCart(cart)
 
@@ -362,7 +348,6 @@ class BookItemActivity : AppCompatActivity() {
             if (review.isPresent){
                 // Visibility animation between existing review and new review layout
                 AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, visibilityAnimDuration)
-                userReview = review.get()
 
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
@@ -380,20 +365,8 @@ class BookItemActivity : AppCompatActivity() {
 
                     layout.userReviewTxt.isVisible = userReview.review.isNotBlank()
 
-                    if (userPhotoUri!=null){
-                        layout.letterIcon.visibility = GONE
-                        layout.userImage.visibility = VISIBLE
-                        layout.userImage.load(userPhotoUri){
-                            showLetterIcon(userReview.userName)
-                        }
-                    }else{
-                        showLetterIcon(userReview.userName)
-                    }
+                    setUserReviewProfilePhoto(userPhotoUri, userReview.userName)
                 }
-            }else{
-                // If user review is not present bcos user have not yet reviewed this app or user is opening this book on a
-                    //  new device get user review from online database
-                getUserReviewAsync(isbn, userId, visibilityAnimDuration)
             }
 
             // Get how long the user review text length is
@@ -404,6 +377,18 @@ class BookItemActivity : AppCompatActivity() {
             showOrderedBook(orderedBook)
             showCartItems(cartItems)
         })
+    }
+
+    private fun setUserReviewProfilePhoto(userPhotoUri:String?, userName:String){
+        if (userPhotoUri!=null){
+            layout.letterIcon.visibility = GONE
+            layout.userImage.visibility = VISIBLE
+            layout.userImage.load(userPhotoUri){
+                showLetterIcon(userName)
+            }
+        }else{
+            showLetterIcon(userName)
+        }
     }
 
     private fun showOrderedBook(orderedBook: Optional<OrderedBooks>){
@@ -531,30 +516,6 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun getUserReviewAsync(isbn:String, userId:String, animDuration:Long){
-        remoteDataSource.getLiveDataAsync(this, RemoteDataFields.PUBLISHED_BOOKS_COLL,isbn, RemoteDataFields.REVIEWS_COLL, userId){ documentSnapshot, _ ->
-            documentSnapshot?.let {
-                if (it.exists()){
-                    val doc = it.data
-                    val userReview = json.fromAny(doc!!, UserReview::class.java)
-
-                    bookItemActivityViewModel.addUserReview(userReview)
-                }else{
-                    AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
-                }
-            }
-            if (documentSnapshot==null){
-                AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, animDuration)
-            }
-        }
-    }
-
-    private fun convertCurrency(conversionEndpoint:String, queryParameters:String, onComplete:(Response)->Unit){
-        WebApi().get(conversionEndpoint, queryParameters) { response ->
-            onComplete(response)
-        }
-    }
 
     private fun getNoOfDownloads(value:Long): String {
         val thousand = 1000

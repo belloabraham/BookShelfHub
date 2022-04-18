@@ -1,10 +1,10 @@
-package com.bookshelfhub.bookshelfhub.data.models
+package com.bookshelfhub.bookshelfhub.data.models.entities
 
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class ApiKeys(
-    var fixerEndpoint: String? = "",
+    var fixerAccessKey: String? = "",
     var flutterEncKey: String? = "",
     var flutterPublicKey: String? = "",
     var payStackLivePrivateKey: String? = "",

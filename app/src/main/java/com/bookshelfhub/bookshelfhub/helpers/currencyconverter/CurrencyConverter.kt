@@ -7,7 +7,7 @@ object CurrencyConverter{
     private const val andAmountEq = "&amount="
 
     /**
-     * &from="USD"&to="NGN"&amount="1000"
+     * e.g &from="USD"&to="NGN"&amount="1000"
      */
     fun getQueryParam(fromCurrency: String, toCurrency: String, amount:Double): String {
         return "$andFromEq+$fromCurrency+$andToEq+$toCurrency$andAmountEq$amount"

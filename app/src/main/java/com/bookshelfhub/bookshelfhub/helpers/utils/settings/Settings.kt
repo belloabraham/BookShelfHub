@@ -11,6 +11,6 @@ const val FLUTTER_ENCRYPTION = "flutterEncKey"
 const val FLUTTER_PUBLIC = "flutterPublicKey"
 
 const val  API_KEYS = "api_keys"
-const val  FIXER_ENDPOINT = "fixerEndpoint"
+const val  FIXER_ACCESS_KEY = "fixerAccessKey"
 const val  PERSPECTIVE_API = "perspectiveKey"
 }

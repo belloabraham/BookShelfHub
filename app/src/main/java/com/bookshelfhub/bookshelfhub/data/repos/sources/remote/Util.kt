@@ -7,7 +7,7 @@ import javax.inject.Inject
 class Util @Inject constructor(private val json:Json) {
 
 
-     fun <T: Any> queryToListType(querySnapshot: QuerySnapshot?, type:Class<T>): List<T> {
+     fun <T: Any> queryToListOfType(querySnapshot: QuerySnapshot?, type:Class<T>): List<T> {
         var dataList = emptyList<T>()
 
         querySnapshot?.let {

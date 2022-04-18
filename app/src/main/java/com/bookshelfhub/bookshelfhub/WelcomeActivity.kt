@@ -9,8 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
@@ -258,21 +257,36 @@ class WelcomeActivity : AppCompatActivity() {
 
     }
 
+    override fun onStop() {
+        welcomeActivityViewModel.unsubscribeFromLiveUserData()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        welcomeActivityViewModel.unsubscribeFromLiveUserData()
+        super.onDestroy()
+    }
+
     private fun afterAuthCompletes(isExistingUser:Boolean){
         if (isExistingUser){
-            welcomeActivityViewModel.getLiveUserDataSnapShot().observe(this, Observer {userDataDocSnapShot->
-                val userDataExist = userDataDocSnapShot.exists()
-                if(userDataExist){
-                    welcomeActivityViewModel.addBookInterest(userDataDocSnapShot)
-                    welcomeActivityViewModel.updateUserDeviceType(userDataDocSnapShot)
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    welcomeActivityViewModel.getLiveUserDataSnapShot().asFlow()
+                        .collect{ userDataDocSnapShot->
+                            val userDataExist = userDataDocSnapShot.exists()
+                            if(userDataExist){
+                                welcomeActivityViewModel.addBookInterest(userDataDocSnapShot)
+                                welcomeActivityViewModel.updateUserDeviceType(userDataDocSnapShot)
 
-                    //Notify UI that user data adding to local Db is complete
-                    userAuthViewModel.setIsAddingUser(false)
-                }else{
-                    //Navigate to user form data
-                    userAuthViewModel.setIsExistingUser(false)
+                                //Notify UI that user data adding to local Db is complete
+                                userAuthViewModel.setIsAddingUser(false)
+                            }else{
+                                //Navigate to user form data
+                                userAuthViewModel.setIsExistingUser(false)
+                            }
+                        }
                 }
-            })
+            }
         }
     }
 

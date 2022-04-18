@@ -8,7 +8,7 @@ import com.google.firebase.Timestamp
 @Entity(tableName = "UserReview")
 data class UserReview(
     @PrimaryKey
-    val isbn:String,
+    val bookId:String,
     var review:String,
     var userRating:Double,
     var userName:String,

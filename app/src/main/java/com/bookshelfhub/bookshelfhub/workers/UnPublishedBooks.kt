@@ -41,7 +41,7 @@ class UnPublishedBooks @AssistedInject constructor (
                 RemoteDataFields.PUBLISHED,false,
             ).await()
 
-            val unPublishedBooks =  util.queryToListType(querySnapshot, PublishedBook::class.java)
+            val unPublishedBooks =  util.queryToListOfType(querySnapshot, PublishedBook::class.java)
 
             if(unPublishedBooks.isEmpty()){
                 localDb.deleteUnPublishedBookRecords(unPublishedBooks)

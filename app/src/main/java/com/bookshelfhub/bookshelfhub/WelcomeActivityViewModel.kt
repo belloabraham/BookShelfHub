@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub
 import android.os.Build
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
@@ -77,9 +78,8 @@ class WelcomeActivityViewModel @Inject constructor(
         }
     }
 
-    override fun onCleared() {
+    fun unsubscribeFromLiveUserData(){
         userRepo.unsubscribeFromLiveUserData()
-        super.onCleared()
     }
 
 }

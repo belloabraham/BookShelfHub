@@ -3,9 +3,9 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "PubReferrers")
-data class PubReferrers(
+@Entity(tableName= "Collaborator")
+data class Collaborator(
     val pubId:String,
     @PrimaryKey
-    val isbn:String
+    val bookId:String
 )

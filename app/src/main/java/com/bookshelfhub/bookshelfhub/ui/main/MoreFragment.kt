@@ -144,6 +144,7 @@ class MoreFragment : Fragment() {
             startMoreActivity(R.id.profileFragment)
         }
 
+
         signOutBtn.setOnClickListener {
 
              AlertDialogBuilder.with(R.string.sign_out_message, requireActivity())
@@ -266,14 +267,14 @@ class MoreFragment : Fragment() {
 
         mainActivityViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
             if(bookInterest.isPresent && bookInterest.get().added){
-                layout.interestNotifCard.visibility = View.GONE
+                layout.interestNotifCard.visibility = GONE
 
             }else{
                 layout.interestNotifCard.visibility = View.VISIBLE
             }
         })
 
-        mainActivityViewModel.getUserRecord().observe(viewLifecycleOwner, Observer { userRecord ->
+        moreViewModel.getLiveUserRecord().observe(viewLifecycleOwner, Observer { userRecord ->
          /*if (!userRecord.mailOrPhoneVerified){
               if (authType==AuthType.GOOGLE.ID){
                   layout.verifyPhoneCard.visibility = View.VISIBLE

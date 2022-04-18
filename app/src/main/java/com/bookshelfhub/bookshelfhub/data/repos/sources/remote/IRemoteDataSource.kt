@@ -9,7 +9,9 @@ import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
 
-    fun getListOfDataAsync(collection:String, document: String, subCollection: String): Task<QuerySnapshot>
+    suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T?
+
+    suspend fun <T: Any> getListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>): List<T>
 
     fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit ): ListenerRegistration
 
@@ -29,13 +31,16 @@ interface IRemoteDataSource {
         (data:T)->Unit) : ListenerRegistration
 
 
-    fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>, whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String= Book.ISBN, direction: Query.Direction = Query.Direction.DESCENDING, onComplete: (dataList:List<T>, Exception?)->Unit):Task<QuerySnapshot>
+    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction): List<T>
 
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean = true, onComplete:
         (data:DocumentSnapshot?, error: FirebaseFirestoreException?)->Unit) : ListenerRegistration
 
-    fun getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any): Task<QuerySnapshot>
+    fun <T: Any> getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>, onComplete:
+        (data:T?, error:FirebaseFirestoreException?)->Unit): ListenerRegistration
+
+    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>): List<T>
 
 
     fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String):Task<Void>
@@ -54,7 +59,7 @@ interface IRemoteDataSource {
             (data: DocumentSnapshot?, e: Exception?) -> Unit
     ):ListenerRegistration
 
-    fun <T: Any> getLiveListOfDataAsync(Collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration
+    fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration
 
      fun <T : Any> getLiveListOfDataAsync(
          collection: String,

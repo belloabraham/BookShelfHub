@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.SearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
@@ -23,6 +25,7 @@ class StoreViewModel @Inject constructor(
     private val publishedBooksRepo: PublishedBooksRepo,
     cartItemsRepo: CartItemsRepo,
     private val remoteDataSource: IRemoteDataSource,
+    private val  searchHistoryRepo: SearchHistoryRepo,
     val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()
@@ -41,11 +44,13 @@ class StoreViewModel @Inject constructor(
 
 
     init {
+
         loadPublishedBooks()
         totalCartItems = cartItemsRepo.getLiveTotalCartItemsNo(userId)
 
         viewModelScope.launch{
-           publishedBooks = publishedBooksRepo.getPublishedBooks()
+
+            publishedBooks = publishedBooksRepo.getPublishedBooks()
 
             if (publishedBooks.isEmpty()){
                 remoteDataSource.getLiveListOfDataAsync(
@@ -68,6 +73,10 @@ class StoreViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
+        return searchHistoryRepo.getLiveStoreSearchHistory(userId)
     }
 
     fun getPublishedBooks(): List<PublishedBook> {

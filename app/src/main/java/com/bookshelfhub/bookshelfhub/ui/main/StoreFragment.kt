@@ -189,7 +189,7 @@ class StoreFragment : Fragment() {
 
         val bookReqMsg = getString(R.string.cant_find_book)
 
-        mainActivityViewModel.getStoreSearchHistory().observe(viewLifecycleOwner, Observer { searchHistory ->
+        storeViewModel.getStoreSearchHistory().observe(viewLifecycleOwner, Observer { searchHistory ->
             searchListAdapter.submitList(searchHistory)
             storeSearchHistory = searchHistory
         })

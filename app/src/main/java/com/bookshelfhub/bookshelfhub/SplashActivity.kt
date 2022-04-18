@@ -54,13 +54,13 @@ class SplashActivity : AppCompatActivity() {
                         Intent(this@SplashActivity, WelcomeActivity::class.java)
                     }
 
-                    getReferrer(intent)
+                    getCollaboratorOrUserReferralLink(intent)
                 }
             }
         }else{
             // Take user to welcome screen as user is yet to sign in
             val intent = Intent(this, WelcomeActivity::class.java)
-            getReferrer(intent)
+            getCollaboratorOrUserReferralLink(intent)
         }
 
     }
@@ -74,7 +74,7 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun getReferrer(intent:Intent){
+    private fun getCollaboratorOrUserReferralLink(intent:Intent){
         // This App could've been opened by a dynamic link and not the from the app icon
         var referrer:String?=null
 

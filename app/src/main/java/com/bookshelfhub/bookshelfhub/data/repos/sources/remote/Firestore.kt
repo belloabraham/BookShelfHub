@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.data.repos.sources.remote
 
-import android.app.Activity
 import com.bookshelfhub.bookshelfhub.data.models.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -11,6 +10,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
@@ -31,17 +31,8 @@ import javax.inject.Inject
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
                  }
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
                  onComplete(dataList)
              }
         return subscription
@@ -67,25 +58,14 @@ import javax.inject.Inject
                      return@addSnapshotListener
                  }
 
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
                  onComplete(dataList)
              }
          return subscription
      }
 
 
-     override fun <T: Any>  getLiveDataAsync(collection:String, document: String, type:Class<T>,  retry:Boolean, onComplete:
+     override fun <T: Any> getLiveDataAsync(collection:String, document: String, type:Class<T>,  retry:Boolean, onComplete:
          (data:T)->Unit): ListenerRegistration {
 
          val subscription = db.collection(collection).document(document)
@@ -93,12 +73,9 @@ import javax.inject.Inject
                  if (retry && error!=null){
                      return@addSnapshotListener
                  }
-                 documentSnapShot?.let {
-                    if (it.exists()){
-                        val data =  it.data!!
-                        val model = json.fromAny(data, type)
-                        onComplete(model)
-                    }
+
+                 docSnapshotToType(documentSnapShot, type)?.let {
+                     onComplete(it)
                  }
              }
          return subscription
@@ -120,6 +97,28 @@ import javax.inject.Inject
             }
        return subscription
     }
+
+     override suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T? {
+
+         val documentSnapshot = db.collection(collection).document(document).collection(subCollection).document(subDocument).get().await()
+
+        return docSnapshotToType(documentSnapshot, type)
+
+     }
+
+     override fun <T: Any> getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>, onComplete:
+         (data:T?, error:FirebaseFirestoreException?)->Unit): ListenerRegistration {
+
+         val subscription = db.collection(collection).document(document).collection(subCollection).document(subDocument)
+             .addSnapshotListener{ documentSnapShot, error ->
+                 if (shouldRetry && error!=null){
+                     return@addSnapshotListener
+                 }
+                 val data = docSnapshotToType(documentSnapShot, type)
+                 onComplete(data, error)
+             }
+         return subscription
+     }
 
 
      override fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean, onComplete:
@@ -145,27 +144,17 @@ import javax.inject.Inject
                  if (shouldRetry && e!=null){
                      return@addSnapshotListener
                  }
-
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
                  onComplete(dataList)
              }
         return subscription
      }
 
 
-     override fun getListOfDataAsync(collection:String, document: String, subCollection: String): Task<QuerySnapshot> {
-        return  db.collection(collection).document(document).collection(subCollection)
-             .get()
+     override suspend fun <T: Any> getListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>): List<T> {
+         val querySnapShot = db.collection(collection).document(document).collection(subCollection)
+             .get().await()
+        return  querySnapshotToListOfType(querySnapShot, type)
      }
 
 
@@ -180,17 +169,7 @@ import javax.inject.Inject
                      return@addSnapshotListener
                  }
 
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
 
                  runBlocking {
                      onComplete(dataList)
@@ -199,11 +178,11 @@ import javax.inject.Inject
          return subscription
      }
 
-     override fun getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any): Task<QuerySnapshot> {
-         
-       return  db.collection(collection)
+     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>): List<T> {
+       val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
-             .get()
+             .get().await()
+         return querySnapshotToListOfType(querySnapShot, type)
      }
 
 
@@ -221,18 +200,7 @@ import javax.inject.Inject
                      return@addSnapshotListener
                  }
 
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
                  onComplete(dataList)
              }
          return subscription
@@ -249,72 +217,34 @@ import javax.inject.Inject
                      return@addSnapshotListener
                  }
 
-                 var dataList = emptyList<T>()
-                 querySnapShot?.let {
-
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 val data =  doc.data
-                                 dataList = dataList.plus(json.fromAny(data, type))
-                             }
-                         }
-                     }
-                 }
+                 val dataList = querySnapshotToListOfType(querySnapShot, type)
                  onComplete(dataList)
              }
          return subscription
      }
 
 
-     override fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction,  onComplete: (dataList:List<T>, Exception?)->Unit): Task<QuerySnapshot> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction): List<T> {
 
-        // var dataList = emptyList<T>()
-         return db.collection(collection).document(document).collection(subCollection)
+        val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
              .limit(limit)
-             .get()
+             .get().await()
 
-             /*.addOnSuccessListener {
-                     if (!it.isEmpty){
-                         for (doc in it) {
-                             if (doc.exists()){
-                                 if (doc.id!=excludeDocId){
-                                     val data =  doc.data
-                                     dataList = dataList.plus(json.fromAny(data, type))
-                                 }
-                             }
-                         }
-                     }
-                 onComplete(dataList, null)
-             }
-             .addOnFailureListener {
-                 onComplete(dataList, it)
-             }*/
+         return querySnapshotToListOfType(querySnapShot, type)
 
      }
 
 
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>,   shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
+     override fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
 
          val subscription = db.collection(collection).document(document).collection(subCollection)
             .addSnapshotListener{ querySnapShot, error ->
                 if (error!=null && shouldRetry){
                     return@addSnapshotListener
                 }
-                var dataList = emptyList<T>()
-                querySnapShot?.let {
-                    if (!it.isEmpty){
-                        for (doc in it) {
-                            if (doc.exists()){
-                                val data =  doc.data
-                                dataList = dataList.plus(json.fromAny(data, type))
-                            }
-                        }
-                    }
-                }
-
+                val dataList = querySnapshotToListOfType(querySnapShot, type)
                 runBlocking {
                     onComplete(dataList)
                 }
@@ -349,8 +279,8 @@ import javax.inject.Inject
              val length = userReviews.size - 1
 
              for (i in 0..length){
-                 val reviewDocRef = db.collection(collection).document(userReviews[i].isbn).collection(subCollection).document(subDocument)
-                 val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].isbn)
+                 val reviewDocRef = db.collection(collection).document(userReviews[i].bookId).collection(subCollection).document(subDocument)
+                 val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].bookId)
                  batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
                  batch.set(bookDynamicAttrDocRef, bookAttrs[i], SetOptions.merge())
              }
@@ -389,6 +319,32 @@ import javax.inject.Inject
                  batch.delete(docRef)
              }
          }
+
+     }
+
+
+     private fun <T: Any> docSnapshotToType(documentSnapshot: DocumentSnapshot?, type:Class<T>): T?{
+         if(documentSnapshot != null && documentSnapshot.exists()){
+             val data =  documentSnapshot.data!!
+            return  json.fromAny(data, type)
+         }
+         return null
+     }
+
+    private fun <T: Any> querySnapshotToListOfType(querySnapshot: QuerySnapshot?, type:Class<T>): List<T> {
+         var dataList = emptyList<T>()
+
+         querySnapshot?.let {
+             if (!it.isEmpty) {
+                 for (doc in it) {
+                     if (doc.exists()) {
+                         val data = doc.data
+                         dataList = dataList.plus(json.fromAny(data, type))
+                     }
+                 }
+             }
+         }
+         return dataList
 
      }
 
