@@ -17,9 +17,10 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
-import com.bookshelfhub.bookshelfhub.helpers.webapi.CurrencyConversionAPI
+import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.workers.Worker
@@ -118,12 +119,12 @@ class BookItemActivityViewModel @Inject constructor(
 
   private fun generateBookShareLink(){
     viewModelScope.launch {
-      val book = publishedBooksRepo.getPublishedBook(bookId).get()
-      try {
-         bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
-      }catch (e:Exception){
-        return@launch
-      }
+        val book = publishedBooksRepo.getPublishedBook(bookId).get()
+        try {
+          bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+        }catch (e:Exception){
+          return@launch
+        }
     }
   }
 

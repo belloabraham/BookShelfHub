@@ -65,26 +65,6 @@ import javax.inject.Inject
      }
 
 
-
-
-
-     override fun <T: Any> getLiveDataAsync(collection:String, document: String, type:Class<T>,  retry:Boolean, onComplete:
-         (data:T)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection).document(document)
-             .addSnapshotListener { documentSnapShot, error ->
-                 if (retry && error!=null){
-                     return@addSnapshotListener
-                 }
-
-                 docSnapshotToType(documentSnapShot, type)?.let {
-                     onComplete(it)
-                 }
-             }
-         return subscription
-     }
-
-
      override suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot{
          return  db.collection(collection)
              .document(document).get().await()
@@ -96,20 +76,6 @@ import javax.inject.Inject
         return docSnapshotToType(docSnapshot, type)
      }
 
-   override fun getLiveDataAsync(collection:String, document: String, retry:Boolean, onComplete:
-     (data:DocumentSnapshot?, e:Exception?)->Unit): ListenerRegistration {
-
-       val subscription = db.collection(collection)
-            .document(document)
-            .addSnapshotListener{ documentSnapShot, error ->
-
-                if (retry && error!=null){
-                    return@addSnapshotListener
-                }
-                onComplete(documentSnapShot, error)
-            }
-       return subscription
-    }
 
      override suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T? {
 
@@ -119,33 +85,6 @@ import javax.inject.Inject
 
      }
 
-     override fun <T: Any> getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>, onComplete:
-         (data:T?, error:FirebaseFirestoreException?)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .addSnapshotListener{ documentSnapShot, error ->
-                 if (shouldRetry && error!=null){
-                     return@addSnapshotListener
-                 }
-                 val data = docSnapshotToType(documentSnapShot, type)
-                 onComplete(data, error)
-             }
-         return subscription
-     }
-
-
-     override fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean, onComplete:
-         (data:DocumentSnapshot?, error:FirebaseFirestoreException?)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection).document(document).collection(subCollection).document(subDocument)
-             .addSnapshotListener{ documentSnapShot, error ->
-                 if (shouldRetry && error!=null){
-                     return@addSnapshotListener
-                 }
-                     onComplete(documentSnapShot, error)
-             }
-         return subscription
-     }
 
      override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, direction: Query.Direction, orderBy:String, shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit): ListenerRegistration {
 
@@ -164,59 +103,11 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>): List<T> {
-         val querySnapShot = db.collection(collection).document(document).collection(subCollection)
-             .get().await()
-        return  querySnapshotToListOfType(querySnapShot, type)
-     }
-
-
-
-     override fun <T: Any> getLiveListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection)
-             .whereEqualTo(whereKey, whereValue)
-             .addSnapshotListener { querySnapShot, error  ->
-
-                 if (error!=null && shouldRetry){
-                     return@addSnapshotListener
-                 }
-
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-
-                 runBlocking {
-                     onComplete(dataList)
-                 }
-             }
-         return subscription
-     }
-
      override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>): List<T> {
        val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
              .get().await()
          return querySnapshotToListOfType(querySnapShot, type)
-     }
-
-
-     //TODO Sub Collections
-     override fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, orderBy:String, direction: Query.Direction, startAfter:Timestamp, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection)
-             .whereNotEqualTo(downloadUrlKey, null)
-             .whereEqualTo(userIdKey, userId)
-             .orderBy(orderBy, direction)
-             .startAfter(startAfter)
-             .addSnapshotListener{ querySnapShot, e ->
-
-                 if (shouldRetry && e!=null){
-                     return@addSnapshotListener
-                 }
-
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-                 onComplete(dataList)
-             }
-         return subscription
      }
 
 
@@ -263,6 +154,13 @@ import javax.inject.Inject
 
          return querySnapshotToListOfType(querySnapShot, type)
 
+     }
+
+     override suspend fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>): List<T> {
+
+         val querySnapshot = db.collection(collection).document(document).collection(subCollection)
+             .get().await()
+         return   querySnapshotToListOfType(querySnapshot, type)
      }
 
 

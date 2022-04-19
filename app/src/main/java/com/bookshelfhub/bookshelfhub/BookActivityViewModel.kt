@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import android.net.Uri
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
@@ -10,6 +11,8 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,12 +20,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookActivityViewModel @Inject constructor(
-    val remoteDataSource: IRemoteDataSource,
     val userAuth: IUserAuth,
     private val settingsUtil: SettingsUtil,
     val savedState: SavedStateHandle,
+    private val connectionUtil: ConnectionUtil,
     private val orderedBooksRepo: OrderedBooksRepo,
-    publishedBooksRepo: PublishedBooksRepo,
+    private val dynamicLink:IDynamicLink,
+    private val publishedBooksRepo: PublishedBooksRepo,
     private val readHistoryRepo: ReadHistoryRepo,
     private val searchHistoryRepo: SearchHistoryRepo,
     private val bookmarksRepo: BookmarksRepo,
@@ -30,11 +34,13 @@ class BookActivityViewModel @Inject constructor(
 ) : ViewModel() {
 
     val userId = userAuth.getUserId()
-    private var isbn = savedState.get<String>(Book.ID)!!
+    private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
     private var liveOrderedBook: LiveData<OrderedBooks> = MutableLiveData()
     private var readHistory: LiveData<Optional<History>> = MutableLiveData()
+    private var bookShareLink:Uri?=null
+    private lateinit var book:PublishedBook
 
 
     private var livePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
@@ -42,36 +48,26 @@ class BookActivityViewModel @Inject constructor(
 
     init {
 
+
         viewModelScope.launch {
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {
-                readHistory = readHistoryRepo.getLiveReadHistory()
+                readHistory = readHistoryRepo.getLiveReadHistory(0)
             }
+            book = publishedBooksRepo.getPublishedBook(bookId).get()
         }
 
-        livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(isbn)
-        loadLiveOrderedBook(isbn, bookName)
+
+        livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
+        loadLiveOrderedBook(bookId, bookName)
         viewModelScope.launch {
-            orderedBook = orderedBooksRepo.getAnOrderedBook(isbn)
+            orderedBook = orderedBooksRepo.getAnOrderedBook(bookId)
         }
 
-        remoteDataSource.getLiveListOfDataWhereAsync(
-            RemoteDataFields.PUBLISHED_BOOKS_COLL,
-            isbn,
-            RemoteDataFields.VIDEO_LIST,
-            BookVideos::class.java,
-            true
-        ) {
-            if (it.isNotEmpty()) {
-                viewModelScope.launch {
-                    bookVideosRepo.addBookVideos(it)
-                }
-            }
-        }
         if (isSearchItem) {
             addShelfSearchHistory(
                 ShelfSearchHistory(
-                    isbn,
+                    bookId,
                     bookName,
                     userId,
                     DateTimeUtil.getDateTimeAsString()
@@ -80,12 +76,43 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
+     fun getBookVideos(){
+        viewModelScope.launch {
+            if(connectionUtil.isConnected()){
+                try {
+                    val bookVideos =  bookVideosRepo.getRemoteBookVideos(bookId)
+                    if(bookVideos.isNotEmpty()){
+                        bookVideosRepo.addBookVideos(bookVideos)
+                    }
+                }catch (e:Exception){
+                    return@launch
+                }
+            }
+        }
+    }
 
     fun loadLiveOrderedBook(isbn: String, bookName: String) {
         //Re set the value of ISBN as this activity can be opened with FLagUpdateCurrent
-        this.isbn = isbn
+        this.bookId = isbn
         this.bookName = bookName
         liveOrderedBook = orderedBooksRepo.getLiveOrderedBook(isbn)
+    }
+
+    fun generateBookShareLink(){
+        val shouldGenerateBookShareUrl = connectionUtil.isConnected() && bookShareLink ==null
+        viewModelScope.launch {
+            if(shouldGenerateBookShareUrl){
+                try {
+                    bookShareLink = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+                }catch (e:Exception){
+                    return@launch
+                }
+            }
+        }
+    }
+
+    fun getBookShareLink(): Uri? {
+        return bookShareLink
     }
 
     fun getLiveOrderedBook(): LiveData<OrderedBooks> {
@@ -93,7 +120,7 @@ class BookActivityViewModel @Inject constructor(
     }
 
     fun getIsbnNo(): String {
-        return isbn
+        return bookId
     }
 
     fun getBookName(): String {
@@ -102,16 +129,16 @@ class BookActivityViewModel @Inject constructor(
 
     fun deleteFromBookmark(pageNumb: Int) {
         viewModelScope.launch {
-            bookmarksRepo.deleteFromBookmark(pageNumb, isbn)
+            bookmarksRepo.deleteFromBookmark(pageNumb, bookId)
         }
     }
 
     suspend fun getBookmark(currentPage: Int): Optional<Bookmark> {
-        return bookmarksRepo.getBookmark(currentPage, isbn)
+        return bookmarksRepo.getBookmark(currentPage, bookId)
     }
 
     fun addBookmark(pageNumber: Int) {
-        val bookmark = Bookmark(userId, isbn, pageNumber, bookName)
+        val bookmark = Bookmark(userId, bookId, pageNumber, bookName)
         viewModelScope.launch {
             bookmarksRepo.addBookmark(bookmark)
         }
@@ -127,7 +154,7 @@ class BookActivityViewModel @Inject constructor(
 
 
     fun getLiveListOfBookVideos(): LiveData<List<BookVideos>> {
-        return bookVideosRepo.getLiveListOfBookVideos(isbn)
+        return bookVideosRepo.getLiveListOfBookVideos(bookId)
     }
 
     private fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory) {
@@ -147,7 +174,7 @@ class BookActivityViewModel @Inject constructor(
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {
                 val percentage = (currentPage / totalPages) * 100
-                val readHistory = History(isbn, currentPage, percentage, bookName)
+                val readHistory = History(bookId, currentPage, percentage, bookName)
                 readHistoryRepo.addReadHistory(readHistory)
             }
         }

@@ -37,7 +37,6 @@ import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.Fragment
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.room.entities.*
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
 import com.google.android.material.card.MaterialCardView
@@ -58,24 +57,18 @@ import javax.inject.Inject
 class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   @Inject
-  lateinit var userAuth: IUserAuth
+  lateinit var settingsUtil: SettingsUtil
+
   private val bookActivityViewModel: BookActivityViewModel by viewModels()
   private lateinit var layout: ActivityBookBinding
   private lateinit var bottomNavigationLayout: LinearLayout
   private var currentPage:Double = 0.0
   private var totalPages:Double = 0.0
-  @Inject
-  lateinit var dynamicLink: IDynamicLink
-  @Inject
-  lateinit var connectionUtil: ConnectionUtil
-  private var bookShareUrl: Uri? = null
   private var publishedBook: PublishedBook? = null
-  private lateinit var userId:String
   private var videoLink: String? = null
   private var bookVideos = listOf<BookVideos>()
   private val hideHandler = Handler()
-  @Inject
-  lateinit var settingsUtil: SettingsUtil
+
 
 
   @SuppressLint("ClickableViewAccessibility")
@@ -84,7 +77,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     EnableWakeLock(this, lifecycle)
 
-    userId = userAuth.getUserId()
     title = bookActivityViewModel.getBookName()
 
     layout = ActivityBookBinding.inflate(layoutInflater)
@@ -159,23 +151,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     }
 
-    bookActivityViewModel.getLivePublishedBook().observe(this, Observer { book ->
-      book?.let {
-        if(book.isPresent){
-          val pubBook = book.get()
-          publishedBook = pubBook
-          dynamicLink.generateShortLinkAsync(
-            pubBook.name,
-            pubBook.description,
-            pubBook.coverUrl,
-            userId
-          ) {
-            bookShareUrl = it
-          }
-        }
-      }
-      })
-
     bookActivityViewModel.getLiveOrderedBook().observe(this, Observer { orderedBook ->
       loadBook(isDarkMode, orderedBook)
     })
@@ -221,6 +196,12 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
       .enableAnnotationRendering(true)
       .enableSwipe(true)
       .load()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    bookActivityViewModel.generateBookShareLink()
+    bookActivityViewModel.getBookVideos()
   }
 
 
@@ -300,26 +281,13 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   private fun shareBookLink(){
-    if (bookShareUrl!=null){
-      startActivity(ShareUtil.getShareIntent(bookShareUrl.toString(), publishedBook!!.name))
-    }else if (!connectionUtil.isConnected()){
-      showToast(R.string.internet_connection_required)
-    }else if(publishedBook!=null){
-        dynamicLink.generateShortLinkAsync(
-          publishedBook!!.name,
-          publishedBook!!.description,
-          publishedBook!!.coverUrl,
-          userId
-        ){ uri->
-          uri?.let {
-            bookShareUrl = uri
-            startActivity(ShareUtil.getShareIntent(it.toString(), publishedBook!!.name))
-          }
-        }
-    }else{
-      showToast(R.string.unable_to_share_book)
+    val bookShareLink = bookActivityViewModel.getBookShareLink()
+    bookShareLink?.let {
+      startActivity(ShareUtil.getShareIntent(it.toString(), publishedBook!!.name))
     }
-
+    if(bookShareLink==null){
+      showToast(R.string.internet_connection_required)
+    }
   }
 
   override fun onPostCreate(savedInstanceState: Bundle?) {
