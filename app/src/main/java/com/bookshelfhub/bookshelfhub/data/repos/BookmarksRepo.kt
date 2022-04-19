@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.Bookmark
+import com.bookshelfhub.bookshelfhub.data.models.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.BookmarksDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookmarksRepo @Inject constructor(
-    private val bookmarksDao: BookmarksDao, private val worker: Worker, private val remoteDataS: IRemoteDataSource) {
+    private val bookmarksDao: BookmarksDao,
+    private val worker: Worker, private val remoteDataSource: IRemoteDataSource) {
 
 
      suspend fun getBookmarks(deleted: Boolean): List<Bookmark> {
@@ -65,6 +69,19 @@ class BookmarksRepo @Inject constructor(
         deleted: Boolean
     ): List<Bookmark> {
         return  withContext(IO){bookmarksDao.getLocalBookmarks(uploaded, deleted)}
+    }
+
+    suspend fun deleteRemoteBookmarks(list: List<IEntityId>, userId:String): Void {
+       return remoteDataSource.deleteListOfDataAsync(list, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL).await()
+    }
+
+   suspend fun getRemoteBookmarks(userId: String): List<Bookmark> {
+        return remoteDataSource.getListOfDataAsync(
+            RemoteDataFields.USERS_COLL,
+            userId,
+            RemoteDataFields.BOOKMARKS_COLL,
+            Bookmark::class.java
+        )
     }
 
      fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>> {

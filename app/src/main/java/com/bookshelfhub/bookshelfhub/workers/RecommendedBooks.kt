@@ -5,8 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -15,7 +16,8 @@ class RecommendedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val localDb: ILocalDb
+    private val publishedBooksRepo: PublishedBooksRepo,
+    private val bookInterestRepo: BookInterestRepo,
 ) : CoroutineWorker(context,
     workerParams
     ) {
@@ -27,253 +29,254 @@ class RecommendedBooks @AssistedInject constructor (
             return Result.retry()
         }
 
-        val optionalBookInterest = localDb.getBookInterest(userAuth.getUserId())
+        val optionalBookInterest = bookInterestRepo.getBookInterest(userAuth.getUserId())
+        val userAddedBookInterest = optionalBookInterest.isPresent && optionalBookInterest.get().added
 
-       if (optionalBookInterest.isPresent && optionalBookInterest.get().added){
+       if (userAddedBookInterest){
            val bookInterest = optionalBookInterest.get()
 
            val archeology = context.getString(R.string.archeology)
            if (bookInterest.archeologyChecked){
-               localDb.updateRecommendedBooksByTag(archeology)
+               publishedBooksRepo.updateRecommendedBooksByTag(archeology)
            }else{
-               localDb.updateRecommendedBooksByTag(archeology, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(archeology, false)
            }
 
            val business = context.getString(R.string.business_finance)
            if (bookInterest.businessAndFinanceChecked){
-               localDb.updateRecommendedBooksByCategory(business)
+               publishedBooksRepo.updateRecommendedBooksByCategory(business)
            }else{
-               localDb.updateRecommendedBooksByCategory(business, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(business, false)
            }
 
            val artAndCraft = context.getString(R.string.art_craft)
            if (bookInterest.artAndCraftChecked){
-               localDb.updateRecommendedBooksByCategory(artAndCraft)
+               publishedBooksRepo.updateRecommendedBooksByCategory(artAndCraft)
            }else{
-               localDb.updateRecommendedBooksByCategory(artAndCraft, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(artAndCraft, false)
            }
 
            val biography = context.getString(R.string.biography)
            if (bookInterest.biographyChecked){
-               localDb.updateRecommendedBooksByTag(biography)
+               publishedBooksRepo.updateRecommendedBooksByTag(biography)
            }else{
-               localDb.updateRecommendedBooksByTag(biography, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(biography, false)
            }
            val civilEng = context.getString(R.string.civil_eng)
            if (bookInterest.civilEngChecked){
-               localDb.updateRecommendedBooksByTag(civilEng)
+               publishedBooksRepo.updateRecommendedBooksByTag(civilEng)
            }else {
-               localDb.updateRecommendedBooksByTag(civilEng, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(civilEng, false)
            }
 
            val examPrep = context.getString(R.string.preparation)
            if (bookInterest.examAndTestPrepChecked){
-               localDb.updateRecommendedBooksByTag(examPrep)
+               publishedBooksRepo.updateRecommendedBooksByTag(examPrep)
            }else{
-               localDb.updateRecommendedBooksByTag(examPrep, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(examPrep, false)
            }
 
            val fashion = context.getString(R.string.fashion)
            if (bookInterest.fashionChecked){
-               localDb.updateRecommendedBooksByTag(fashion)
+               publishedBooksRepo.updateRecommendedBooksByTag(fashion)
            }else{
-               localDb.updateRecommendedBooksByTag(fashion, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(fashion, false)
            }
 
            val history = context.getString(R.string.history)
            if (bookInterest.historyChecked){
-               localDb.updateRecommendedBooksByCategory(history)
+               publishedBooksRepo.updateRecommendedBooksByCategory(history)
            }else{
-               localDb.updateRecommendedBooksByCategory(history, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(history, false)
            }
 
            val comic = context.getString(R.string.comic)
            if (bookInterest.comicChecked){
-               localDb.updateRecommendedBooksByCategory(comic)
+               publishedBooksRepo.updateRecommendedBooksByCategory(comic)
            }else{
-               localDb.updateRecommendedBooksByCategory(comic, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(comic, false)
            }
 
            val travel = context.getString(R.string.travel)
            if (bookInterest.travelChecked){
-               localDb.updateRecommendedBooksByCategory(travel)
+               publishedBooksRepo.updateRecommendedBooksByCategory(travel)
            }else{
-               localDb.updateRecommendedBooksByCategory(travel, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(travel, false)
            }
 
            val scienceTech = context.getString(R.string.science_technology)
            if (bookInterest.scienceAndTechnologyChecked){
-               localDb.updateRecommendedBooksByCategory(scienceTech)
+               publishedBooksRepo.updateRecommendedBooksByCategory(scienceTech)
            }else{
-               localDb.updateRecommendedBooksByCategory(scienceTech, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(scienceTech, false)
            }
 
            val howToManuals = context.getString(R.string.manuals)
            if (bookInterest.howToAndManualsChecked){
-               localDb.updateRecommendedBooksByCategory(howToManuals)
+               publishedBooksRepo.updateRecommendedBooksByCategory(howToManuals)
            }else{
-               localDb.updateRecommendedBooksByCategory(howToManuals, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(howToManuals, false)
            }
 
            val healthFitness = context.getString(R.string.health_fitness)
            if (bookInterest.healthAndFitnessChecked){
-               localDb.updateRecommendedBooksByTag(healthFitness)
+               publishedBooksRepo.updateRecommendedBooksByTag(healthFitness)
            }else{
-               localDb.updateRecommendedBooksByTag(healthFitness, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(healthFitness, false)
            }
 
            val poetry = context.getString(R.string.poetry)
            if (bookInterest.poetryChecked){
-               localDb.updateRecommendedBooksByCategory(poetry)
+               publishedBooksRepo.updateRecommendedBooksByCategory(poetry)
            }else{
-               localDb.updateRecommendedBooksByCategory(poetry, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(poetry, false)
            }
 
            val law = context.getString(R.string.law)
            if (bookInterest.lawChecked){
-               localDb.updateRecommendedBooksByCategory(law)
+               publishedBooksRepo.updateRecommendedBooksByCategory(law)
            }else{
-               localDb.updateRecommendedBooksByCategory(law, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(law, false)
            }
 
            val music = context.getString(R.string.music)
            if (bookInterest.musicChecked){
-               localDb.updateRecommendedBooksByTag(music)
+               publishedBooksRepo.updateRecommendedBooksByTag(music)
            }else{
-               localDb.updateRecommendedBooksByTag(music, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(music, false)
            }
 
            val fiction = context.getString(R.string.fiction)
            if (bookInterest.fictionChecked){
-               localDb.updateRecommendedBooksByCategory(fiction)
+               publishedBooksRepo.updateRecommendedBooksByCategory(fiction)
            }else {
-               localDb.updateRecommendedBooksByCategory(fiction, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(fiction, false)
            }
 
            val langAndRef = context.getString(R.string.languages_reference)
            if (bookInterest.languagesAndReferenceChecked){
-               localDb.updateRecommendedBooksByCategory(langAndRef)
+               publishedBooksRepo.updateRecommendedBooksByCategory(langAndRef)
            }else {
-               localDb.updateRecommendedBooksByCategory(langAndRef, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(langAndRef, false)
             }
 
            val news = context.getString(R.string.news)
            if (bookInterest.newsChecked){
-               localDb.updateRecommendedBooksByCategory(news)
+               publishedBooksRepo.updateRecommendedBooksByCategory(news)
            }else {
-               localDb.updateRecommendedBooksByCategory(news, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(news, false)
            }
 
            val mathsAndEng = context.getString(R.string.engineering_mathematics)
            if (bookInterest.mathsAndEngineeringChecked){
-               localDb.updateRecommendedBooksByTag(mathsAndEng)
+               publishedBooksRepo.updateRecommendedBooksByTag(mathsAndEng)
            }else {
-               localDb.updateRecommendedBooksByTag(mathsAndEng, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(mathsAndEng, false)
            }
 
            val dataAnalysis = context.getString(R.string.data_analysis)
             if (bookInterest.dataAnalysisChecked){
-               localDb.updateRecommendedBooksByTag(dataAnalysis)
+               publishedBooksRepo.updateRecommendedBooksByTag(dataAnalysis)
            }else {
-               localDb.updateRecommendedBooksByTag(dataAnalysis, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(dataAnalysis, false)
             }
 
            val education = context.getString(R.string.education)
             if (bookInterest.educationChecked){
-               localDb.updateRecommendedBooksByCategory(education)
+               publishedBooksRepo.updateRecommendedBooksByCategory(education)
            }else {
-               localDb.updateRecommendedBooksByCategory(education, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(education, false)
             }
 
            val compProg = context.getString(R.string.computer_programming)
            if (bookInterest.computerProgrammingChecked){
-               localDb.updateRecommendedBooksByTag(compProg)
+               publishedBooksRepo.updateRecommendedBooksByTag(compProg)
            }else {
-               localDb.updateRecommendedBooksByTag(compProg, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(compProg, false)
            }
 
            val transportation = context.getString(R.string.transportation)
            if (bookInterest.transportationChecked){
-               localDb.updateRecommendedBooksByTag(transportation)
+               publishedBooksRepo.updateRecommendedBooksByTag(transportation)
            }else {
-               localDb.updateRecommendedBooksByTag(transportation, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(transportation, false)
            }
 
            val literature = context.getString(R.string.literature)
            if (bookInterest.literatureChecked){
-               localDb.updateRecommendedBooksByTag(literature)
+               publishedBooksRepo.updateRecommendedBooksByTag(literature)
            }else {
-               localDb.updateRecommendedBooksByTag(literature, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(literature, false)
            }
 
            val novel = context.getString(R.string.novel)
             if (bookInterest.novelChecked){
-               localDb.updateRecommendedBooksByTag(novel)
+               publishedBooksRepo.updateRecommendedBooksByTag(novel)
            }else {
-               localDb.updateRecommendedBooksByTag(novel, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(novel, false)
            }
 
            val cookBooks = context.getString(R.string.cook_books)
            if (bookInterest.cookBooksChecked){
-               localDb.updateRecommendedBooksByCategory(cookBooks)
+               publishedBooksRepo.updateRecommendedBooksByCategory(cookBooks)
            }else {
-               localDb.updateRecommendedBooksByCategory(cookBooks, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(cookBooks, false)
             }
 
            val politics = context.getString(R.string.politics)
            if (bookInterest.politicsChecked){
-               localDb.updateRecommendedBooksByCategory(politics)
+               publishedBooksRepo.updateRecommendedBooksByCategory(politics)
            }else {
-               localDb.updateRecommendedBooksByCategory(politics, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(politics, false)
            }
 
            val psychology = context.getString(R.string.psychology)
            if (bookInterest.psychologyChecked){
-               localDb.updateRecommendedBooksByTag(psychology)
+               publishedBooksRepo.updateRecommendedBooksByTag(psychology)
            }else {
-               localDb.updateRecommendedBooksByTag(psychology, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(psychology, false)
            }
 
            val humour = context.getString(R.string.humour)
            if (bookInterest.humourChecked){
-               localDb.updateRecommendedBooksByTag(humour)
+               publishedBooksRepo.updateRecommendedBooksByTag(humour)
            }else {
-               localDb.updateRecommendedBooksByTag(humour, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(humour, false)
            }
 
            val islam = context.getString(R.string.islam)
            if (bookInterest.islamChecked){
-               localDb.updateRecommendedBooksByTag(islam)
+               publishedBooksRepo.updateRecommendedBooksByTag(islam)
            }else {
-               localDb.updateRecommendedBooksByTag(islam, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(islam, false)
            }
 
            val christianity = context.getString(R.string.christianity)
             if(bookInterest.christianityChecked){
-               localDb.updateRecommendedBooksByTag(christianity)
+               publishedBooksRepo.updateRecommendedBooksByTag(christianity)
            }else {
-               localDb.updateRecommendedBooksByTag(christianity, false)
+               publishedBooksRepo.updateRecommendedBooksByTag(christianity, false)
            }
 
            val sport = context.getString(R.string.sport)
            if(bookInterest.sportChecked){
-               localDb.updateRecommendedBooksByCategory(sport)
+               publishedBooksRepo.updateRecommendedBooksByCategory(sport)
            }else {
-               localDb.updateRecommendedBooksByCategory(sport, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(sport, false)
            }
 
            val entertainment = context.getString(R.string.entertainment)
            if(bookInterest.entertainmentChecked){
-               localDb.updateRecommendedBooksByCategory(entertainment)
+               publishedBooksRepo.updateRecommendedBooksByCategory(entertainment)
            }else{
-               localDb.updateRecommendedBooksByCategory(entertainment, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(entertainment, false)
            }
 
            val religion = context.getString(R.string.religion)
            if (bookInterest.religionChecked && !bookInterest.islamChecked && !bookInterest.christianityChecked){
-               localDb.updateRecommendedBooksByCategory(religion)
+               publishedBooksRepo.updateRecommendedBooksByCategory(religion)
            }else if (!bookInterest.religionChecked){
-            localDb.updateRecommendedBooksByCategory(religion, false)
+            publishedBooksRepo.updateRecommendedBooksByCategory(religion, false)
            }
 
         }

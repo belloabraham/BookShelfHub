@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
+import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -12,13 +12,13 @@ import dagger.assisted.AssistedInject
 class ClearCart @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb,
+    private val cartItemsRepo: CartItemsRepo,
 ) : CoroutineWorker(context,
     workerParams
 ) {
 
     override suspend fun doWork(): Result {
-       localDb.deleteAllCartItems()
+        cartItemsRepo.deleteAllCartItems()
         return Result.success()
     }
 }

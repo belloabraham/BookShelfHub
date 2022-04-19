@@ -4,60 +4,61 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.data.repos.BookmarksRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.tasks.await
 
 @HiltWorker
 class DeleteBookmarks @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb, private val remoteDataSource: IRemoteDataSource, private val userAuth: IUserAuth
+    private val remoteDataSource: IRemoteDataSource,
+    private val bookmarksRepo: BookmarksRepo,
+    private val userAuth: IUserAuth
 ): CoroutineWorker(context,
 workerParams
 ){
     override suspend fun doWork(): Result {
 
-        if (!userAuth.getIsUserAuthenticated()){
+        val userIsNotAuthenticated  = !userAuth.getIsUserAuthenticated()
+        if (userIsNotAuthenticated){
             return Result.retry()
         }
 
         val userId = userAuth.getUserId()
 
-        //Get locally deleted bookmarks
-        val localListOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = false)
+        removeAllLocallyDeletedBookmarks()
 
-        //Remove theme locally
-        if (localListOfDeletedBookmarks.isNotEmpty()){
-            localDb.deleteBookmarks(localListOfDeletedBookmarks)
-        }
+        //Get bookmarks that was uploaded to the cloud but are now deleted locally
+        val listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks  = bookmarksRepo.getDeletedBookmarks(deleted = true, uploaded = true)
 
-        //Get locally deleted bookmarks that are already on the cloud
-        val listOfDeletedBookmarks  = localDb.getDeletedBookmarks(deleted = true, uploaded = true)
 
      return  try {
-            if (listOfDeletedBookmarks.isNotEmpty()){
-                //Delete them on the cloud using this path user/userId/bookmarks/id
-              val task = remoteDataSource.deleteListOfDataAsync(listOfDeletedBookmarks, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL).await()
-
-                task.run {
-                    localDb.deleteBookmarks(listOfDeletedBookmarks)
-                    Result.success()
-                }
-
-            }else{
-                Result.success()
+            if (listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks.isNotEmpty()){
+                //Delete them from the cloud
+                bookmarksRepo.deleteRemoteBookmarks(
+                    listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks,
+                    userId)
+                //Then delete them locally
+                bookmarksRepo.deleteBookmarks(listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks)
             }
+
+            Result.success()
+
         }catch (e:Exception){
             Logger.log("Worker:DeleteBookmarks", e)
          Result.retry()
         }
 
+    }
 
+    private suspend fun removeAllLocallyDeletedBookmarks(){
+        val listOfLocallyDeletedBookmarks  = bookmarksRepo.getDeletedBookmarks(deleted = true, uploaded = false)
+        if (listOfLocallyDeletedBookmarks.isNotEmpty()){
+            bookmarksRepo.deleteBookmarks(listOfLocallyDeletedBookmarks)
+        }
     }
 
 }

@@ -8,9 +8,8 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
+import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
@@ -20,8 +19,7 @@ class UnPublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val util: Util,
-    private val localDb: ILocalDb,
+    private val publishedBooksRepo: PublishedBooksRepo,
     private val remoteDataSource: IRemoteDataSource
 ) : CoroutineWorker(context,
     workerParams
@@ -29,26 +27,17 @@ class UnPublishedBooks @AssistedInject constructor (
 
     override suspend fun doWork(): Result {
 
-        if (!userAuth.getIsUserAuthenticated()){
+        val userNotAuthenticated = !userAuth.getIsUserAuthenticated()
+        if (userNotAuthenticated){
             return Result.retry()
         }
 
-
        return  try {
-            //Get all Published books where published == false
-            val querySnapshot =  remoteDataSource.getListOfDataWhereAsync(
-                RemoteDataFields.PUBLISHED_BOOKS_COLL,
-                RemoteDataFields.PUBLISHED,false,
-            ).await()
-
-            val unPublishedBooks =  util.queryToListOfType(querySnapshot, PublishedBook::class.java)
-
+            val unPublishedBooks =  publishedBooksRepo.getListOfRemoteUnpublishedBooks()
             if(unPublishedBooks.isEmpty()){
-                localDb.deleteUnPublishedBookRecords(unPublishedBooks)
+                publishedBooksRepo.deleteUnPublishedBookRecords(unPublishedBooks)
             }
-
             Result.success()
-
         }catch (e:Exception){
            Logger.log("Worker:UnPublishedBooks", e)
            Result.retry()

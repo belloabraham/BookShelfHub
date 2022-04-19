@@ -25,16 +25,25 @@ class PublishedBooksRepo @Inject constructor(
             PublishedBook::class.java)
     }
 
+    suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
+        return remoteDataSource.getListOfDataWhereAsync(
+                RemoteDataFields.PUBLISHED_BOOKS_COLL,
+                RemoteDataFields.PUBLISHED,
+                false,
+                PublishedBook::class.java
+            )
+    }
+
      suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {
 
         return withContext(IO){publishedBooksDao.getPublishedBook(isbn)}
     }
 
-     suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
+     suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean=true){
          withContext(IO){publishedBooksDao.updateRecommendedBooksByCategory(category, isRecommended)}
     }
 
-     suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean){
+     suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean=true){
          withContext(IO){publishedBooksDao.updateRecommendedBooksByTag(tag,isRecommended)}
     }
 

@@ -7,8 +7,10 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.UserReviewDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.google.android.gms.tasks.Task
 import com.google.common.base.Optional
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.remoteconfig.internal.Code
@@ -17,7 +19,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDao, private val remoteDataSource: IRemoteDataSource) {
+class UserReviewRepo @Inject constructor(
+    private val userReviewDao: UserReviewDao,
+    private val remoteDataSource: IRemoteDataSource) {
 
      suspend fun addUserReviews(userReviews: List<UserReview>) {
         withContext(IO){userReviewDao.addUserReviews(userReviews)}
@@ -29,6 +33,33 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
           }
          return userReviewDao.getOptionalLiveUserReview(bookId)
     }
+
+    suspend fun updateRemoteUserReview(
+        userReview: UserReview,
+        bookUpdatedValues: HashMap<String, FieldValue>?,
+        bookId: String,
+        userId: String): Void? {
+        return remoteDataSource.updateUserReview(
+            bookUpdatedValues,
+            userReview,
+            RemoteDataFields.PUBLISHED_BOOKS_COLL,
+            bookId,
+            RemoteDataFields.REVIEWS_COLL,
+            userId)
+    }
+
+   suspend fun updateRemoteUserReviews(
+       userReviews: List<UserReview>,
+       bookUpdatedValues: List<HashMap<String, FieldValue>>,
+       userId: String): Void? {
+      return remoteDataSource.updateUserReviews(
+           userReviews,
+           RemoteDataFields.PUBLISHED_BOOKS_COLL,
+           RemoteDataFields.REVIEWS_COLL,
+           userId,
+           bookUpdatedValues
+       )
+   }
 
     private var remoteUserRetryInterval:Long = 1
     private val maxNoOfRetires = 5_000

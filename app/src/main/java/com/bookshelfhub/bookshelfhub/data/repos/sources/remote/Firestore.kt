@@ -180,7 +180,7 @@ import javax.inject.Inject
     }
 
 
-     override fun updateUserReview(bookAttr: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Task<Void> {
+     override suspend fun updateUserReview(bookUpdatedValues: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Void? {
 
          return db.runBatch { batch->
              val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
@@ -192,26 +192,25 @@ import javax.inject.Inject
 
              batch.set(reviewDocRef, userReview)
              batch.set(reviewDocRef, reviewDate, SetOptions.merge())
-             bookAttr?.let {
+             bookUpdatedValues?.let {
                  batch.set(bookDynamicAttrDocRef, it, SetOptions.merge())
              }
-         }
+         }.await()
 
      }
 
 
-     override fun updateUserReview(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookAttrs: List<HashMap<String, FieldValue>>): Task<Void> {
+     override suspend fun updateUserReviews(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookUpdatedValues: List<HashMap<String, FieldValue>>): Void? {
 
        return  db.runBatch { batch->
              val length = userReviews.size - 1
-
              for (i in 0..length){
                  val reviewDocRef = db.collection(collection).document(userReviews[i].bookId).collection(subCollection).document(subDocument)
                  val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].bookId)
                  batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
-                 batch.set(bookDynamicAttrDocRef, bookAttrs[i], SetOptions.merge())
+                 batch.set(bookDynamicAttrDocRef, bookUpdatedValues[i], SetOptions.merge())
              }
-         }
+         }.await()
 
      }
 
