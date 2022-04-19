@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginHorizontal="@dimen/size_16"
-    android:paddingVertical="@dimen/size_25"
+    android:paddingTop="@dimen/size_25"
+    android:paddingBottom="@dimen/size_25"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
     tools:context=".ui.welcome.UserInfoFragment">
@@ -21,15 +22,29 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/nameEditTxtLayout"
+        android:id="@+id/firstNameEditTxtLayout"
         android:layout_marginVertical="@dimen/size_16"
         style="@style/Widget.Design.TextInputLayout">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/nameEditTxt"
+            android:id="@+id/firstNameEditTxt"
             android:inputType="text"
-            android:hint="@string/first_last_name" />
+            android:hint="@string/first_name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lastNameEditTxtLayout"
+        android:layout_marginVertical="@dimen/size_16"
+        style="@style/Widget.Design.TextInputLayout">
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/latsNameEditTxt"
+            android:inputType="text"
+            android:hint="@string/last_name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout

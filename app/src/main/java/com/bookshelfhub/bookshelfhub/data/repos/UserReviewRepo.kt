@@ -30,7 +30,8 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
          return userReviewDao.getOptionalLiveUserReview(bookId)
     }
 
-    var remoteUserRetryInterval:Long = 1
+    private var remoteUserRetryInterval:Long = 1
+    private val maxNoOfRetires = 5_000
     private suspend fun getRemoteUserReview(bookId:String, userId:String){
         try {
             val userReview = remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,bookId, RemoteDataFields.REVIEWS_COLL, userId, true, UserReview::class.java)
@@ -39,7 +40,7 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
             }
             remoteUserRetryInterval = 1
         }catch (e:Exception){
-            if(remoteUserRetryInterval < Config.MAX_NETWORK_RETRIES){
+            if(remoteUserRetryInterval < maxNoOfRetires){
                 delay(200*remoteUserRetryInterval)
                 remoteUserRetryInterval++
                 getRemoteUserReview(bookId, userId)
@@ -47,10 +48,11 @@ class UserReviewRepo @Inject constructor(private val userReviewDao: UserReviewDa
         }
     }
 
-    fun getTop3UserReviewsForBook(){
-
-        remoteDataSource.getListOfDataWhereAsync()
-
+    suspend  fun getListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {
+       return remoteDataSource.getListOfDataWhereAsync(
+            RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
+            RemoteDataFields.REVIEWS_COLL, UserReview::class.java,
+            RemoteDataFields.VERIFIED, whereValue = true, limit, excludedDocId)
     }
 
      suspend fun updateReview(isbn: String, isVerified: Boolean) {

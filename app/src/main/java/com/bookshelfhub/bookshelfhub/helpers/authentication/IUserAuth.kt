@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.authentication
 
 interface IUserAuth {
+     suspend fun updateDisplayName(name:String)
      fun getPhotoUrl(): String?
      fun getIsUserAuthenticated(): Boolean
      fun getUserId(): String

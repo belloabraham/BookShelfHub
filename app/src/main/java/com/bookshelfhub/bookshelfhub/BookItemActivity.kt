@@ -46,7 +46,6 @@ import javax.inject.Inject
 class BookItemActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookItemBinding
-    private val BOOK_REPORT_URL = "book_report_url"
     @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
@@ -148,10 +147,10 @@ class BookItemActivity : AppCompatActivity() {
                                     val priceInUSD = response.body()!!.info.rate*book.price
                                     showBookDetails(book, userVisibleCurrency, priceInUSD)
                                 }else{
-                                    return@launch //Retry
+                                    return@launch
                                 }
                             }catch (e:Exception){
-                                return@launch//Retry
+                                return@launch
                             }
                         }
                     }else{
@@ -232,7 +231,7 @@ class BookItemActivity : AppCompatActivity() {
             // Get all userReview Data
             val review = layout.userReviewEditText.text.toString()
             val newRating = layout.ratingBar.rating.toDouble()
-            val userName = userAuth.getName()!!
+            val userName = bookItemActivityViewModel.getUser().fistName
 
             // difference in user rating from before compared to now
             var ratingDiff = 0.0
@@ -274,7 +273,7 @@ class BookItemActivity : AppCompatActivity() {
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, visibilityAnimDuration)
         }
 
-        bookItemActivityViewModel.getTopThreeOnlineUserReviews().observe(this, Observer { reviews ->
+        bookItemActivityViewModel.getTwoUserReviewsForBook().observe(this, Observer { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.ratingsAndReviewLayout.visibility = VISIBLE
@@ -501,7 +500,7 @@ class BookItemActivity : AppCompatActivity() {
         // User can report this book for anything, like a stolen copyrighted content or so
         if(item.itemId == R.id.reportBookSubMenu){
 
-            val url = remoteConfig.getString(BOOK_REPORT_URL)
+            val url = remoteConfig.getString(Config.BOOK_REPORT_URL)
             val intent = Intent(this, WebViewActivity::class.java)
             with(intent){
                 putExtra(WebView.TITLE, getString(R.string.report_book))

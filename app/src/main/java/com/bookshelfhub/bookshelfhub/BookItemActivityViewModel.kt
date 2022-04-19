@@ -17,6 +17,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -38,6 +39,7 @@ class BookItemActivityViewModel @Inject constructor(
   orderedBooksRepo: OrderedBooksRepo,
   private val cartItemsRepo:CartItemsRepo,
   private val dynamicLink:IDynamicLink,
+  private val userRepo: UserRepo,
   private val currencyConversionAPI: CurrencyConversionAPI,
   private val worker: Worker,
   referralRepo: ReferralRepo,
@@ -46,11 +48,12 @@ class BookItemActivityViewModel @Inject constructor(
 
   private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
-  private var liveUserReview: LiveData<Optional<UserReview>>
+  private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
   private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<Collaborator>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
+  private lateinit var user:User
 
 
   private val userId = userAuth.getUserId()
@@ -58,7 +61,6 @@ class BookItemActivityViewModel @Inject constructor(
   private val author = savedState.get<String>(Book.AUTHOR)!!
   private val bookId = savedState.get<String>(Book.ID)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM)?:false
-  private var conversionEndPoint:String?=null
   private var bookShareUrl: Uri? = null
 
   private val config  = PagingConfig(
@@ -71,28 +73,39 @@ class BookItemActivityViewModel @Inject constructor(
 
     generateBookShareLink()
 
-    localLivePublishedBook = publishedBooksRepo.getLivePublishedBook(bookId)
+    localLivePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
 
-    publisherReferrer = referralRepo.getLivePubReferrer(bookId)
+    publisherReferrer = referralRepo.getALiveOptionalCollaborator(bookId)
 
     liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
 
-    orderedBook = orderedBooksRepo.getALiveOrderedBook(bookId)
+    orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
     //This way this code does not get recalled if activity restarts
     viewModelScope.launch{
+      user = userRepo.getUser(userId).get()
       liveUserReview = userReviewRepo.getLiveUserReview(bookId, userId)
-       conversionEndPoint =  settingsUtil.getString(Settings.FIXER_ACCESS_KEY)
-    }
-
-    publishedBooksRepo.getALiveRemotePublishedBook(bookId){
-      publishedBook.value = it
     }
 
 
-    userReviewRepo.getRemoteBookReviews(bookId, userId, limitBy = 3){ userReviews, e->
-      this.userReviews.value = userReviews
+    viewModelScope.launch {
+      try {
+        publishedBook.value = publishedBooksRepo.getARemotePublishedBook(bookId)
+      }catch (e:Exception){
+        return@launch
+      }
     }
+
+
+
+    viewModelScope.launch {
+      try {
+        userReviews.value  = userReviewRepo.getListOfBookReviews(bookId, 3, excludedDocId =  userId)
+      }catch (e:Exception){
+        return@launch
+      }
+    }
+
 
     //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
     //for store fragment search result
@@ -107,7 +120,7 @@ class BookItemActivityViewModel @Inject constructor(
     viewModelScope.launch {
       val book = publishedBooksRepo.getPublishedBook(bookId).get()
       try {
-        val bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+         bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
       }catch (e:Exception){
         return@launch
       }
@@ -118,6 +131,8 @@ class BookItemActivityViewModel @Inject constructor(
     return bookShareUrl
   }
 
+
+
   suspend fun convertCurrency(fromCurrency:String, toCurrency:String, amount:Double): Response<Fixer> {
     val fixerAccessKey =  settingsUtil.getString(Settings.FIXER_ACCESS_KEY)!!
     return currencyConversionAPI.convert(fixerAccessKey, fromCurrency, toCurrency, amount)
@@ -125,10 +140,6 @@ class BookItemActivityViewModel @Inject constructor(
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
     return liveUserReview
-  }
-
-  fun getConversionEndPoint(): String? {
-    return conversionEndPoint
   }
 
   fun getIsbn():String{
@@ -147,6 +158,10 @@ class BookItemActivityViewModel @Inject constructor(
     viewModelScope.launch{
       cartItemsRepo.addToCart(cart)
     }
+  }
+
+  fun getUser(): User {
+    return user
   }
 
   fun getLiveLocalBook(): LiveData<Optional<PublishedBook>> {
@@ -179,7 +194,7 @@ class BookItemActivityViewModel @Inject constructor(
     }
   }
 
-  fun getTopThreeOnlineUserReviews(): LiveData<List<UserReview>> {
+  fun getTwoUserReviewsForBook(): LiveData<List<UserReview>> {
     return userReviews
   }
 
@@ -196,10 +211,6 @@ class BookItemActivityViewModel @Inject constructor(
    return Pager(config){
       publishedBooksRepo.getBooksByCategoryPageSource(category)
     }.flow
-  }
-
-  override fun onCleared() {
-    super.onCleared()
   }
 
 }

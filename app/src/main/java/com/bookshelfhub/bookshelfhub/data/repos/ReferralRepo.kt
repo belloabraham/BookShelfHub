@@ -16,7 +16,7 @@ class ReferralRepo @Inject constructor(private val referralDao: ReferralDao) {
         }
     }
 
-    fun getLivePubReferrer(isbn:String): LiveData<Optional<Collaborator>> {
+    fun getALiveOptionalCollaborator(isbn:String): LiveData<Optional<Collaborator>> {
         return  referralDao.getLivePubReferrer(isbn)
     }
 }

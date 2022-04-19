@@ -4,7 +4,9 @@ import com.bookshelfhub.bookshelfhub.extensions.capitalize
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
 
 open class UserAuth() : IUserAuth {
@@ -34,6 +36,21 @@ open class UserAuth() : IUserAuth {
             id = i.providerId
         }
         return id
+    }
+
+   private var noOfUserNameUpdateRetry = 4
+    override suspend fun updateDisplayName(name:String){
+        val profileUpdates = userProfileChangeRequest {
+            displayName = name
+        }
+        try {
+            auth.currentUser!!.updateProfile(profileUpdates).await()
+            noOfUserNameUpdateRetry = 0
+        }catch (e:Exception){
+            if(noOfUserNameUpdateRetry<4){
+                updateDisplayName(name)
+            }
+        }
     }
 
     override fun getName(): String? {

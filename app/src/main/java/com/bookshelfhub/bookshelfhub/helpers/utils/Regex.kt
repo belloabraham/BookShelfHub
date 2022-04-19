@@ -86,5 +86,4 @@ object Regex {
             + WORD_BOUNDARY
             + ")")
 
-   const val FIRST_NAME_LAST_NAME = "^[a-zA-Z]{2,}(?: [a-zA-Z]+){0,2}$"
 }

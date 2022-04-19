@@ -18,7 +18,7 @@ class BookInfoViewModel @Inject constructor(
   private val isbn = savedState.get<String>(Book.ID)!!
 
   init {
-    localLivePublishedBook = publishedBooksRepo.getLivePublishedBook(isbn)
+    localLivePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(isbn)
   }
 
   fun getLivePublishedBook(): LiveData<Optional<PublishedBook>> {

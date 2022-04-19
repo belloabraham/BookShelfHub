@@ -88,9 +88,13 @@ import javax.inject.Inject
      override suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot{
          return  db.collection(collection)
              .document(document).get().await()
-
      }
 
+     override suspend fun <T: Any>  getDataAsync(collection:String, document: String, type:Class<T>): T? {
+         val docSnapshot =  db.collection(collection)
+             .document(document).get().await()
+        return docSnapshotToType(docSnapshot, type)
+     }
 
    override fun getLiveDataAsync(collection:String, document: String, retry:Boolean, onComplete:
      (data:DocumentSnapshot?, e:Exception?)->Unit): ListenerRegistration {
@@ -233,7 +237,23 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction): List<T> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, excludedDocId:String): List<T> {
+
+         val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
+             .whereEqualTo(whereKey,whereValue)
+             .limit(limit)
+             .get().await()
+
+         querySnapShot.removeAll {
+             it.id == excludedDocId
+         }
+
+         return querySnapshotToListOfType(querySnapShot, type)
+
+     }
+
+
+     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, orderBy: String, direction: Query.Direction): List<T> {
 
         val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)

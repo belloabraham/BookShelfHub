@@ -15,16 +15,14 @@ class PublishedBooksRepo @Inject constructor(
     private val publishedBooksDao: PublishedBooksDao,
     private val remoteDataSource: IRemoteDataSource) {
 
-     fun getLivePublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
+     fun getALiveOptionalPublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
         return publishedBooksDao.getLivePublishedBook(isbn)
     }
 
-    fun getALiveRemotePublishedBook(bookId:String, onNewData:(data:PublishedBook)->Unit){
-        remoteDataSource.getLiveDataAsync(
+    suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {
+       return remoteDataSource.getDataAsync(
             RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
-            PublishedBook::class.java){
-            onNewData(it)
-        }
+            PublishedBook::class.java)
     }
 
      suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {

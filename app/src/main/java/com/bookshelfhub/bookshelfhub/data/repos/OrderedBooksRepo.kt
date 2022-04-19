@@ -23,7 +23,7 @@ class OrderedBooksRepo @Inject constructor(private val orderedBooksDao: OrderedB
         return  withContext(IO){ orderedBooksDao.getOrderedBooks(userId)}
     }
 
-     fun getALiveOrderedBook(isbn: String): LiveData<Optional<OrderedBooks>> {
+     fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBooks>> {
         return orderedBooksDao.getALiveOrderedBook(isbn)
     }
 

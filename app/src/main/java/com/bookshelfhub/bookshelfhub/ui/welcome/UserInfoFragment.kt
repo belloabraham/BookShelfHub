@@ -27,6 +27,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.android.synthetic.main.slider_item.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -69,7 +70,6 @@ class UserInfoFragment : Fragment() {
 
         if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
-            layout.nameEditTxt.setText(userAuth.getName())
             layout.emailEditTxt.setText(userAuth.getEmail())
         }else{
             layout.emailEditTxtLayout.visibility=View.VISIBLE
@@ -77,21 +77,23 @@ class UserInfoFragment : Fragment() {
         }
 
         layout.btnContinue.setOnClickListener {
-            layout.nameEditTxtLayout.error=null
+            layout.firstNameEditTxtLayout.error=null
+            layout.lastNameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
             layout.phoneEditTxtLayout.error=null
             val email = layout.emailEditTxt.text.toString().trim()
             val phone = layout.phoneEditTxt.text.toString().trim()
-            val name = layout.nameEditTxt.text.toString().trim()
+            val firstName = layout.firstNameEditTxt.text.toString().trim()
+            val lastName = layout.firstNameEditTxt.text.toString().trim()
 
             if (!email.isValidEmailAddress()){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
-            }else if(TextUtils.isEmpty(name)){
-                layout.nameEditTxtLayout.error=getString(R.string.empty_name_error)
+            }else if(TextUtils.isEmpty(firstName)){
+                layout.firstNameEditTxtLayout.error=getString(R.string.empty_name_error)
+            }else if(TextUtils.isEmpty(lastName)){
+                layout.lastNameEditTxtLayout.error=getString(R.string.empty_name_error)
             }else if(!phone.isPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
-            }else if (!name.isFullName(Regex.FIRST_NAME_LAST_NAME)){
-                layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)
@@ -107,10 +109,15 @@ class UserInfoFragment : Fragment() {
                     }
                 }
 
-                viewLifecycleOwner.lifecycleScope.launch(IO) {
+
+                viewLifecycleOwner.lifecycleScope.launch {
+
+                    userAuth.updateDisplayName(firstName)
+
                     val user = User(userId, userAuth.getAuthType())
                     user.appVersion=appUtil.getAppVersionName()
-                    user.name = name
+                    user.fistName = firstName
+                    user.lastName = lastName
                     user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone = phone

@@ -49,7 +49,7 @@ class BookActivityViewModel @Inject constructor(
             }
         }
 
-        livePublishedBook = publishedBooksRepo.getLivePublishedBook(isbn)
+        livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(isbn)
         loadLiveOrderedBook(isbn, bookName)
         viewModelScope.launch {
             orderedBook = orderedBooksRepo.getAnOrderedBook(isbn)

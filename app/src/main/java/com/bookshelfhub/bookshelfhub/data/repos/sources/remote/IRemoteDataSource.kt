@@ -9,6 +9,11 @@ import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
 
+
+    suspend fun <T: Any>  getDataAsync(collection:String, document: String, type:Class<T>): T?
+
+    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, excludedDocId:String): List<T>
+
     suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot
 
     suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T?
@@ -33,7 +38,7 @@ interface IRemoteDataSource {
         (data:T)->Unit) : ListenerRegistration
 
 
-    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, excludeDocId:String, limit:Long, orderBy: String, direction: Query.Direction): List<T>
+    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any,limit:Long, orderBy: String, direction: Query.Direction): List<T>
 
 
     fun getLiveDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean = true, onComplete:
