@@ -15,7 +15,7 @@ interface IRemoteDataSource {
 
     suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, excludedDocId:String): List<T>
 
-    suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot
+    suspend fun addDataAsync(collection:String, document:String, data: Any): Void?
 
     suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T?
 

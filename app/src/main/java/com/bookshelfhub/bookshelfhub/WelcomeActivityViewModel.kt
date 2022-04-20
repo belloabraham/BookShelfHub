@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
 import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
@@ -29,7 +30,7 @@ class WelcomeActivityViewModel @Inject constructor(
 
     private val referrer = savedState.get<String>(Referrer.ID)
     private val userId = userAuth.getUserId()
-    private var userDocSnapShot: MutableLiveData<DocumentSnapshot> = MutableLiveData()
+    private var remoteUser: MutableLiveData<RemoteUser?> = MutableLiveData()
 
     fun getReferrer(): String? {
         return referrer
@@ -41,9 +42,7 @@ class WelcomeActivityViewModel @Inject constructor(
         }
     }
 
-    fun updateUserDeviceType(userDataDocSnapShot:DocumentSnapshot) {
-        val userJsonString = userDataDocSnapShot.get(RemoteDataFields.USER)
-        val user = json.fromAny(userJsonString!!, User::class.java)
+    fun updateUserDeviceType(user:User) {
 
         val userDevice = DeviceUtil.getDeviceBrandAndModel()
         val userOS = DeviceUtil.getDeviceOSVersionInfo(Build.VERSION.SDK_INT)
@@ -62,25 +61,23 @@ class WelcomeActivityViewModel @Inject constructor(
         }
     }
 
-    fun addBookInterest(userDatADocSnapShot:DocumentSnapshot){
-        try {
-            val jsonString = userDatADocSnapShot.get(RemoteDataFields.BOOK_INTEREST)
-            val bookInterest = json.fromAny(jsonString!!, BookInterest::class.java)
+    fun addRemoteBookInterest(bookInterest: BookInterest?){
+        bookInterest?.let {
             bookInterest.uploaded=true
-            addBookInterest(bookInterest)
-        }catch (e:Exception){}
+            addBookInterest(it)
+        }
     }
 
-     fun getRemoteUserDataSnapshot(): LiveData<DocumentSnapshot> {
+     fun getRemoteUserDataSnapshot(): LiveData<RemoteUser?> {
          viewModelScope.launch {
              try {
                  val docSnapshot = userRepo.getRemoteUserDataSnapshot(userId)
-                 userDocSnapShot.value = docSnapshot
+                 remoteUser.value = docSnapshot
              }catch (e:Exception){
                  return@launch
              }
          }
-       return userDocSnapShot
+       return remoteUser
     }
 
 

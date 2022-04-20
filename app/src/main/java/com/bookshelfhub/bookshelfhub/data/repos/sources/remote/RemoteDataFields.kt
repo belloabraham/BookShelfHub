@@ -10,6 +10,9 @@ object RemoteDataFields{
     const val ORDERED_BOOKS_COLL = "ordered_books"
     const val EARNINGS = "earnings"
 
+    const val NOTIFICATION_TOKEN="notificationToken"
+
+
     //Sub Collections
     const val BOOKMARKS_COLL = "bookmarks"
     const val REVIEWS_COLL = "reviews"

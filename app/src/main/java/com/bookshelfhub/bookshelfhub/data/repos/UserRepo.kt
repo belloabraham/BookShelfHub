@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.UserDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
@@ -25,8 +26,17 @@ class UserRepo @Inject constructor(
     private val worker: Worker) {
 
 
-    suspend fun getRemoteUserDataSnapshot(userId:String):DocumentSnapshot{
-       return  remoteDataSource.getDataAsync(RemoteDataFields.USERS_COLL, userId)
+    suspend fun getRemoteUserDataSnapshot(userId:String): RemoteUser? {
+       return  remoteDataSource.getDataAsync(RemoteDataFields.USERS_COLL, userId, RemoteUser::class.java)
+    }
+
+    suspend fun uploadNotificationToken(notificationToken:String, userId: String): Void? {
+      return  remoteDataSource.addDataAsync(notificationToken,
+            RemoteDataFields.USERS_COLL, userId, RemoteDataFields.NOTIFICATION_TOKEN)
+    }
+
+    suspend fun addRemoteUser(remoteUser: RemoteUser, userId: String): Void? {
+        return remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
     }
 
      suspend fun getUser(userId:String): Optional<User> {

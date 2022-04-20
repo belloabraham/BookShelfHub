@@ -33,7 +33,7 @@ workerParams
         }
 
 
-               val userId = userAuth.getUserId()
+           val userId = userAuth.getUserId()
 
            return  try {
                  bookmarksRepo.updateRemoteUserBookmarks(listOfBookmarks, userId)

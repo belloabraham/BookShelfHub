@@ -254,11 +254,11 @@ class WelcomeActivity : AppCompatActivity() {
             lifecycleScope.launch {
                     welcomeActivityViewModel.getRemoteUserDataSnapshot()
                         .asFlow()
-                        .collect{ userDataDocSnapShot->
-                            val userDataExist = userDataDocSnapShot.exists()
+                        .collect{ remoteUser->
+                            val userDataExist = remoteUser !=null
                             if(userDataExist){
-                                welcomeActivityViewModel.addBookInterest(userDataDocSnapShot)
-                                welcomeActivityViewModel.updateUserDeviceType(userDataDocSnapShot)
+                                welcomeActivityViewModel.addRemoteBookInterest(remoteUser!!.bookInterest)
+                                welcomeActivityViewModel.updateUserDeviceType(remoteUser.user)
                                 //Notify UI that user data adding to local Db is complete
                                 userAuthViewModel.setIsAddingUser(false)
                             }else{

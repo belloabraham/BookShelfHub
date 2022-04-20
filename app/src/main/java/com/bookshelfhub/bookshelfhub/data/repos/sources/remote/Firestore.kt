@@ -49,6 +49,13 @@ import javax.inject.Inject
 
     }
 
+     override suspend fun addDataAsync(collection:String, document:String, data: Any): Void? {
+         return  db.collection(collection)
+             .document(document)
+             .set(data, SetOptions.merge()).await()
+
+     }
+
      override fun <T: Any> getLiveListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
          val subscription = db.collection(collection)
              .orderBy(orderBy)
@@ -64,11 +71,6 @@ import javax.inject.Inject
          return subscription
      }
 
-
-     override suspend fun getDataAsync(collection:String, document: String): DocumentSnapshot{
-         return  db.collection(collection)
-             .document(document).get().await()
-     }
 
      override suspend fun <T: Any>  getDataAsync(collection:String, document: String, type:Class<T>): T? {
          val docSnapshot =  db.collection(collection)

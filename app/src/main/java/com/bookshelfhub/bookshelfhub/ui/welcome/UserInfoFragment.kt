@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
+import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
@@ -125,8 +126,10 @@ class UserInfoFragment : Fragment() {
                     user.referrerId = referrerId
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
+
                     withContext(Main){
-                      userAuthViewModel.setIsAddingUser(false, user)
+                      userAuthViewModel.addRemoteUserData(RemoteUser(user, null, null))
+                      userAuthViewModel.setIsAddingUser(false)
                     }
                 }
             }
