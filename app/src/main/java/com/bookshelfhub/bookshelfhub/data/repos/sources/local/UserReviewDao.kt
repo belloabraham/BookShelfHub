@@ -10,25 +10,21 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.google.common.base.Optional
 
 @Dao
-interface UserReviewDao {
+abstract class UserReviewDao :BaseDao<UserReview> {
+
     @Query("SELECT * FROM UserReview WHERE bookId = :bookId")
-    fun getOptionalLiveUserReview(bookId:String): LiveData<Optional<UserReview>>
+    abstract fun getOptionalLiveUserReview(bookId:String): LiveData<Optional<UserReview>>
 
     @Query("SELECT * FROM UserReview WHERE verified = :isVerified")
-    suspend fun getUserReviews(isVerified:Boolean): List<UserReview>
+    abstract suspend  fun getUserReviews(isVerified:Boolean): List<UserReview>
 
     @Query("UPDATE UserReview set verified =:isVerified where bookId =:bookId")
-    suspend fun updateReview(bookId: String, isVerified:Boolean)
+    abstract suspend  fun updateReview(bookId: String, isVerified:Boolean)
 
     @Query("DELETE FROM UserReview")
-    suspend fun deleteAllReviews()
+    abstract suspend  fun deleteAllReviews()
 
     @Query("SELECT * FROM UserReview WHERE bookId = :bookId")
-    suspend fun getUserReview(bookId:String): Optional<UserReview>
+    abstract suspend  fun getUserReview(bookId:String): Optional<UserReview>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUserReviews(userReviews: List<UserReview>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUserReview(userReview: UserReview)
 }

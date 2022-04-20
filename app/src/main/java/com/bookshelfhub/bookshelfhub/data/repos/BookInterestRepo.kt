@@ -35,7 +35,7 @@ class BookInterestRepo @Inject constructor(
 
     suspend fun addBookInterest(bookInterest: BookInterest){
         withContext(IO) {
-            bookInterestDao.addBookInterest(bookInterest)
+            bookInterestDao.insertOrReplace(bookInterest)
         }
         val oneTimeBookInterestDataUpload =
             OneTimeWorkRequestBuilder<UploadBookInterest>()

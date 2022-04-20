@@ -10,10 +10,10 @@ import javax.inject.Inject
 class PaymentCardRepo @Inject constructor(private val paymentCardDao: PaymentCardDao) {
 
      suspend fun addPaymentCard(paymentCard: PaymentCard) {
-        withContext(IO){ paymentCardDao.addPaymentCard(paymentCard)}
+        withContext(IO){ paymentCardDao.insertOrReplace(paymentCard)}
     }
      suspend fun deletePaymentCard(card: PaymentCard) {
-         withContext(IO){ paymentCardDao.deletePaymentCard(card)}
+         withContext(IO){ paymentCardDao.delete(card)}
     }
 
      suspend fun getPaymentCards(): List<PaymentCard> {

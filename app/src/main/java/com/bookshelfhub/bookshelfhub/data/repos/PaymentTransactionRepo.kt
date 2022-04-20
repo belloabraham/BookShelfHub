@@ -4,19 +4,16 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.PaymentTransactionDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.workers.Worker
-import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PaymentTransactionRepo @Inject constructor(
     private  val  paymentTransactionDao: PaymentTransactionDao,
-    private val remoteDataSource: IRemoteDataSource,
-    private val worker: Worker) {
+    private val remoteDataSource: IRemoteDataSource) {
     
     suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {
-        withContext(IO){ paymentTransactionDao.addPaymentTransactions(paymentTransactions)}
+        withContext(IO){ paymentTransactionDao.insertAllOrReplace(paymentTransactions)}
     }
 
     suspend fun uploadPaymentTransaction(paymentTransactions:List<PaymentTransaction>, userId:String): Void? {

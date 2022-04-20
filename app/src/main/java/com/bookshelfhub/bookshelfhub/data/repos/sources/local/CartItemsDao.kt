@@ -7,25 +7,20 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
 import com.google.common.base.Optional
 
 @Dao
-interface CartItemsDao {
+abstract class CartItemsDao : BaseDao<Cart> {
+    
     @Query("SELECT COUNT(*) FROM Cart WHERE userId =:userId")
-    fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
+    abstract fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
     @Query("DELETE FROM Cart WHERE isbn in (:isbnList)")
-    suspend fun deleteFromCart(isbnList: List<String>)
+    abstract suspend fun deleteFromCart(isbnList: List<String>)
 
     @Query("DELETE FROM Cart")
-    suspend fun deleteAllCartItems()
-
-    @Delete
-    suspend fun deleteFromCart(cart: Cart)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addToCart(cart: Cart)
+    abstract suspend fun deleteAllCartItems()
 
     @Query("SELECT * FROM Cart WHERE userId =:userId")
-    fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
+    abstract fun getLiveListOfCartItems(userId: String):LiveData<List<Cart>>
 
     @Query("SELECT * FROM Cart WHERE userId =:userId")
-    suspend fun getListOfCartItems(userId: String):List<Cart>
+    abstract suspend fun getListOfCartItems(userId: String):List<Cart>
 }

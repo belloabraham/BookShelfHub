@@ -30,7 +30,7 @@ class CartItemsRepo @Inject constructor(
     }
 
      suspend fun addToCart(cart: Cart) {
-         withContext(IO){cartItemsDao.addToCart(cart)}
+         withContext(IO){cartItemsDao.insertOrReplace(cart)}
          // Clear every Items in this cart in the next 15 hours
          val clearCart =
              OneTimeWorkRequestBuilder<ClearCart>()
@@ -48,7 +48,7 @@ class CartItemsRepo @Inject constructor(
     }
 
      suspend fun deleteFromCart(cart: Cart) {
-         withContext(IO){cartItemsDao.deleteFromCart(cart)}
+         withContext(IO){cartItemsDao.delete(cart)}
     }
     
 }

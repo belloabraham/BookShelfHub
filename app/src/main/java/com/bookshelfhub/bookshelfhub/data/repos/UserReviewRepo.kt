@@ -1,19 +1,12 @@
 package com.bookshelfhub.bookshelfhub.data.repos
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.UserReviewDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.google.android.gms.tasks.Task
 import com.google.common.base.Optional
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.remoteconfig.internal.Code
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -24,7 +17,7 @@ class UserReviewRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource) {
 
      suspend fun addUserReviews(userReviews: List<UserReview>) {
-        withContext(IO){userReviewDao.addUserReviews(userReviews)}
+        withContext(IO){userReviewDao.insertAllOrReplace(userReviews)}
     }
 
       suspend fun getLiveUserReview(bookId:String, userId:String): LiveData<Optional<UserReview>> {
@@ -67,7 +60,7 @@ class UserReviewRepo @Inject constructor(
         try {
             val userReview = remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,bookId, RemoteDataFields.REVIEWS_COLL, userId, true, UserReview::class.java)
             userReview?.let {
-                userReviewDao.addUserReview(it)
+                userReviewDao.insertOrReplace(it)
             }
             remoteUserRetryInterval = 1
         }catch (e:Exception){
@@ -99,7 +92,7 @@ class UserReviewRepo @Inject constructor(
     }
 
      suspend fun addUserReview(userReview: UserReview) {
-         withContext(IO){ userReviewDao.addUserReview(userReview)}
+         withContext(IO){ userReviewDao.insertOrReplace(userReview)}
     }
 
     suspend fun getUserReviews(isVerified: Boolean): List<UserReview> {

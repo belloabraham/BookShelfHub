@@ -10,10 +10,8 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideos
 import com.google.common.base.Optional
 
 @Dao
-interface BookVideosDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addBookVideos(bookVideos: List<BookVideos>)
+abstract class BookVideosDao : BaseDao<BookVideos> {
 
     @Query("SELECT * FROM BookVideos WHERE isbn = :isbn")
-    fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>>
+    abstract fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideos>>
 }

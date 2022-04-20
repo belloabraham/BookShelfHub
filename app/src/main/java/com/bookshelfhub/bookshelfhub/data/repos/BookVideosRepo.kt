@@ -20,7 +20,7 @@ class BookVideosRepo @Inject constructor(
     }
 
      suspend fun addBookVideos(bookVideos: List<BookVideos>) {
-          withContext(IO){bookVideosDao.addBookVideos(bookVideos)}
+          withContext(IO){bookVideosDao.insertAllOrReplace(bookVideos)}
     }
 
    suspend fun getRemoteBookVideos(bookId:String): List<BookVideos> {

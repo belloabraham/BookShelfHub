@@ -11,7 +11,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.google.common.base.Optional
 
 @Dao
-interface SearchHistoryDao {
+interface SearchHistoryDao{
     @Query("SELECT * FROM ShelfSearchHistory WHERE userId = :userId Order BY dateTime DESC LIMIT 4")
     fun getLiveShelfSearchHistory(userId:String): LiveData<List<ShelfSearchHistory>>
 

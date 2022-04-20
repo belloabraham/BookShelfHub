@@ -12,7 +12,7 @@ class ReferralRepo @Inject constructor(private val referralDao: ReferralDao) {
 
     suspend fun addPubReferrer(collaborator: Collaborator){
         withContext(IO){
-            referralDao.addPubReferrer(collaborator)
+            referralDao.insertOrReplace(collaborator)
         }
     }
 

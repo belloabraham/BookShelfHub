@@ -32,7 +32,7 @@ class OrderedBooksRepo @Inject constructor(private val orderedBooksDao: OrderedB
     }
 
      suspend fun addOrderedBooks(OrderedBooks: List<OrderedBooks>){
-         withContext(IO){ orderedBooksDao.addOrderedBooks(OrderedBooks)}
+         withContext(IO){ orderedBooksDao.insertAllOrIgnore(OrderedBooks)}
     }
      fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBooks>> {
         return  orderedBooksDao.getLiveBooksOrdered(userId)

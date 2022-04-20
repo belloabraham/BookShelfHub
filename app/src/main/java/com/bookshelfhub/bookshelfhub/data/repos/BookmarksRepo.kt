@@ -45,7 +45,7 @@ class BookmarksRepo @Inject constructor(
     }
 
      suspend fun addBookmark(bookmark: Bookmark) {
-         withContext(IO){bookmarksDao.addBookmark(bookmark)}
+         withContext(IO){bookmarksDao.insertOrReplace(bookmark)}
     }
 
      suspend fun getDeletedBookmarks(deleted: Boolean, uploaded: Boolean): List<Bookmark> {
@@ -57,11 +57,11 @@ class BookmarksRepo @Inject constructor(
     }
 
      suspend fun addBookmarkList(bookmarks: List<Bookmark>) {
-         withContext(IO){bookmarksDao.addBookmarkList(bookmarks)}
+         withContext(IO){bookmarksDao.insertAllOrReplace(bookmarks)}
     }
 
      suspend fun deleteBookmarks(bookmarks: List<Bookmark>) {
-         withContext(IO){bookmarksDao.deleteBookmarks(bookmarks)}
+         withContext(IO){bookmarksDao.deleteAll(bookmarks)}
     }
 
      suspend fun getLocalBookmarks(

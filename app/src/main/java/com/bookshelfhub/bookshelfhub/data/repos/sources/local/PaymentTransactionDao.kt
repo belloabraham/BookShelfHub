@@ -10,13 +10,12 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.google.common.base.Optional
 
 @Dao
-interface PaymentTransactionDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
+abstract class PaymentTransactionDao : BaseDao<PaymentTransaction> {
 
     @Query("SELECT * FROM PaymentTransaction")
-    suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
+    abstract suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
 
     @Query("DELETE FROM PaymentTransaction")
-    suspend fun deleteAllPaymentTransactions()
+    abstract suspend fun deleteAllPaymentTransactions()
+
 }

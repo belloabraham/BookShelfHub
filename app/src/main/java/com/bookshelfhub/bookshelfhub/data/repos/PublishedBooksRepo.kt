@@ -60,11 +60,11 @@ class PublishedBooksRepo @Inject constructor(
     }
 
      suspend fun addAllPubBooks(pubBooks:List<PublishedBook>){
-         withContext(IO){publishedBooksDao.addAllPubBooks(pubBooks)}
+         withContext(IO){publishedBooksDao.insertAllOrReplace(pubBooks)}
     }
 
      suspend fun deleteUnPublishedBookRecords(unPublishedBooks : List<PublishedBook>){
-         withContext(IO){publishedBooksDao.deleteUnPublishedBookRecords(unPublishedBooks)}
+         withContext(IO){publishedBooksDao.deleteAll(unPublishedBooks)}
     }
 
      suspend fun getPublishedBooks(): List<PublishedBook> {

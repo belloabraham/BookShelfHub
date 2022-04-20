@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub.data.repos
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
@@ -14,8 +13,6 @@ import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -56,7 +53,7 @@ class UserRepo @Inject constructor(
 
     suspend fun addUser(user: User){
         withContext(IO) {
-            userDao.addUser(user)
+            userDao.insertOrReplace(user)
         }
 
         if(!user.uploaded){

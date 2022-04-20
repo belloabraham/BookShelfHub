@@ -8,18 +8,15 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.google.common.base.Optional
 
 @Dao
-interface UserDao {
+abstract class UserDao :BaseDao<User> {
 
     @Query("DELETE FROM User")
-    suspend fun deleteUserRecord()
+    abstract suspend  fun deleteUserRecord()
 
     @Query("SELECT * FROM User WHERE userId = :userId")
-    suspend fun getUser(userId:String): Optional<User>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addUser(user: User)
+    abstract suspend  fun getUser(userId:String): Optional<User>
 
     @Query("SELECT * FROM User WHERE userId = :userId")
-    fun getLiveUser(userId:String): LiveData<User>
+    abstract fun getLiveUser(userId:String): LiveData<User>
 
 }

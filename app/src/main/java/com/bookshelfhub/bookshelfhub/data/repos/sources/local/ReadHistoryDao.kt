@@ -10,13 +10,11 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.History
 import com.google.common.base.Optional
 
 @Dao
-interface ReadHistoryDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addReadHistory(history: History)
+abstract class ReadHistoryDao : BaseDao<History> {
 
     @Query("SELECT * FROM History WHERE id =:id")
-    fun getLiveReadHistory(id:Int):LiveData<Optional<History>>
+    abstract fun getLiveReadHistory(id:Int):LiveData<Optional<History>>
 
     @Query("DELETE FROM History")
-    suspend fun deleteAllHistory()
+    abstract suspend fun deleteAllHistory()
 }
