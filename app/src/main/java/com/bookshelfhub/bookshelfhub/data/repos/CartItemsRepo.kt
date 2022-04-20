@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos
 import androidx.lifecycle.LiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.repos.sources.local.CartItemsDao
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
@@ -17,11 +17,11 @@ class CartItemsRepo @Inject constructor(
     private val cartItemsDao: CartItemsDao,
     private val worker: Worker) {
 
-     suspend fun getListOfCartItems(userId: String): List<Cart> {
+     suspend fun getListOfCartItems(userId: String): List<CartItem> {
         return  withContext(IO){cartItemsDao.getListOfCartItems(userId)}
     }
 
-     fun getLiveListOfCartItems(userId: String): LiveData<List<Cart>> {
+     fun getLiveListOfCartItems(userId: String): LiveData<List<CartItem>> {
         return  cartItemsDao.getLiveListOfCartItems(userId)
     }
 
@@ -29,7 +29,7 @@ class CartItemsRepo @Inject constructor(
         return  cartItemsDao.getLiveTotalCartItemsNo(userId)
     }
 
-     suspend fun addToCart(cart: Cart) {
+     suspend fun addToCart(cart: CartItem) {
          withContext(IO){cartItemsDao.insertOrReplace(cart)}
          // Clear every Items in this cart in the next 15 hours
          val clearCart =
@@ -47,7 +47,7 @@ class CartItemsRepo @Inject constructor(
          withContext(IO){ cartItemsDao.deleteFromCart(isbnList)}
     }
 
-     suspend fun deleteFromCart(cart: Cart) {
+     suspend fun deleteFromCart(cart: CartItem) {
          withContext(IO){cartItemsDao.delete(cart)}
     }
     

@@ -26,8 +26,8 @@ class ReviewListAdapter {
         return adapterOf {
 
             diff(
-                areContentsTheSame = { old, new -> old.isbn == new.isbn  },
-                areItemsTheSame = { old, new -> old.isbn == new.isbn }
+                areContentsTheSame = { old, new -> old.bookId == new.bookId  },
+                areItemsTheSame = { old, new -> old.bookId == new.bookId }
             )
 
             register(

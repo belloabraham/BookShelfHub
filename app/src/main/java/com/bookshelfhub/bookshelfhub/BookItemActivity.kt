@@ -17,7 +17,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
@@ -25,13 +24,13 @@ import com.bookshelfhub.bookshelfhub.data.*
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
@@ -62,8 +61,8 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var userVisibleCurrency:String
     private lateinit var userId: String
     private lateinit var bookId:String
-    private var orderedBook: Optional<OrderedBooks> = Optional.absent()
-    private var cartItems = listOf<Cart>()
+    private var orderedBook: Optional<OrderedBook> = Optional.absent()
+    private var cartItems = listOf<CartItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,7 +173,7 @@ class BookItemActivity : AppCompatActivity() {
                 }else{
                     it
                 }
-                val cart = Cart(
+                val cart = CartItem(
                     userId, book.bookId,
                     book.name,
                     book.author,
@@ -334,7 +333,7 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun showOrderedBook(orderedBook: Optional<OrderedBooks>){
+    private fun showOrderedBook(orderedBook: Optional<OrderedBook>){
         if (orderedBook.isPresent){
             // If the user have bought this book then hide addToCartBtn and Buy button
 
@@ -354,7 +353,7 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCartItems(cartItems:List<Cart>){
+    private fun showCartItems(cartItems:List<CartItem>){
         if(cartItems.isNotEmpty()){
             // Show no of items in cart on view cart button
             layout.checkoutNotifText.text = "${cartItems.size}"

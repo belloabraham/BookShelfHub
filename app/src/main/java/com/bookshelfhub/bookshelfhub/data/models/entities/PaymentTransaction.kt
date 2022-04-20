@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 
-@Entity(tableName = "PaymentTransaction")
+@Entity(tableName = "PaymentTransactions")
 data class PaymentTransaction(
     @PrimaryKey
     override val bookId: String,
@@ -19,4 +19,7 @@ data class PaymentTransaction(
     override val password: String? = null,
     override val downloadUrl: String? = null,
     override val dateTime: Timestamp?=null,
+    override val month: Int,
+    override val year: Int,
+    override val additionInfo: String?,
 ): IOrderedBooks

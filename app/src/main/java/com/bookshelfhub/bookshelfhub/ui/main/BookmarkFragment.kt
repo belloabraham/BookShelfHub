@@ -87,11 +87,8 @@ class BookmarkFragment : Fragment() {
                         snackBar.setAction(R.string.undo) {
                             bookmarkArrayList.add(position, bookmark)
                             adapter.notifyItemInserted(position)
-
                                 bookmarkViewModel.addBookmark(bookmark)
-
                         }.show()
-
             }
         }
 

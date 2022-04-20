@@ -6,7 +6,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 
-@Database(entities = [User::class, OrderedBooks::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, Cart::class, UserReview::class, History::class, Bookmark::class, PaymentTransaction::class, BookVideos::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookVideo::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RoomInstance: RoomDatabase() {
 

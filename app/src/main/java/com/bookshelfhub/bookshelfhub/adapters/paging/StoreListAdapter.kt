@@ -15,6 +15,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
 class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, StoreListAdapter.ViewHolder>(diffCallBack){
 
@@ -37,17 +38,17 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
         fun bindToView(model: PublishedBook, activity: Activity){
-                    imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder){
-                        title.background = null
-                        title.text = model.name
-                    }
+
+            imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
+            title.background = null
+            title.text = model.name
 
             imageView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
                     with(intent){
-                        putExtra(Book.NAME.KEY, model.name)
-                        putExtra(Book.AUTHOR.KEY, model.author)
-                        putExtra(Book.ID.KEY, model.bookId)
+                        putExtra(Book.NAME, model.name)
+                        putExtra(Book.AUTHOR, model.author)
+                        putExtra(Book.ID, model.bookId)
                     }
                     activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
             }

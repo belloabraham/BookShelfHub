@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.data.models.entities
+package com.bookshelfhub.bookshelfhub.data.repos.sources.local
 
 import androidx.room.TypeConverter
 import com.google.firebase.Timestamp

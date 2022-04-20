@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -18,25 +17,22 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DisplayUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.EnableWakeLock
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideos
-import com.bookshelfhub.bookshelfhub.data.models.entities.History
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
+import com.bookshelfhub.bookshelfhub.data.models.entities.ReadHistory
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.Fragment
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.pdfviewer.listener.OnPageChangeListener
 import com.google.android.material.card.MaterialCardView
@@ -66,7 +62,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private var totalPages:Double = 0.0
   private var publishedBook: PublishedBook? = null
   private var videoLink: String? = null
-  private var bookVideos = listOf<BookVideos>()
+  private var bookVideos = listOf<BookVideo>()
   private val hideHandler = Handler()
 
 
@@ -169,7 +165,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     bottomNavigationLayout = layout.fullscreenContentControls
   }
 
-  private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBooks){
+  private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBook){
     val isbn=orderedBook.bookId
     val filePath = "$isbn${File.separator}$isbn.pdf"
     val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
@@ -214,7 +210,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
   }
 
-  private fun showReadProgressDialog(readHistory: History) {
+  private fun showReadProgressDialog(readHistory: ReadHistory) {
     lifecycleScope.launch(IO) {
       val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED, 0)
       withContext(Main) {

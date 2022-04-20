@@ -12,19 +12,19 @@ import com.google.common.base.Optional
 @Dao
 abstract class UserReviewDao :BaseDao<UserReview> {
 
-    @Query("SELECT * FROM UserReview WHERE bookId = :bookId")
+    @Query("SELECT * FROM UserReviews WHERE bookId = :bookId")
     abstract fun getOptionalLiveUserReview(bookId:String): LiveData<Optional<UserReview>>
 
-    @Query("SELECT * FROM UserReview WHERE verified = :isVerified")
+    @Query("SELECT * FROM UserReviews WHERE verified = :isVerified")
     abstract suspend  fun getUserReviews(isVerified:Boolean): List<UserReview>
 
-    @Query("UPDATE UserReview set verified =:isVerified where bookId =:bookId")
+    @Query("UPDATE UserReviews set verified =:isVerified where bookId =:bookId")
     abstract suspend  fun updateReview(bookId: String, isVerified:Boolean)
 
-    @Query("DELETE FROM UserReview")
+    @Query("DELETE FROM UserReviews")
     abstract suspend  fun deleteAllReviews()
 
-    @Query("SELECT * FROM UserReview WHERE bookId = :bookId")
+    @Query("SELECT * FROM UserReviews WHERE bookId = :bookId")
     abstract suspend  fun getUserReview(bookId:String): Optional<UserReview>
 
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 
-@Entity(tableName= "StoreSearchHistory")
+@Entity(tableName= "StoreSearchHistories")
 data class StoreSearchHistory(
     @PrimaryKey
      override val bookId:String,

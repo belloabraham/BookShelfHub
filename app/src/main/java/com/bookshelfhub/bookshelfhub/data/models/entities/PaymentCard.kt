@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "PaymentCard")
+@Entity(tableName= "PaymentCards")
 data class PaymentCard(
     @PrimaryKey
     val cardNo: String,

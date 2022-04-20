@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
 class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, SimilarBooksAdapter.ViewHolder>(diffCallBack){
 
@@ -34,14 +35,15 @@ class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
         fun bindToView(model: PublishedBook, activity: Activity){
-                imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
+
+              imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 
             imageView.setOnClickListener {
                     val intent = Intent(activity, BookItemActivity::class.java)
                     with(intent){
-                        putExtra(Book.NAME.KEY, model.name)
-                        putExtra(Book.AUTHOR.KEY, model.author)
-                        putExtra(Book.ID.KEY, model.bookId)
+                        putExtra(Book.NAME, model.name)
+                        putExtra(Book.AUTHOR, model.author)
+                        putExtra(Book.ID, model.bookId)
                     }
                     val options = ActivityOptions.makeSceneTransitionAnimation(activity, it, activity.getString(R.string.trans_book))
                     activity.startActivity(intent, options.toBundle())

@@ -17,8 +17,6 @@ import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -47,13 +45,13 @@ class BookItemActivityViewModel @Inject constructor(
   private val searchHistoryRepo: SearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
 
-  private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
+  private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
   private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<Collaborator>> = MutableLiveData()
-  private var orderedBook: LiveData<Optional<OrderedBooks>> = MutableLiveData()
+  private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
 
 
@@ -147,7 +145,7 @@ class BookItemActivityViewModel @Inject constructor(
     return  bookId
   }
 
-  fun getALiveOrderedBook(): LiveData<Optional<OrderedBooks>> {
+  fun getALiveOrderedBook(): LiveData<Optional<OrderedBook>> {
     return orderedBook
   }
 
@@ -155,7 +153,7 @@ class BookItemActivityViewModel @Inject constructor(
     return publisherReferrer
   }
 
-  fun addToCart(cart: Cart){
+  fun addToCart(cart: CartItem){
     viewModelScope.launch{
       cartItemsRepo.addToCart(cart)
     }
@@ -204,7 +202,7 @@ class BookItemActivityViewModel @Inject constructor(
     return publishedBook
   }
 
-  fun getLiveListOfCartItems(): LiveData<List<Cart>> {
+  fun getLiveListOfCartItems(): LiveData<List<CartItem>> {
     return liveCartItems
   }
 

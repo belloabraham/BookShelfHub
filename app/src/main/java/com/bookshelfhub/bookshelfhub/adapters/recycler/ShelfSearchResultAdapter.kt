@@ -10,7 +10,7 @@ import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
@@ -48,9 +48,9 @@ class ShelfSearchResultAdapter(private val context: Context) {
         fun startBookActivity(isbn:String, title:String, context: Context){
             val intent = Intent(context, BookActivity::class.java)
             with(intent){
-                putExtra(Book.NAME.KEY, title)
-                putExtra(Book.ID.KEY, isbn)
-                putExtra(Book.IS_SEARCH_ITEM.KEY, true)
+                putExtra(Book.NAME, title)
+                putExtra(Book.ID, isbn)
+                putExtra(Book.IS_SEARCH_ITEM, true)
             }
             context.startActivity(intent)
         }
@@ -68,7 +68,7 @@ class ShelfSearchResultAdapter(private val context: Context) {
         }
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<OrderedBooks>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<OrderedBook>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(isbn:String, name:String, context: Context){

@@ -12,10 +12,10 @@ import com.google.common.base.Optional
 @Dao
 abstract class PaymentTransactionDao : BaseDao<PaymentTransaction> {
 
-    @Query("SELECT * FROM PaymentTransaction")
+    @Query("SELECT * FROM PaymentTransactions")
     abstract suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
 
-    @Query("DELETE FROM PaymentTransaction")
+    @Query("DELETE FROM PaymentTransactions")
     abstract suspend fun deleteAllPaymentTransactions()
 
 }

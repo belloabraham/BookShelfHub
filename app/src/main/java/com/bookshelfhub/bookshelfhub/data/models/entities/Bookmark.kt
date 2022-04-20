@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "Bookmark")
+@Entity(tableName= "Bookmarks")
 data class Bookmark(
     val userId:String,
     val isbn:String,

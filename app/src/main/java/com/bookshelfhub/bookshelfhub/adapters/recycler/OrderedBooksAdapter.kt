@@ -19,7 +19,7 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Download
 import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.downloadmanager.*
@@ -38,7 +38,7 @@ class OrderedBooksAdapter(
 
 ) {
 
-    fun getOrderedBooksAdapter(): ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>> {
+    fun getOrderedBooksAdapter(): ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>> {
 
         return adapterOf {
 
@@ -57,7 +57,7 @@ class OrderedBooksAdapter(
         }
     }
 
-    private class OrderedBookViewHolder(view: View) : RecyclerViewHolder<OrderedBooks>(view) {
+    private class OrderedBookViewHolder(view: View) : RecyclerViewHolder<OrderedBook>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         private val progressBar: ProgressBar = view.findViewById(R.id.progress)
@@ -67,11 +67,13 @@ class OrderedBooksAdapter(
 
         private var downloadRequest: DownloadRequest? = null
 
-        fun bindToView(model: OrderedBooks, activity: Activity, lifecycleOwner: LifecycleOwner) {
+        fun bindToView(model: OrderedBook, activity: Activity, lifecycleOwner: LifecycleOwner) {
 
             val url = model.downloadUrl
             title.text = model.name
-            imageView.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
+
+            imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
+
             val isbn = model.bookId
             val bookName = model.name
             val pubId = model.pubId
@@ -204,15 +206,15 @@ class OrderedBooksAdapter(
             intent.putExtra(Download.FILE_NAME, fileName)
             intent.putExtra(Download.DIR_PATH, dirPath)
             intent.putExtra(Download.BOOK_NAME, bookName)
-            intent.putExtra(Book.ID.KEY, isbn)
+            intent.putExtra(Book.ID, isbn)
             context.startService(intent)
         }
 
-        private fun openBook(activity: Activity, model: OrderedBooks) {
+        private fun openBook(activity: Activity, model: OrderedBook) {
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
-                putExtra(Book.NAME.KEY, model.name)
-                putExtra(Book.ID.KEY, model.bookId)
+                putExtra(Book.NAME, model.name)
+                putExtra(Book.ID, model.bookId)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 activity,

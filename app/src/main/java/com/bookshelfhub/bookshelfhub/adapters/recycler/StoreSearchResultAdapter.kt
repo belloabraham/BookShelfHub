@@ -26,10 +26,10 @@ class StoreSearchResultAdapter (private val context:Context) {
     fun startBookItemActivity(name:String, isbn:String, author:String, context: Context){
         val intent = Intent(context, BookItemActivity::class.java)
         with(intent){
-            putExtra(Book.NAME.KEY, name)
-            putExtra(Book.ID.KEY, isbn)
-            putExtra(Book.AUTHOR.KEY, author)
-            putExtra(Book.IS_SEARCH_ITEM.KEY, true)
+            putExtra(Book.NAME, name)
+            putExtra(Book.ID, isbn)
+            putExtra(Book.AUTHOR, author)
+            putExtra(Book.IS_SEARCH_ITEM, true)
         }
         context.startActivity(intent)
     }
@@ -97,8 +97,8 @@ class StoreSearchResultAdapter (private val context:Context) {
             itemCardView.setOnClickListener {
                 val intent = Intent(context, WebViewActivity::class.java)
                 with(intent){
-                    putExtra(WebView.TITLE.KEY, context.getString(R.string.request_a_book))
-                    putExtra(WebView.URL.KEY, context.getString(R.string.book_req_url))
+                    putExtra(WebView.TITLE, context.getString(R.string.request_a_book))
+                    putExtra(WebView.URL, context.getString(R.string.book_req_url))
                 }
                 context.startActivity(intent)
             }

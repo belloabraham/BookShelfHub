@@ -8,7 +8,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -18,7 +18,7 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class CartItemsListAdapter(private val context: Context) {
 
-     fun getCartListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<Cart, RecyclerViewHolder<Cart>> {
+     fun getCartListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<CartItem, RecyclerViewHolder<CartItem>> {
         return adapterOf {
 
           diff(
@@ -37,13 +37,13 @@ class CartItemsListAdapter(private val context: Context) {
         }
     }
 
-    private class CarItemsListViewHolder (view: View): RecyclerViewHolder<Cart>(view) {
+    private class CarItemsListViewHolder (view: View): RecyclerViewHolder<CartItem>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val price: TextView = view.findViewById(R.id.price)
         private val author: TextView = view.findViewById(R.id.author)
         private val cover: ImageView = view.findViewById(R.id.cover)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model: Cart, context: Context, onLongClickListener:()->Boolean) {
+        fun bindToView(model: CartItem, context: Context, onLongClickListener:()->Boolean) {
             title.text =  model.title
 
             if (model.priceInUsd==null){

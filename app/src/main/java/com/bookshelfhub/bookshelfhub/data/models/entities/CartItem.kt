@@ -3,8 +3,8 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "Cart")
-data class Cart(
+@Entity(tableName= "CartItems")
+data class CartItem(
     var userId:String,
     @PrimaryKey
     val isbn: String,

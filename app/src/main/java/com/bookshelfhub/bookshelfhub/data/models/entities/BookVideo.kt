@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName= "BookVideos")
-data class BookVideos(
+data class BookVideo(
     @PrimaryKey
     val isbnPageNumber:String,
     val isbn:String,

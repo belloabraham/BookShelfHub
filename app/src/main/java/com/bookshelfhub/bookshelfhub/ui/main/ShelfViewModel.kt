@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.ui.main
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.repos.OrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.SearchHistoryRepo
@@ -18,7 +18,7 @@ class ShelfViewModel @Inject constructor(
     searchHistoryRepo: SearchHistoryRepo,
     val userAuth:IUserAuth): ViewModel(){
     
-    private var liveOrderedBooks: LiveData<List<OrderedBooks>> = MutableLiveData()
+    private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
     private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
 
     private val userId:String = userAuth.getUserId()
@@ -29,11 +29,11 @@ class ShelfViewModel @Inject constructor(
         liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
     }
 
-    suspend fun getOrderedBooks(): List<OrderedBooks> {
+    suspend fun getOrderedBooks(): List<OrderedBook> {
         return orderedBooksRepo.getOrderedBooks(userId)
     }
 
-    fun addOrderedBooks(orderedBooks: List<OrderedBooks>){
+    fun addOrderedBooks(orderedBooks: List<OrderedBook>){
         viewModelScope.launch {
             orderedBooksRepo.addOrderedBooks(orderedBooks)
         }
@@ -43,7 +43,7 @@ class ShelfViewModel @Inject constructor(
         return shelfShelfSearchHistory
     }
 
-    fun getLiveOrderedBooks():LiveData<List<OrderedBooks>>{
+    fun getLiveOrderedBooks():LiveData<List<OrderedBook>>{
         return liveOrderedBooks
     }
 

@@ -10,9 +10,9 @@ import com.google.common.base.Optional
 
 @Dao
 abstract class BookInterestDao : BaseDao<BookInterest> {
-    @Query("SELECT * FROM BookInterest WHERE userId = :userId")
+    @Query("SELECT * FROM BookInterests WHERE userId = :userId")
     abstract suspend fun getBookInterest(userId:String): Optional<BookInterest>
 
-    @Query("SELECT * FROM BookInterest WHERE userId = :userId")
+    @Query("SELECT * FROM BookInterests WHERE userId = :userId")
     abstract fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>>
 }

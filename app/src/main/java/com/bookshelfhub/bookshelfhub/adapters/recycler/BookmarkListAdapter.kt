@@ -44,8 +44,8 @@ class BookmarkListAdapter( private val context: Context) {
             itemCardView.setOnClickListener {
                 val intent = Intent(context, BookActivity::class.java)
                 with(intent){
-                    putExtra(Book.NAME.KEY, model.title)
-                    putExtra(Book.ID.KEY, model.isbn)
+                    putExtra(Book.NAME, model.title)
+                    putExtra(Book.ID, model.isbn)
                 }
                 context.startActivity(intent)
             }

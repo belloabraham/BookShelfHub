@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.data.models.entities
+package com.bookshelfhub.bookshelfhub.data.models.uistate
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,7 +6,7 @@ import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.google.firebase.Timestamp
 
 @Entity(tableName= "OrderedBooks")
-data class OrderedBooks(
+data class OrderedBookUiState(
     @PrimaryKey
     override val bookId:String,
     override val priceInUSD: Double,

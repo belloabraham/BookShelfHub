@@ -29,8 +29,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadPaymentTransactions
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
@@ -59,8 +58,6 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
-    lateinit var json: Json
-    @Inject
     lateinit var worker: Worker
     @Inject
     lateinit var remoteDataSource: IRemoteDataSource
@@ -75,7 +72,7 @@ class CartFragment : Fragment() {
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
     private var userEarnings =0.0
-    private var mCartListAdapter:ListAdapter<Cart, RecyclerViewHolder<Cart>>?=null
+    private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
     private var paymentCardsAdapter:ListAdapter<PaymentCard, RecyclerViewHolder<PaymentCard>>?=null
     private var mView:View?=null
 
@@ -117,14 +114,14 @@ class CartFragment : Fragment() {
         )
 
         //Setup swipe to delete Items in cart
-        var listOfCartItems: ArrayList<Cart> =  ArrayList()
+        var listOfCartItems: ArrayList<CartItem> =  ArrayList()
 
 
         //Listen for changes in no of items in cart
         cartViewModel.getListOfCartItems().observe(viewLifecycleOwner, Observer { cartList ->
 
             if (listOfCartItems.isEmpty()){
-                listOfCartItems = cartList as ArrayList<Cart>
+                listOfCartItems = cartList as ArrayList<CartItem>
                 cartListAdapter.submitList(listOfCartItems)
             }
 
@@ -191,7 +188,7 @@ class CartFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
                 val position: Int = viewHolder.bindingAdapterPosition
-                val cart: Cart = cartListAdapter.currentList[position]
+                val cart: CartItem = cartListAdapter.currentList[position]
 
                 listOfCartItems.removeAt(position)
                 cartListAdapter.notifyItemRemoved(position)

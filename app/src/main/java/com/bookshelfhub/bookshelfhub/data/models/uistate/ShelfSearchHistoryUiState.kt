@@ -1,11 +1,11 @@
-package com.bookshelfhub.bookshelfhub.data.models.entities
+package com.bookshelfhub.bookshelfhub.data.models.uistate
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 
 @Entity(tableName= "ShelfSearchHistories")
-data class ShelfSearchHistory(
+data class ShelfSearchHistoryUiState(
     @PrimaryKey
     override val bookId:String,
     override val name:String,

@@ -9,8 +9,6 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.google.common.base.Optional
@@ -37,14 +35,14 @@ class BookActivityViewModel @Inject constructor(
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
-    private var liveOrderedBook: LiveData<OrderedBooks> = MutableLiveData()
-    private var readHistory: LiveData<Optional<History>> = MutableLiveData()
+    private var liveOrderedBook: LiveData<OrderedBook> = MutableLiveData()
+    private var readHistory: LiveData<Optional<ReadHistory>> = MutableLiveData()
     private var bookShareLink:Uri?=null
     private lateinit var book:PublishedBook
 
 
     private var livePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
-    private lateinit var orderedBook: OrderedBooks
+    private lateinit var orderedBook: OrderedBook
 
     init {
 
@@ -115,7 +113,7 @@ class BookActivityViewModel @Inject constructor(
         return bookShareLink
     }
 
-    fun getLiveOrderedBook(): LiveData<OrderedBooks> {
+    fun getLiveOrderedBook(): LiveData<OrderedBook> {
         return liveOrderedBook
     }
 
@@ -148,12 +146,12 @@ class BookActivityViewModel @Inject constructor(
         return livePublishedBook
     }
 
-    fun getAnOrderedBook(): OrderedBooks {
+    fun getAnOrderedBook(): OrderedBook {
         return orderedBook
     }
 
 
-    fun getLiveListOfBookVideos(): LiveData<List<BookVideos>> {
+    fun getLiveListOfBookVideos(): LiveData<List<BookVideo>> {
         return bookVideosRepo.getLiveListOfBookVideos(bookId)
     }
 
@@ -163,7 +161,7 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
-    fun getLiveReadHistory(): LiveData<Optional<History>> {
+    fun getLiveReadHistory(): LiveData<Optional<ReadHistory>> {
         return readHistory
     }
 
@@ -174,7 +172,7 @@ class BookActivityViewModel @Inject constructor(
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {
                 val percentage = (currentPage / totalPages) * 100
-                val readHistory = History(bookId, currentPage, percentage, bookName)
+                val readHistory = ReadHistory(bookId, currentPage, percentage, bookName)
                 readHistoryRepo.addReadHistory(readHistory)
             }
         }

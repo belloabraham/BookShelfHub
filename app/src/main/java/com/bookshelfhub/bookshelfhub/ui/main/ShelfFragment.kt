@@ -19,7 +19,7 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBooks
+import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
-    private var orderedBookList:List<OrderedBooks> = emptyList()
+    private var orderedBookList:List<OrderedBook> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
     @Inject
@@ -46,7 +46,7 @@ class ShelfFragment : Fragment() {
     lateinit var remoteDataSource: IRemoteDataSource
 
     private var binding: FragmentShelfBinding?=null
-    private var mOrderedBooksAdapter: ListAdapter<OrderedBooks, RecyclerViewHolder<OrderedBooks>>?=null
+    private var mOrderedBooksAdapter: ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>>?=null
     private var mSearchListAdapter: ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>>?=null
 
     override fun onCreateView(
@@ -75,7 +75,7 @@ class ShelfFragment : Fragment() {
                     requireActivity(),
                     RemoteDataFields.ORDERED_BOOKS_COLL,
                     userId,
-                    OrderedBooks::class.java
+                    OrderedBook::class.java
                 ) {
                     if (it.isEmpty()){
                         layout.progressBar.visibility = GONE
@@ -91,7 +91,7 @@ class ShelfFragment : Fragment() {
                         requireActivity(),
                         RemoteDataFields.ORDERED_BOOKS_COLL,
                         userId,
-                        OrderedBooks::class.java,
+                        OrderedBook::class.java,
                         orderBy = RemoteDataFields.ORDER_DATE_TIME,
                         Query.Direction.DESCENDING,
                         startAfter = timestamp

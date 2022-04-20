@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName= "BookInterest")
+@Entity(tableName= "BookInterests")
 data class BookInterest(
      @PrimaryKey
      var userId: String,

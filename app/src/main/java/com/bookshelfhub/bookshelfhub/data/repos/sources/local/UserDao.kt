@@ -10,13 +10,13 @@ import com.google.common.base.Optional
 @Dao
 abstract class UserDao :BaseDao<User> {
 
-    @Query("DELETE FROM User")
+    @Query("DELETE FROM Users")
     abstract suspend  fun deleteUserRecord()
 
-    @Query("SELECT * FROM User WHERE userId = :userId")
+    @Query("SELECT * FROM Users WHERE userId = :userId")
     abstract suspend  fun getUser(userId:String): Optional<User>
 
-    @Query("SELECT * FROM User WHERE userId = :userId")
+    @Query("SELECT * FROM Users WHERE userId = :userId")
     abstract fun getLiveUser(userId:String): LiveData<User>
 
 }

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.data.models.entities
+package com.bookshelfhub.bookshelfhub.data.models.uistate
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -6,7 +6,7 @@ import com.google.firebase.Timestamp
 
 
 @Entity(tableName = "UserReviews")
-data class UserReview(
+data class UserReviewUiState(
     @PrimaryKey
     val bookId:String,
     var review:String,

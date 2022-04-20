@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.ui.cart
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.data.models.entities.Cart
+import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
@@ -25,7 +25,7 @@ class CartViewModel @Inject constructor(
     val settingsUtil: SettingsUtil,
     userAuth: IUserAuth): ViewModel(){
 
-  private var liveCartItems: LiveData<List<Cart>> = MutableLiveData()
+  private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private val userId = userAuth.getUserId()
   private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
@@ -69,19 +69,19 @@ class CartViewModel @Inject constructor(
     return livePaymentCards
   }
 
-  fun deleteFromCart(cart: Cart){
+  fun deleteFromCart(cart: CartItem){
     viewModelScope.launch{
       cartItemsRepo.deleteFromCart(cart)
     }
   }
 
-  fun addToCart(cart: Cart){
+  fun addToCart(cart: CartItem){
     viewModelScope.launch {
       cartItemsRepo.addToCart(cart)
     }
   }
 
-  fun getListOfCartItems(): LiveData<List<Cart>> {
+  fun getListOfCartItems(): LiveData<List<CartItem>> {
     return liveCartItems
   }
 
