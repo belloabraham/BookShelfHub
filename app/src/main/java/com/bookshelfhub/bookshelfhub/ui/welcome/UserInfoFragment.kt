@@ -63,13 +63,14 @@ class UserInfoFragment : Fragment() {
 
         val isNewUser = args.isNewUser
         val userId = userAuth.getUserId()
+        val userAuthType = userAuth.getAuthType()
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
 
         }
 
 
-        if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
+        if (userAuthType== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
             layout.emailEditTxt.setText(userAuth.getEmail())
         }else{
@@ -85,14 +86,14 @@ class UserInfoFragment : Fragment() {
             val email = layout.emailEditTxt.text.toString().trim()
             val phone = layout.phoneEditTxt.text.toString().trim()
             val firstName = layout.firstNameEditTxt.text.toString().trim()
-            val lastName = layout.firstNameEditTxt.text.toString().trim()
+            val lastName = layout.lastNameEditTxt.text.toString().trim()
 
             if (!email.isValidEmailAddress()){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(firstName)){
-                layout.firstNameEditTxtLayout.error=getString(R.string.empty_name_error)
+                layout.firstNameEditTxtLayout.error=getString(R.string.first_name_req_error)
             }else if(TextUtils.isEmpty(lastName)){
-                layout.lastNameEditTxtLayout.error=getString(R.string.empty_name_error)
+                layout.lastNameEditTxtLayout.error=getString(R.string.last_name_req_error)
             }else if(!phone.isPhoneNumber()){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
@@ -115,7 +116,7 @@ class UserInfoFragment : Fragment() {
 
                     userAuth.updateDisplayName(firstName)
 
-                    val user = User(userId, userAuth.getAuthType())
+                    val user = User(userId, userAuthType)
                     user.appVersion=appUtil.getAppVersionName()
                     user.fistName = firstName
                     user.lastName = lastName

@@ -11,7 +11,6 @@ object Tag {
     const val oneTimeBookInterestUpload =  "oneTimeBookInterestUpload"
     const val periodicUserDataUpload = "periodicUserDataUpload"
     const val addUserUniqueWorkDatUpload = "addUserUniqueWorkDatUpload"
-    const val addBookInterestUniqueWorkDatUpload = "addBookInterestUniqueWorkDatUpload"
 
     const val oneTimeBookmarksDataDownload = "oneTimeBookmarksDataDownload"
     const val oneTimeRemotePrivateKeyWorker ="oneTimeRemotePrivateKeyWorker"

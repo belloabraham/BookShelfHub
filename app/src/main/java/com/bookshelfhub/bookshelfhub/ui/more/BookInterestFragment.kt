@@ -32,10 +32,10 @@ class BookInterestFragment : Fragment() {
 
     private lateinit var bookInterestObservable: BookInterestObservable
     private val bookInterestViewModel: BookInterestViewModel by viewModels()
+
     @Inject
     lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var worker: Worker
+
     private lateinit var oldBookInterest: BookInterest
     private var binding: FragmentInterestBinding?=null
 
@@ -90,16 +90,7 @@ class BookInterestFragment : Fragment() {
                 val bookInterest = bookInterestObservable.getBookInterestRecord()
                  bookInterest.uploaded = false
                  bookInterest.added=true
-                    bookInterestViewModel.addBookInterest(bookInterest)
-
-           val oneTimeBookInterestUpload =
-               OneTimeWorkRequestBuilder<UploadBookInterest>()
-                   .setConstraints(Constraint.getConnected())
-                   .build()
-
-           worker.enqueueUniqueWork(Tag.oneTimeBookInterestUpload,
-               ExistingWorkPolicy.REPLACE, oneTimeBookInterestUpload)
-
+                 bookInterestViewModel.addBookInterest(bookInterest)
                     activity?.let {
                         showToast(R.string.interest_Saved)
                         it.finish()

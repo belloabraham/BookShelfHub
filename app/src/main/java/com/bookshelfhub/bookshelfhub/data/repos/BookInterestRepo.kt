@@ -41,7 +41,7 @@ class BookInterestRepo @Inject constructor(
             OneTimeWorkRequestBuilder<UploadBookInterest>()
                 .setConstraints(Constraint.getConnected())
                 .build()
-        worker.enqueueUniqueWork(Tag.addBookInterestUniqueWorkDatUpload, ExistingWorkPolicy.REPLACE, oneTimeBookInterestDataUpload)
+        worker.enqueueUniqueWork(Tag.oneTimeBookInterestUpload, ExistingWorkPolicy.REPLACE, oneTimeBookInterestDataUpload)
     }
 
 

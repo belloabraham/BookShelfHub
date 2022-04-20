@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import com.bookshelfhub.bookshelfhub.R
+import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.helpers.utils.AnimUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
@@ -31,8 +32,6 @@ class AboutFragment : Fragment() {
     lateinit var appUtil: AppUtil
     @Inject
     lateinit var remoteConfig: IRemoteConfig
-    private val EMAIL="email"
-    private val PHONE="phone"
     private var binding: FragmentAboutBinding?=null
 
     override fun onCreateView(
@@ -47,8 +46,8 @@ class AboutFragment : Fragment() {
 
         layout.contactGrid.setColumnCount(3)
         layout.socialGrid.setColumnCount(3)
-        val email = remoteConfig.getString(EMAIL)
-        val phoneNumber = remoteConfig.getString(PHONE)
+        val email = remoteConfig.getString(Config.EMAIL)
+        val phoneNumber = remoteConfig.getString(Config.PHONE)
 
         val socialBuilder = getAboutPageSocialBuilder()
         val contactBuilder = getAboutPageContactBuilder(email, phoneNumber)

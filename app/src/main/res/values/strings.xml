@@ -119,7 +119,6 @@
     <string name="last_name">First Name</string>
     <string name="first_name">Last Name</string>
     <string name="phone_number">Phone number</string>
-    <string name="empty_name_error">Name field is required</string>
     <string name="valid_phone_error">Enter a valid phone number</string>
     <string name="valid_email_error">Enter a valid email address</string>
 
@@ -287,7 +286,8 @@
     <string name="date_of_birth">Date of birth</string>
     <string name="gender">Gender</string>
     <string name="phone_req_error">Your phone number is required</string>
-    <string name="name_req_error">Your name is required</string>
+    <string name="first_name_req_error">Your first name is required</string>
+    <string name="last_name_req_error">Your last name is required</string>
     <string name="mail_req_error">Your email is required</string>
     <string name="updated">Updated</string>
     <string name="additionalInfo">Additional information</string>

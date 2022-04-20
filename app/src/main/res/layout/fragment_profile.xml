@@ -12,19 +12,33 @@
         android:padding="@dimen/size_16"
         android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/nameEditTxtLayout"
-        android:layout_marginBottom="@dimen/size_16"
-        style="@style/Widget.Design.TextInputLayout">
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/nameEditTxt"
-            android:inputType="text"
-            android:hint="@string/first_last_name" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:id="@+id/firstNameEditTxtLayout"
+            android:layout_marginVertical="@dimen/size_16"
+            style="@style/Widget.Design.TextInputLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/firstNameEditTxt"
+                android:inputType="text"
+                android:hint="@string/first_name" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lastNameEditTxtLayout"
+            android:layout_marginVertical="@dimen/size_16"
+            style="@style/Widget.Design.TextInputLayout">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lastNameEditTxt"
+                android:inputType="text"
+                android:hint="@string/last_name" />
+        </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

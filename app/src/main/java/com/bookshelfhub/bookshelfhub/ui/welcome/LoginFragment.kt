@@ -23,6 +23,7 @@ import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.extensions.showErrorToolTip
 import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.authentication.*
+import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.Dispatchers.IO
@@ -44,15 +45,12 @@ class LoginFragment:Fragment() {
     private val phoneAuthViewModel: PhoneAuthViewModel by activityViewModels()
     private val googleAuthViewModel: GoogleAuthViewModel by activityViewModels()
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
-    private val PHONE = "phone"
-    private val DIALING_CODE="dialingCode"
+
 
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
     @Inject
     lateinit var settingsUtil: SettingsUtil
-    @Inject
-    lateinit var userAuth: IUserAuth
 
 
     override fun onCreateView(
@@ -75,14 +73,12 @@ class LoginFragment:Fragment() {
         layout.ccp.registerCarrierNumberEditText(layout.phoneNumEditText)
 
 
-        viewLifecycleOwner.lifecycleScope.launch(IO) {
-           val number = settingsUtil.getString(PHONE)
-            val dialingCode = settingsUtil.getString(DIALING_CODE)
+        viewLifecycleOwner.lifecycleScope.launch {
+           val number = settingsUtil.getString(Settings.PHONE)
+            val dialingCode = settingsUtil.getString(Settings.DIALING_CODE)
             if (number!=null && dialingCode==layout.ccp.selectedCountryCodeWithPlus){
-                withContext(Main) {
-                    val phone  = number.replace(layout.ccp.selectedCountryCodeWithPlus,"")
-                    layout.phoneNumEditText.setText(phone)
-                }
+                val phone  = number.replace(layout.ccp.selectedCountryCodeWithPlus,"")
+                layout.phoneNumEditText.setText(phone)
             }
         }
 
@@ -172,9 +168,9 @@ class LoginFragment:Fragment() {
     }
 
     private fun savePhoneNumber(number: String){
-        lifecycleScope.launch(IO) {
-            settingsUtil.setString(PHONE, number)
-            settingsUtil.setString(DIALING_CODE, layout.ccp.selectedCountryCodeWithPlus)
+        lifecycleScope.launch {
+            settingsUtil.setString(Settings.PHONE, number)
+            settingsUtil.setString(Settings.DIALING_CODE, layout.ccp.selectedCountryCodeWithPlus)
         }
     }
 

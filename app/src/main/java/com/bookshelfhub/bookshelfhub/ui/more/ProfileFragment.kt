@@ -38,6 +38,7 @@ class ProfileFragment : Fragment() {
     lateinit var userAuth: IUserAuth
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
+
     private var gender:String?=null
     private var dateOfBirth:String?=null
     private val profileViewModel:ProfileViewModel by viewModels()
@@ -52,11 +53,13 @@ class ProfileFragment : Fragment() {
         layout = binding!!
 
         var user: User? = null
+        val userAuthType = userAuth.getAuthType()
 
         profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
             user = liveUser
-            layout.nameEditTxt.setText(liveUser!!.name)
-            if (userAuth.getAuthType()== AuthType.GOOGLE.ID){
+            layout.firstNameEditTxt.setText(liveUser!!.fistName)
+            layout.lastNameEditTxt.setText(liveUser.lastName)
+            if (userAuthType == AuthType.GOOGLE.ID){
                 layout.phoneEditTxtLayout.visibility=View.VISIBLE
             }else{
                 layout.emailEditTxtLayout.visibility=VISIBLE
@@ -91,27 +94,30 @@ class ProfileFragment : Fragment() {
 
         layout.btnSave.setOnClickListener {
             layout.phoneEditTxtLayout.error = null
-            layout.nameEditTxtLayout.error = null
+            layout.lastNameEditTxtLayout.error=null
+            layout.emailEditTxtLayout.error=null
             layout.emailEditTxtLayout.error = null
             val email = layout.emailEditTxt.text.toString().trim()
             val phone = layout.phoneEditTxt.text.toString().trim()
-            val name = layout.nameEditTxt.text.toString().trim()
+            val firstName = layout.firstNameEditTxt.text.toString().trim()
+            val lastName = layout.firstNameEditTxt.text.toString().trim()
             val additionalInfo = layout.additionalInfoText.text.toString().trim()
-            if(TextUtils.isEmpty(name)){
-                layout.nameEditTxtLayout.error = getString(R.string.name_req_error)
+            if(TextUtils.isEmpty(firstName)){
+                layout.firstNameEditTxtLayout.error = getString(R.string.first_name_req_error)
+            }else if(TextUtils.isEmpty(lastName)){
+              layout.lastNameEditTxtLayout.error=getString(R.string.last_name_req_error)
             }else if (TextUtils.isEmpty(phone)){
                 layout.phoneEditTxtLayout.error = getString(R.string.phone_req_error)
             }else if (TextUtils.isEmpty(email)){
                 layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
-            }else if (!name.isFullName(Regex.FIRST_NAME_LAST_NAME)){
-                layout.nameEditTxtLayout.error=getString(R.string.valid_full_name)
             }else {
                 user?.let { updatedUserRecord ->
                     updatedUserRecord.dateOfBirth = dateOfBirth
                     updatedUserRecord.gender = gender
-                    updatedUserRecord.name = name
+                    updatedUserRecord.fistName = firstName
+                    updatedUserRecord.lastName = lastName
                     updatedUserRecord.additionInfo = additionalInfo
-                    if (userAuth.getAuthType() == AuthType.GOOGLE.ID) {
+                    if (userAuthType == AuthType.GOOGLE.ID) {
                         if (phone != updatedUserRecord.phone) {
                             updatedUserRecord.mailOrPhoneVerified = false
                             updatedUserRecord.phone = phone
