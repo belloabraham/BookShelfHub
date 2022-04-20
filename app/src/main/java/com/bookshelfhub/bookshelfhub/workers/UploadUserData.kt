@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 class UploadUserData  @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val localDb: ILocalDb,
+    private val userRepo: UserRepo,
     private val userAuth:IUserAuth,
     private val remoteDataSource: IRemoteDataSource
 ): CoroutineWorker(context,
@@ -27,26 +27,26 @@ class UploadUserData  @AssistedInject constructor (
     override suspend fun doWork(): Result {
 
         val userId = userAuth.getUserId()
-        val user = localDb.getUser(userId)
+        val user = userRepo.getUser(userId)
 
         val userData = user.get()
-         return   if (user.isPresent && !userData.uploaded){
 
-             try {
-                 remoteDataSource.addDataAsync(userData, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.USER).await()
+        if(user.isPresent){
+            Result.success()
+        }
 
-                     userData.uploaded = true
-                     localDb.addUser(userData)
-                     Result.success()
+       return  try {
+                userRepo.uploadUser(userData, userId)
+                 userData.uploaded = true
+                 userRepo.addUser(userData)
 
-             }catch (e:Exception){
-                 Logger.log("Worker:UploadUserData", e)
-                 Result.retry()
-             }
+                 Result.success()
 
-            }else{
-                Result.success()
-            }
+         }catch (e:Exception){
+             Logger.log("Worker:UploadUserData", e)
+             Result.retry()
+         }
+
 
     }
 }

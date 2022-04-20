@@ -26,7 +26,7 @@ interface IRemoteDataSource {
 
    suspend fun updateUserReviews(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookUpdatedValues: List<HashMap<String, FieldValue>>): Void?
 
-    fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void>
+   suspend fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Void?
 
 
     fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String = RemoteDataFields.USER_ID, downloadUrlKey:String= RemoteDataFields.DOWNLOAD_URL, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit) : ListenerRegistration

@@ -35,7 +35,11 @@ class UserRepo @Inject constructor(
             RemoteDataFields.USERS_COLL, userId, RemoteDataFields.NOTIFICATION_TOKEN)
     }
 
-    suspend fun addRemoteUser(remoteUser: RemoteUser, userId: String): Void? {
+    suspend fun uploadUser(user:User, userId: String): Void? {
+      return  remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, RemoteDataFields.USER, user)
+    }
+
+    suspend fun uploadRemoteUser(remoteUser: RemoteUser, userId: String): Void? {
         return remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
     }
 
@@ -49,15 +53,19 @@ class UserRepo @Inject constructor(
         return  userDao.getLiveUser(userId)
     }
 
+
     suspend fun addUser(user: User){
         withContext(IO) {
             userDao.addUser(user)
         }
-        val oneTimeUserDataUpload =
-            OneTimeWorkRequestBuilder<UploadUserData>()
-                .setConstraints(Constraint.getConnected())
-                .build()
-        worker.enqueueUniqueWork(Tag.addUserUniqueWorkDatUpload, ExistingWorkPolicy.REPLACE, oneTimeUserDataUpload)
+
+        if(!user.uploaded){
+            val oneTimeUserDataUpload =
+                OneTimeWorkRequestBuilder<UploadUserData>()
+                    .setConstraints(Constraint.getConnected())
+                    .build()
+            worker.enqueueUniqueWork(Tag.addUserUniqueWorkDatUpload, ExistingWorkPolicy.REPLACE, oneTimeUserDataUpload)
+        }
     }
 
      suspend fun deleteUserRecord() {

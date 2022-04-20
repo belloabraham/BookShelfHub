@@ -225,14 +225,14 @@ import javax.inject.Inject
      }
 
 
-     override fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Task<Void> {
+     override suspend fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Void? {
 
         return  db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document()
                  batch.set(docRef, item)
              }
-         }
+         }.await()
      }
 
 
