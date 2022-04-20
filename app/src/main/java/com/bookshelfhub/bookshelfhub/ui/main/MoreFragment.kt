@@ -71,8 +71,6 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var userAuth: IUserAuth
     @Inject
-    lateinit var remoteDataSource: IRemoteDataSource
-    @Inject
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
@@ -215,31 +213,13 @@ class MoreFragment : Fragment() {
         }
 
         layout.referraLinkCard.setOnClickListener {
-            activity?.let { activity ->
-                var link = mainActivityViewModel.getUserReferralLink()
-                if (link==null){
-                    lifecycleScope.launch(IO){
-                      link =  settingsUtil.getString(Referrer.REF_LINK)
-                        withContext(Main){
-                            if (link==null){
-                                dynamicLink.generateShortLinkAsync(
-                                    remoteConfig.getString(Social.TITLE),
-                                    remoteConfig.getString(Social.DESC),
-                                    remoteConfig.getString(Social.IMAGE_URL),
-                                    userAuth.getUserId()
-                                ){
-                                    if (it!=null){
-                                        getReferralLink(it.toString())
-                                    }
-                                }
-                            }else{
-                                getReferralLink(link!!)
-                            }
-                        }
-                    }
-                }else{
-                    getReferralLink(link!!)
-                }
+            lifecycleScope.launch {
+               val link =  settingsUtil.getString(Referrer.REF_LINK)
+               if(link==null){
+                  showToast(R.string.internet_connection_required)
+               }else{
+                   getReferralLink(link)
+               }
             }
         }
 

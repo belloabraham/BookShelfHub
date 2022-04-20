@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,7 @@ class MainActivityViewModel @Inject constructor(
     private val dynamicLink: IDynamicLink,
     private val settingsUtil: SettingsUtil,
     private val bookInterestRepo: BookInterestRepo,
+    private val connectionUtil: ConnectionUtil,
     private val referralRepo: ReferralRepo
     ):ViewModel() {
 
@@ -52,7 +54,6 @@ class MainActivityViewModel @Inject constructor(
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
         getRemotePrivateKeys()
-
     }
 
     fun getCollaboratorReferralBookId(): String? {
@@ -71,7 +72,7 @@ class MainActivityViewModel @Inject constructor(
 
      fun getAndSaveAppShareDynamicLink(){
         viewModelScope.launch {
-            if(settingsUtil.getString(Referrer.REF_LINK) == null){
+            if(settingsUtil.getString(Referrer.REF_LINK) == null && connectionUtil.isConnected()){
                 val title = remoteConfig.getString(Social.TITLE)
                 val description = remoteConfig.getString(Social.DESC)
                 val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
@@ -140,14 +141,6 @@ class MainActivityViewModel @Inject constructor(
 
     fun setIsNightMode(value:Boolean){
         isNightMode.value = value
-    }
-
-    fun setUserReferralLink(value:String){
-        userReferralLink=value
-    }
-
-    fun getUserReferralLink():String?{
-        return userReferralLink
     }
 
     fun addCollaborator(collaborator: Collaborator){

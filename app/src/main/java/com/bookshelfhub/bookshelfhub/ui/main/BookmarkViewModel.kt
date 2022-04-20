@@ -23,7 +23,7 @@ class BookmarkViewModel @Inject constructor(
 
 
     init{
-       liveBookmarks = bookmarksRepo.getLiveBookmarks()
+       liveBookmarks = bookmarksRepo.getLiveBookmarks(false)
     }
 
     fun addBookmark(bookmark: Bookmark){

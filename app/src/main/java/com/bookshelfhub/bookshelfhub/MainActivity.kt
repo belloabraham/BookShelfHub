@@ -192,7 +192,6 @@ class MainActivity : AppCompatActivity() {
 
         setActiveViewPagerAndPageAfterMainActivityThemeChange()
 
-
     }
 
     private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {

@@ -5,7 +5,8 @@
     <!-- TODO: Book Activity-->
     <string name="removed_bookmark_msg">Removed from bookmark</string>
     <string name="bookmark_added_msg">Added to bookmark</string>
-    <string name="internet_connection_required">Connect to the internet and retry sharing book</string>
+    <string name="internet_connection_required">Connect to the internet and retry</string>
+
     <string name="no_video_msg">There is currently no video for this page, make sure you are connected to the internet to get notified of new videos.</string>
     <string name="close">Close</string>
     <string name="unable_to_share_book">You can not share this book at the moment as it has been unpublished from the book store, try later</string>

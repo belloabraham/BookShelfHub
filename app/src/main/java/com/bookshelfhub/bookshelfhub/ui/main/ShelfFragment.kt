@@ -42,8 +42,6 @@ class ShelfFragment : Fragment() {
     private val shelfViewModel: ShelfViewModel by viewModels()
     @Inject
     lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var remoteDataSource: IRemoteDataSource
 
     private var binding: FragmentShelfBinding?=null
     private var mOrderedBooksAdapter: ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>>?=null
