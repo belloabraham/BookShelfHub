@@ -15,13 +15,15 @@ data class PublishedBook(
     val description: String="",
     val publishedDate: Timestamp? = null,
     val category: String="",
-    val tag: String="",
+    val tag: String?="",
     val sellerCurrency:String ="",
     val totalReviews:Long=0,
     val totalRatings:Float=0f,
     val published:Boolean=true,
+    val lastUpdated: Timestamp? = null,
+    val approved:Boolean = false,
     val pubId: String="",
-    val language:String="",
     var price: Double=0.0,
-    val recommended:Boolean = false
+    val recommended:Boolean = false,
+    val serialNo: Long=0
     ) 

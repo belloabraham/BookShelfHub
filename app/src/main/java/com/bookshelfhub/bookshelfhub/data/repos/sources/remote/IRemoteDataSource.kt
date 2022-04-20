@@ -9,6 +9,7 @@ import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
 
+    suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey:String, whereValue:Any, whereKey2:String, whereValue2:Any, orderBy: String, direction: Query.Direction, type:Class<T>): List<T>
 
     suspend fun <T: Any>  getDataAsync(collection:String, document: String, type:Class<T>): T?
 
@@ -41,14 +42,9 @@ interface IRemoteDataSource {
     fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String):Task<Void>
 
 
-    fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void>
+    suspend fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Void?
 
-     fun addDataAsync(
-        data: Any,
-        collection: String,
-        document: String,
-        field: String
-    ): Task<Void>
+    suspend fun addDataAsync(collection:String, document:String, field:String, data: Any): Void?
 
 
     fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration

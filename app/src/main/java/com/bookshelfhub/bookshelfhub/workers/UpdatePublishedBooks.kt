@@ -7,10 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
+import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
@@ -20,9 +17,7 @@ class UpdatePublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val remoteDataSource: IRemoteDataSource,
-    private val util: Util,
-    private val localDb: ILocalDb
+    private val publishedBooksRepo: PublishedBooksRepo,
 ) : CoroutineWorker(context,
     workerParams
 ) {
@@ -34,15 +29,10 @@ class UpdatePublishedBooks @AssistedInject constructor (
 
        return try {
 
-           val querySnapshot =  remoteDataSource.getListOfDataWhereAsync(
-               RemoteDataFields.PUBLISHED_BOOKS_COLL,
-               RemoteDataFields.PUBLISHED, true,
-           ).await()
-
-           val publishedBooks = util.queryToListOfType(querySnapshot, PublishedBook::class.java)
+           val publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
 
            if(publishedBooks.isNotEmpty()){
-               localDb.addAllPubBooks(publishedBooks)
+               publishedBooksRepo.addAllPubBooks(publishedBooks)
            }
            Result.success()
         }catch (e:Exception){

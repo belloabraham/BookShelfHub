@@ -7,6 +7,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.sources.local.PublishedBooksDao
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.google.common.base.Optional
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,6 +33,17 @@ class PublishedBooksRepo @Inject constructor(
                 false,
                 PublishedBook::class.java
             )
+    }
+
+    suspend  fun getRemotePublishedBooks(): List<PublishedBook> {
+      return  remoteDataSource.getListOfDataWhereAsync(
+            RemoteDataFields.PUBLISHED_BOOKS_COLL,
+            whereKey = RemoteDataFields.PUBLISHED, true,
+            whereKey2 = RemoteDataFields.APPROVED, true,
+            orderBy = RemoteDataFields.SERIAL_NO,
+            Query.Direction.ASCENDING,
+            PublishedBook::class.java
+        )
     }
 
      suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {

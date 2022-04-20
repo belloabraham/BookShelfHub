@@ -33,6 +33,8 @@ object RemoteDataFields{
 
     //Must be same as .services.database.local.room.entities.PublishedBook.published
     const val PUBLISHED = "published"
+    const val APPROVED ="approved"
+    const val SERIAL_NO ="serialNo"
 
     //Must be same as .services.database.local.room.entities.PublishedBook.dateTime
     const val DATE_TIME_PUBLISHED = "dateTime"

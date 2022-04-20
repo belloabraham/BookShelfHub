@@ -71,6 +71,10 @@ class BookmarksRepo @Inject constructor(
         return  withContext(IO){bookmarksDao.getLocalBookmarks(uploaded, deleted)}
     }
 
+    suspend fun updateRemoteUserBookmarks(listOfBookmarks:List<Bookmark>, userId: String): Void? {
+       return remoteDataSource.addListOfDataAsync(listOfBookmarks, RemoteDataFields.USERS_COLL, userId,  RemoteDataFields.BOOKMARKS_COLL)
+    }
+
     suspend fun deleteRemoteBookmarks(list: List<IEntityId>, userId:String): Void {
        return remoteDataSource.deleteListOfDataAsync(list, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL).await()
     }

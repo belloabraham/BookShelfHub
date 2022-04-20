@@ -39,13 +39,13 @@ import javax.inject.Inject
      }
 
 
-    override fun addDataAsync(data: Any, collection:String, document:String, field:String ): Task<Void> {
+    override suspend fun addDataAsync(collection:String, document:String, field:String, data: Any): Void? {
         val newData = hashMapOf(
             field to data,
         )
           return  db.collection(collection)
                 .document(document)
-                .set(newData, SetOptions.merge())
+                .set(newData, SetOptions.merge()).await()
 
     }
 
@@ -138,9 +138,18 @@ import javax.inject.Inject
          querySnapShot.removeAll {
              it.id == excludedDocId
          }
+         return querySnapshotToListOfType(querySnapShot, type)
+     }
+
+
+     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey:String, whereValue:Any, whereKey2:String, whereValue2:Any, orderBy: String, direction: Query.Direction, type:Class<T>): List<T> {
+         val querySnapShot =  db.collection(collection)
+             .whereEqualTo(whereKey,whereValue)
+             .whereEqualTo(whereKey2,whereValue2)
+             .orderBy(orderBy, direction)
+             .get().await()
 
          return querySnapshotToListOfType(querySnapShot, type)
-
      }
 
 
@@ -153,7 +162,6 @@ import javax.inject.Inject
              .get().await()
 
          return querySnapshotToListOfType(querySnapShot, type)
-
      }
 
      override suspend fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>): List<T> {
@@ -226,14 +234,14 @@ import javax.inject.Inject
      }
 
 
-     override fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
+     override suspend fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Void? {
 
        return  db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
                  batch.set(docRef, item)
              }
-         }
+         }.await()
 
     }
 

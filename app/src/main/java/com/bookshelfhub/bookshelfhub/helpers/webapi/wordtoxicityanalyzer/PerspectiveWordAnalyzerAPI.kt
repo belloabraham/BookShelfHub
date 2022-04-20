@@ -5,11 +5,13 @@ import com.bookshelfhub.bookshelfhub.data.models.apis.perspective.post.PostBody
 import com.bookshelfhub.bookshelfhub.data.models.apis.perspective.response.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface PerspectiveWordAnalyzerAPI {
 
+    @Headers("Content-Type: application/json")
     @POST(PerspectiveAPI.PATH)
     suspend fun analyze(
         @Body() postBody:PostBody,
