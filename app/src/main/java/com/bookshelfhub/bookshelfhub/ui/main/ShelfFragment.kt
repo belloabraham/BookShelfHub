@@ -65,7 +65,7 @@ class ShelfFragment : Fragment() {
             shelfSearchHistoryList=shelfSearchHistory
         })
 
-        viewLifecycleOwner.lifecycleScope.launch(IO){
+        viewLifecycleOwner.lifecycleScope.launch{
             val orderedBooks = shelfViewModel.getOrderedBooks()
             if (orderedBooks.isEmpty()){
                 //Get all available ordered books the user have

@@ -1,14 +1,14 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
+import com.bookshelfhub.bookshelfhub.data.models.Earnings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
-import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.PaymentCardRepo
-import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,10 +18,11 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     val remoteDataSource: IRemoteDataSource,
-    val cardRepo: PaymentCardRepo,
     paymentCardRepo: PaymentCardRepo,
     private val cartItemsRepo: CartItemsRepo, 
      userRepo: UserRepo,
+    private val paymentTransactionRepo: PaymentTransactionRepo,
+    private val earningsRepo: EarningsRepo,
     val settingsUtil: SettingsUtil,
     userAuth: IUserAuth): ViewModel(){
 
@@ -32,6 +33,8 @@ class CartViewModel @Inject constructor(
   private var flutterEncKey:String?=null
   private var flutterPublicKey:String?=null
   private lateinit var user: User
+  private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
+  private var totalEarnings = 0.0
 
   init {
     liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
@@ -44,6 +47,37 @@ class CartViewModel @Inject constructor(
       user =  userRepo.getUser(userId).get()
     }
   }
+
+  fun getTotalEarnings(): Double {
+    return totalEarnings
+  }
+
+  fun addPaymentTransactions(paymentTransactions:List<PaymentTransaction>){
+    viewModelScope.launch {
+      paymentTransactionRepo.addPaymentTransactions(paymentTransactions)
+    }
+  }
+
+  fun getLiveListOfCartItemsAfterEarnings(): LiveData<List<CartItem>> {
+    return Transformations.switchMap(getLiveTotalEarnings()) { earnings ->
+      for (earning in earnings){
+        totalEarnings.plus(earning.earned)
+      }
+      cartItemsRepo.getLiveListOfCartItems(userId)
+    }
+  }
+
+  private fun getLiveTotalEarnings(): LiveData<List<Earnings>> {
+    viewModelScope.launch {
+      try {
+        earnings.value = earningsRepo.getRemoteEarnings(userId)
+      }catch (e:Exception){
+        return@launch
+      }
+    }
+    return earnings
+  }
+
 
   fun getUser(): User {
     return user

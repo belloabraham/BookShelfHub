@@ -19,7 +19,6 @@ class UploadUserData  @AssistedInject constructor (
     @Assisted workerParams: WorkerParameters,
     private val userRepo: UserRepo,
     private val userAuth:IUserAuth,
-    private val remoteDataSource: IRemoteDataSource
 ): CoroutineWorker(context,
     workerParams
 ) {

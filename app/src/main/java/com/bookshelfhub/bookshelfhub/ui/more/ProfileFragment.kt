@@ -57,7 +57,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
             user = liveUser
-            layout.firstNameEditTxt.setText(liveUser!!.fistName)
+            layout.firstNameEditTxt.setText(liveUser!!.firstName)
             layout.lastNameEditTxt.setText(liveUser.lastName)
             if (userAuthType == AuthType.GOOGLE.ID){
                 layout.phoneEditTxtLayout.visibility=View.VISIBLE
@@ -114,7 +114,7 @@ class ProfileFragment : Fragment() {
                 user?.let { updatedUserRecord ->
                     updatedUserRecord.dateOfBirth = dateOfBirth
                     updatedUserRecord.gender = gender
-                    updatedUserRecord.fistName = firstName
+                    updatedUserRecord.firstName = firstName
                     updatedUserRecord.lastName = lastName
                     updatedUserRecord.additionInfo = additionalInfo
                     if (userAuthType == AuthType.GOOGLE.ID) {

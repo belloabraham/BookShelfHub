@@ -19,7 +19,5 @@ data class PaymentTransaction(
     override val password: String? = null,
     override val downloadUrl: String? = null,
     override val dateTime: Timestamp?=null,
-    override val month: Int,
-    override val year: Int,
     override val additionInfo: String?,
 ): IOrderedBooks

@@ -11,8 +11,6 @@ interface IOrderedBooks {
     val name: String
     val coverUrl: String
     val referrerId: String?
-    val month:Int
-    val year:Int
     val pubId:String
     val orderedCountryCode: String?
     var transactionReference: String?

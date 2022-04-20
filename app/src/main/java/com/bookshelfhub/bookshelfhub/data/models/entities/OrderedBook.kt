@@ -20,7 +20,7 @@ data class OrderedBook(
     override val password:String?=null,
     override val downloadUrl:String?=null,
     override val dateTime:Timestamp?=null,
-    override val month: Int,
-    override val year: Int,
+    val month: Int,
+    val year: Int,
     override val additionInfo: String?
 ): ISearchResult, IOrderedBooks

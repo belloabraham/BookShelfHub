@@ -98,11 +98,9 @@ class MoreFragment : Fragment() {
         authType= userAuth.getAuthType()
         userId = userAuth.getUserId()
 
-        viewLifecycleOwner.lifecycleScope.launch(IO){
+        viewLifecycleOwner.lifecycleScope.launch{
             val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
-            withContext(Main){
                 progressPopupToggle.setChecked(isChecked, false)
-            }
         }
         val isDarkMode =  when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
             Configuration.UI_MODE_NIGHT_NO -> {
@@ -118,7 +116,7 @@ class MoreFragment : Fragment() {
         }
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->
-            lifecycleScope.launch(IO) {
+            lifecycleScope.launch{
                 settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP, isChecked)
             }
         }
@@ -151,13 +149,11 @@ class MoreFragment : Fragment() {
                  .setPositiveAction(R.string.sign_out){
                      userAuth.signOut()
                      if (authType == AuthType.GOOGLE.ID){
-                         viewLifecycleOwner.lifecycleScope.launch(IO){
+                         viewLifecycleOwner.lifecycleScope.launch{
                              try {
                                  googleAuth.signOut().await()
-                                 withContext(Main){
                                      moreViewModel.deleteUserData()
                                      startSplashActivity()
-                                 }
                              }catch (e:Exception){}
                          }
                      }else{

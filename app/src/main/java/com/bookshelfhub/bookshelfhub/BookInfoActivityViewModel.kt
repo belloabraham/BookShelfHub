@@ -13,10 +13,10 @@ class BookInfoActivityViewModel @Inject constructor(
 ): ViewModel() {
     private val title = savedState.get<String>(Book.NAME)!!
     private val fragmentId = savedState.get<Int>(Fragment.ID)!!
-    private val isbn = savedState.get<String>(Book.ID)!!
+    private val bookId = savedState.get<String>(Book.ID)!!
 
     fun getIsbn(): String {
-        return isbn
+        return bookId
     }
 
     fun getFragmentId(): Int {

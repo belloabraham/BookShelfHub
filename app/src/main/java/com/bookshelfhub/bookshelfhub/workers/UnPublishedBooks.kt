@@ -20,7 +20,6 @@ class UnPublishedBooks @AssistedInject constructor (
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
     private val publishedBooksRepo: PublishedBooksRepo,
-    private val remoteDataSource: IRemoteDataSource
 ) : CoroutineWorker(context,
     workerParams
 ) {

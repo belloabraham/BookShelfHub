@@ -25,20 +25,6 @@ import javax.inject.Inject
      }
 
 
-    override fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit ): ListenerRegistration {
-     val subscription = db.collection(collection).document(document).collection(subCollection)
-             .addSnapshotListener{ querySnapShot, e ->
-                 if (shouldRetry && e!=null){
-                     return@addSnapshotListener
-                 }
-
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-                 onComplete(dataList)
-             }
-        return subscription
-     }
-
-
     override suspend fun addDataAsync(collection:String, document:String, field:String, data: Any): Void? {
         val newData = hashMapOf(
             field to data,
@@ -113,23 +99,6 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String, downloadUrlKey:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
-         val subscription = db.collection(collection)
-             .whereNotEqualTo(downloadUrlKey, null)
-             .whereEqualTo(userIdKey, userId)
-             .addSnapshotListener{ querySnapShot, e ->
-
-                 if (shouldRetry && e!=null){
-                     return@addSnapshotListener
-                 }
-
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-                 onComplete(dataList)
-             }
-         return subscription
-     }
-
-
      override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, excludedDocId:String): List<T> {
 
          val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
@@ -172,22 +141,6 @@ import javax.inject.Inject
              .get().await()
          return   querySnapshotToListOfType(querySnapshot, type)
      }
-
-
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection).document(document).collection(subCollection)
-            .addSnapshotListener{ querySnapShot, error ->
-                if (error!=null && shouldRetry){
-                    return@addSnapshotListener
-                }
-                val dataList = querySnapshotToListOfType(querySnapShot, type)
-                runBlocking {
-                    onComplete(dataList)
-                }
-            }
-        return subscription
-    }
 
 
      override suspend fun updateUserReview(bookUpdatedValues: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Void? {

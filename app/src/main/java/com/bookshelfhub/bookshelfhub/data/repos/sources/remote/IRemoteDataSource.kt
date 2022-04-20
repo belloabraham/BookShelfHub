@@ -21,15 +21,10 @@ interface IRemoteDataSource {
 
     suspend fun <T: Any> getListOfDataAsync(collection:String, document: String, subCollection: String, type:Class<T>): List<T>
 
-    fun <T:Any> getLiveListOfDataAsync(collection:String, document:String, subCollection: String, type:Class<T>, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit ): ListenerRegistration
-
-
    suspend fun updateUserReviews(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookUpdatedValues: List<HashMap<String, FieldValue>>): Void?
 
    suspend fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Void?
 
-
-    fun <T: Any> getLiveOrderedBooks(collection:String, userId:String, type:Class<T>, userIdKey: String = RemoteDataFields.USER_ID, downloadUrlKey:String= RemoteDataFields.DOWNLOAD_URL, shouldRetry: Boolean = true, onComplete: (dataList:List<T>)->Unit) : ListenerRegistration
 
     suspend fun updateUserReview(bookUpdatedValues: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Void?
 
@@ -38,7 +33,6 @@ interface IRemoteDataSource {
 
     suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>): List<T>
 
-
     fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String):Task<Void>
 
 
@@ -46,8 +40,6 @@ interface IRemoteDataSource {
 
     suspend fun addDataAsync(collection:String, document:String, field:String, data: Any): Void?
 
-
-    fun <T: Any> getLiveListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>, shouldRetry: Boolean, onComplete: suspend (dataList:List<T>)->Unit): ListenerRegistration
 
      fun <T : Any> getLiveListOfDataAsync(
          collection: String,

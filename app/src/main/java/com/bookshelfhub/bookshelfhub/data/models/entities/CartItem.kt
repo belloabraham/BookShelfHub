@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class CartItem(
     var userId:String,
     @PrimaryKey
-    val isbn: String,
+    val bookId: String,
     val title: String,
     val author:String,
     val pubId:String,

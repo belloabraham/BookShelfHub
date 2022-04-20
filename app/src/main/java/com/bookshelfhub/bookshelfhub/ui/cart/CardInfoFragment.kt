@@ -12,16 +12,11 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
-import com.bookshelfhub.bookshelfhub.helpers.database.ILocalDb
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.helpers.EditTextCreditCardNumberFormatterWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -113,13 +108,11 @@ class CardInfoFragment : Fragment() {
                      * to ensure data is completely added before nav controller navigates back
                      */
 
-                    viewLifecycleOwner.lifecycleScope.launch(IO){
+                    viewLifecycleOwner.lifecycleScope.launch{
                         localDb.addPaymentCard(paymentCard)
-                        withContext(Main){
                             //Set is new card to notify Cart fragment that there is now a new card
                             cartViewModel.setIsNewCard(true)
                             findNavController().navigateUp()
-                        }
                     }
                 }
 

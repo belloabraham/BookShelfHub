@@ -118,7 +118,7 @@ class UserInfoFragment : Fragment() {
 
                     val user = User(userId, userAuthType)
                     user.appVersion=appUtil.getAppVersionName()
-                    user.fistName = firstName
+                    user.firstName = firstName
                     user.lastName = lastName
                     user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email

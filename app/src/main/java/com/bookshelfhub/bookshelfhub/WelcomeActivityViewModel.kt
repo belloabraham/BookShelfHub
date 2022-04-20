@@ -24,7 +24,6 @@ class WelcomeActivityViewModel @Inject constructor(
     private val bookInterestRepo: BookInterestRepo,
     private val userRepo: UserRepo,
     userAuth: IUserAuth,
-    private val json: Json,
     private val appUtil: AppUtil,
 ): ViewModel() {
 

@@ -24,7 +24,6 @@ class StoreViewModel @Inject constructor(
     val connectionUtil: ConnectionUtil,
     private val publishedBooksRepo: PublishedBooksRepo,
     cartItemsRepo: CartItemsRepo,
-    private val remoteDataSource: IRemoteDataSource,
     private val  searchHistoryRepo: SearchHistoryRepo,
     val userAuth: IUserAuth): ViewModel() {
 

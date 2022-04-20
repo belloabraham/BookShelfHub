@@ -28,12 +28,9 @@ import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadPaymentTransactions
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
-import com.bookshelfhub.bookshelfhub.data.models.Earnings
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.payment.*
 import com.bookshelfhub.bookshelfhub.workers.Worker
@@ -43,8 +40,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
@@ -60,18 +57,15 @@ class CartFragment : Fragment() {
     @Inject
     lateinit var worker: Worker
     @Inject
-    lateinit var remoteDataSource: IRemoteDataSource
-    @Inject
     lateinit var userAuth: IUserAuth
 
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
     private var bookIsbnsAndReferrerIds=""
-    private var isbns =""
+    private var bookIds =""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
-    private var userEarnings =0.0
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
     private var paymentCardsAdapter:ListAdapter<PaymentCard, RecyclerViewHolder<PaymentCard>>?=null
     private var mView:View?=null
@@ -113,74 +107,39 @@ class CartFragment : Fragment() {
             )
         )
 
-        //Setup swipe to delete Items in cart
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
+       cartViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
+           val countryCode = Location.getCountryCode(requireActivity().applicationContext)
+           showCartItemsState(cartItems)
 
-        //Listen for changes in no of items in cart
-        cartViewModel.getListOfCartItems().observe(viewLifecycleOwner, Observer { cartList ->
+           totalAmountInLocalCurrency = 0.0
+           totalAmountInUSD = 0.0
+           bookIsbnsAndReferrerIds = ""
+           bookIds = ""
 
-            if (listOfCartItems.isEmpty()){
-                listOfCartItems = cartList as ArrayList<CartItem>
-                cartListAdapter.submitList(listOfCartItems)
-            }
+           if (cartItems.isNotEmpty()){
+               listOfCartItems = cartItems as ArrayList<CartItem>
+               cartListAdapter.submitList(listOfCartItems)
 
-            totalAmountInLocalCurrency = 0.0
-            totalAmountInUSD = 0.0
-            bookIsbnsAndReferrerIds = ""
-            isbns = ""
-            var localCurrency = ""
+               val anItemInCart = cartItems[0]
+               val priceInUSD = anItemInCart.priceInUsd ?: anItemInCart.price
 
-            val countryCode = Location.getCountryCode(requireActivity().applicationContext)
+               val userAdditionalInfo = cartViewModel.getUser().additionInfo
 
-            //If any book in Cart
-            if (cartList.isNotEmpty()){
+               for(cartItem in cartItems){
 
-                //Get the total price of book in local currency and USD to show to the user
-                //and for a list of Payment transaction
-                for (cart in cartList){
+                   paymentTransaction.plus(PaymentTransaction(cartItem.bookId, priceInUSD, cartItem.title, cartItem.pubId, userId,cartItem.coverUrl,  cartItem.referrerId, countryCode, userAdditionalInfo))
 
-                    //If price in USD is null return cart.price else return cart.priceInUsd as the local price must be in USD
-                    val priceInUSD = cart.priceInUsd ?: cart.price
+                   totalAmountInUSD.plus(priceInUSD)
+                   totalAmountInLocalCurrency.plus(cartItem.price)
+                   bookIds.plus("${cartItem.bookId}, ")
+                   bookIsbnsAndReferrerIds.plus("${cartItem.bookId} (${cartItem.referrerId}), ")
+               }
 
-                    paymentTransaction.plus(PaymentTransaction(cart.isbn, priceInUSD, cart.title, cart.pubId, userId,cart.coverUrl,  cart.referrerId, countryCode))
-
-                    totalAmountInUSD.plus(priceInUSD)
-                    localCurrency = cart.currency
-                    totalAmountInLocalCurrency.plus(cart.price)
-                    isbns.plus("${cart.isbn}, ")
-                    bookIsbnsAndReferrerIds.plus("${cart.isbn} (${cart.referrerId}), ")
-                }
-
-                remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS, RemoteDataFields.REFERRER_ID, userId, Earnings::class.java, shouldRetry = true){
-
-                    userEarnings = 0.0
-
-                    //Get all total earning by the user from the cloud
-                    for(earning in it){
-                        userEarnings.plus(earning.earn)
-                    }
-
-                    if (totalAmountInUSD == totalAmountInLocalCurrency){
-                        //Then local currency must be in USD
-                            //Show only USD Price
-                        layout.totalCostTxt.text = String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, userEarnings)
-                    }else{
-                        //Show Usd and Local Price
-                        layout.totalCostTxt.text = String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, userEarnings)
-                    }
-
-                }
-
-                layout.checkoutBtn.isEnabled = true
-                layout.emptyCartLayout.visibility = GONE
-                layout.cartItemsRecView.visibility = VISIBLE
-            }else{
-                layout.checkoutBtn.isEnabled = false
-                layout.emptyCartLayout.visibility = VISIBLE
-                layout.cartItemsRecView.visibility = GONE
-            }
-        })
+               showTotalAmountOfBooks(totalAmountInUSD, anItemInCart.currency, totalAmountInLocalCurrency)
+           }
+       })
 
 
 
@@ -294,36 +253,37 @@ class CartFragment : Fragment() {
                         paymentTransaction[i].transactionReference = it
                     }
 
-                   uploadTransactions {
-                       //Show user a message that their transaction is processing and close Cart activity when the click ok
-                       showPaymentProcessingMsg()
-                   }
-
+                    cartViewModel.addPaymentTransactions(paymentTransaction)
+                    showPaymentProcessingMsg()
                 }
             }
 
         }
     }
 
-    private fun uploadTransactions(onComplete:()->Unit){
-        lifecycleScope.launch(IO){
-            //Add transaction to local database
-            localDb.addPaymentTransactions(paymentTransaction)
 
-            //Start a worker that further process the transaction
-            withContext(Main){
-                val oneTimeVerifyPaymentTrans =
-                    OneTimeWorkRequestBuilder<UploadPaymentTransactions>()
-                        .setConstraints(Constraint.getConnected())
-                        .build()
+    private fun showTotalAmountOfBooks(
+        totalAmountInUSD:Double,
+        localCurrency:String,
+        totalAmountInLocalCurrency:Double){
 
-               worker.enqueue(oneTimeVerifyPaymentTrans)
-            }
-            withContext(Main){
-                onComplete()
-            }
+        val totalEarnings = cartViewModel.getTotalEarnings()
+        layout.totalCostTxt.text =  if (totalAmountInUSD == totalAmountInLocalCurrency) String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, totalEarnings) else String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, totalEarnings)
+
+    }
+
+    private fun showCartItemsState(cartItems:List<CartItem>){
+        if (cartItems.isEmpty()){
+            layout.checkoutBtn.isEnabled = false
+            layout.emptyCartLayout.visibility = VISIBLE
+            layout.cartItemsRecView.visibility = GONE
+        }else{
+            layout.checkoutBtn.isEnabled = true
+            layout.emptyCartLayout.visibility = GONE
+            layout.cartItemsRecView.visibility = VISIBLE
         }
     }
+
 
     private fun showPaymentProcessingMsg(){
         //Show user a message that their transaction is processing and close Cart activity when the click ok
@@ -355,11 +315,11 @@ class CartFragment : Fragment() {
             totalAmountInLocalCurrency
         }else{
             totalAmountInUSD
-        } - userEarnings
+        } - cartViewModel.getTotalEarnings()
 
         if (paymentSDKType == SDKType.FLUTTER_WAVE){
             //Meta data containing who bought book and who the referrer for the each book is
-            val metaList = listOf(Meta(Payment.USER_ID, userId), Meta(Payment.BOOKS_AND_REF, bookIsbnsAndReferrerIds.trim()))
+            val metaList = listOf(Meta(Payment.USER_ID.KEY, userId), Meta(Payment.BOOKS_AND_REF.KEY, bookIsbnsAndReferrerIds.trim()))
             chargeCardWithFlutter(paymentCard, amountToChargeInUSD, metaList)
         }else{
             //Meta data containing who bought book and  and who the referrer for the book is
@@ -374,10 +334,8 @@ class CartFragment : Fragment() {
         val user =  cartViewModel.getUser()
         val callback = getFlutterPaymentCallBack()
 
-        val name = user.name.replace("  ", " ")
-        val names =  name.split(" ")
-        val firstName = names[0]
-        val lastName = names[1]
+        val firstName = user.firstName
+        val lastName = user.lastName
 
         val payment = FlutterWave(
             cartViewModel.getFlutterEncKey()!!,
@@ -385,7 +343,7 @@ class CartFragment : Fragment() {
             firstName,
             lastName,
             user.email,
-            isbns.trim(),
+            bookIds.trim(),
             metaList,
             callback
         )

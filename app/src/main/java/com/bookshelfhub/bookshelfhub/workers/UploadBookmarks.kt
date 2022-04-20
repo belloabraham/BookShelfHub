@@ -14,7 +14,8 @@ import dagger.assisted.AssistedInject
 
 @HiltWorker
 class UploadBookmarks @AssistedInject constructor(
-    @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
+    @Assisted val context: Context,
+    @Assisted workerParams: WorkerParameters,
     private val bookmarksRepo: BookmarksRepo,
     private val userAuth: IUserAuth
 ): CoroutineWorker(context,

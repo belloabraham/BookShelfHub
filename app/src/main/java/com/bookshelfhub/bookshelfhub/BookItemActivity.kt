@@ -230,7 +230,7 @@ class BookItemActivity : AppCompatActivity() {
             // Get all userReview Data
             val review = layout.userReviewEditText.text.toString()
             val newRating = layout.ratingBar.rating.toDouble()
-            val userName = bookItemActivityViewModel.getUser().fistName
+            val userName = bookItemActivityViewModel.getUser().firstName
 
             // difference in user rating from before compared to now
             var ratingDiff = 0.0
@@ -360,7 +360,7 @@ class BookItemActivity : AppCompatActivity() {
 
             // Check if this book is in cart
             val bookInCart = cartItems.filter {
-                it.isbn == bookId
+                it.bookId == bookId
             }
 
             // if this Book is in cart

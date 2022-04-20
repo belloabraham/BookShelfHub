@@ -10,7 +10,7 @@ abstract class CartItemsDao : BaseDao<CartItem> {
     @Query("SELECT COUNT(*) FROM CartItems WHERE userId =:userId")
     abstract fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
-    @Query("DELETE FROM CartItems WHERE isbn in (:isbnList)")
+    @Query("DELETE FROM CartItems WHERE bookId in (:isbnList)")
     abstract suspend fun deleteFromCart(isbnList: List<String>)
 
     @Query("DELETE FROM CartItems")

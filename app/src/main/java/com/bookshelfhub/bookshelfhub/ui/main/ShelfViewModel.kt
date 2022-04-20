@@ -13,7 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShelfViewModel @Inject constructor(
-    val remoteDataSource: IRemoteDataSource,
     private val orderedBooksRepo: OrderedBooksRepo,
     searchHistoryRepo: SearchHistoryRepo,
     val userAuth:IUserAuth): ViewModel(){

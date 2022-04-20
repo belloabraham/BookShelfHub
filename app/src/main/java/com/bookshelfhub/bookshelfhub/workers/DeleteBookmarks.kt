@@ -13,8 +13,8 @@ import dagger.assisted.AssistedInject
 
 @HiltWorker
 class DeleteBookmarks @AssistedInject constructor(
-    @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
-    private val remoteDataSource: IRemoteDataSource,
+    @Assisted val context: Context,
+    @Assisted workerParams: WorkerParameters,
     private val bookmarksRepo: BookmarksRepo,
     private val userAuth: IUserAuth
 ): CoroutineWorker(context,
