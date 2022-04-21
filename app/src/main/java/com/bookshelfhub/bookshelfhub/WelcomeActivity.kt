@@ -21,6 +21,7 @@ import com.bookshelfhub.bookshelfhub.helpers.google.GooglePlayServices
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.GoogleAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.PhoneAuthViewModel
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.FirebaseException
@@ -354,6 +355,7 @@ class WelcomeActivity : AppCompatActivity() {
 
     private fun startMainActivity(intent: Intent) {
         hideAnimation()
+        intent.putExtra(Referrer.ID, welcomeActivityViewModel.getACollaboratorOrUserReferralId())
         startActivity(intent)
     }
 

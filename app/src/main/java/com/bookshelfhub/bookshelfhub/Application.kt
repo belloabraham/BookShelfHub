@@ -1,10 +1,12 @@
 package com.bookshelfhub.bookshelfhub
 
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.*
+import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
-import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.bookshelfhub.downloadmanager.DownloadManager
 import com.bookshelfhub.downloadmanager.DownloadManagerConfig
 import com.google.firebase.FirebaseApp
@@ -16,8 +18,11 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
 
 @HiltAndroidApp
 class Application: android.app.Application(), Configuration.Provider {
@@ -39,6 +44,11 @@ class Application: android.app.Application(), Configuration.Provider {
 
         // Should come first
         setUpAppCheck()
+
+        //Setup Timber
+        if (BuildConfig.DEBUG) {
+            Timber.plant(DebugTree())
+        }
 
         setupDownloadManager()
 

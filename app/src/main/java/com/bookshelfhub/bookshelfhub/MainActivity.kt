@@ -95,34 +95,36 @@ class MainActivity : AppCompatActivity() {
                     mainActivityViewModel.setActiveViewPager(0)
                 }
 
-                when (newIndex) {
-                    0 -> {
-                        //set active page to get the last active page in the case of activity recreate when theme changes
-                        mainActivityViewModel.setActivePage(0)
-                        layout.shelfStoreViewPager.setCurrentItem(0, true)
-                    }
-                    1 -> {
-                        mainActivityViewModel.setActivePage(1)
-                        layout.shelfStoreViewPager.setCurrentItem(1, true)
-                    }
-                    2 -> {
-                        mainActivityViewModel.setActivePage(0)
-                        layout.cartMoreViewPager.setCurrentItem(0, true)
-                    }
-                    3 -> {
-                        mainActivityViewModel.setActivePage(1)
-                        layout.cartMoreViewPager.setCurrentItem(1, true)
-                    }
-                }
+                setViewPagerPosition(newIndex)
 
             }
 
-            override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {
-            }
+            override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {}
         })
 
     }
 
+    private fun setViewPagerPosition(tabIndex:Int){
+        when (tabIndex) {
+            0 -> {
+                //set active page to get the last active page in the case of activity recreate when theme changes
+                mainActivityViewModel.setActivePage(0)
+                layout.shelfStoreViewPager.setCurrentItem(0, true)
+            }
+            1 -> {
+                mainActivityViewModel.setActivePage(1)
+                layout.shelfStoreViewPager.setCurrentItem(1, true)
+            }
+            2 -> {
+                mainActivityViewModel.setActivePage(0)
+                layout.cartMoreViewPager.setCurrentItem(0, true)
+            }
+            3 -> {
+                mainActivityViewModel.setActivePage(1)
+                layout.cartMoreViewPager.setCurrentItem(1, true)
+            }
+        }
+    }
 
     private fun newUpdateInstallUpdateMessage() {
         Snackbar.make(
@@ -213,7 +215,6 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
 
     private fun setUpShelfStoreViewPager() {
         val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())

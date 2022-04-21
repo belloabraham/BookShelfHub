@@ -38,9 +38,7 @@ class MainActivityViewModel @Inject constructor(
     private var newAppUpdateNotifNo: MutableLiveData<Int> = MutableLiveData()
     private var bookInterestNotifNo: MutableLiveData<Int> = MutableLiveData()
     private val userId:String = userAuth.getUserId()
-    private var userReferralLink:String?=null
     private var onBackPressed: MutableLiveData<Boolean> = MutableLiveData()
-    private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
 
     private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
@@ -55,8 +53,6 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getBookIdFromACollaboratorReferrerId(): String? {
-        //Discard Id if referral link is from a User
-
         val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > userId.length
 
         if(referrerIsACollaborator){

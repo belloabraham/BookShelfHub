@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,6 +28,10 @@ class WelcomeActivityViewModel @Inject constructor(
     private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
     private val userId = userAuth.getUserId()
     private var remoteUser: MutableLiveData<RemoteUser?> = MutableLiveData()
+
+    fun getACollaboratorOrUserReferralId(): String? {
+        return aCollaboratorOrUserReferralId
+    }
 
     fun getUserReferralId(): String? {
         aCollaboratorOrUserReferralId?.let {
@@ -76,6 +81,7 @@ class WelcomeActivityViewModel @Inject constructor(
                  val docSnapshot = userRepo.getRemoteUserDataSnapshot(userId)
                  remoteUser.value = docSnapshot
              }catch (e:Exception){
+                 Timber.e(e)
                  return@launch
              }
          }

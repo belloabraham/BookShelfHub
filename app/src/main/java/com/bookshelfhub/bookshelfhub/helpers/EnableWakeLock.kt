@@ -13,9 +13,6 @@ class EnableWakeLock(private val activity:Activity,  val lifecycle: Lifecycle) :
         lifecycle.addObserver(this)
     }
 
-    /**
-     * Keep the screen display on when activity in OnResume
-     */
     override fun onResume(owner: LifecycleOwner) {
         super.onResume(owner)
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
