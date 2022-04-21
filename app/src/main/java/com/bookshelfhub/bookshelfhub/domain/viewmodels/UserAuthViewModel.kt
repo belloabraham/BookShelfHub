@@ -23,10 +23,13 @@ class UserAuthViewModel @Inject constructor(
     private val userId = userAuth.getUserId()
 
 
-     fun addRemoteUserData(remoteUser: RemoteUser){
+     fun addRemoteAndLocalUser(remoteUser: RemoteUser){
          viewModelScope.launch {
              try {
                  userRepo.uploadRemoteUser(remoteUser, userId)
+                 remoteUser.user.uploaded=true
+                 userRepo.addUser(remoteUser.user)
+                 setIsAddingUser(false)
              }catch (e:Exception){
                  return@launch
              }

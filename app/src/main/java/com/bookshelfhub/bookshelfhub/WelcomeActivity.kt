@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
@@ -31,7 +30,6 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -54,9 +52,6 @@ class WelcomeActivity : AppCompatActivity() {
     private var phoneAuthCallbacks:  PhoneAuthProvider.OnVerificationStateChangedCallbacks?=null
 
 
-    //***Get Nullable referral userID or PubIdAndISBN
-    private var referrer: String? = null
-
     @Inject
     lateinit var connectionUtil: ConnectionUtil
 
@@ -69,27 +64,14 @@ class WelcomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        phoneAuthCallbacks = getAuthCallBack(  R.string.otp_error_msg,
+        phoneAuthCallbacks = getPhoneAuthCallBack(  R.string.otp_error_msg,
             R.string.too_many_request_error,
             R.string.phone_sign_in_error)
 
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        referrer = welcomeActivityViewModel.getReferrer()
-
-        //Set to userAuthViewModel if referral Id is not for a publisherReferrer but for an individual user
-        referrer?.let { referrerId ->
-            if (!referrerId.contains(Referrer.SEPARATOR)) {
-                //An individual refer this user
-                userAuthViewModel.setUserReferrerId(referrerId)
-            }
-        }
-
-        //Pass Nullable referral userID or PubIdAndISBN and set to Main Activity to be opened in store immediately if PubISBN
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags =  Intent.FLAG_ACTIVITY_SINGLE_TOP
-        intent.putExtra(Referrer.ID, referrer)
+        userAuthViewModel.setUserReferrerId(welcomeActivityViewModel.getUserReferralId())
 
         //Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
@@ -103,67 +85,26 @@ class WelcomeActivity : AppCompatActivity() {
         googleAuth = GoogleAuth(this, R.string.gcp_web_client)
 
         //Start an activity for result callback
-        resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val data: Intent? = result.data
-                    //Sign in with Google
-                    lifecycleScope.launch(IO) {
-                        try {
-                            val googleSignIn =
-                                GoogleSignIn.getSignedInAccountFromIntent(data).await()
-                            try {
-                                //Google Sign In was successful, authenticate with Firebase
-                                val authResult =
-                                    googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
-                                withContext(Main) {
-                                    googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
-                                    googleAuthViewModel.setIsAuthenticatedSuccessful(true)
-                                }
-                            } catch (e: Exception) {
-                                val authErrorMsg =
-                                    getString(R.string.authentication) + ": " + signInErrorMsg
-                                withContext(Main) {
-                                    googleAuthViewModel.setAuthenticationError(authErrorMsg)
-                                }
-                            } finally {
-                                withContext(Main) {
-                                    googleAuthViewModel.setIsAuthenticationComplete(true)
-                                }
-                            }
+        resultLauncher = getGoogleSignInActivityResult()
 
-                        } catch (e: Exception) {
-                            withContext(Main) {
-                                //Google Sign In failed, update UI appropriately
-                                hideAnimation()
-                                googleAuthViewModel.setSignInError(signInErrorMsg)
-                            }
-                        }
-
-                    }
-
-                } else {
-                    hideAnimation()
-                }
-            }
-
-        phoneAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
+        phoneAuthViewModel.getIsNewUser().observe(this, Observer { _ ->
             hideAnimation()
         })
 
-        phoneAuthViewModel.getIsCodeSent().observe(this, Observer { isCodeSent ->
+        phoneAuthViewModel.getIsCodeSent().observe(this, Observer { _ ->
             hideAnimation()
         })
 
         phoneAuthViewModel.getSignInStarted().observe(this, Observer { signInStarted ->
             if (signInStarted) {
-                showAnimation(R.raw.loading)
+                showAnimation()
             }
         })
 
         phoneAuthViewModel.getSignInCompleted().observe(this, Observer {
             //If Phone sign in attempt failed hide animation
-            if (!userAuth.getIsUserAuthenticated()) {
+            val userSignedInAttemptFailed = !userAuth.getIsUserAuthenticated()
+            if (userSignedInAttemptFailed) {
                 hideAnimation()
             }
         })
@@ -178,27 +119,27 @@ class WelcomeActivity : AppCompatActivity() {
 
         googleAuthViewModel.getIsAuthenticationComplete().observe(this, Observer {
             //if Google authentication failed hide animation
-            if (!userAuth.getIsUserAuthenticated()) {
+            val userSignedInAttemptFailed = !userAuth.getIsUserAuthenticated()
+            if (userSignedInAttemptFailed) {
                 hideAnimation()
             }
         })
 
         userAuthViewModel.getIsAddingUser().observe(this, Observer { isAddingUser ->
-            //user data is being added to the cloud
+            //user data is being added to the database
             if (isAddingUser) {
                 showAnimation()
             } else {
-                //User data is added completely or is not beign added bcos user data alredy exist
                 hideAnimation()
-                if (googleAuthViewModel.getIsNewUser().value == true || phoneAuthViewModel.getIsNewUser().value == true) {
-                    showConfettiAnim()
+                val intent = Intent(this, MainActivity::class.java)
 
+                val isANewUser = googleAuthViewModel.getIsNewUser().value == true || phoneAuthViewModel.getIsNewUser().value == true
+                if (isANewUser) {
+                    showConfettiAnim()
                     //***Delay for 1.7sec for confetti animation to complete showing ***
-                    lifecycleScope.launch(IO) {
+                    lifecycleScope.launch {
                         delay(1700)
-                        withContext(Main) {
-                            showSignUpCompletedDialog(intent)
-                        }
+                        showSignUpCompletedDialog(intent)
                     }
                 } else {
                     finish()
@@ -214,23 +155,29 @@ class WelcomeActivity : AppCompatActivity() {
             }
         })
 
-        googleAuthViewModel.getAuthenticationError().observe(this, Observer { authErrorMsg ->
-            Snackbar.make(layout.rootView, authErrorMsg, Snackbar.LENGTH_LONG)
-                .setAction(R.string.try_again) {
-                    val errorMsg =
-                        authErrorMsg.replace(getString(R.string.authentication) + ": ", "")
-                    signInOrSignUpWithGoogle(errorMsg)
-                }
-                .show()
-        })
 
-        googleAuthViewModel.getSignInError().observe(this, Observer { signInErrorMsg ->
-            Snackbar.make(layout.rootView, signInErrorMsg, Snackbar.LENGTH_LONG)
-                .setAction(R.string.try_again) {
-                    signInOrSignUpWithGoogle(signInErrorMsg)
-                }
-                .show()
-        })
+        lifecycleScope.launch {
+            googleAuthViewModel.getAuthenticationError().collect{authErrorMsg ->
+                Snackbar.make(layout.rootView, authErrorMsg, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.try_again) {
+                        val errorMsg =
+                            authErrorMsg.replace(getString(R.string.authentication) + ": ", "")
+                        signInOrSignUpWithGoogle(errorMsg)
+                    }
+                    .show()
+            }
+        }
+
+        lifecycleScope.launch {
+            googleAuthViewModel.getSignInError().collect{ signInErrorMsg ->
+                Snackbar.make(layout.rootView, signInErrorMsg, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.try_again) {
+                        signInOrSignUpWithGoogle(signInErrorMsg)
+                    }
+                    .show()
+            }
+        }
+
 
         phoneAuthViewModel.getIsSignedInSuccessfully().observe(this, Observer { isSignedInSuccessfully ->
             if (isSignedInSuccessfully){
@@ -248,11 +195,46 @@ class WelcomeActivity : AppCompatActivity() {
 
     }
 
+    private fun getGoogleSignInActivityResult(): ActivityResultLauncher<Intent> {
+       return   registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                //Sign in with Google
+                lifecycleScope.launch{
+                    try {
+                        val googleSignIn =
+                            withContext(IO){GoogleSignIn.getSignedInAccountFromIntent(data).await()}
+                        try {
+                            //Google Sign In was successful, authenticate with Firebase
+                            val authResult =
+                                googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
+                            googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
+                            googleAuthViewModel.setIsAuthenticatedSuccessful(true)
+                        } catch (e: Exception) {
+                            val authErrorMsg =
+                                getString(R.string.authentication) + ": " + signInErrorMsg
+                            googleAuthViewModel.setAuthenticationError(authErrorMsg)
+                        } finally {
+                            googleAuthViewModel.setIsAuthenticationComplete(true)
+                        }
+
+                    } catch (e: Exception) {
+                        //Google Sign In failed, update UI appropriately
+                        hideAnimation()
+                        googleAuthViewModel.setSignInError(signInErrorMsg)
+                    }
+                }
+
+            } else {
+                hideAnimation()
+            }
+        }
+    }
 
     private fun afterAuthCompletes(isExistingUser:Boolean){
         if (isExistingUser){
             lifecycleScope.launch {
-                    welcomeActivityViewModel.getRemoteUserDataSnapshot()
+                    welcomeActivityViewModel.getRemoteUser()
                         .asFlow()
                         .collect{ remoteUser->
                             val userDataExist = remoteUser !=null
@@ -315,24 +297,17 @@ class WelcomeActivity : AppCompatActivity() {
 
     fun verifyPhoneNumberWithCode(code: String) {
         phoneAuthViewModel.setSignInStarted(true)
-        lifecycleScope.launch(IO){
+        lifecycleScope.launch{
             try {
                 val authResult = phoneAuth.verifyPhoneNumberWithCode(code, storedVerificationId!!).await()
-                withContext(Main){
                     phoneAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
                     phoneAuthViewModel.setIsSignedInSuccessfully(true)
-                }
-
             }catch (e:Exception){
                 if (e is FirebaseAuthInvalidCredentialsException) {
-                    withContext(Main){
                         phoneAuthViewModel.setSignedInFailedError(getString(R.string.otp_error_msg))
-                    }
                 }
             }finally {
-                withContext(Main) {
                     phoneAuthViewModel.setSignInCompleted(true)
-                }
             }
         }
     }
@@ -383,7 +358,7 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
 
-    private fun getAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
+    private fun getPhoneAuthCallBack(wrongOTPErrorMsg:Int, tooManyReqErrorMsg:Int, otherAuthErrorMsg:Int): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
         return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
@@ -417,7 +392,5 @@ class WelcomeActivity : AppCompatActivity() {
             }
         }
     }
-
-
 
 }

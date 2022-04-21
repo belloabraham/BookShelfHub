@@ -7,13 +7,10 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
 import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
-import com.google.firebase.firestore.DocumentSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,12 +24,18 @@ class WelcomeActivityViewModel @Inject constructor(
     private val appUtil: AppUtil,
 ): ViewModel() {
 
-    private val referrer = savedState.get<String>(Referrer.ID)
+    private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
     private val userId = userAuth.getUserId()
     private var remoteUser: MutableLiveData<RemoteUser?> = MutableLiveData()
 
-    fun getReferrer(): String? {
-        return referrer
+    fun getUserReferralId(): String? {
+        aCollaboratorOrUserReferralId?.let {
+            val isUserReferralId = !it.contains(Referrer.SEPARATOR)
+            if(isUserReferralId){
+                return it
+            }
+        }
+        return null
     }
 
     private fun addBookInterest(bookInterest:BookInterest){
@@ -67,7 +70,7 @@ class WelcomeActivityViewModel @Inject constructor(
         }
     }
 
-     fun getRemoteUserDataSnapshot(): LiveData<RemoteUser?> {
+     fun getRemoteUser(): LiveData<RemoteUser?> {
          viewModelScope.launch {
              try {
                  val docSnapshot = userRepo.getRemoteUserDataSnapshot(userId)

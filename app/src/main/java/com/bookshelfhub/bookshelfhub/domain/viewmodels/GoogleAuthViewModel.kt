@@ -4,15 +4,26 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class GoogleAuthViewModel @Inject constructor(): ViewModel(){
-    private var authenticationError: MutableLiveData<String> = MutableLiveData<String>()
+    private val _authenticationErrorFlow = MutableSharedFlow<String>()
+    private var authenticationErrorSharedFlow = _authenticationErrorFlow.asSharedFlow()
+
+    private var _signInErrorFlow = MutableSharedFlow<String>()
+    private var signInErrorSharedFlow = _signInErrorFlow.asSharedFlow()
+
     private var isAuthenticationComplete: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    private var signInError: MutableLiveData<String> = MutableLiveData<String>()
+
+
     private var isNewUser:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var isAuthenticationSuccessful: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+
+
 
 
     fun setIsNewUser(isNewUser:Boolean){
@@ -30,18 +41,20 @@ class GoogleAuthViewModel @Inject constructor(): ViewModel(){
         return isAuthenticationSuccessful
     }
 
-    fun getSignInError():LiveData<String>{
-        return signInError
-    }
-    fun setSignInError(value:String){
-        signInError.value=value
+    fun getSignInError(): SharedFlow<String> {
+        return signInErrorSharedFlow
     }
 
-    fun getAuthenticationError():LiveData<String>{
-        return authenticationError
+    suspend fun setSignInError(value:String){
+        _signInErrorFlow.emit(value)
     }
-    fun setAuthenticationError(value:String){
-        authenticationError.value=value
+
+    fun getAuthenticationError(): SharedFlow<String> {
+        return authenticationErrorSharedFlow
+    }
+
+    suspend fun setAuthenticationError(value:String){
+        _authenticationErrorFlow.emit(value)
     }
 
     fun setIsAuthenticationComplete(value:Boolean){

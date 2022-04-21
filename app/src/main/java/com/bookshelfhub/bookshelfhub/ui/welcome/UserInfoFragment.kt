@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.databinding.FragmentUserInfoBinding
-import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.isValidEmailAddress
 import com.bookshelfhub.bookshelfhub.extensions.isPhoneNumber
 import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
@@ -25,14 +24,9 @@ import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.android.synthetic.main.slider_item.*
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -46,8 +40,6 @@ class UserInfoFragment : Fragment() {
     lateinit var appUtil: AppUtil
     @Inject
     lateinit var keyboardUtil: KeyboardUtil
-    @Inject
-    lateinit var json: Json
     private val userAuthViewModel: UserAuthViewModel by activityViewModels()
     private val args:UserInfoFragmentArgs by navArgs()
 
@@ -65,10 +57,7 @@ class UserInfoFragment : Fragment() {
         val userId = userAuth.getUserId()
         val userAuthType = userAuth.getAuthType()
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-
-        }
-
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
         if (userAuthType== AuthType.GOOGLE.ID){
             layout.phoneEditTxtLayout.visibility=View.VISIBLE
@@ -100,21 +89,11 @@ class UserInfoFragment : Fragment() {
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)
 
-                val referrer = userAuthViewModel.getUserReferrerId()
-                var referrerId:String?=null
-                if (isNewUser){
-                    //If an individual user refer this user get that user id
-                    referrer?.let {
-                        if (it.length==userId.length){
-                            referrerId = it
-                        }
+                val userReferralId = if(isNewUser) userAuthViewModel.getUserReferrerId() else null
+
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        userAuth.updateDisplayName(firstName)
                     }
-                }
-
-
-                viewLifecycleOwner.lifecycleScope.launch {
-
-                    userAuth.updateDisplayName(firstName)
 
                     val user = User(userId, userAuthType)
                     user.appVersion=appUtil.getAppVersionName()
@@ -124,15 +103,12 @@ class UserInfoFragment : Fragment() {
                     user.email = email
                     user.phone = phone
                     //Save the user ID to database
-                    user.referrerId = referrerId
+                    user.referrerId = userReferralId
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
 
-                    withContext(Main){
-                      userAuthViewModel.addRemoteUserData(RemoteUser(user, null, null))
-                      userAuthViewModel.setIsAddingUser(false)
-                    }
-                }
+                    userAuthViewModel.setIsAddingUser(true)
+                    userAuthViewModel.addRemoteAndLocalUser(RemoteUser(user, null, null))
             }
         }
 

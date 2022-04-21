@@ -54,7 +54,7 @@ class MainActivityViewModel @Inject constructor(
         getRemotePrivateKeys()
     }
 
-    fun getBookIdFromACollaboratorReferrer(): String? {
+    fun getBookIdFromACollaboratorReferrerId(): String? {
         //Discard Id if referral link is from a User
 
         val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > userId.length

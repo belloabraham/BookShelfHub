@@ -8,7 +8,6 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         checkForNewAppUpdate(inAppUpdate)
 
 
-        mainActivityViewModel.getBookIdFromACollaboratorReferrer()?.let { bookId->
+        mainActivityViewModel.getBookIdFromACollaboratorReferrerId()?.let { bookId->
            openBookInBookStore(bookId)
         }
 
