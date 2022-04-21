@@ -13,9 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -33,32 +31,21 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Enable full screen display ***/
-        hideSystemUI(window)
+        enableFullScreenDisplayForSplashActivity(window)
 
-        // Check if user signed in ***/
         if (userAuth.getIsUserAuthenticated()){
+
             val userId = userAuth.getUserId()
 
             lifecycleScope.launch {
-                // Get user data***/
-                val user = userRepo.getUser(userId)
-
-                withContext(Main){
-                    // Check if user data exist as user may not complete sign up which requires user data***/
-                    val intent = if (user.isPresent && userId == user.get().userId){
+                    val user = userRepo.getUser(userId)
+                    val nextIntent = if (user.isPresent && userId == user.get().userId)
                         Intent(this@SplashActivity, MainActivity::class.java)
-                    }else{
-                        // If user data does not exist but user signed in take user to Welcome screen to complete ***
-                        // sign in by entering there data***
-                        Intent(this@SplashActivity, WelcomeActivity::class.java)
-                    }
-
-                    getCollaboratorOrUserReferralLink(intent)
-                }
+                    else Intent(this@SplashActivity, WelcomeActivity::class.java)
+                    getCollaboratorOrUserReferralLink(nextIntent)
             }
+
         }else{
-            // Take user to welcome screen as user is yet to sign in
             val intent = Intent(this, WelcomeActivity::class.java)
             getCollaboratorOrUserReferralLink(intent)
         }
@@ -66,7 +53,7 @@ class SplashActivity : AppCompatActivity() {
 
 
     @Suppress("DEPRECATION")
-    private fun hideSystemUI(window: Window) {
+    private fun enableFullScreenDisplayForSplashActivity(window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(true)
         }else{
@@ -75,20 +62,16 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun getCollaboratorOrUserReferralLink(intent:Intent){
-        // This App could've been opened by a dynamic link and not the from the app icon
         var aCollaboratorOrUserReferralId:String?=null
 
         dynamicLink.getDeepLinkAsync(this){
             if(it!=null){
-                // Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
-                //  Remove the main url to get referral userID or PubIdAndISBN
+
                 aCollaboratorOrUserReferralId = it.toString().replace(deeplinkDomainPrefix,"").trim()
 
-                //  Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
                 startNextActivity(intent, aCollaboratorOrUserReferralId)
             }else{
-                //  Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
                 startNextActivity(intent, aCollaboratorOrUserReferralId)
             }
         }

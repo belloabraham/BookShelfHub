@@ -102,7 +102,6 @@ class UserInfoFragment : Fragment() {
                     user.device = DeviceUtil.getDeviceBrandAndModel()
                     user.email = email
                     user.phone = phone
-                    //Save the user ID to database
                     user.referrerId = userReferralId
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)

@@ -93,7 +93,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     })
 
     layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
-
       override fun liked(likeButton: LikeButton?) {
         delayedHide(AUTO_HIDE_DELAY_MILLIS)
         bookActivityViewModel.addBookmark(currentPage.toInt())
@@ -204,14 +203,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     intent?.let {
-      val isbn = it.getStringExtra(Book.ID)
+      val bookId = it.getStringExtra(Book.ID)
       val name = it.getStringExtra(Book.NAME)
-      bookActivityViewModel.loadLiveOrderedBook(isbn!!, name!!)
+      bookActivityViewModel.loadLiveOrderedBook(bookId!!, name!!)
     }
   }
 
   private fun showReadProgressDialog(readHistory: ReadHistory) {
-    lifecycleScope.launch(IO) {
+    lifecycleScope.launch {
       val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED, 0)
       withContext(Main) {
         val view = View.inflate(this@BookActivity, R.layout.continue_reading, null)
@@ -223,7 +222,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
         MaterialBottomSheetDialogBuilder(this@BookActivity, this@BookActivity)
           .setOnDismissListener {
-            //Stop showing users the option to disable progress popup after two times of showing them
             if (noOfDismiss < 2) {
               showToast(R.string.dismiss_msg)
               runBlocking {
@@ -268,11 +266,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   private fun checkIfPageIsBookmarked(){
-    lifecycleScope.launch(IO){
+    lifecycleScope.launch{
       val bookmark = bookActivityViewModel.getBookmark(currentPage.toInt())
-      withContext(Main){
         layout.bookmarkBtn.isLiked = bookmark.isPresent
-      }
     }
   }
 

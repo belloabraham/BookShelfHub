@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IPhoneAuthViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 
 @HiltViewModel
@@ -15,7 +16,7 @@ class PhoneAuthViewModel @Inject constructor() :ViewModel(), IPhoneAuthViewModel
     private var signedInFailedError: MutableLiveData<String> = MutableLiveData<String>()
     private var isSignedInSuccessfully: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var isCodeSent: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    private var isNewUser:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isNewUser:Boolean?=null
     private var signInStarted: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var signInCompleted: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
@@ -42,10 +43,10 @@ class PhoneAuthViewModel @Inject constructor() :ViewModel(), IPhoneAuthViewModel
     }
 
     override fun setIsNewUser(isNewUser:Boolean?){
-         this.isNewUser.value = isNewUser
+         this.isNewUser = isNewUser
     }
 
-    override fun getIsNewUser():LiveData<Boolean>{
+    override fun getIsNewUser(): Boolean?{
         return isNewUser
     }
 

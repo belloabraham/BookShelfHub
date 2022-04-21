@@ -110,7 +110,6 @@ class CardInfoFragment : Fragment() {
 
                     viewLifecycleOwner.lifecycleScope.launch{
                         localDb.addPaymentCard(paymentCard)
-                            //Set is new card to notify Cart fragment that there is now a new card
                             cartViewModel.setIsNewCard(true)
                             findNavController().navigateUp()
                     }

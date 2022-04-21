@@ -244,7 +244,6 @@ class StoreFragment : Fragment() {
                 }
 
                 override fun onQueryTextSubmit(query: CharSequence): Boolean {
-                    //TODO Come back to implement this
                     return true
                 }
             })

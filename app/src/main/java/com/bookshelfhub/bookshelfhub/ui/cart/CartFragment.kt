@@ -88,7 +88,6 @@ class CartFragment : Fragment() {
         layout.cartItemsRecView.adapter = cartListAdapter
 
 
-        //Get all available cards and save them a list of cards
         cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
             this.savedPaymentCards = savedPaymentCards
         })

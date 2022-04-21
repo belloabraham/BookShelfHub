@@ -92,7 +92,6 @@ class BookActivityViewModel @Inject constructor(
     }
 
     fun loadLiveOrderedBook(isbn: String, bookName: String) {
-        //Re set the value of ISBN as this activity can be opened with FLagUpdateCurrent
         this.bookId = isbn
         this.bookName = bookName
         liveOrderedBook = orderedBooksRepo.getLiveOrderedBook(isbn)
@@ -170,7 +169,6 @@ class BookActivityViewModel @Inject constructor(
 
     fun addReadHistory(currentPage: Int, totalPages: Int) {
         viewModelScope.launch {
-            //Delete all previous history when a book gets opened as only one is needed to show the user resume dialog
             readHistoryRepo.deleteAllHistory()
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {

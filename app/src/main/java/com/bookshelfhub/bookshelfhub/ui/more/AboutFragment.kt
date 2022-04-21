@@ -91,7 +91,7 @@ class AboutFragment : Fragment() {
         val tvLabel = view.findViewById<TextView>(R.id.label)
         val ivIcon: AppCompatImageView = view.findViewById(R.id.icon)
         ivIcon.setImageBitmap(item.getIcon())
-        tvLabel.setText(item.getLabel())
+        tvLabel.text = item.getLabel()
         view.setOnClickListener(item.getOnClick())
         holder.addView(view)
         return view

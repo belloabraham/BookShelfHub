@@ -49,7 +49,7 @@ class BookItemActivityViewModel @Inject constructor(
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
-  private var publishedBook: MutableLiveData<PublishedBook> = MutableLiveData()
+  private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
   private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var publisherReferrer: LiveData<Optional<Collaborator>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
@@ -81,7 +81,6 @@ class BookItemActivityViewModel @Inject constructor(
 
     orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
-    //This way this code does not get recalled if activity restarts
     viewModelScope.launch{
       user = userRepo.getUser(userId).get()
       liveUserReview = userReviewRepo.getLiveUserReview(bookId, userId)
@@ -90,14 +89,12 @@ class BookItemActivityViewModel @Inject constructor(
 
     viewModelScope.launch {
       try {
-        publishedBook.value = publishedBooksRepo.getARemotePublishedBook(bookId)
+        publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
       }catch (e:Exception){
         Timber.e(e)
         return@launch
       }
     }
-
-
 
     viewModelScope.launch {
       try {
@@ -114,7 +111,6 @@ class BookItemActivityViewModel @Inject constructor(
     if (isSearchItem){
       addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }
-
 
   }
 
@@ -145,7 +141,7 @@ class BookItemActivityViewModel @Inject constructor(
     return liveUserReview
   }
 
-  fun getIsbn():String{
+  fun getBookId():String{
     return  bookId
   }
 
@@ -153,7 +149,7 @@ class BookItemActivityViewModel @Inject constructor(
     return orderedBook
   }
 
-  fun getLivePubReferrerByIsbn(): LiveData<Optional<Collaborator>> {
+  fun getOptionalCollaboratorForThisBook(): LiveData<Optional<Collaborator>> {
     return publisherReferrer
   }
 
@@ -176,7 +172,7 @@ class BookItemActivityViewModel @Inject constructor(
       userReviewRepo.addUserReview(userReview)
       val isSpamUrlInReview = !userReview.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
       if (isSpamUrlInReview){
-        //Put data to be passed to the review worker, data of the BOOK_ID(Book that was reviewed) and Rating diff
+
         val data = Data.Builder()
         data.putString(Book.ID, userReview.bookId)
         data.putDouble(Book.RATING_DIFF, diffInRating)
@@ -201,9 +197,8 @@ class BookItemActivityViewModel @Inject constructor(
     return userReviews
   }
 
-
   fun getPublishedBookOnline(): LiveData<PublishedBook> {
-    return publishedBook
+    return publishedBookOnline
   }
 
   fun getLiveListOfCartItems(): LiveData<List<CartItem>> {

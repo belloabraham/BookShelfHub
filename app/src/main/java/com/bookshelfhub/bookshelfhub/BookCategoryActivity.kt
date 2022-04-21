@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +32,7 @@ class BookCategoryActivity : AppCompatActivity() {
     private lateinit var layout:ActivityBookCategoryBinding
     private var listOfBooks = emptyList<PublishedBook>()
     private val bookCategoryActivityViewModel:BookCategoryActivityViewModel by viewModels()
-    //Message shown when user cant find a book they are searching for
+
     private lateinit var bookRequestMsg:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +54,6 @@ class BookCategoryActivity : AppCompatActivity() {
 
 
         lifecycleScope.launch {
-            //If the category that trigger this book is recommended books, load recommended books as there is no book
-            //with a category of "Recommended for you"
             bookCategoryActivityViewModel.getFlowOfBookCategory().collectLatest { books->
                 bookListAdapter.submitData(books)
             }
@@ -105,18 +105,18 @@ class BookCategoryActivity : AppCompatActivity() {
         }
 
         bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
-            if(cartItemsCount>0){
+            val cartIsNotEmpty = cartItemsCount > 0
+            if(cartIsNotEmpty){
                 layout.cartNotifText.text = "$cartItemsCount"
-                layout.cartBtnContainer.visibility = View.VISIBLE
+                layout.cartBtnContainer.visibility = VISIBLE
             }else{
-                layout.cartBtnContainer.visibility = View.GONE
+                layout.cartBtnContainer.visibility = GONE
             }
 
         })
 
-        bookCategoryActivityViewModel.getLiveBooksByCategory().observe(this, Observer { books ->
-            listOfBooks = books
-        })
+        listOfBooks = bookCategoryActivityViewModel.getBooksByCategory()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -133,8 +133,8 @@ class BookCategoryActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if (layout.materialSearchView.hasFocus()) {
             layout.materialSearchView.clearFocus()
-            layout.materialSearchView.visibility = View.GONE
-            layout.toolbar.visibility = View.VISIBLE
+            layout.materialSearchView.visibility = GONE
+            layout.toolbar.visibility = VISIBLE
         }else{
             finish()
         }
@@ -142,8 +142,8 @@ class BookCategoryActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(item.itemId == R.id.search){
-            layout.toolbar.visibility = View.GONE
-            layout.materialSearchView.visibility = View.VISIBLE
+            layout.toolbar.visibility = GONE
+            layout.materialSearchView.visibility = VISIBLE
             layout.materialSearchView.requestFocus()
         }else{
             finish()

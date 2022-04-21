@@ -41,13 +41,11 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
             paymentTransactionRepo.uploadPaymentTransaction(paymentTrans, userId)
 
-            //Get ISBN of all books in transaction
             val transactionBooksISBNs = mutableListOf<String>()
             for (trans in paymentTrans) {
                 transactionBooksISBNs.add(trans.bookId)
             }
 
-            //Delete all book that are in the Payment transaction record form the cart record so user does not other them again and for better UX
             cartItemsRepo.deleteFromCart(transactionBooksISBNs)
             paymentTransactionRepo.deleteAllPaymentTransactions()
 

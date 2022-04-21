@@ -43,8 +43,6 @@ class PostPendingUserReview @AssistedInject constructor(
         }
 
 
-        //Check for reviews that have its book in Shelf and make it verified
-        //Also posted as I will need to add the data to local Db
            for (review in unVerifiedUserReviews){
                for (book in orderedBooks){
                    if (review.bookId == book.bookId){
@@ -54,7 +52,6 @@ class PostPendingUserReview @AssistedInject constructor(
                }
            }
 
-           //Get verified reviews from all reviews
                val verifiedReviews = unVerifiedUserReviews.filter {
                    it.verified && !it.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
                }
@@ -68,9 +65,7 @@ class PostPendingUserReview @AssistedInject constructor(
            for (review in verifiedReviews){
 
                val dynamicBookAttr =  hashMapOf(
-                   //Add to book total review
                    RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(1),
-                   //Add userRatingDiff to total ratings that can be + or -
                    RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(review.userRating)
                )
                 listOfUpdatedBookValues.plus(dynamicBookAttr)

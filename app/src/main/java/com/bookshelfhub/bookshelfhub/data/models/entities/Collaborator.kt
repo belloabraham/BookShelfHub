@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName= "Collaborators")
 data class Collaborator(
-    val pubId:String,
+    val collabId:String,
     @PrimaryKey
     val bookId:String
 )

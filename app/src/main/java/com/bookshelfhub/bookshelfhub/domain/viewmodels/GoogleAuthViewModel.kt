@@ -16,21 +16,18 @@ class GoogleAuthViewModel @Inject constructor(): ViewModel(){
 
     private var _signInErrorFlow = MutableSharedFlow<String>()
     private var signInErrorSharedFlow = _signInErrorFlow.asSharedFlow()
-
     private var isAuthenticationComplete: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-
-
-    private var isNewUser:MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var isNewUser:Boolean?=null
     private var isAuthenticationSuccessful: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
 
 
 
 
     fun setIsNewUser(isNewUser:Boolean){
-        this.isNewUser.value = isNewUser
+        this.isNewUser = isNewUser
     }
 
-    fun getIsNewUser():LiveData<Boolean>{
+    fun getIsNewUser():Boolean?{
         return isNewUser
     }
 

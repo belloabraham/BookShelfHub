@@ -36,8 +36,6 @@ class PostUserReview @AssistedInject constructor(
         val apiKey:String = settingsUtil.getString(Settings.PERSPECTIVE_API)!!
         val userReview  = userReviewRepo.getUserReview(bookId).get()
 
-        // Check if the review have been posted before
-
         val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
         val userId = userAuth.getUserId()
         val updatedBookValues: HashMap<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
@@ -59,7 +57,6 @@ class PostUserReview @AssistedInject constructor(
                         userReview, updatedBookValues, bookId, userId)
 
                     if (userReview.verified){
-                        // Update user review locally
                        userReview.postedBefore = true
                         userReviewRepo.addUserReview(userReview)
                     }
@@ -78,16 +75,12 @@ class PostUserReview @AssistedInject constructor(
         val userReviewNoForBook: Long = if (userReview.postedBefore) 0  else  1
         if (userReview.verified) {
             return if (userReviewNoForBook > 0) {
-                //If user is posting for the first time
                 hashMapOf(
-                    // Add to book total review
                     RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(userReviewNoForBook),
-                    // Add userRatingDiff to total ratings that can be + or -
                     RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             } else {
                 hashMapOf(
-                    // Has user has posted before only upload userRatingDiff
                     RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             }

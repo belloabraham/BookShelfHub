@@ -38,7 +38,6 @@ class BookmarkFragment : Fragment() {
         val layout = binding!!
 
          mAdapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
-            //Show users a hint on how to remove an added bookmark
             showRemoveBookmarkHint(layout)
         }
 

@@ -39,13 +39,10 @@ class BookInfoActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
-        //Remove the default fragment that was navigated to set in @res/navigation/book_info_activity_navigation
         navController.popBackStack()
 
-        //Set value for the new fragment bundle to receive
-        val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getIsbn())
+        val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getBookId())
 
-        //Navigate to the new fragment
         navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)
     }
 

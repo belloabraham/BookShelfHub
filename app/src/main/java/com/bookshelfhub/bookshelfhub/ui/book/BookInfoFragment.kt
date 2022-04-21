@@ -48,7 +48,7 @@ class BookInfoFragment : Fragment() {
                 })
 
                 book.publishedDate?.let {
-                    val  localDate = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                    val  localDate = DateUtil.getHumanReaddable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                     layout.publishedDateTxt.text = localDate
                 }
 

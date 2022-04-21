@@ -44,7 +44,6 @@ class OnBoardingFragment:Fragment() {
 
         sliderAdapter = SliderAdapter()
 
-        //Setting up Slider view for Onboarding
         layout.sliderView.setSliderAdapter(sliderAdapter!!)
         layout.sliderView.setIndicatorAnimation(IndicatorAnimationType.WORM)
         layout.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
@@ -57,14 +56,12 @@ class OnBoardingFragment:Fragment() {
         addSliderItems(sliderAdapter!!)
 
 
-        //Navigate to Login Fragment
         layout.btnLogin.setOnClickListener {
             val login = getString(R.string.login)
             val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(login)
             findNavController().navigate(actionLogin)
         }
 
-        //Navigate to Login Fragment
         layout.btnSignup.setOnClickListener {
           val signUp = getString(R.string.sign_up)
             val actionLogin = OnBoardingFragmentDirections.actionOnBoardingFragmentToLoginFragment(signUp)
@@ -88,7 +85,6 @@ class OnBoardingFragment:Fragment() {
     }
 
     override fun onDestroyView() {
-       // binding!!.sliderView.sliderPager.adapter = null
         binding!!.sliderView.stopAutoCycle()
         sliderAdapter = null
         binding = null

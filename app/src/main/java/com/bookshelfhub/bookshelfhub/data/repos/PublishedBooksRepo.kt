@@ -71,16 +71,20 @@ class PublishedBooksRepo @Inject constructor(
         return withContext(IO){publishedBooksDao.getPublishedBooks()}
     }
 
-     fun getLiveTrendingBooks(): LiveData<List<PublishedBook>> {
-        return publishedBooksDao.getLiveTrendingBooks()
+     suspend fun getTrendingBooks(): List<PublishedBook> {
+        return publishedBooksDao.getTrendingBooks()
     }
 
-     fun getLiveRecommendedBooks(): LiveData<List<PublishedBook>> {
-        return publishedBooksDao.getLiveRecommendedBooks()
+     suspend fun getRecommendedBooks(): List<PublishedBook> {
+        return publishedBooksDao.getRecommendedBooks()
     }
 
-     fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBook>> {
+    /* fun getLiveBooksByCategory(category:String): LiveData<List<PublishedBook>> {
         return publishedBooksDao.getLiveBooksByCategory(category)
+    }*/
+
+   suspend fun getBooksByCategory(category:String): List<PublishedBook>{
+        return publishedBooksDao.getBooksByCategory(category)
     }
 
      fun getLivePublishedBooks(): LiveData<List<PublishedBook>> {

@@ -14,20 +14,15 @@ import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
-import com.bookshelfhub.bookshelfhub.extensions.isFullName
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -79,7 +74,7 @@ class ProfileFragment : Fragment() {
         })
 
         layout.dobDatePicker.setOnDatePickListener {
-            dateOfBirth = DateUtil.dateToString(it, DateFormat.MM_DD_YYYY.completeFormatValue)
+            dateOfBirth = DateUtil.getHumanReaddable(it, DateFormat.MM_DD_YYYY.completeFormatValue)
         }
 
         layout.genderDropDown.setOnFocusChangeListener { v, hasFocus ->
@@ -127,13 +122,11 @@ class ProfileFragment : Fragment() {
                         updatedUserRecord.email = email
                     }
 
-                    viewLifecycleOwner.lifecycleScope.launch(IO) {
+                    viewLifecycleOwner.lifecycleScope.launch{
                         updatedUserRecord.uploaded=false
                         profileViewModel.addUser(updatedUserRecord)
-                        withContext(Main){
                             showToast(getString(R.string.updated))
                             requireActivity().finish()
-                        }
                     }
                 }
             }

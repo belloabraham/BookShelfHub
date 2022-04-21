@@ -39,9 +39,7 @@ class UploadUserData  @AssistedInject constructor (
                 userRepo.uploadUser(userData, userId)
                  userData.uploaded = true
                  userRepo.addUser(userData)
-
                  Result.success()
-
          }catch (e:Exception){
            Timber.e(e)
              Result.retry()

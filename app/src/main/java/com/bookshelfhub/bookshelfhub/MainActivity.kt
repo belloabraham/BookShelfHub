@@ -3,7 +3,6 @@ package com.bookshelfhub.bookshelfhub
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
@@ -37,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        //Check if there is an update for this app using In App update
         inAppUpdate = InAppUpdate(this)
         checkForNewAppUpdate(inAppUpdate)
 
@@ -47,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
-            //Navigate to a particular tab based on set value
             layout.bottomBar.selectTabAt(it, true)
         })
 
@@ -56,14 +53,11 @@ class MainActivity : AppCompatActivity() {
             val notifNumber = mainActivityViewModel.getTotalMoreTabNotification()
 
             if (notifNumber > 0) {
-                //there is a notification, set notification bubble for the
-                // bottom tab of more with the number of notification
                 layout.bottomBar.setBadgeAtTabIndex(
                     moreTabIndex,
                     AnimatedBottomBar.Badge("$notifNumber")
                 )
             } else {
-                //there are no notification remove any notification badge if there is one
                 layout.bottomBar.clearBadgeAtTabIndex(moreTabIndex)
             }
         })
@@ -84,14 +78,12 @@ class MainActivity : AppCompatActivity() {
             ) {
 
                 if (newIndex > 1) {
-                    //if user navigates to bookmark or more fragment
-                    layout.shelfStoreViewPager.visibility = View.INVISIBLE
+                    layout.shelfStoreViewPager.visibility = INVISIBLE
                     layout.cartMoreViewPager.visibility = VISIBLE
-                    //set active visible view pager to get the last active view pager in the case of activity recreate when theme changes
                     mainActivityViewModel.setActiveViewPager(1)
                 } else {
                     layout.shelfStoreViewPager.visibility = VISIBLE
-                    layout.cartMoreViewPager.visibility = View.INVISIBLE
+                    layout.cartMoreViewPager.visibility = INVISIBLE
                     mainActivityViewModel.setActiveViewPager(0)
                 }
 
@@ -126,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun newUpdateInstallUpdateMessage() {
+    private fun newUpdateDownloadedCompleteMessage() {
         Snackbar.make(
             layout.container,
             getString(R.string.new_update_downloaded),
@@ -143,7 +135,6 @@ class MainActivity : AppCompatActivity() {
     private fun checkForNewAppUpdate(inAppUpdate:InAppUpdate){
         inAppUpdate.checkForNewAppUpdate { isImmediateUpdate, appUpdateInfo ->
 
-            //Notify the more fragment update button of new update
             mainActivityViewModel.setIsNewUpdate()
 
             if (isImmediateUpdate) {
@@ -154,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                     InAppUpdate.ACTIVITY_REQUEST_CODE
                 ) { installState ->
                     if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-                        newUpdateInstallUpdateMessage()
+                        newUpdateDownloadedCompleteMessage()
                     }
                 }
             }
@@ -167,22 +158,37 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+    override fun onBackPressed() {
+        val deviceOSIsAndroid10 = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
+        if (deviceOSIsAndroid10) {
+            exitAppWithoutMemoryLeakOnAndroid10()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun exitAppWithoutMemoryLeakOnAndroid10(){
+        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+            super.onBackPressed()
+        } else {
+            finishAfterTransition()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         mainActivityViewModel.getAndSaveAppShareDynamicLink()
 
-        //Check if user has a completed download to prompt them for install
         inAppUpdate.checkForDownloadedOrDownloadingUpdate(InAppUpdate.ACTIVITY_REQUEST_CODE) {
-            newUpdateInstallUpdateMessage()
+            newUpdateDownloadedCompleteMessage()
         }
 
         setActiveViewPagerAndPageAfterMainActivityThemeChange()
     }
 
     private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {
-        //Set active view pager and page based on what was last set by bottom nav on select change  to saved state Instance as a result of activity recreated from theme change, as activity recreated create the effect of when resource get reclaimed by the OS
         if (mainActivityViewModel.getActiveViewPager() == 0) {
-            //Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
             layout.bottomBar.selectTabAt(
                 if (mainActivityViewModel.getActivePage() == 0) 0 else 1,
                 false
@@ -201,25 +207,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        //Workaround to android 10 leak when user press back button on main activity
-        //This code prevents the leak
-        val deviceOSIsAndroid10 = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
-        if (deviceOSIsAndroid10) {
-            if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-                super.onBackPressed()
-            } else {
-                finishAfterTransition()
-            }
-        } else {
-            super.onBackPressed()
-        }
-    }
 
     private fun setUpShelfStoreViewPager() {
         val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
         val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
-        //Disables Swipe left and right
+        //Disables Swipe left and right for viewpager
         layout.shelfStoreViewPager.isUserInputEnabled = false
         layout.shelfStoreViewPager.adapter = shelfStoreAdapter
     }
@@ -227,7 +219,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpCartMoreViewPager() {
         val fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
         val cartMoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
-        //Disables Swipe left and right
+        //Disables Swipe left and right for viewpager
         layout.cartMoreViewPager.isUserInputEnabled = false
         layout.cartMoreViewPager.adapter = cartMoreAdapter
     }

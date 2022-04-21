@@ -30,11 +30,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -77,20 +75,14 @@ class WelcomeActivity : AppCompatActivity() {
         //Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
 
-        //Initialize Firebase Phone Verification and Auth
         phoneAuth = PhoneAuth(
             this,
         )
 
-        //Initialize Firebase Google Auth
         googleAuth = GoogleAuth(this, R.string.gcp_web_client)
 
-        //Start an activity for result callback
         resultLauncher = getGoogleSignInActivityResult()
 
-        phoneAuthViewModel.getIsNewUser().observe(this, Observer { _ ->
-            hideAnimation()
-        })
 
         phoneAuthViewModel.getIsCodeSent().observe(this, Observer { _ ->
             hideAnimation()
@@ -103,39 +95,28 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         phoneAuthViewModel.getSignInCompleted().observe(this, Observer {
-            //If Phone sign in attempt failed hide animation
-            val userSignedInAttemptFailed = !userAuth.getIsUserAuthenticated()
-            if (userSignedInAttemptFailed) {
+            val signInAttemptFailed = !userAuth.getIsUserAuthenticated()
+            if (signInAttemptFailed) {
                 hideAnimation()
             }
         })
-
-        googleAuthViewModel.getIsNewUser().observe(this, Observer { isNewUser ->
-            //once sign in operation successful
-            if (isNewUser) {
-                hideAnimation()
-            }
-        })
-
 
         googleAuthViewModel.getIsAuthenticationComplete().observe(this, Observer {
-            //if Google authentication failed hide animation
-            val userSignedInAttemptFailed = !userAuth.getIsUserAuthenticated()
-            if (userSignedInAttemptFailed) {
+            val authAttemptFailed = !userAuth.getIsUserAuthenticated()
+            if (authAttemptFailed) {
                 hideAnimation()
             }
         })
 
-        userAuthViewModel.getIsAddingUser().observe(this, Observer { isAddingUser ->
-            //user data is being added to the database
-            if (isAddingUser) {
+        userAuthViewModel.getIsAddingUser().observe(this, Observer { userDataUploading ->
+            if (userDataUploading) {
                 showAnimation()
             } else {
                 hideAnimation()
                 val intent = Intent(this, MainActivity::class.java)
 
-                val isANewUser = googleAuthViewModel.getIsNewUser().value == true || phoneAuthViewModel.getIsNewUser().value == true
-                if (isANewUser) {
+                val isNewUser = googleAuthViewModel.getIsNewUser() == true || phoneAuthViewModel.getIsNewUser() == true
+                if (isNewUser) {
                     showConfettiAnim()
                     //***Delay for 1.7sec for confetti animation to complete showing ***
                     lifecycleScope.launch {
@@ -150,8 +131,8 @@ class WelcomeActivity : AppCompatActivity() {
         })
 
         userAuthViewModel.getIsExistingUser().observe(this, Observer { isExistingUser ->
-            //Confirmed that user data exist on the cloud
-            if (!isExistingUser) {
+           val isNotAnExistingUser = !isExistingUser
+            if (isNotAnExistingUser) {
                 hideAnimation()
             }
         })
@@ -182,14 +163,21 @@ class WelcomeActivity : AppCompatActivity() {
 
         phoneAuthViewModel.getIsSignedInSuccessfully().observe(this, Observer { isSignedInSuccessfully ->
             if (isSignedInSuccessfully){
-                val isExistingUser = !phoneAuthViewModel.getIsNewUser().value!!
-                afterAuthCompletes(isExistingUser)
+                val isNewUser = phoneAuthViewModel.getIsNewUser()!!
+                afterAuthCompletes(!isNewUser)
+                if(isNewUser){
+                    hideAnimation()
+                }
             }
         })
 
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(this, Observer { isAuthSuccessful ->
             if (isAuthSuccessful){
-                val isExistingUser = !googleAuthViewModel.getIsNewUser().value!!
+                val isNewUser = googleAuthViewModel.getIsNewUser()!!
+                val isExistingUser = !isNewUser
+                if(isNewUser){
+                    hideAnimation()
+                }
                 afterAuthCompletes(isExistingUser)
             }
         })
@@ -200,13 +188,10 @@ class WelcomeActivity : AppCompatActivity() {
        return   registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
-                //Sign in with Google
                 lifecycleScope.launch{
                     try {
-                        val googleSignIn =
-                            withContext(IO){GoogleSignIn.getSignedInAccountFromIntent(data).await()}
+                        val googleSignIn = GoogleSignIn.getSignedInAccountFromIntent(data).await()
                         try {
-                            //Google Sign In was successful, authenticate with Firebase
                             val authResult =
                                 googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
                             googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
@@ -220,7 +205,6 @@ class WelcomeActivity : AppCompatActivity() {
                         }
 
                     } catch (e: Exception) {
-                        //Google Sign In failed, update UI appropriately
                         hideAnimation()
                         googleAuthViewModel.setSignInError(signInErrorMsg)
                     }
@@ -242,10 +226,9 @@ class WelcomeActivity : AppCompatActivity() {
                             if(userDataExist){
                                 welcomeActivityViewModel.addRemoteBookInterest(remoteUser!!.bookInterest)
                                 welcomeActivityViewModel.updateUserDeviceType(remoteUser.user)
-                                //Notify UI that user data adding to local Db is complete
+                                //Notify UI that user data uploading to local Db is complete
                                 userAuthViewModel.setIsAddingUser(false)
                             }else{
-                                //Navigate to user form data
                                 userAuthViewModel.setIsExistingUser(false)
                             }
                         }
@@ -315,19 +298,24 @@ class WelcomeActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (!layout.lottieAnimView.isAnimating) {
-            //Workaround to android 10 leak when user press back button on main activity
-            //This code prevents the leak
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                if (onBackPressedDispatcher.hasEnabledCallbacks()) {
-                    super.onBackPressed()
-                } else {
-                    finishAfterTransition()
-                }
+            val deviceOSIsAndroid10 = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
+            if (deviceOSIsAndroid10) {
+                exitAppWithoutMemoryLeakOnAndroid10()
             } else {
                 super.onBackPressed()
             }
         }
     }
+
+    private fun exitAppWithoutMemoryLeakOnAndroid10(){
+        if (onBackPressedDispatcher.hasEnabledCallbacks()) {
+            super.onBackPressed()
+        } else {
+            finishAfterTransition()
+        }
+    }
+
+
 
     fun signInOrSignUpWithGoogle(signInErrorMsg: String) {
         this.signInErrorMsg = signInErrorMsg

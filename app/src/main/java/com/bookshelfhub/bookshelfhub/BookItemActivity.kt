@@ -73,17 +73,15 @@ class BookItemActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = null
 
-        bookId = bookItemActivityViewModel.getIsbn()
+        bookId = bookItemActivityViewModel.getBookId()
         visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         userId = userAuth.getUserId()
-        // UserPhoto Uri if user signed in with Gmail, to be display bu user review
         val userPhotoUri = userAuth.getPhotoUrl()
 
-        // Check publisher referrer database to see if a publisher refer this user to the current book and get their ID
-        bookItemActivityViewModel.getLivePubReferrerByIsbn().observe(this, Observer { referrer ->
-            if (referrer.isPresent){
-                this.referrer = referrer.get().pubId
+        bookItemActivityViewModel.getOptionalCollaboratorForThisBook().observe(this, Observer { collaborator ->
+            if (collaborator.isPresent){
+                this.referrer = collaborator.get().collabId
             }
         })
 
@@ -101,24 +99,16 @@ class BookItemActivity : AppCompatActivity() {
         bookItemActivityViewModel.getLiveLocalBook().observe(this, Observer { pubBook->
             val book = pubBook.get()
                 localBook = book
-
-                // This value should remain the same and should not be changed with online book value to avoid surprises for the
-                // user as sudden change in the book cover, title or name is bad
                 layout.title.text = book.name
                 layout.author.text = String.format(getString(R.string.by), book.author)
                 layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
         })
 
 
-        // While Progress bar is loading, get this particular book from the cloud as things like price, no of downloads and ratings may have changed
-        // which have been queried by the by bookItemViewModel in init as snapshot listener
         bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
-
-            // try getting private AI Keys again if it does not exist as there is an assured network connection by now
 
             bookOnlineVersion =  book
 
-            // get device country code in uppercase, to tell where user is shopping from
             val countryCode = Location.getCountryCode(this)
 
             countryCode?.let {
@@ -126,17 +116,17 @@ class BookItemActivity : AppCompatActivity() {
                 val localCurrency = Currency.getLocalCurrency(countryCode = it)
 
                 userVisibleCurrency = if(book.sellerCurrency == localCurrency){
-                    // If seller currency is same as buyer's local return seller currency as buyer's visible currency in the case of a user buying a book that is sold in his or her home country, they don't want to see that book sold in another currency
                     book.sellerCurrency
                 }else{
-                    // The buyer must be buying a book not sold in its country (it's fair to show book price in dollars)
                     Currency.USD
                 }
 
-                // the book is not free
-                if (book.price >0.0 ) {
+                val bookIsFree = book.price > 0
+
+                if (bookIsFree) {
                     showAddToCartButton()
-                    if (userVisibleCurrency != Currency.USD){
+                    val bookCurrencySameAsBuyerLocalCurrency = userVisibleCurrency != Currency.USD
+                    if (bookCurrencySameAsBuyerLocalCurrency){
                         lifecycleScope.launch {
                             try {
                               val response =  bookItemActivityViewModel.convertCurrency(
@@ -155,13 +145,14 @@ class BookItemActivity : AppCompatActivity() {
                                 return@launch
                             }
                         }
-                    }else{
-                        // buyer is not buying book sold in his or her country
-                        showBookDetails(book, userVisibleCurrency)
                     }
 
-                }else{
-                    // This book is free
+                    if(!bookCurrencySameAsBuyerLocalCurrency){
+                        showBookDetails(book, userVisibleCurrency)
+                    }
+                }
+
+                if(!bookIsFree){
                     showBookDetails(book, userVisibleCurrency)
                 }
             }
@@ -171,11 +162,8 @@ class BookItemActivity : AppCompatActivity() {
         layout.addToCartBtn.setOnClickListener {
             onlineBookPriceInUSD?.let {
                 val book = bookOnlineVersion!!
-                val priceInUSD:Double? = if(it == book.price){
-                    null
-                }else{
-                    it
-                }
+                val priceInUSD:Double? = if(it == book.price) null else it
+
                 val cart = CartItem(
                     userId, book.bookId,
                     book.name,
@@ -186,6 +174,7 @@ class BookItemActivity : AppCompatActivity() {
                     book.price,
                     userVisibleCurrency, priceInUSD
                 )
+
                 bookItemActivityViewModel.addToCart(cart)
             }
         }
@@ -223,21 +212,17 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
-            // Hide rating layout of edit text if user rating is <=0
-            layout.ratingInfoLayout.isVisible = rating>0
+            val userRated = rating > 0
+            layout.ratingInfoLayout.isVisible = userRated
         }
 
-        // Post user review
         layout.postBtn.setOnClickListener {
 
-            // Get all userReview Data
             val review = layout.userReviewEditText.text.toString()
             val newRating = layout.ratingBar.rating.toDouble()
             val userName = bookItemActivityViewModel.getUser().firstName
 
-            // difference in user rating from before compared to now
             var ratingDiff = 0.0
-            // Have the user rating been uploaded to the cloud before?
             var postedBefore = false
             userReview?.let {
                 ratingDiff = newRating - it.userRating
@@ -246,8 +231,7 @@ class BookItemActivity : AppCompatActivity() {
 
             val newReview = UserReview(bookId, review, newRating, userName, isVerifiedReview, userPhotoUri, postedBefore)
 
-            // Save user review to local database
-               bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
+            bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
 
         }
 
@@ -255,8 +239,6 @@ class BookItemActivity : AppCompatActivity() {
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            // Show the user the number of text he/she have left to type out of 500 which is review edit
-            // text length as the user type
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
                     layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), it.length)
@@ -267,11 +249,9 @@ class BookItemActivity : AppCompatActivity() {
         })
         
 
-        // Show review layout
         layout.editYourReviewBtn.setOnClickListener {
             layout.yourReviewLayout.visibility = GONE
             layout.rateBookLayout.visibility = VISIBLE
-            // Review layout to existing review layout(if visible) visibility animation
             AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, visibilityAnimDuration)
         }
 
@@ -291,15 +271,14 @@ class BookItemActivity : AppCompatActivity() {
             layout.ratingInfoLayout.visibility = GONE
 
             if (review.isPresent){
-                // Visibility animation between existing review and new review layout
+
                 AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, visibilityAnimDuration)
 
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
                     userReview.dateTime?.let {
-                        // Convert server dateTime to local date in string
-                        val  localDate = DateUtil.dateToString(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                        val  localDate = DateUtil.getHumanReaddable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                         layout.date.text = localDate
                     }
 
@@ -314,7 +293,6 @@ class BookItemActivity : AppCompatActivity() {
                 }
             }
 
-            // Get how long the user review text length is
             val reviewLength = layout.userReviewEditText.text.toString().length
 
             layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
@@ -338,35 +316,28 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun showOrderedBook(orderedBook: Optional<OrderedBook>){
         if (orderedBook.isPresent){
-            // If the user have bought this book then hide addToCartBtn and Buy button
 
             val book = orderedBook.get()
-            // if book exist on user device make open book button visible
             val filName = "$bookId.pdf"
             val dirPath = "${book.pubId}${File.separator}$bookId"
             if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, filName)){
                 showOpenBookButton()
             }else{
-                // Else make download button visible
                 showDownloadBookButton()
             }
 
-            // If the user have bought this book then the user review is verified just in case the user post a review
             isVerifiedReview = true
         }
     }
 
     private fun showCartItems(cartItems:List<CartItem>){
         if(cartItems.isNotEmpty()){
-            // Show no of items in cart on view cart button
             layout.checkoutNotifText.text = "${cartItems.size}"
 
-            // Check if this book is in cart
-            val bookInCart = cartItems.filter {
+           val bookInCart = cartItems.filter {
                 it.bookId == bookId
             }
 
-            // if this Book is in cart
             if (bookInCart.isNotEmpty()){
                 showViewCartButton()
             }
@@ -378,17 +349,13 @@ class BookItemActivity : AppCompatActivity() {
         layout.progressBar.visibility = GONE
 
         if(priceInUSD!=null){
-            // price was converted to USD
             onlineBookPriceInUSD = priceInUSD
             layout.price.text = String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price,priceInUSD)
         }else{
-            // the price is in USD
             onlineBookPriceInUSD = book.price
             layout.price.text = String.format(getString(R.string.usd_price), book.price)
-
         }
 
-        // Load similar books
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
 
         layout.similarBooksRecView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
@@ -402,7 +369,6 @@ class BookItemActivity : AppCompatActivity() {
         layout.noOfDownloadsText.text = Downloads.getHumanReadable(book.totalDownloads)
 
         if(book.price == 0.0){
-            // If book  exist on user device
             val fileName = "$bookId.pdf"
             val dirPath = "${book.pubId}${File.separator}$bookId"
             if(AppExternalStorage.isDocumentFileExist(applicationContext, dirPath, fileName)){
@@ -413,10 +379,8 @@ class BookItemActivity : AppCompatActivity() {
             }
         }
 
-        // Load similar books for this book by category
         loadSimilarBooks(book.category, similarBooksAdapter)
 
-        // Make the whole Book data visible
         layout.bookItemLayout.visibility = VISIBLE
     }
 
@@ -474,7 +438,6 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {
-
             bookItemActivityViewModel.
             getBooksByCategoryPageSource(category).collectLatest { similarBooks ->
 
@@ -485,10 +448,7 @@ class BookItemActivity : AppCompatActivity() {
                     layout.similarBooksRecView.isVisible = isVisible
                 }
 
-                lifecycleScope.launch {
-                    similarBooksAdapter.submitData(similarBooks)
-                }
-
+                similarBooksAdapter.submitData(similarBooks)
             }
         }
     }
@@ -499,7 +459,7 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // User can report this book for anything, like a stolen copyrighted content or so
+
         if(item.itemId == R.id.reportBookSubMenu){
 
             val url = remoteConfig.getString(Config.BOOK_REPORT_URL)

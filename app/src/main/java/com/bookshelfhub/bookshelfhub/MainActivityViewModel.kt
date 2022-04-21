@@ -62,7 +62,6 @@ class MainActivityViewModel @Inject constructor(
             val bookId = collaboratorAndBookId[1]
 
             val collaborator = Collaborator(collaboratorId, bookId)
-            //Add collaborate and book referred ID to the database
             addCollaborator(collaborator)
             return bookId
         }
@@ -133,7 +132,7 @@ class MainActivityViewModel @Inject constructor(
     }
 
 
-    fun addCollaborator(collaborator: Collaborator){
+    private fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {
             referralRepo.addPubReferrer(collaborator)
         }
@@ -156,15 +155,11 @@ class MainActivityViewModel @Inject constructor(
         return onBackPressed
     }
 
-    fun setBookInterestNotifNo(value:Int){
+    private fun setBookInterestNotifNo(value:Int){
         bookInterestNotifNo.value=value
         isNewMoreTabNotif.value=true
     }
 
-     fun setVerifyPhoneOrEmailNotif(value:Int){
-        verifyPhoneOrEmailNotifNo.value = value
-        isNewMoreTabNotif.value=true
-    }
 
     fun getBookInterest():LiveData<Optional<BookInterest>>{
         return bookInterestRepo.getLiveBookInterest(userId)

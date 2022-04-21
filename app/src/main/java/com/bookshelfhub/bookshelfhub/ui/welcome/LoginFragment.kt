@@ -62,7 +62,6 @@ class LoginFragment:Fragment() {
         layout = binding!!
 
 
-        //Populate UI controls with data based on User login or Sign up
         layout.title.text = args.loginSignup
         val description= String.format(getString(R.string.login_signup_desicription), args.loginSignup)
         val loginSignupText= String.format(getString(R.string.with_phone), args.loginSignup)
@@ -82,12 +81,10 @@ class LoginFragment:Fragment() {
             }
         }
 
-        //TODO Hide error button as user edit or re-type phone number
        layout.phoneNumEditText.doOnTextChanged { text, start, before, count ->
            layout.errorAlertBtn.visibility = View.GONE
        }
 
-        //TODO Hide keyboard and show error message when error button is clicked
         layout.errorAlertBtn.setOnClickListener {
             keyboardUtil.hideKeyboard(layout.phoneNumEditText)
             viewLifecycleOwner.lifecycleScope.launch(Main) {
@@ -101,14 +98,12 @@ class LoginFragment:Fragment() {
         }
 
 
-        //TODO Try to login or signup user when the done key gets press on keyboard if phone number is valid
         layout.phoneNumEditText.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
                keyboardUtil.hideKeyboard(layout.phoneNumEditText)
                 startPhoneNumberVerification()
                actionId == EditorInfo.IME_ACTION_DONE
         })
 
-        //TODO Try to login or signup user when the login or signup button gets press if phone number is valid
         layout.btnPhoneLogin.setOnClickListener {
                 startPhoneNumberVerification()
         }
@@ -125,10 +120,9 @@ class LoginFragment:Fragment() {
             }
         })
 
-        //This gets triggered if user is new user from firebase authentication
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
             if (isAuthSuccessful){
-                val isNewUser = googleAuthViewModel.getIsNewUser().value!!
+                val isNewUser = googleAuthViewModel.getIsNewUser()!!
                 if (isNewUser){
                     val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
@@ -136,8 +130,6 @@ class LoginFragment:Fragment() {
             }
         })
 
-        //This gets triggered if user is not new user from firebase authenetication but user data does not exist
-        //On firestore
         userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
             if (!isExistingUser){
                 val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)

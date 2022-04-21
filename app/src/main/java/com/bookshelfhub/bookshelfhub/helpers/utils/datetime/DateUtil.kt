@@ -8,7 +8,7 @@ import java.util.*
 object DateUtil {
 
     @JvmStatic
-    fun dateToString(date: Date?, pattern: String?): String? {
+    fun getHumanReaddable(date: Date?, pattern: String?): String? {
         date?.let {
             try {
                 return SimpleDateFormat(pattern, Locale.getDefault()).format(it)

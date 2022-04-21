@@ -10,7 +10,7 @@ interface IPhoneAuthViewModel {
     fun setIsCodeSent(value: Boolean)
     fun getIsCodeSent(): LiveData<Boolean>
     fun setIsNewUser(isNewUser: Boolean?)
-    fun getIsNewUser(): LiveData<Boolean>
+    fun getIsNewUser(): Boolean?
     fun getIsSignedInSuccessfully(): LiveData<Boolean>
     fun setIsSignedInSuccessfully(value: Boolean)
     fun getIsSignedInFailedError(): LiveData<String>

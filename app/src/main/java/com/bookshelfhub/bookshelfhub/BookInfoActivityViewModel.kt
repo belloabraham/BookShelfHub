@@ -15,7 +15,7 @@ class BookInfoActivityViewModel @Inject constructor(
     private val fragmentId = savedState.get<Int>(Fragment.ID)!!
     private val bookId = savedState.get<String>(Book.ID)!!
 
-    fun getIsbn(): String {
+    fun getBookId(): String {
         return bookId
     }
 

@@ -28,7 +28,6 @@ workerParams
         val userId = userAuth.getUserId()
 
          return  try {
-                //Get user bookmarks from the cloud using this path user/userId/bookmarks/id
                 val bookmarks = bookmarksRepo.getRemoteBookmarks(userId)
 
                 if (bookmarks.isNotEmpty()) {
