@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -83,6 +84,7 @@ class BookActivityViewModel @Inject constructor(
                         bookVideosRepo.addBookVideos(bookVideos)
                     }
                 }catch (e:Exception){
+                    Timber.e(e)
                     return@launch
                 }
             }
@@ -103,6 +105,7 @@ class BookActivityViewModel @Inject constructor(
                 try {
                     bookShareLink = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
                 }catch (e:Exception){
+                    Timber.e(e)
                     return@launch
                 }
             }

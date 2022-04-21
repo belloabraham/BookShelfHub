@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 @HiltWorker
 class UploadPaymentTransactions @AssistedInject constructor(
@@ -52,6 +53,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
             Result.success()
         } catch (e: Exception) {
+            Timber.e(e)
             return Result.retry()
         }
 

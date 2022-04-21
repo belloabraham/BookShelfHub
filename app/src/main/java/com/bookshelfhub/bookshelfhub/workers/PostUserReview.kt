@@ -16,6 +16,7 @@ import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAna
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 
 @HiltWorker
@@ -67,6 +68,7 @@ class PostUserReview @AssistedInject constructor(
                 Result.success()
 
         }catch (e:Exception){
+           Timber.e(e)
             Result.retry()
         }
 

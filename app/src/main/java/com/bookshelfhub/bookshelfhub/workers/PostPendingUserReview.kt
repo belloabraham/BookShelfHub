@@ -14,6 +14,7 @@ import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 
 @HiltWorker
@@ -85,7 +86,7 @@ class PostPendingUserReview @AssistedInject constructor(
                Result.success()
 
            }catch (e:Exception){
-               Logger.log("Worker:PostPendReview", e)
+              Timber.e(e)
                Result.retry()
            }
 

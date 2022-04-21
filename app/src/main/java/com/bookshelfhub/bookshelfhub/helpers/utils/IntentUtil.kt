@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.view.View
 import com.bookshelfhub.bookshelfhub.R
+import timber.log.Timber
 
 
 class IntentUtil(private val context:Context) {

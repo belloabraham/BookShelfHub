@@ -48,6 +48,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -155,7 +156,9 @@ class MoreFragment : Fragment() {
                                  googleAuth.signOut().await()
                                      moreViewModel.deleteUserData()
                                      startSplashActivity()
-                             }catch (e:Exception){}
+                             }catch (e:Exception){
+                                 Timber.e(e)
+                             }
                          }
                      }else{
                          moreViewModel.deleteUserData()

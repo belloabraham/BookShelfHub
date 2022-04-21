@@ -12,6 +12,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 @HiltWorker
 class UploadBookInterest @AssistedInject constructor (
@@ -45,7 +46,7 @@ class UploadBookInterest @AssistedInject constructor (
               Result.success()
 
           }catch (e:Exception){
-              Logger.log("Worker:UploadBkInterest", e)
+             Timber.e(e)
               Result.retry()
           }
 

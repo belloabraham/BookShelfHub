@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FieldValue
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 class UserReviewRepo @Inject constructor(
@@ -64,6 +65,7 @@ class UserReviewRepo @Inject constructor(
             }
             remoteUserRetryInterval = 1
         }catch (e:Exception){
+            Timber.e(e)
             if(remoteUserRetryInterval < maxNoOfRetires){
                 delay(200*remoteUserRetryInterval)
                 remoteUserRetryInterval++

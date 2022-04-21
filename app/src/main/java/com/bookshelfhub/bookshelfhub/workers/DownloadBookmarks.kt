@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.BookmarksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 @HiltWorker
 class DownloadBookmarks @AssistedInject constructor(
@@ -42,7 +43,7 @@ workerParams
                 Result.success()
 
             } catch (e: Exception) {
-             Logger.log("Worker:DownldBookmarks", e)
+               Timber.e(e)
                Result.retry()
             }
 

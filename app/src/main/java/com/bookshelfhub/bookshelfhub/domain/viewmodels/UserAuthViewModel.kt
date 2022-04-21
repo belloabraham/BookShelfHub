@@ -9,6 +9,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +32,7 @@ class UserAuthViewModel @Inject constructor(
                  userRepo.addUser(remoteUser.user)
                  setIsAddingUser(false)
              }catch (e:Exception){
+                 Timber.e(e)
                  return@launch
              }
          }

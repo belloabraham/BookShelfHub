@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 @HiltWorker
 class GetRemotePrivateKeys  @AssistedInject constructor (
@@ -44,6 +45,7 @@ class GetRemotePrivateKeys  @AssistedInject constructor (
             }
              Result.success()
         }catch (e:Exception){
+           Timber.e(e)
              Result.retry()
         }
     }

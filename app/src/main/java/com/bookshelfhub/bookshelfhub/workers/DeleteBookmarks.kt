@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 @HiltWorker
 class DeleteBookmarks @AssistedInject constructor(
@@ -48,7 +49,7 @@ workerParams
             Result.success()
 
         }catch (e:Exception){
-            Logger.log("Worker:DeleteBookmarks", e)
+         Timber.e(e)
          Result.retry()
         }
 

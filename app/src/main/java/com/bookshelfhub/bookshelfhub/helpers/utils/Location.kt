@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.helpers.utils
 
 import android.content.Context
 import android.telephony.TelephonyManager
+import timber.log.Timber
 
 
 object Location {
@@ -21,6 +22,7 @@ object Location {
                     null
                 }
         } catch(e:Exception){
+            Timber.e(e)
             null
         }
     }

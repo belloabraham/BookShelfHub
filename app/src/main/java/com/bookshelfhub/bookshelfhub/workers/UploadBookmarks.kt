@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 @HiltWorker
 class UploadBookmarks @AssistedInject constructor(
@@ -50,7 +51,7 @@ workerParams
                      Result.success()
 
              }catch (e:Exception){
-                 Logger.log("Worker:UploadBookmarks", e)
+               Timber.e(e)
                  Result.retry()
              }
 

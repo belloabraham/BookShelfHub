@@ -27,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -91,6 +92,7 @@ class BookItemActivityViewModel @Inject constructor(
       try {
         publishedBook.value = publishedBooksRepo.getARemotePublishedBook(bookId)
       }catch (e:Exception){
+        Timber.e(e)
         return@launch
       }
     }
@@ -101,6 +103,7 @@ class BookItemActivityViewModel @Inject constructor(
       try {
         userReviews.value  = userReviewRepo.getListOfBookReviews(bookId, 3, excludedDocId =  userId)
       }catch (e:Exception){
+        Timber.e(e)
         return@launch
       }
     }
@@ -121,6 +124,7 @@ class BookItemActivityViewModel @Inject constructor(
         try {
           bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
         }catch (e:Exception){
+          Timber.e(e)
           return@launch
         }
     }

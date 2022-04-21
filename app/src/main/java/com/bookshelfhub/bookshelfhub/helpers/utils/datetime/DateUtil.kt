@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers.utils.datetime
 
+import timber.log.Timber
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -12,6 +13,7 @@ object DateUtil {
             try {
                 return SimpleDateFormat(pattern, Locale.getDefault()).format(it)
             } catch (e: ParseException) {
+                Timber.e(e)
                 e.printStackTrace()
             }
         }

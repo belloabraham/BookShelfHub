@@ -17,6 +17,7 @@ import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -80,6 +81,7 @@ class MainActivityViewModel @Inject constructor(
                         settingsUtil.setString(Referrer.REF_LINK, it.toString())
                     }
                 }catch (e:Exception){
+                    Timber.e(e)
                 }
             }
         }
@@ -183,7 +185,7 @@ class MainActivityViewModel @Inject constructor(
 
     fun setIsNewUpdate(){
         newAppUpdateNotifNo.value = 1
-        //TODO set that there is a new notification in more tab
+        //Set that there is a new notification in more tab
         isNewMoreTabNotif.value=true
     }
 

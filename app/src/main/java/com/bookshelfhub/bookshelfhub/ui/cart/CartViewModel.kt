@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,6 +73,7 @@ class CartViewModel @Inject constructor(
       try {
         earnings.value = earningsRepo.getRemoteEarnings(userId)
       }catch (e:Exception){
+        Timber.e(e)
         return@launch
       }
     }

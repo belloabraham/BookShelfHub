@@ -12,6 +12,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 @HiltWorker
 class UploadUserData  @AssistedInject constructor (
@@ -42,7 +43,7 @@ class UploadUserData  @AssistedInject constructor (
                  Result.success()
 
          }catch (e:Exception){
-             Logger.log("Worker:UploadUserData", e)
+           Timber.e(e)
              Result.retry()
          }
 

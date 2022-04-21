@@ -10,6 +10,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import timber.log.Timber
 
 @HiltWorker
 class UploadNotificationToken @AssistedInject constructor(
@@ -38,7 +39,7 @@ class UploadNotificationToken @AssistedInject constructor(
                  userRepo.uploadNotificationToken(notificationToken!!, userId)
                  Result.success()
             }catch (e:Exception){
-                Logger.log("Worker:UploadNotifToken", e)
+               Timber.e(e)
                 Result.retry()
             }
 

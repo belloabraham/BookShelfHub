@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.helpers.utils
 import android.content.Context
 import android.content.res.Resources
 import androidx.core.content.ContextCompat
+import timber.log.Timber
 
 object ColorUtil {
 
@@ -10,6 +11,7 @@ object ColorUtil {
         return try {
             ContextCompat.getColor(context, res)
         } catch (e: Resources.NotFoundException) {
+            Timber.e(e)
             res
         }
     }

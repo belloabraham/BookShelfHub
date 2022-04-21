@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 @HiltWorker
 class UnPublishedBooks @AssistedInject constructor (
@@ -38,7 +39,7 @@ class UnPublishedBooks @AssistedInject constructor (
             }
             Result.success()
         }catch (e:Exception){
-           Logger.log("Worker:UnPublishedBooks", e)
+           Timber.e(e)
            Result.retry()
         }
 

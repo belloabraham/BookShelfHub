@@ -37,6 +37,7 @@ import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -146,9 +147,11 @@ class BookItemActivity : AppCompatActivity() {
                                     val priceInUSD = response.body()!!.info.rate*book.price
                                     showBookDetails(book, userVisibleCurrency, priceInUSD)
                                 }else{
+                                    Timber.e(response.message())
                                     return@launch
                                 }
                             }catch (e:Exception){
+                                Timber.e(e)
                                 return@launch
                             }
                         }
