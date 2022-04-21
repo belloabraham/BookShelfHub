@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.content.Intent
 import androidx.lifecycle.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -10,7 +9,6 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
 import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
@@ -45,7 +43,7 @@ class MainActivityViewModel @Inject constructor(
     private var isNightMode:MutableLiveData<Boolean>  = MutableLiveData()
 
 
-    private val referrerId = savedState.get<String>(Referrer.ID)
+    private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
     private val ACTIVE_VIEW_PAGER="active_view_pager"
     private val ACTIVE_PAGE="active_page"
 
@@ -56,13 +54,18 @@ class MainActivityViewModel @Inject constructor(
         getRemotePrivateKeys()
     }
 
-    fun getCollaboratorReferralBookId(): String? {
-        if(referrerId != null && referrerId.length > userId.length){
-            val collaboratorAndBookId = referrerId.split(Referrer.SEPARATOR)
+    fun getBookIdFromACollaboratorReferrer(): String? {
+        //Discard Id if referral link is from a User
+
+        val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > userId.length
+
+        if(referrerIsACollaborator){
+            val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.split(Referrer.SEPARATOR)
             val collaboratorId = collaboratorAndBookId[0]
             val bookId = collaboratorAndBookId[1]
+
             val collaborator = Collaborator(collaboratorId, bookId)
-            //Add publisher ID that refer the user to the database
+            //Add collaborate and book referred ID to the database
             addCollaborator(collaborator)
             return bookId
         }
@@ -131,17 +134,6 @@ class MainActivityViewModel @Inject constructor(
         savedState.set(ACTIVE_VIEW_PAGER,value)
     }
 
-    fun getReferrer(): String? {
-        return referrerId
-    }
-
-    fun getIsNightMode():LiveData<Boolean>{
-       return isNightMode
-    }
-
-    fun setIsNightMode(value:Boolean){
-        isNightMode.value = value
-    }
 
     fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.utils
+package com.bookshelfhub.bookshelfhub.helpers
 
 import android.app.Activity
 import android.view.WindowManager

@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
@@ -29,9 +30,8 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var dynamicLink: IDynamicLink
 
-
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         // Enable full screen display ***/
         hideSystemUI(window)
@@ -62,8 +62,8 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, WelcomeActivity::class.java)
             getCollaboratorOrUserReferralLink(intent)
         }
-
     }
+
 
     @Suppress("DEPRECATION")
     private fun hideSystemUI(window: Window) {
@@ -76,27 +76,27 @@ class SplashActivity : AppCompatActivity() {
 
     private fun getCollaboratorOrUserReferralLink(intent:Intent){
         // This App could've been opened by a dynamic link and not the from the app icon
-        var referrer:String?=null
+        var aCollaboratorOrUserReferralId:String?=null
 
         dynamicLink.getDeepLinkAsync(this){
             if(it!=null){
                 // Get deep link main url
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
                 //  Remove the main url to get referral userID or PubIdAndISBN
-                referrer = it.toString().replace(deeplinkDomainPrefix,"").trim()
+                aCollaboratorOrUserReferralId = it.toString().replace(deeplinkDomainPrefix,"").trim()
 
                 //  Start Main or Welcome or Main Activity with referral userID or PubIdAndISBN
-                startNextActivity(intent, referrer)
+                startNextActivity(intent, aCollaboratorOrUserReferralId)
             }else{
                 //  Start Main or Welcome or Main Activity with a null referral userID or PubIdAndISBN
-                startNextActivity(intent, referrer)
+                startNextActivity(intent, aCollaboratorOrUserReferralId)
             }
         }
 
     }
 
-    private fun startNextActivity(intent:Intent, referrerId:String?){
-        intent.putExtra(Referrer.ID, referrerId)
+    private fun startNextActivity(intent:Intent, aCollaboratorOrUserReferralId:String?){
+        intent.putExtra(Referrer.ID, aCollaboratorOrUserReferralId)
         finish()
         startActivity(intent)
     }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,6 @@ import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
 import com.bookshelfhub.bookshelfhub.ui.main.BookmarkFragment
 import com.bookshelfhub.bookshelfhub.ui.main.MoreFragment
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfFragment
@@ -23,7 +22,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -33,48 +31,21 @@ class MainActivity : AppCompatActivity() {
     private val mainActivityViewModel: MainActivityViewModel by viewModels()
 
     private lateinit var inAppUpdate: InAppUpdate
-    private val IN_APP_UPDATE_ACTIVITY_REQUEST_CODE = 700
-    private var referrer: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
         layout = ActivityMainBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
         //Check if there is an update for this app using In App update
         inAppUpdate = InAppUpdate(this)
-        inAppUpdate.checkForNewAppUpdate { isImmediateUpdate, appUpdateInfo ->
+        checkForNewAppUpdate(inAppUpdate)
 
-            //Notify the more fragment update button of new update
-            mainActivityViewModel.setIsNewUpdate()
 
-            if (isImmediateUpdate) {
-                inAppUpdate.startImmediateUpdate(appUpdateInfo, IN_APP_UPDATE_ACTIVITY_REQUEST_CODE)
-            } else {
-                inAppUpdate.startFlexibleUpdate(
-                    appUpdateInfo,
-                    IN_APP_UPDATE_ACTIVITY_REQUEST_CODE
-                ) { installState ->
-                    if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-                        newUpdateInstallUpdateMessage()
-                    }
-                }
-            }
+        mainActivityViewModel.getBookIdFromACollaboratorReferrer()?.let { bookId->
+           openBookInBookStore(bookId)
         }
-
-        //Get Nullable referral userID or PubIdAndISBN
-        referrer = mainActivityViewModel.getReferrer()
-
-
-        mainActivityViewModel.getCollaboratorReferralBookId()?.let { bookId->
-            //Open book in book store
-            val intent = Intent(this, BookItemActivity::class.java)
-            intent.putExtra(Referrer.BOOK_REFERRED, bookId)
-            startActivity(intent)
-        }
-
 
         mainActivityViewModel.getSelectedIndex().observe(this, Observer {
             //Navigate to a particular tab based on set value
@@ -151,21 +122,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainActivityViewModel.getIsNightMode().observe(this, Observer { isDarkTheme ->
-            setAppThem(isDarkTheme)
-        })
-
     }
 
-    private fun setAppThem(isDarkTheme: Boolean) {
-        //change activity theme when user switch the theme in more fragment
-        val mode = if (isDarkTheme) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
-        }
-        AppCompatDelegate.setDefaultNightMode(mode)
-    }
 
     private fun newUpdateInstallUpdateMessage() {
         Snackbar.make(
@@ -180,18 +138,44 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun checkForNewAppUpdate(inAppUpdate:InAppUpdate){
+        inAppUpdate.checkForNewAppUpdate { isImmediateUpdate, appUpdateInfo ->
+
+            //Notify the more fragment update button of new update
+            mainActivityViewModel.setIsNewUpdate()
+
+            if (isImmediateUpdate) {
+                inAppUpdate.startImmediateUpdate(appUpdateInfo, InAppUpdate.ACTIVITY_REQUEST_CODE)
+            } else {
+                inAppUpdate.startFlexibleUpdate(
+                    appUpdateInfo,
+                    InAppUpdate.ACTIVITY_REQUEST_CODE
+                ) { installState ->
+                    if (installState.installStatus() == InstallStatus.DOWNLOADED) {
+                        newUpdateInstallUpdateMessage()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openBookInBookStore(bookId:String){
+        val intent = Intent(this, BookItemActivity::class.java)
+        intent.putExtra(Referrer.BOOK_REFERRED, bookId)
+        startActivity(intent)
+    }
+
     override fun onResume() {
         super.onResume()
-
         mainActivityViewModel.getAndSaveAppShareDynamicLink()
 
         //Check if user has a completed download to prompt them for install
-        inAppUpdate.checkForDownloadedOrDownloadingUpdate(IN_APP_UPDATE_ACTIVITY_REQUEST_CODE) {
+        inAppUpdate.checkForDownloadedOrDownloadingUpdate(InAppUpdate.ACTIVITY_REQUEST_CODE) {
             newUpdateInstallUpdateMessage()
         }
 
         setActiveViewPagerAndPageAfterMainActivityThemeChange()
-
     }
 
     private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {
@@ -200,18 +184,18 @@ class MainActivity : AppCompatActivity() {
             //Programmatic select tab will only will only switch view pager in onResume and not on create when activity recreated from theme changed
             layout.bottomBar.selectTabAt(
                 if (mainActivityViewModel.getActivePage() == 0) 0 else 1,
-                true
+                false
             )
             layout.shelfStoreViewPager.visibility = VISIBLE
-            layout.cartMoreViewPager.visibility = View.INVISIBLE
+            layout.cartMoreViewPager.visibility = INVISIBLE
             layout.shelfStoreViewPager.currentItem = mainActivityViewModel.getActivePage()!!
         } else if (mainActivityViewModel.getActiveViewPager() == 1) {
             layout.bottomBar.selectTabAt(
                 if (mainActivityViewModel.getActivePage() == 0) 2 else 3,
-                true
+                false
             )
             layout.cartMoreViewPager.currentItem = mainActivityViewModel.getActivePage()!!
-            layout.shelfStoreViewPager.visibility = View.INVISIBLE
+            layout.shelfStoreViewPager.visibility = INVISIBLE
             layout.cartMoreViewPager.visibility = VISIBLE
         }
     }
@@ -219,7 +203,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         //Workaround to android 10 leak when user press back button on main activity
         //This code prevents the leak
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+        val deviceOSIsAndroid10 = Build.VERSION.SDK_INT == Build.VERSION_CODES.Q
+        if (deviceOSIsAndroid10) {
             if (onBackPressedDispatcher.hasEnabledCallbacks()) {
                 super.onBackPressed()
             } else {
@@ -234,6 +219,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpShelfStoreViewPager() {
         val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
         val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
+        //Disables Swipe left and right
         layout.shelfStoreViewPager.isUserInputEnabled = false
         layout.shelfStoreViewPager.adapter = shelfStoreAdapter
     }
@@ -241,6 +227,7 @@ class MainActivity : AppCompatActivity() {
     private fun setUpCartMoreViewPager() {
         val fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
         val cartMoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
+        //Disables Swipe left and right
         layout.cartMoreViewPager.isUserInputEnabled = false
         layout.cartMoreViewPager.adapter = cartMoreAdapter
     }

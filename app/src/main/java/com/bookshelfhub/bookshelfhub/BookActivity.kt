@@ -23,7 +23,7 @@ import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.utils.EnableWakeLock
+import com.bookshelfhub.bookshelfhub.helpers.EnableWakeLock
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo

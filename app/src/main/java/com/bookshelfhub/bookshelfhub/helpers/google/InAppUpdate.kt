@@ -110,5 +110,10 @@ class InAppUpdate(private val activity: Activity) {
         return appUpdateInfo.clientVersionStalenessDays == null
     }
 
+    companion object{
+        const val ACTIVITY_REQUEST_CODE = 700
+    }
+
+
 
 }

@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -112,7 +113,7 @@ class MoreFragment : Fragment() {
         darkModeToggle.setChecked(isDarkMode, withAnimation = false)
 
         darkModeToggle.setOnCheckedChangeListener { isChecked->
-            mainActivityViewModel.setIsNightMode(isChecked)
+            setAppThem(isChecked)
         }
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->
@@ -282,6 +283,16 @@ class MoreFragment : Fragment() {
             .setPositiveAction(R.string.ok){}
             .showBottomSheet(view)
 
+    }
+
+    private fun setAppThem(isDarkTheme: Boolean) {
+        //change activity theme when user switch the theme in more fragment
+        val mode = if (isDarkTheme) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun startSplashActivity(){
