@@ -5,7 +5,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.data.models.entities.ApiKeys
-import com.bookshelfhub.bookshelfhub.data.repos.PrivateKeysRepo
+import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import dagger.assisted.Assisted
@@ -16,7 +16,7 @@ import timber.log.Timber
 class GetRemotePrivateKeys  @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val privateKeysRepo: PrivateKeysRepo,
+    private val privateKeysRepo: IPrivateKeysRepo,
     val settingsUtil: SettingsUtil
 ): CoroutineWorker(context,
     workerParams

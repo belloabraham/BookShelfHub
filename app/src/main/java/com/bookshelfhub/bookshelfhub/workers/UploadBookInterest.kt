@@ -4,21 +4,17 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
-import com.bookshelfhub.bookshelfhub.data.repos.ReadHistoryRepo
-import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 @HiltWorker
 class UploadBookInterest @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val bookInterestRepo: BookInterestRepo,
+    private val bookInterestRepo: IBookInterestRepo,
     private val userAuth:IUserAuth):
     CoroutineWorker(context, workerParams) {
 

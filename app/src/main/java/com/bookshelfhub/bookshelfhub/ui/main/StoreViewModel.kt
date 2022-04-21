@@ -8,12 +8,11 @@ import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
-import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.SearchHistoryRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -22,9 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class StoreViewModel @Inject constructor(
     val connectionUtil: ConnectionUtil,
-    private val publishedBooksRepo: PublishedBooksRepo,
-    cartItemsRepo: CartItemsRepo,
-    private val  searchHistoryRepo: SearchHistoryRepo,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    cartItemsRepo: ICartItemsRepo,
+    private val  searchHistoryRepo: ISearchHistoryRepo,
     val userAuth: IUserAuth): ViewModel() {
 
     private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()

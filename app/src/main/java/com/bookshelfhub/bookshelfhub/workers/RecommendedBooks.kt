@@ -5,8 +5,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
-import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -16,8 +16,8 @@ class RecommendedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val publishedBooksRepo: PublishedBooksRepo,
-    private val bookInterestRepo: BookInterestRepo,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    private val bookInterestRepo: IBookInterestRepo,
 ) : CoroutineWorker(context,
     workerParams
     ) {

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
-import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserAuthViewModel @Inject constructor(
-    private val userRepo: UserRepo,
+    private val userRepo: IUserRepo,
     private val userAuth: IUserAuth
     ): ViewModel(){
 

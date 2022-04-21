@@ -14,11 +14,18 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
+import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
-import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
+import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.PostUserReview
 import com.bookshelfhub.bookshelfhub.workers.Worker
@@ -34,16 +41,16 @@ import javax.inject.Inject
 class BookItemActivityViewModel @Inject constructor(
   val settingsUtil: SettingsUtil,
   val savedState: SavedStateHandle,
-  private val publishedBooksRepo: PublishedBooksRepo,
-  private  val userReviewRepo: UserReviewRepo,
-  orderedBooksRepo: OrderedBooksRepo,
-  private val cartItemsRepo:CartItemsRepo,
+  private val publishedBooksRepo: IPublishedBooksRepo,
+  private  val userReviewRepo: IUserReviewRepo,
+  orderedBooksRepo: IOrderedBooksRepo,
+  private val cartItemsRepo: ICartItemsRepo,
   private val dynamicLink:IDynamicLink,
-  private val userRepo: UserRepo,
-  private val currencyConversionAPI: CurrencyConversionAPI,
+  private val userRepo: IUserRepo,
+  private val currencyConversionAPI: ICurrencyConversionAPI,
   private val worker: Worker,
-  referralRepo: ReferralRepo,
-  private val searchHistoryRepo: SearchHistoryRepo,
+  referralRepo: IReferralRepo,
+  private val searchHistoryRepo: ISearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()

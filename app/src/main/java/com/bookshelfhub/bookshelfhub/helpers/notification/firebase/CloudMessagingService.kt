@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub.helpers.notification.firebase
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadNotificationToken
 import com.google.firebase.messaging.FirebaseMessagingService

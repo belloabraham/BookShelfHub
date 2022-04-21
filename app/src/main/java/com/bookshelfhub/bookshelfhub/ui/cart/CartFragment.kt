@@ -9,13 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Location
@@ -26,12 +24,9 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.UploadPaymentTransactions
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.payment.*
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.flutterwave.raveandroid.rave_java_commons.Meta
@@ -40,10 +35,6 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 

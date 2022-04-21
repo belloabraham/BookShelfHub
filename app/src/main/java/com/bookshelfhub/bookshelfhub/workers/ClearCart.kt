@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -12,7 +12,7 @@ import dagger.assisted.AssistedInject
 class ClearCart @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val cartItemsRepo: CartItemsRepo,
+    private val cartItemsRepo: ICartItemsRepo,
 ) : CoroutineWorker(context,
     workerParams
 ) {

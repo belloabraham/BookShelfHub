@@ -6,16 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.Bookmark
-import com.bookshelfhub.bookshelfhub.data.repos.BookmarksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class BookmarkViewModel @Inject constructor(
     val userAuth:IUserAuth,
-    private val bookmarksRepo: BookmarksRepo,
+    private val bookmarksRepo: IBookmarksRepo,
     ): ViewModel(){
 
     val userId = userAuth.getUserId()

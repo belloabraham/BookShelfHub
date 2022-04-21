@@ -8,6 +8,12 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.IBookVideosRepo
+import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.readhistory.IReadHistoryRepo
+import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
@@ -23,13 +29,13 @@ class BookActivityViewModel @Inject constructor(
     private val settingsUtil: SettingsUtil,
     val savedState: SavedStateHandle,
     private val connectionUtil: ConnectionUtil,
-    private val orderedBooksRepo: OrderedBooksRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
     private val dynamicLink:IDynamicLink,
-    private val publishedBooksRepo: PublishedBooksRepo,
-    private val readHistoryRepo: ReadHistoryRepo,
-    private val searchHistoryRepo: SearchHistoryRepo,
-    private val bookmarksRepo: BookmarksRepo,
-    private val bookVideosRepo: BookVideosRepo,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    private val readHistoryRepo: IReadHistoryRepo,
+    private val searchHistoryRepo: ISearchHistoryRepo,
+    private val bookmarksRepo: IBookmarksRepo,
+    private val bookVideosRepo: IBookVideosRepo,
 ) : ViewModel() {
 
     val userId = userAuth.getUserId()

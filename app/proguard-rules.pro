@@ -23,15 +23,10 @@
 #Realtime database
  -keepattributes Signature
 
-#Data Entities
--keep class com.bookshelfhub.bookshelfhub.helpers.database.room.entities.**{
+#Data models
+-keep class com.bookshelfhub.bookshelfhub.data.models.**{
     *;
 }
-
--keep class com.bookshelfhub.bookshelfhub.models.**{
-    *;
-}
-
 
 #PDFViewer
 -keep class com.shockwave.**

@@ -5,8 +5,8 @@ import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
-import com.bookshelfhub.bookshelfhub.data.repos.BookInterestRepo
-import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
@@ -19,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WelcomeActivityViewModel @Inject constructor(
     val savedState: SavedStateHandle,
-    private val bookInterestRepo: BookInterestRepo,
-    private val userRepo: UserRepo,
+    private val bookInterestRepo: IBookInterestRepo,
+    private val userRepo: IUserRepo,
     userAuth: IUserAuth,
     private val appUtil: AppUtil,
 ): ViewModel() {

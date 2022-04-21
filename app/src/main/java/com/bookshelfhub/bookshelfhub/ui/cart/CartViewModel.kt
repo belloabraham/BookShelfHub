@@ -9,8 +9,13 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.earnings.IEarningsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.IPaymentCardRepo
+import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,14 +23,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    val remoteDataSource: IRemoteDataSource,
-    paymentCardRepo: PaymentCardRepo,
-    private val cartItemsRepo: CartItemsRepo, 
-     userRepo: UserRepo,
-    private val paymentTransactionRepo: PaymentTransactionRepo,
-    private val earningsRepo: EarningsRepo,
-    val settingsUtil: SettingsUtil,
-    userAuth: IUserAuth): ViewModel(){
+  val remoteDataSource: IRemoteDataSource,
+  paymentCardRepo: IPaymentCardRepo,
+  private val cartItemsRepo: ICartItemsRepo,
+  userRepo: IUserRepo,
+  private val paymentTransactionRepo: IPaymentTransactionRepo,
+  private val earningsRepo: IEarningsRepo,
+  val settingsUtil: SettingsUtil,
+  userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private val userId = userAuth.getUserId()

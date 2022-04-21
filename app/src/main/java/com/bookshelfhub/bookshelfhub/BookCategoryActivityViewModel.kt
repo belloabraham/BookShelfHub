@@ -8,8 +8,8 @@ import androidx.paging.PagingData
 import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -20,8 +20,8 @@ import javax.inject.Inject
 class BookCategoryActivityViewModel @Inject constructor(
   @ApplicationContext context: Context,
   val savedState: SavedStateHandle,
-  private val publishedBooksRepo: PublishedBooksRepo,
-  private  val cartItemsRepo: CartItemsRepo,
+  private val publishedBooksRepo: IPublishedBooksRepo,
+  private  val cartItemsRepo: ICartItemsRepo,
   val userAuth: IUserAuth) : ViewModel(){
 
   private var booksByCategory: List<PublishedBook> = emptyList()

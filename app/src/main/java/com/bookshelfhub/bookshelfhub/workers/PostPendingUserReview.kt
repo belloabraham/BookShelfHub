@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.OrderedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.UserReviewRepo
-import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
+import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.google.firebase.firestore.FieldValue
@@ -22,8 +21,8 @@ class PostPendingUserReview @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
-    private val orderedBooksRepo: OrderedBooksRepo,
-    private val userReviewRepo: UserReviewRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
+    private val userReviewRepo: IUserReviewRepo,
 ): CoroutineWorker(context,
     workerParams
 ){

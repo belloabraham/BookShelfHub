@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
-import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
@@ -17,7 +16,7 @@ class UploadNotificationToken @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
-    private val userRepo: UserRepo,
+    private val userRepo: IUserRepo,
 ): CoroutineWorker(context,
     workerParams) {
 

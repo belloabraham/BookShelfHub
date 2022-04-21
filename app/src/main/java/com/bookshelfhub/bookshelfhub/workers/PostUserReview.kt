@@ -9,10 +9,10 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.PerspectiveAPI
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.UserReviewRepo
-import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
+import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -22,8 +22,8 @@ import timber.log.Timber
 @HiltWorker
 class PostUserReview @AssistedInject constructor(
     @Assisted val context: Context, @Assisted workerParams: WorkerParameters,
-   private val wordAnalyzerAPI: WordAnalyzerAPI,
-    private val userReviewRepo: UserReviewRepo,
+    private val wordAnalyzerAPI: IWordAnalyzerAPI,
+    private val userReviewRepo: IUserReviewRepo,
     private val settingsUtil: SettingsUtil,
     private val userAuth: IUserAuth
 ): CoroutineWorker(context,

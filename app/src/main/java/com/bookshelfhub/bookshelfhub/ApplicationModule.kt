@@ -1,22 +1,32 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.BookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.BookmarksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.CartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.PaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.PublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.UserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.UserReviewRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.UserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Firestore
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.data.sources.remote.Firestore
+import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.data.repos.sources.local.RoomInstance
-import com.bookshelfhub.bookshelfhub.helpers.rest.WebApi
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
-import com.bookshelfhub.bookshelfhub.helpers.SecreteKeys
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.Util
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.gson.Gson
 import dagger.Module
@@ -36,28 +46,15 @@ object ApplicationModule {
         return Firebase()
     }
 
-
     @Singleton
     @Provides
-    fun providePrivateKeys(settingsUtil: SettingsUtil): SecreteKeys {
-        return SecreteKeys(settingsUtil)
+    fun providePublishedBooksRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource): IPublishedBooksRepo {
+        return PublishedBooksRepo(roomInstance.publishedBooksDao(), remoteDataSource)
     }
 
     @Singleton
     @Provides
-    fun provideDatabaseUtil(json:Json): Util {
-        return Util(json)
-    }
-
-    @Singleton
-    @Provides
-    fun providePublishedBooksRepo(roomInstance: RoomInstance): PublishedBooksRepo {
-        return PublishedBooksRepo(roomInstance.publishedBooksDao())
-    }
-
-    @Singleton
-    @Provides
-    fun provideUserReviewRepo(roomInstance: RoomInstance, remoteDataSource:IRemoteDataSource): UserReviewRepo {
+    fun provideUserReviewRepo(roomInstance: RoomInstance, remoteDataSource:IRemoteDataSource): IUserReviewRepo {
         return UserReviewRepo(roomInstance.userReviewsDao(), remoteDataSource)
     }
 
@@ -67,11 +64,6 @@ object ApplicationModule {
         return Worker(context)
     }
 
-    @Singleton
-    @Provides
-    fun provideWebAPI(): WebApi {
-        return WebApi()
-    }
 
     @Singleton
     @Provides
@@ -88,33 +80,33 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideUserRepo(roomInstance: RoomInstance, worker:Worker): UserRepo {
-        return UserRepo(roomInstance.userDao(), worker)
+    fun provideUserRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IUserRepo {
+        return UserRepo(roomInstance.userDao(), remoteDataSource, worker)
     }
 
     @Singleton
     @Provides
-    fun provideCartRepo(roomInstance: RoomInstance): CartItemsRepo {
-        return CartItemsRepo(roomInstance.cartItemsDao())
+    fun provideCartRepo(roomInstance: RoomInstance, worker: Worker): ICartItemsRepo {
+        return CartItemsRepo(roomInstance.cartItemsDao(), worker)
     }
 
     @Singleton
     @Provides
-    fun providePaymentTransactionRepo(roomInstance: RoomInstance, worker: Worker): PaymentTransactionRepo {
-        return PaymentTransactionRepo(roomInstance.paymentTransDao(), worker)
+    fun providePaymentTransactionRepo(roomInstance: RoomInstance, worker: Worker, remoteDataSource: IRemoteDataSource): IPaymentTransactionRepo {
+        return PaymentTransactionRepo(roomInstance.paymentTransDao(), worker, remoteDataSource)
     }
 
     @Singleton
     @Provides
-    fun provideBookmarkRepo(roomInstance: RoomInstance, worker:Worker, remoteDataSource: IRemoteDataSource): BookmarksRepo {
+    fun provideBookmarkRepo(roomInstance: RoomInstance, worker:Worker, remoteDataSource: IRemoteDataSource): IBookmarksRepo {
         return BookmarksRepo(roomInstance.bookmarksDao(), worker, remoteDataSource)
     }
 
 
     @Singleton
     @Provides
-    fun provideBookInterestRepo(roomInstance: RoomInstance, worker:Worker): BookInterestRepo {
-        return BookInterestRepo(roomInstance.bookInterestDao(), worker)
+    fun provideBookInterestRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IBookInterestRepo {
+        return BookInterestRepo(roomInstance.bookInterestDao(), remoteDataSource, worker)
     }
 
     @Singleton

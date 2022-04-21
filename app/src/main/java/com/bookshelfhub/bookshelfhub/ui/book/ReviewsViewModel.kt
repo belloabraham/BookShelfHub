@@ -7,14 +7,14 @@ import androidx.lifecycle.ViewModel
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.data.repos.UserReviewRepo
+import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ReviewsViewModel @Inject constructor(
     val savedState: SavedStateHandle,
-    userReviewRepo: UserReviewRepo,
+    userReviewRepo: IUserReviewRepo,
     val userAuth:IUserAuth ): ViewModel(){
 
     val userId = userAuth.getUserId()

@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.CartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.PaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
@@ -17,8 +16,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
-    private val cartItemsRepo: CartItemsRepo,
-    private val paymentTransactionRepo: PaymentTransactionRepo,
+    private val cartItemsRepo: ICartItemsRepo,
+    private val paymentTransactionRepo: IPaymentTransactionRepo,
 ) : CoroutineWorker(
     context,
     workerParams

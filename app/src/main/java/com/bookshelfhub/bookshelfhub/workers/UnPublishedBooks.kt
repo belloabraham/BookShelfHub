@@ -4,15 +4,10 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.helpers.utils.Logger
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.repos.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.data.repos.PublishedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 @HiltWorker
@@ -20,7 +15,7 @@ class UnPublishedBooks @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val userAuth:IUserAuth,
-    private val publishedBooksRepo: PublishedBooksRepo,
+    private val publishedBooksRepo: IPublishedBooksRepo,
 ) : CoroutineWorker(context,
     workerParams
 ) {

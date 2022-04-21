@@ -6,7 +6,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
-import com.bookshelfhub.bookshelfhub.data.repos.*
+import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
+import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
@@ -28,9 +29,9 @@ class MainActivityViewModel @Inject constructor(
     private val remoteConfig: IRemoteConfig,
     private val dynamicLink: IDynamicLink,
     private val settingsUtil: SettingsUtil,
-    private val bookInterestRepo: BookInterestRepo,
+    private val bookInterestRepo: IBookInterestRepo,
     private val connectionUtil: ConnectionUtil,
-    private val referralRepo: ReferralRepo
+    private val referralRepo: IReferralRepo
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()

@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
-import com.bookshelfhub.bookshelfhub.data.repos.UserRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepo: UserRepo,
+    private val userRepo: IUserRepo,
     val userAuth: IUserAuth): ViewModel(){
 
     private val userId:String = userAuth.getUserId()
