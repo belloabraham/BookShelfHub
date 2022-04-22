@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:text="@string/swipe_down"
             android:gravity="center"
+            android:id="@+id/newlyPurchasedBooksMsgTxt"
             style="@style/TextAppearance.MaterialComponents.Caption"
             android:layout_margin="@dimen/size_16" />
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -70,11 +71,12 @@ class ShelfFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             shelfViewModel.getLiveOrderedBooks().asFlow()
                 .collectLatest { orderedBooks ->
-                    //Hide just incase data get load by user swipe
+                    //Hide just in case data get load by user swipe
                     layout.swipeRefreshLayout.isRefreshing = false
                     //Hide as this is visible by default
                     layout.progressBar.visibility = GONE
                     if (orderedBooks.isNotEmpty()) {
+                        shelfViewModel.updateBookPurchaseState(isNewlyPurchased = false)
                         layout.orderedBooksRecView.visibility = VISIBLE
                         layout.emptyShelf.visibility = GONE
                         layout.appbarLayout.visibility = VISIBLE
@@ -91,6 +93,13 @@ class ShelfFragment : Fragment() {
         layout.swipeRefreshLayout.setOnRefreshListener {
             shelfViewModel.getRemoteOrderedBooks()
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            shelfViewModel.doesUserHaveUnDownloadedPurchasedBooks().collect{ ifUserHaveUnDownloadedPurchasedBooks->
+                layout.newlyPurchasedBooksMsgTxt.isVisible = ifUserHaveUnDownloadedPurchasedBooks
+            }
+        }
+
 
         layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
@@ -173,6 +182,7 @@ class ShelfFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         shelfViewModel.getRemoteOrderedBooks()
+        shelfViewModel.checkIfUserHaveUnDownloadedPurchasedBook()
     }
 
     override fun onDestroyView() {
