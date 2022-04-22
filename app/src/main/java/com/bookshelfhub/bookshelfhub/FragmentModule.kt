@@ -27,7 +27,6 @@ object FragmentModule {
         return ClipboardHelper(context)
     }
 
-
     @FragmentScoped
     @Provides
     fun getTextLinkBuilder(): TextLinkBuilder {

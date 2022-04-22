@@ -6,7 +6,7 @@ import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 
 interface IPhoneAuth {
-     fun startPhoneNumberVerification(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
+     fun sendVerificationCode(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
      fun verifyPhoneNumberWithCode(code: String, storedVerificationId: String): Task<AuthResult>
      fun resendVerificationCode(phoneNumber: String, resendToken: PhoneAuthProvider.ForceResendingToken, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
      fun signInWithCredential(credential: PhoneAuthCredential)

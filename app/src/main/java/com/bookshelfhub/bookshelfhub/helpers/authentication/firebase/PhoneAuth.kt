@@ -13,7 +13,7 @@ open class PhoneAuth(private  val activity: Activity) :
 
     private val auth: FirebaseAuth = Firebase.auth
 
-     override fun startPhoneNumberVerification(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks) {
+     override fun sendVerificationCode(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks) {
          val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)
              .setActivity(activity)

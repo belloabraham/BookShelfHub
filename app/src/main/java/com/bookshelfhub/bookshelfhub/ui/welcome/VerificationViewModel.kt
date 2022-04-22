@@ -16,10 +16,11 @@ class VerificationViewModel @Inject constructor(
 
     private val IN_PROGRESS="in_progress"
     private var timeRemainingInMillis: MutableLiveData<Long> = MutableLiveData<Long>()
-    private val timerDurationInMilliSec = 180000L
+    private val timerDurationInMilliSec = 300_000 //5 Minutes
     private var inProgress = savedState.get<Boolean>(IN_PROGRESS)?: false
 
         init {
+            //Just in the case the fragment got recreated, do not restart timer if timer was running before activity got recreated
             if (!inProgress){
                 startTimer()
             }

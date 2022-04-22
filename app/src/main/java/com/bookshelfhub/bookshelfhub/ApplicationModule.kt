@@ -27,6 +27,9 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
+import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
+import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
+import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.gson.Gson
 import dagger.Module
@@ -44,6 +47,12 @@ object ApplicationModule {
     @Provides
     fun provideRemoteConfig(): IRemoteConfig {
         return Firebase()
+    }
+
+    @Singleton
+    @Provides
+    fun provideWordAnalyzerAPI(): IWordAnalyzerAPI {
+        return WordAnalyzerAPI(RetrofitInstance.perspectiveAPI)
     }
 
     @Singleton

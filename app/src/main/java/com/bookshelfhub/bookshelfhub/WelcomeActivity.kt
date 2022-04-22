@@ -258,7 +258,7 @@ class WelcomeActivity : AppCompatActivity() {
         if (!layout.lottieAnimView.isAnimating) {
             if (connectionUtil.isConnected()) {
                 showAnimation()
-                phoneAuth.startPhoneNumberVerification(phoneNumber, phoneAuthCallbacks!!)
+                phoneAuth.sendVerificationCode(phoneNumber, phoneAuthCallbacks!!)
             } else {
                 Snackbar.make(layout.rootView, R.string.connection_error, Snackbar.LENGTH_LONG)
                     .show()
@@ -352,7 +352,8 @@ class WelcomeActivity : AppCompatActivity() {
         return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                phoneAuthViewModel.setOTPCode("000000")
+                val otpCodeMask = "000000"
+                phoneAuthViewModel.setOTPCode(otpCodeMask)
                 phoneAuth.signInWithCredential(credential)
             }
 
