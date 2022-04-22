@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers.google
 
 import android.app.Activity
-import android.content.Context
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.android.play.core.install.InstallState
@@ -34,7 +33,7 @@ class InAppUpdate(private val activity: Activity) {
                 if ((appUpdateInfo.updatePriority() >= highUpdatePriority || isLastNotifPast90Days(appUpdateInfo)) && isImmediateUpdateAllowed){
                     onSuccess(true, appUpdateInfo)
 
-                }else if ((isFirstUpdateNotif(appUpdateInfo) || isLastNotifPast30Days(appUpdateInfo)) && isFlexibleUpdateAllowed) {
+                }else if ((isFirstUpdateNotif(appUpdateInfo) || isLastNotificationPast30Days(appUpdateInfo)) && isFlexibleUpdateAllowed) {
                     onSuccess(false, appUpdateInfo)
                 }
 
@@ -73,7 +72,7 @@ class InAppUpdate(private val activity: Activity) {
     /**
      *Check if the last time the user got noticed about notification is past 30 days
      */
-    private fun isLastNotifPast30Days(appUpdateInfo:AppUpdateInfo): Boolean {
+    private fun isLastNotificationPast30Days(appUpdateInfo:AppUpdateInfo): Boolean {
         val latsUpdateNotificationDays = appUpdateInfo.clientVersionStalenessDays ?: -1
         return latsUpdateNotificationDays>=daysForFlexibleUpdate
     }

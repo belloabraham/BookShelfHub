@@ -29,10 +29,9 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.currencyconverter.Currency
+import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
-import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -421,7 +420,7 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun shareBook(){
         bookItemActivityViewModel.getBookShareLink()?.let {
-            startActivity(ShareUtil.getShareIntent(it.toString(), bookOnlineVersion!!.name))
+            startActivity(ShareUtil.getShareIntent(it, bookOnlineVersion!!.name))
         }
     }
 

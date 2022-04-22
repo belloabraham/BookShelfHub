@@ -24,7 +24,11 @@ import javax.inject.Inject
      }
 
 
-    override suspend fun addDataAsync(collection:String, document:String, field:String, data: Any): Void? {
+    override suspend fun addDataAsync(
+        collection:String,
+        document:String,
+        field:String,
+        data: Any): Void? {
         val newData = hashMapOf(
             field to data,
         )
@@ -34,14 +38,21 @@ import javax.inject.Inject
 
     }
 
-     override suspend fun addDataAsync(collection:String, document:String, data: Any): Void? {
+     override suspend fun addDataAsync(
+         collection:String,
+         document:String,
+         data: Any): Void? {
          return  db.collection(collection)
              .document(document)
              .set(data, SetOptions.merge()).await()
-
      }
 
-     override fun <T: Any> getLiveListOfDataAsync(collection:String, type:Class<T>, orderBy:String, shouldRetry: Boolean, onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
+     override fun <T: Any> getLiveListOfDataAsync(
+         collection:String,
+         type:Class<T>,
+         orderBy:String,
+         shouldRetry: Boolean,
+         onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
          val subscription = db.collection(collection)
              .orderBy(orderBy)
              .addSnapshotListener { querySnapShot, e ->
@@ -57,14 +68,23 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any>  getDataAsync(collection:String, document: String, type:Class<T>): T? {
+     override suspend fun <T: Any>  getDataAsync(
+         collection:String,
+         document: String,
+         type:Class<T>): T? {
          val docSnapshot =  db.collection(collection)
              .document(document).get().await()
         return docSnapshotToType(docSnapshot, type)
      }
 
 
-     override suspend fun <T: Any> getDataAsync(collection:String, document: String, subCollection: String, subDocument:String, shouldRetry:Boolean,type:Class<T>): T? {
+     override suspend fun <T: Any> getDataAsync(
+         collection:String,
+         document: String,
+         subCollection: String,
+         subDocument:String,
+         shouldRetry:Boolean,
+         type:Class<T>): T? {
 
          val documentSnapshot = db.collection(collection).document(document).collection(subCollection).document(subDocument).get().await()
 
@@ -73,7 +93,13 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getLiveListOfDataAsyncFrom(collection:String, type:Class<T>, startAt: Timestamp, direction: Query.Direction, orderBy:String, shouldRetry: Boolean, onComplete:  (dataList:List<T>)->Unit): ListenerRegistration {
+     override fun <T: Any> getLiveListOfDataAsyncFrom(
+         collection:String, type:Class<T>,
+         startAt: Timestamp,
+         direction: Query.Direction,
+         orderBy:String,
+         shouldRetry: Boolean,
+         onComplete:  (dataList:List<T>)->Unit): ListenerRegistration {
 
          val subscription = db.collection(collection)
              .orderBy(orderBy, direction)
@@ -90,7 +116,11 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey: String, whereValue: Any, type:Class<T>): List<T> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(
+         collection:String,
+         whereKey: String,
+         whereValue: Any,
+         type:Class<T>): List<T> {
        val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
              .get().await()
@@ -98,7 +128,15 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, excludedDocId:String): List<T> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(
+         collection:String,
+         document:String,
+         subCollection:String,
+         type:Class<T>,
+         whereKey:String,
+         whereValue:Any,
+         limit:Long,
+         excludedDocId:String): List<T> {
 
          val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
@@ -112,7 +150,15 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, whereKey:String, whereValue:Any, whereKey2:String, whereValue2:Any, orderBy: String, direction: Query.Direction, type:Class<T>): List<T> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(
+         collection:String,
+         whereKey:String,
+         whereValue:Any,
+         whereKey2:String,
+         whereValue2:Any,
+         orderBy: String,
+         direction: Query.Direction,
+         type:Class<T>): List<T> {
          val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey,whereValue)
              .whereEqualTo(whereKey2,whereValue2)
@@ -123,7 +169,14 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun <T: Any> getListOfDataWhereAsync(collection:String, document:String, subCollection:String, type:Class<T>,  whereKey:String, whereValue:Any, limit:Long, orderBy: String, direction: Query.Direction): List<T> {
+     override suspend fun <T: Any> getListOfDataWhereAsync(
+         collection:String,
+         document:String,
+         subCollection:String,
+         type:Class<T>,
+         whereKey:String, whereValue:Any,
+         limit:Long, orderBy: String,
+         direction: Query.Direction): List<T> {
 
         val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
@@ -134,7 +187,26 @@ import javax.inject.Inject
          return querySnapshotToListOfType(querySnapShot, type)
      }
 
-     override suspend fun <T: Any> getListOfDataAsync(collection:String, document:String, subCollection:String, type:Class<T>): List<T> {
+     override suspend fun <T: Any> getListOfDataAsync(
+         collection:String,
+         document:String,
+         subCollection:String,
+         orderBy: String,
+         direction: Query.Direction,
+         startAfter:Any,
+         type:Class<T>): List<T> {
+
+         val querySnapshot = db.collection(collection).document(document).collection(subCollection)
+             .orderBy(orderBy, direction)
+             .startAfter(startAfter)
+             .get().await()
+         return   querySnapshotToListOfType(querySnapshot, type)
+     }
+
+     override suspend fun <T: Any> getListOfDataAsync(
+         collection:String, document:String,
+         subCollection:String,
+         type:Class<T>): List<T> {
 
          val querySnapshot = db.collection(collection).document(document).collection(subCollection)
              .get().await()
@@ -142,7 +214,13 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun updateUserReview(bookUpdatedValues: HashMap<String, FieldValue>?, userReview: UserReview, collection: String, document:String, subCollection: String, subDocument: String): Void? {
+     override suspend fun updateUserReview(
+         bookUpdatedValues: HashMap<String, FieldValue>?,
+         userReview: UserReview,
+         collection: String,
+         document:String,
+         subCollection: String,
+         subDocument: String): Void? {
 
          return db.runBatch { batch->
              val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
@@ -162,7 +240,12 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun updateUserReviews(userReviews: List<UserReview>, collection: String, subCollection: String, subDocument: String, bookUpdatedValues: List<HashMap<String, FieldValue>>): Void? {
+     override suspend fun updateUserReviews(
+         userReviews: List<UserReview>,
+         collection: String,
+         subCollection: String,
+         subDocument: String,
+         bookUpdatedValues: List<HashMap<String, FieldValue>>): Void? {
 
        return  db.runBatch { batch->
              val length = userReviews.size - 1
@@ -177,7 +260,11 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun addListOfDataAsync(collection: String, document:String, subCollection: String, list: List<Any>): Void? {
+     override suspend fun addListOfDataAsync(
+         collection: String,
+         document:String,
+         subCollection: String,
+         list: List<Any>): Void? {
 
         return  db.runBatch { batch->
              for (item in list){
@@ -188,7 +275,11 @@ import javax.inject.Inject
      }
 
 
-     override suspend fun addListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Void? {
+     override suspend fun addListOfDataAsync(
+         list: List<IEntityId>,
+         collection: String,
+         document:String,
+         subCollection: String): Void? {
 
        return  db.runBatch { batch->
              for (item in list){
@@ -199,19 +290,24 @@ import javax.inject.Inject
 
     }
 
-     override fun deleteListOfDataAsync(list: List<IEntityId>, collection: String, document:String, subCollection: String): Task<Void> {
+     override suspend fun deleteListOfDataAsync(
+         list: List<IEntityId>,
+         collection: String,
+         document:String,
+         subCollection: String):Void {
 
         return db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
                  batch.delete(docRef)
              }
-         }
+         }.await()
 
      }
 
-
-     private fun <T: Any> docSnapshotToType(documentSnapshot: DocumentSnapshot?, type:Class<T>): T?{
+     private fun <T: Any> docSnapshotToType(
+         documentSnapshot: DocumentSnapshot?,
+         type:Class<T>): T?{
          if(documentSnapshot != null && documentSnapshot.exists()){
              val data =  documentSnapshot.data!!
             return  json.fromAny(data, type)
@@ -219,7 +315,9 @@ import javax.inject.Inject
          return null
      }
 
-    private fun <T: Any> querySnapshotToListOfType(querySnapshot: QuerySnapshot?, type:Class<T>): List<T> {
+    private fun <T: Any> querySnapshotToListOfType(
+        querySnapshot: QuerySnapshot?,
+        type:Class<T>): List<T> {
          var dataList = emptyList<T>()
 
          querySnapshot?.let {

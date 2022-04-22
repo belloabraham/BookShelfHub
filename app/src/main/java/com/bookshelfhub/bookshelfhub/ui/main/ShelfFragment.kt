@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -26,6 +27,9 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.android.synthetic.main.fragment_shelf.*
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
@@ -51,7 +55,6 @@ class ShelfFragment : Fragment() {
     ): View {
         binding = FragmentShelfBinding.inflate(inflater, container, false)
         val layout = binding!!
-         val userId = userAuth.getUserId()
 
          mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
         mOrderedBooksAdapter = OrderedBooksAdapter(requireActivity(), viewLifecycleOwner).getOrderedBooksAdapter()
@@ -63,58 +66,31 @@ class ShelfFragment : Fragment() {
             shelfSearchHistoryList=shelfSearchHistory
         })
 
-        viewLifecycleOwner.lifecycleScope.launch{
-            val orderedBooks = shelfViewModel.getOrderedBooks()
-            if (orderedBooks.isEmpty()){
-                //Get all available ordered books the user have
-                remoteDataSource.getLiveOrderedBooks(
-                    requireActivity(),
-                    RemoteDataFields.ORDERED_BOOKS_COLL,
-                    userId,
-                    OrderedBook::class.java
-                ) {
-                    if (it.isEmpty()){
-                        layout.progressBar.visibility = GONE
-                        //Show empty shelf that proves that the have not bought any books
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            shelfViewModel.getLiveOrderedBooks().asFlow()
+                .collectLatest { orderedBooks ->
+                    //Hide just incase data get load by user swipe
+                    layout.swipeRefreshLayout.isRefreshing = false
+                    //Hide as this is visible by default
+                    layout.progressBar.visibility = GONE
+                    if (orderedBooks.isNotEmpty()) {
+                        layout.orderedBooksRecView.visibility = VISIBLE
+                        layout.emptyShelf.visibility = GONE
+                        layout.appbarLayout.visibility = VISIBLE
+                        orderedBooksAdapter.submitList(orderedBooks)
+                        orderedBookList = orderedBooks
+                    } else {
                         layout.emptyShelf.visibility = VISIBLE
-                    }else{
-                        shelfViewModel.addOrderedBooks(it)
+                        layout.appbarLayout.visibility = INVISIBLE
+                        layout.orderedBooksRecView.visibility = GONE
                     }
-                }
-            }else{
-                orderedBooks[0].dateTime?.let { timestamp->
-                    remoteDataSource.getLiveOrderedBooks(
-                        requireActivity(),
-                        RemoteDataFields.ORDERED_BOOKS_COLL,
-                        userId,
-                        OrderedBook::class.java,
-                        orderBy = RemoteDataFields.ORDER_DATE_TIME,
-                        Query.Direction.DESCENDING,
-                        startAfter = timestamp
-                    ) {
-                        shelfViewModel.addOrderedBooks(it)
-                    }
-                }
             }
         }
 
-
-
-        shelfViewModel.getLiveOrderedBooks().observe(viewLifecycleOwner, Observer { orderedBooks ->
-
-            if (orderedBooks.isNotEmpty()) {
-                layout.orderedBooksRecView.visibility = VISIBLE
-                layout.emptyShelf.visibility = GONE
-                layout.appbarLayout.visibility = VISIBLE
-                orderedBooksAdapter.submitList(orderedBooks)
-                orderedBookList = orderedBooks
-            } else {
-                layout.progressBar.visibility = VISIBLE
-                layout.appbarLayout.visibility = INVISIBLE
-                layout.orderedBooksRecView.visibility = GONE
-            }
-        })
-
+        layout.swipeRefreshLayout.setOnRefreshListener {
+            shelfViewModel.getRemoteOrderedBooks()
+        }
 
         layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
@@ -192,6 +168,11 @@ class ShelfFragment : Fragment() {
         fun newInstance(): ShelfFragment {
             return ShelfFragment()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shelfViewModel.getRemoteOrderedBooks()
     }
 
     override fun onDestroyView() {

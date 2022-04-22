@@ -6,14 +6,18 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
+import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ShelfViewModel @Inject constructor(
     private val orderedBooksRepo: IOrderedBooksRepo,
     searchHistoryRepo: ISearchHistoryRepo,
+    private val connectionUtil: ConnectionUtil,
     val userAuth:IUserAuth): ViewModel(){
     
     private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
@@ -29,6 +33,25 @@ class ShelfViewModel @Inject constructor(
 
     suspend fun getOrderedBooks(): List<OrderedBook> {
         return orderedBooksRepo.getOrderedBooks(userId)
+    }
+
+    fun getRemoteOrderedBooks(){
+            viewModelScope.launch {
+                if(connectionUtil.isConnected()){
+                val localOrderedBooks = orderedBooksRepo.getOrderedBooks(userId)
+                val lastOrderedBookSN =  if(localOrderedBooks.isEmpty()) 0 else localOrderedBooks.size
+                try {
+                   val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
+                       userId,
+                       lastOrderedBookSN.toLong()
+                   )
+                   orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
+                }catch (e:Exception){
+                    Timber.e(e)
+                    return@launch
+                }
+            }
+        }
     }
 
     fun addOrderedBooks(orderedBooks: List<OrderedBook>){

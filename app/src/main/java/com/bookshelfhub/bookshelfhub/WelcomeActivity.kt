@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityWelcomeBinding
-import com.bookshelfhub.bookshelfhub.helpers.MaterialAlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.MaterialAlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.*
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth

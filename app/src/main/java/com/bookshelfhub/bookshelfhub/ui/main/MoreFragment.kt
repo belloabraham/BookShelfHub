@@ -25,8 +25,8 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer

@@ -20,11 +20,11 @@ import javax.inject.Inject
 class Firebase @Inject constructor(private val domainPrefix:String, private val context:Context) :
     IDynamicLink {
 
-    override suspend fun generateShortLinkAsync(socialTitle:String,
-                                        socialDescription:String,
-                                        imageUri:String,
-                                        uniqueId: String,
-                                        minimumVCode:Int): Uri? {
+    override suspend fun generateShortDynamicLinkAsync(socialTitle:String,
+                                                       socialDescription:String,
+                                                       imageUri:String,
+                                                       uniqueId: String,
+                                                       minimumVCode:Int): Uri? {
 
          return withContext(IO){ val uri = Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
 
@@ -69,7 +69,7 @@ class Firebase @Inject constructor(private val domainPrefix:String, private val 
     /**
      * Used to get the link deep link from the generated Link
      */
-    override fun getDeepLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
+    override fun getDeepLinkFromDynamicLinkAsync(activity:Activity, onComplete:(Uri?)->Unit){
             Firebase.dynamicLinks
                 .getDynamicLink(activity.intent)
                 .addOnSuccessListener(activity) { pendingDynamicLinkData:PendingDynamicLinkData? ->

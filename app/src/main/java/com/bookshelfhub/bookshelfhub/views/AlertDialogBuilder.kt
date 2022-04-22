@@ -1,7 +1,6 @@
-package com.bookshelfhub.bookshelfhub.helpers
+package com.bookshelfhub.bookshelfhub.views
 
 import android.app.Activity
-import android.content.Context
 import android.text.Html
 
 class AlertDialogBuilder private constructor(private val message: String, private val activity: Activity){
@@ -58,7 +57,7 @@ class AlertDialogBuilder private constructor(private val message: String, privat
     }
 
 
-     class Builder(private val alertDialogBuilder:AlertDialogBuilder){
+     class Builder(private val alertDialogBuilder: AlertDialogBuilder){
 
         fun showDialog(title:Int){
             showDialog(alertDialogBuilder.getString(title))

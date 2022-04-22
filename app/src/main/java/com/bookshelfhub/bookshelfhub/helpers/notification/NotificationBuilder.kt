@@ -83,10 +83,6 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-   /* fun build(notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)): Builder {
-        return Builder(this, context, notificationStyle)
-    }*/
-
     fun setActionText(value:Int): NotificationBuilder {
         setActionText(getString(value))
         return this

@@ -5,17 +5,31 @@ object RemoteDataFields{
     const val VIDEO_LIST = "video_list"
 
     //Collections
+    //users/userId/{userdata}
     const val USERS_COLL = "users"
+    //published_books/bookId/{book}
     const val PUBLISHED_BOOKS_COLL = "published_books"
+
+    //users/userId/{userdata}/ordered_books/{docIds}/{docData}
     const val ORDERED_BOOKS_COLL = "ordered_books"
+
+    //users/userId/{userdata}/bookmarks/{docIds}/{docData}
+    const val BOOKMARKS_COLL = "bookmarks"
+
+
+
+    const val REVIEWS_COLL = "reviews"
+
+
     const val EARNINGS = "earnings"
+
 
     const val NOTIFICATION_TOKEN="notificationToken"
 
 
     //Sub Collections
-    const val BOOKMARKS_COLL = "bookmarks"
-    const val REVIEWS_COLL = "reviews"
+
+
     const val TRANSACTIONS_COLL = "transactions"
 
     //Fields

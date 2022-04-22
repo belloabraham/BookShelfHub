@@ -6,7 +6,7 @@ import android.net.Uri
 
 interface IDynamicLink {
 
-    suspend fun generateShortLinkAsync(
+    suspend fun generateShortDynamicLinkAsync(
         socialTitle: String,
         socialDescription: String,
         imageUri: String,
@@ -14,5 +14,5 @@ interface IDynamicLink {
         minimumVCode: Int = 0
      ): Uri?
 
-    fun getDeepLinkAsync(activity: Activity, onComplete: (Uri?) -> Unit)
+    fun getDeepLinkFromDynamicLinkAsync(activity: Activity, onComplete: (Uri?) -> Unit)
 }

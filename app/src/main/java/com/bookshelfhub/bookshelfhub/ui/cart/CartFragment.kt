@@ -21,8 +21,8 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
-import com.bookshelfhub.bookshelfhub.helpers.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard

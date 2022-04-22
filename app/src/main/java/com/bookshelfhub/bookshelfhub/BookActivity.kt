@@ -22,7 +22,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
-import com.bookshelfhub.bookshelfhub.helpers.MaterialBottomSheetDialogBuilder
+import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.EnableWakeLock
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
@@ -40,7 +40,6 @@ import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

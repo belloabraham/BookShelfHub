@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.currencyconverter
+package com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter
 
 import com.bookshelfhub.bookshelfhub.helpers.payment.GPaySupportedCountries
 import com.bookshelfhub.bookshelfhub.helpers.payment.SupportedCountries
@@ -17,17 +17,17 @@ object Currency {
 
     fun getLocalCurrency(countryCode:String): String {
         return when (countryCode) {
-            SupportedCountries.NIGERIA.COUNTRY_CODE ->
+            SupportedCountries.NIGERIA ->
                 NGN
-            SupportedCountries.GHANA.COUNTRY_CODE ->
+            SupportedCountries.GHANA ->
                 GHS
-            SupportedCountries.TANZANIA.COUNTRY_CODE ->
+            SupportedCountries.TANZANIA ->
                 TZX
-            SupportedCountries.UGANDA.COUNTRY_CODE ->
+            SupportedCountries.UGANDA ->
                 UGX
-            GPaySupportedCountries.SOUTH_AFRICA.COUNTRY_CODE ->
+            GPaySupportedCountries.SOUTH_AFRICA ->
                 ZAR
-            GPaySupportedCountries.KENYA.COUNTRY_CODE ->
+            GPaySupportedCountries.KENYA ->
                 KES
             else ->
                 USD

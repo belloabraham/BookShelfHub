@@ -57,7 +57,8 @@ class UserRepo @Inject constructor(
             userDao.insertOrReplace(user)
         }
 
-        if(!user.uploaded){
+        val userIsNotUploaded = !user.uploaded
+        if(userIsNotUploaded){
             val oneTimeUserDataUpload =
                 OneTimeWorkRequestBuilder<UploadUserData>()
                     .setConstraints(Constraint.getConnected())

@@ -77,7 +77,7 @@ class BookmarksRepo @Inject constructor(
     }
 
     override suspend fun deleteRemoteBookmarks(list: List<IEntityId>, userId:String): Void {
-       return remoteDataSource.deleteListOfDataAsync(list, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL).await()
+       return remoteDataSource.deleteListOfDataAsync(list, RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOKMARKS_COLL)
     }
 
    override suspend fun getRemoteBookmarks(userId: String): List<Bookmark> {

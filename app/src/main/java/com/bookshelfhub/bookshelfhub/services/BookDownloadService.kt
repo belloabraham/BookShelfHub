@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub
+package com.bookshelfhub.bookshelfhub.services
 
 import android.app.PendingIntent
 import android.content.Intent
@@ -6,6 +6,8 @@ import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.bookshelfhub.bookshelfhub.BookActivity
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Download
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder

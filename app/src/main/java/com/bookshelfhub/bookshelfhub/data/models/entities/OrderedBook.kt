@@ -22,5 +22,6 @@ data class OrderedBook(
     override val dateTime:Timestamp?=null,
     val month: Int,
     val year: Int,
+    val serialNo:Long,
     override val additionInfo: String?
 ): ISearchResult, IOrderedBooks

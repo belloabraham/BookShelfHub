@@ -77,7 +77,7 @@ class MainActivityViewModel @Inject constructor(
                 val description = remoteConfig.getString(Social.DESC)
                 val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
                 try {
-                    dynamicLink.generateShortLinkAsync(title, description, imageUrl, userId)?.let {
+                    dynamicLink.generateShortDynamicLinkAsync(title, description, imageUrl, userId)?.let {
                         settingsUtil.setString(Referrer.REF_LINK, it.toString())
                     }
                 }catch (e:Exception){

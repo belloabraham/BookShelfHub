@@ -1,13 +1,11 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.net.Uri
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
@@ -56,9 +54,11 @@ class BookActivityViewModel @Inject constructor(
 
         viewModelScope.launch {
             bookShareLink = settingsUtil.getString(bookId)
+
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {
-                readHistory = readHistoryRepo.getLiveReadHistory(0)
+                val firstRecordInTheDatabase = 0
+                readHistory = readHistoryRepo.getLiveReadHistory(firstRecordInTheDatabase)
             }
             book = publishedBooksRepo.getPublishedBook(bookId).get()
         }
@@ -109,7 +109,7 @@ class BookActivityViewModel @Inject constructor(
         viewModelScope.launch {
             if(shouldGenerateBookShareUrl){
                 try {
-                    bookShareLink = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId).toString()
+                    bookShareLink = dynamicLink.generateShortDynamicLinkAsync(book.name , book.description, book.coverUrl, userId).toString()
                     settingsUtil.setString(bookId, bookShareLink!!.toString())
                 }catch (e:Exception){
                     Timber.e(e)

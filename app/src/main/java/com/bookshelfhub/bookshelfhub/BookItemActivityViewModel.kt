@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.net.Uri
 import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -13,7 +12,6 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
-import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
@@ -70,7 +68,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val author = savedState.get<String>(Book.AUTHOR)!!
   private val bookId = savedState.get<String>(Book.ID)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM)?:false
-  private var bookShareUrl: Uri? = null
+  private var bookShareUrl: String? = null
 
   private val config  = PagingConfig(
     pageSize = 5,
@@ -124,20 +122,23 @@ class BookItemActivityViewModel @Inject constructor(
 
   private fun generateBookShareLink(){
     viewModelScope.launch {
+      bookShareUrl = settingsUtil.getString(bookId)
+      if (bookShareUrl == null){
         val book = publishedBooksRepo.getPublishedBook(bookId).get()
         try {
-          bookShareUrl = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+          bookShareUrl = dynamicLink.generateShortDynamicLinkAsync(book.name , book.description, book.coverUrl, userId).toString()
+          settingsUtil.setString(bookId, bookShareUrl!!.toString())
         }catch (e:Exception){
           Timber.e(e)
           return@launch
         }
+      }
     }
   }
 
-  fun getBookShareLink(): Uri? {
+  fun getBookShareLink(): String? {
     return bookShareUrl
   }
-
 
 
   suspend fun convertCurrency(fromCurrency:String, toCurrency:String, amount:Double): Response<Fixer> {

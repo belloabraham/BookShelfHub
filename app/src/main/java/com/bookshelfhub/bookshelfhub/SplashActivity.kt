@@ -39,9 +39,11 @@ class SplashActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                     val user = userRepo.getUser(userId)
+
                     val nextIntent = if (user.isPresent && userId == user.get().userId)
                         Intent(this@SplashActivity, MainActivity::class.java)
                     else Intent(this@SplashActivity, WelcomeActivity::class.java)
+
                     getCollaboratorOrUserReferralLink(nextIntent)
             }
 
@@ -64,7 +66,7 @@ class SplashActivity : AppCompatActivity() {
     private fun getCollaboratorOrUserReferralLink(intent:Intent){
         var aCollaboratorOrUserReferralId:String?=null
 
-        dynamicLink.getDeepLinkAsync(this){
+        dynamicLink.getDeepLinkFromDynamicLinkAsync(this){
             if(it!=null){
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
 
