@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.BookVideosRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.bookshelfhub.data.repos.earnings.EarningsRepo
@@ -21,7 +20,6 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookShareLinkUseCase
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.TimerUtil
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
@@ -36,14 +34,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
-
-    @ViewModelScoped
-    @Provides
-    fun provideTimerUtil(): TimerUtil {
-        val intervalInMilliSec = 1000L
-        return TimerUtil(intervalInMilliSec)
-    }
-
 
     @ViewModelScoped
     @Provides

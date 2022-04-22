@@ -275,7 +275,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private fun shareBookLink(){
     val bookShareLink = bookActivityViewModel.getBookShareLink()
     bookShareLink?.let {
-      startActivity(ShareUtil.getShareIntent(it.toString(), publishedBook!!.name))
+      startActivity(ShareUtil.getShareIntent(it, publishedBook!!.name))
     }
     if(bookShareLink==null){
       showToast(R.string.internet_connection_required)

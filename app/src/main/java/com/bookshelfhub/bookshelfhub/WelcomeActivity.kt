@@ -84,9 +84,11 @@ class WelcomeActivity : AppCompatActivity() {
         resultLauncher = getGoogleSignInActivityResult()
 
 
-        phoneAuthViewModel.getIsCodeSent().observe(this, Observer { _ ->
-            hideAnimation()
-        })
+        lifecycleScope.launch {
+            phoneAuthViewModel.getIsCodeSent().collect{
+                hideAnimation()
+            }
+        }
 
         phoneAuthViewModel.getSignInStarted().observe(this, Observer { signInStarted ->
             if (signInStarted) {
@@ -379,7 +381,9 @@ class WelcomeActivity : AppCompatActivity() {
                 // Save verification ID and resending token so we can use them later
                 storedVerificationId = verificationId
                 resendToken = token
-                phoneAuthViewModel.setIsCodeSent(true)
+                lifecycleScope.launch {
+                    phoneAuthViewModel.setIsCodeSent(true)
+                }
             }
         }
     }

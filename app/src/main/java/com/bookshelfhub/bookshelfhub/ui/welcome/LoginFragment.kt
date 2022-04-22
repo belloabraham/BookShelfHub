@@ -113,12 +113,17 @@ class LoginFragment:Fragment() {
             (requireActivity() as WelcomeActivity).signInOrSignUpWithGoogle(errorMsg)
         }
 
-        phoneAuthViewModel.getIsCodeSent().observe(viewLifecycleOwner, Observer { isCodeSent ->
-            if (isCodeSent){
-                val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(phoneNumber)
-                findNavController().navigate(actionVerifyPhone)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            phoneAuthViewModel.getIsCodeSent().collect{ codeIsSent ->
+                if (codeIsSent){
+                    val actionVerifyPhone = LoginFragmentDirections.actionLoginFragmentToVerificationFragment(phoneNumber)
+                    userAuthViewModel.setIsNavigatedFromLogin(true)
+                    findNavController().navigate(actionVerifyPhone)
+                }
             }
-        })
+        }
+
 
         googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
             if (isAuthSuccessful){

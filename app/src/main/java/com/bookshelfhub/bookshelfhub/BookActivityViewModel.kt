@@ -44,7 +44,7 @@ class BookActivityViewModel @Inject constructor(
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
     private var liveOrderedBook: LiveData<OrderedBook> = MutableLiveData()
     private var readHistory: LiveData<Optional<ReadHistory>> = MutableLiveData()
-    private var bookShareLink:Uri?=null
+    private var bookShareLink:String?=null
     private lateinit var book:PublishedBook
 
 
@@ -55,6 +55,7 @@ class BookActivityViewModel @Inject constructor(
 
 
         viewModelScope.launch {
+            bookShareLink = settingsUtil.getString(bookId)
             val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
             if (showPopup) {
                 readHistory = readHistoryRepo.getLiveReadHistory(0)
@@ -104,11 +105,12 @@ class BookActivityViewModel @Inject constructor(
     }
 
     fun generateBookShareLink(){
-        val shouldGenerateBookShareUrl = connectionUtil.isConnected() && bookShareLink ==null
+        val shouldGenerateBookShareUrl = connectionUtil.isConnected() && bookShareLink == null
         viewModelScope.launch {
             if(shouldGenerateBookShareUrl){
                 try {
-                    bookShareLink = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId)
+                    bookShareLink = dynamicLink.generateShortLinkAsync(book.name , book.description, book.coverUrl, userId).toString()
+                    settingsUtil.setString(bookId, bookShareLink!!.toString())
                 }catch (e:Exception){
                     Timber.e(e)
                     return@launch
@@ -117,7 +119,7 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
-    fun getBookShareLink(): Uri? {
+    fun getBookShareLink(): String? {
         return bookShareLink
     }
 

@@ -22,7 +22,16 @@ class UserAuthViewModel @Inject constructor(
     private var isExistingUser: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var referrerId: String? =null
     private val userId = userAuth.getUserId()
+    private var isNavigatedFromLogin:Boolean = false
 
+
+    fun isNavigatedFromLogin(): Boolean {
+        return isNavigatedFromLogin
+    }
+
+    fun setIsNavigatedFromLogin(value:Boolean){
+        isNavigatedFromLogin = value
+    }
 
      fun addRemoteAndLocalUser(remoteUser: RemoteUser){
          viewModelScope.launch {

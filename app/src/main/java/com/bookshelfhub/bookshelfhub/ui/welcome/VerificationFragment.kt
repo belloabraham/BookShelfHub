@@ -4,15 +4,17 @@ import `in`.aabhasjindal.otptextview.OTPListener
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.WelcomeActivity
 import com.bookshelfhub.bookshelfhub.databinding.FragmentVerificationBinding
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
@@ -22,6 +24,8 @@ import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import com.klinker.android.link_builder.applyLinks
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -79,18 +83,23 @@ class VerificationFragment:Fragment(){
                 layout.resendCodeTxtView.applyLinks(links)
 
 
-                verificationViewModel.getTimerTimeRemaining().observe(viewLifecycleOwner, Observer { timeRemainingInSec ->
-                    if (timeRemainingInSec!=0L){
-                        val min = timeRemainingInSec/60L
-                        val sec = timeRemainingInSec%60L
-                        layout.timerTxtView.text =
-                            String.format(getString(R.string.time_remaining), min, sec)
-                    }else{
-                        layout.timerTxtView.visibility=View.GONE
-                        layout.resendCodeTxtView.visibility=View.VISIBLE
+                viewLifecycleOwner.lifecycleScope.launch {
+                    phoneAuthViewModel.getIsCodeSent().collect{
+                        layout.timerTxtView.visibility= VISIBLE
+                        layout.resendCodeTxtView.visibility= GONE
+                        verificationViewModel.countDownTime().collect{timeRemainingInSec->
+                            countDownTime(timeRemainingInSec, layout)
+                        }
                     }
+                }
 
-                })
+                if(userAuthViewModel.isNavigatedFromLogin()){
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        verificationViewModel.countDownTime().collect{timeRemainingInSec->
+                           countDownTime(timeRemainingInSec, layout)
+                        }
+                    }
+                }
 
                 phoneAuthViewModel.getOTPCode().observe(viewLifecycleOwner, Observer { otpCode ->
                     layout.otpView.setOTP(otpCode)
@@ -116,6 +125,8 @@ class VerificationFragment:Fragment(){
                 })
 
 
+
+
                 userAuthViewModel.getIsExistingUser().observe(viewLifecycleOwner, Observer { isExistingUser ->
                     if (!isExistingUser){
                         val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(false)
@@ -126,21 +137,20 @@ class VerificationFragment:Fragment(){
                 return layout.root
     }
 
+    private fun countDownTime(timeRemainingInSec:Long, layout:FragmentVerificationBinding){
+        if (timeRemainingInSec!=0L){
+            val min = timeRemainingInSec/60L
+            val sec = timeRemainingInSec%60L
+            layout.timerTxtView.text =
+                String.format(getString(R.string.time_remaining), min, sec)
+        }else{
+            layout.timerTxtView.visibility=GONE
+            layout.resendCodeTxtView.visibility=VISIBLE
+        }
+    }
 
     override fun onDestroyView() {
         binding=null
         super.onDestroyView()
     }
-
-    override fun onDestroy() {
-        verificationViewModel.setInProgress(false)
-        super.onDestroy()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        verificationViewModel.setInProgress(true)
-        super.onSaveInstanceState(outState)
-    }
-
-
 }

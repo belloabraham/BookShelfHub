@@ -24,6 +24,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -47,6 +48,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val cartItemsRepo: ICartItemsRepo,
   private val dynamicLink:IDynamicLink,
   private val userRepo: IUserRepo,
+  private val connectionUtil: ConnectionUtil,
   private val currencyConversionAPI: ICurrencyConversionAPI,
   private val worker: Worker,
   referralRepo: IReferralRepo,
@@ -113,8 +115,7 @@ class BookItemActivityViewModel @Inject constructor(
     }
 
 
-    //Check if this activity was started by a search result adapter item in StoreFragment, if so record a search history
-    //for store fragment search result
+
     if (isSearchItem){
       addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }

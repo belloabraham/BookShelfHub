@@ -16,10 +16,11 @@ class GoogleAuthViewModel @Inject constructor(): ViewModel(){
 
     private var _signInErrorFlow = MutableSharedFlow<String>()
     private var signInErrorSharedFlow = _signInErrorFlow.asSharedFlow()
+
     private var isAuthenticationComplete: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+
     private var isNewUser:Boolean?=null
     private var isAuthenticationSuccessful: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-
 
 
 

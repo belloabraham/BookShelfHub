@@ -1,14 +1,15 @@
 package com.bookshelfhub.bookshelfhub.helpers.authentication
 
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.SharedFlow
 
 interface IPhoneAuthViewModel {
     fun setSignInCompleted(value: Boolean)
     fun getSignInCompleted(): LiveData<Boolean>
     fun setSignInStarted(value: Boolean)
     fun getSignInStarted(): LiveData<Boolean>
-    fun setIsCodeSent(value: Boolean)
-    fun getIsCodeSent(): LiveData<Boolean>
+    suspend fun setIsCodeSent(value: Boolean)
+    fun getIsCodeSent(): SharedFlow<Boolean>
     fun setIsNewUser(isNewUser: Boolean?)
     fun getIsNewUser(): Boolean?
     fun getIsSignedInSuccessfully(): LiveData<Boolean>
