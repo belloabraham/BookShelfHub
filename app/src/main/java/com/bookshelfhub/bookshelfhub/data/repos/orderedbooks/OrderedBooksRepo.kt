@@ -8,26 +8,30 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrderedBooksRepo @Inject constructor(
     private val orderedBooksDao: OrderedBooksDao,
-    private val remoteDataSource: IRemoteDataSource) :
+    private val remoteDataSource: IRemoteDataSource,
+    private val ioDispatcher: CoroutineDispatcher = IO
+) :
     IOrderedBooksRepo {
 
 
 
      override suspend fun getAnOrderedBook(isbn: String): OrderedBook {
-        return  withContext(IO){ orderedBooksDao.getAnOrderedBook(isbn)}
+        return  withContext(ioDispatcher){ orderedBooksDao.getAnOrderedBook(isbn)}
     }
 
     override suspend fun getRemoteListOfOrderedBooks(
         userId: String,
         lastOrderedBookBySN:Long,
         direction:Query.Direction): List<OrderedBook> {
-          return  remoteDataSource.getListOfDataAsync(
+          return  withContext(ioDispatcher){ remoteDataSource.getListOfDataAsync(
                 RemoteDataFields.USERS_COLL,
                 userId,
                 RemoteDataFields.ORDERED_BOOKS_COLL,
@@ -35,7 +39,7 @@ class OrderedBooksRepo @Inject constructor(
                 direction,
                 lastOrderedBookBySN,
                 OrderedBook::class.java
-            )
+            )}
     }
 
 
@@ -44,7 +48,7 @@ class OrderedBooksRepo @Inject constructor(
     }
 
      override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {
-        return  withContext(IO){ orderedBooksDao.getOrderedBooks(userId)}
+        return  withContext(ioDispatcher){ orderedBooksDao.getOrderedBooks(userId)}
     }
 
      override fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
@@ -56,7 +60,7 @@ class OrderedBooksRepo @Inject constructor(
     }
 
      override suspend fun addOrderedBooks(OrderedBooks: List<OrderedBook>){
-         withContext(IO){ orderedBooksDao.insertAllOrIgnore(OrderedBooks)}
+         withContext(ioDispatcher){ orderedBooksDao.insertAllOrIgnore(OrderedBooks)}
     }
      override fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBook>> {
         return  orderedBooksDao.getLiveBooksOrdered(userId)

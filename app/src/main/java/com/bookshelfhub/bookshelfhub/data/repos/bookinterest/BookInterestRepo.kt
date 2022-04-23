@@ -9,23 +9,33 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookInterestRepo @Inject constructor(
     private val bookInterestDao: BookInterestDao,
     private val remoteDataSource: IRemoteDataSource,
-    private val worker:Worker) : IBookInterestRepo {
+    private val worker:Worker,
+    private val ioDispatcher: CoroutineDispatcher = IO,
+    ) : IBookInterestRepo {
 
     override suspend fun getBookInterest(userId:String): Optional<BookInterest> {
-        return   withContext(IO){
+        return withContext(ioDispatcher){
             bookInterestDao.getBookInterest(userId)
         }
     }
 
     override suspend fun updateRemoteUserBookInterest(bookInterest: BookInterest, userId:String): Void? {
-       return remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, RemoteDataFields.BOOK_INTEREST, bookInterest)
+       return  withContext(ioDispatcher){
+           remoteDataSource.addDataAsync(
+               RemoteDataFields.USERS_COLL,
+               userId,
+               RemoteDataFields.BOOK_INTEREST,
+               bookInterest)
+       }
     }
 
     override fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {
@@ -33,7 +43,7 @@ class BookInterestRepo @Inject constructor(
     }
 
     override suspend fun addBookInterest(bookInterest: BookInterest){
-        withContext(IO) {
+        withContext(ioDispatcher) {
             bookInterestDao.insertOrReplace(bookInterest)
         }
         val oneTimeBookInterestDataUpload =

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.MainActivityViewModel
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
@@ -71,7 +72,7 @@ class ShelfFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             shelfViewModel.getLiveOrderedBooks().asFlow()
                 .collectLatest { orderedBooks ->
-                    //Hide just in case data get load by user swipe
+                    //Hide just in case data get load by user swipe to refresh
                     layout.swipeRefreshLayout.isRefreshing = false
                     //Hide as this is visible by default
                     layout.progressBar.visibility = GONE
@@ -89,6 +90,11 @@ class ShelfFragment : Fragment() {
                     }
             }
         }
+
+        layout.swipeRefreshLayout.setColorSchemeResources(
+            R.color.light_blue,
+            R.color.orange,
+            R.color.purple_700)
 
         layout.swipeRefreshLayout.setOnRefreshListener {
             shelfViewModel.getRemoteOrderedBooks()

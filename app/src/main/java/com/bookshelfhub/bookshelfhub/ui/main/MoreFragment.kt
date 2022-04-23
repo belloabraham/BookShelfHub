@@ -20,8 +20,8 @@ import com.bookshelfhub.bookshelfhub.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast

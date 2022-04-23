@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.utils.settings
+package com.bookshelfhub.bookshelfhub.helpers.settings
 
 object Settings {
     const val SHOW_CONTINUE_POPUP = "show_continue_popup"

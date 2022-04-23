@@ -2,8 +2,8 @@ package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo

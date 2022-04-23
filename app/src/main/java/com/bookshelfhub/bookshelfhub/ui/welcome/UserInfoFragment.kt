@@ -20,10 +20,9 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.domain.viewmodels.UserAuthViewModel
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.KeyboardUtil
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.launch

@@ -24,8 +24,8 @@ import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.EnableWakeLock
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
 import com.bookshelfhub.bookshelfhub.data.models.entities.ReadHistory
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook

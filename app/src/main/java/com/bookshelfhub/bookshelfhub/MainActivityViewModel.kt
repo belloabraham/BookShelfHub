@@ -3,7 +3,7 @@ package com.bookshelfhub.bookshelfhub
 import androidx.lifecycle.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.models.entities.Collaborator
 import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo

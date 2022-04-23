@@ -9,11 +9,13 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
- class Firestore @Inject constructor(val json: Json): IRemoteDataSource {
+ class Firestore @Inject constructor(
+     private val json: Json): IRemoteDataSource {
     private val db:FirebaseFirestore = Firebase.firestore
      
      init {

@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentProfileBinding
 import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat

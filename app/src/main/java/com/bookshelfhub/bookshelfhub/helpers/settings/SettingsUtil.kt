@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.utils.settings
+package com.bookshelfhub.bookshelfhub.helpers.settings
 
 import android.content.Context
 import androidx.datastore.core.DataStore

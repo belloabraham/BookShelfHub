@@ -9,13 +9,15 @@ import com.bookshelfhub.bookshelfhub.data.repos.cartitems.CartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.PaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
+import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.PrivateKeysRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.PublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.UserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.UserReviewRepo
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.Firebase
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
@@ -31,6 +33,7 @@ import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
 import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
 import com.bookshelfhub.bookshelfhub.workers.Worker
+import com.google.firebase.database.DatabaseReference
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -80,6 +83,11 @@ object ApplicationModule {
         return AppUtil(context)
     }
 
+    @Singleton
+    @Provides
+    fun providePrivateKeyRepo(databaseRef: DatabaseReference): IPrivateKeysRepo {
+        return PrivateKeysRepo(databaseRef)
+    }
 
     @Singleton
     @Provides

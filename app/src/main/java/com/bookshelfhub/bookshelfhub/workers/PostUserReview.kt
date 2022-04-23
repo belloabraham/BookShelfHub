@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.PerspectiveAPI
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview

@@ -2,13 +2,12 @@ package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
-import com.bookshelfhub.bookshelfhub.data.repos.*
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.earnings.IEarningsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.IPaymentCardRepo

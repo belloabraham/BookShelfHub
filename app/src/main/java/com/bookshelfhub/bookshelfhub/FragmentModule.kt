@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.helpers.utils.KeyboardUtil
+import com.bookshelfhub.bookshelfhub.helpers.KeyboardUtil
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
 import dagger.Module

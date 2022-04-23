@@ -16,8 +16,7 @@ object RemoteDataFields{
     //users/userId/{userdata}/bookmarks/{docIds}/{docData}
     const val BOOKMARKS_COLL = "bookmarks"
 
-
-
+    //published_books/bookId/reviews/userId
     const val REVIEWS_COLL = "reviews"
 
 
@@ -29,7 +28,7 @@ object RemoteDataFields{
 
     //Sub Collections
 
-
+    //Users/userId/Transaction
     const val TRANSACTIONS_COLL = "transactions"
 
     //Fields

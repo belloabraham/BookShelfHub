@@ -8,6 +8,8 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.Constraint
 import com.bookshelfhub.bookshelfhub.workers.UploadPaymentTransactions
 import com.bookshelfhub.bookshelfhub.workers.Worker
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,11 +17,13 @@ import javax.inject.Inject
 class PaymentTransactionRepo @Inject constructor(
     private  val  paymentTransactionDao: PaymentTransactionDao,
     private val worker: Worker,
-    private val remoteDataSource: IRemoteDataSource) :
+    private val remoteDataSource: IRemoteDataSource,
+    private val ioDispatcher: CoroutineDispatcher = IO
+    ) :
     IPaymentTransactionRepo {
     
     override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {
-        withContext(IO){ paymentTransactionDao.insertAllOrReplace(paymentTransactions)}
+        withContext(ioDispatcher){ paymentTransactionDao.insertAllOrReplace(paymentTransactions)}
         val oneTimeVerifyPaymentTrans =
             OneTimeWorkRequestBuilder<UploadPaymentTransactions>()
                 .setConstraints(Constraint.getConnected())
@@ -37,10 +41,10 @@ class PaymentTransactionRepo @Inject constructor(
     }
 
     override suspend fun getAllPaymentTransactions(): List<PaymentTransaction> {
-        return withContext(IO){ paymentTransactionDao.getAllPaymentTransactions()}
+        return withContext(ioDispatcher){ paymentTransactionDao.getAllPaymentTransactions()}
     }
 
     override suspend fun deleteAllPaymentTransactions() {
-        withContext(IO){ paymentTransactionDao.deleteAllPaymentTransactions()}
+        withContext(ioDispatcher){ paymentTransactionDao.deleteAllPaymentTransactions()}
     }
 }

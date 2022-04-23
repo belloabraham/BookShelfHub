@@ -7,8 +7,8 @@ import androidx.paging.PagingData
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer

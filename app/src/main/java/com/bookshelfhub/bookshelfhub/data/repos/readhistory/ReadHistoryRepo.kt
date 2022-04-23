@@ -4,15 +4,18 @@ import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.ReadHistory
 import com.bookshelfhub.bookshelfhub.data.sources.local.ReadHistoryDao
 import com.google.common.base.Optional
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ReadHistoryRepo @Inject constructor(private val readHistoryDao: ReadHistoryDao) :
+class ReadHistoryRepo @Inject constructor(
+    private val readHistoryDao: ReadHistoryDao,
+    private val ioDispatcher: CoroutineDispatcher = IO) :
     IReadHistoryRepo {
     
      override suspend fun addReadHistory(history: ReadHistory) {
-         withContext(IO){ readHistoryDao.insertOrReplace(history)}
+         withContext(ioDispatcher){ readHistoryDao.insertOrReplace(history)}
     }
 
      override fun getLiveReadHistory(id:Int): LiveData<Optional<ReadHistory>> {
@@ -20,7 +23,7 @@ class ReadHistoryRepo @Inject constructor(private val readHistoryDao: ReadHistor
     }
 
      override suspend fun deleteAllHistory() {
-         withContext(IO){ readHistoryDao.deleteAllHistory()}
+         withContext(ioDispatcher){ readHistoryDao.deleteAllHistory()}
     }
 
 }

@@ -8,7 +8,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -8,6 +8,7 @@ import com.bookshelfhub.bookshelfhub.data.sources.local.CartItemsDao
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.Worker
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class CartItemsRepo @Inject constructor(
     private val cartItemsDao: CartItemsDao,
-    private val worker: Worker) :
+    private val worker: Worker,
+    private val ioDispatcher: CoroutineDispatcher = IO) :
     ICartItemsRepo {
 
 
@@ -28,7 +30,7 @@ class CartItemsRepo @Inject constructor(
     }
 
      override suspend fun addToCart(cart: CartItem) {
-         withContext(IO){cartItemsDao.insertOrReplace(cart)}
+         withContext(ioDispatcher){cartItemsDao.insertOrReplace(cart)}
          // Clear every Items in this cart in the next 15 hours
          val clearCart =
              OneTimeWorkRequestBuilder<ClearCart>()
@@ -38,15 +40,15 @@ class CartItemsRepo @Inject constructor(
     }
 
      override suspend fun deleteAllCartItems() {
-         withContext(IO){cartItemsDao.deleteAllCartItems()}
+         withContext(ioDispatcher){cartItemsDao.deleteAllCartItems()}
     }
 
      override suspend fun deleteFromCart(isbnList: List<String>) {
-         withContext(IO){ cartItemsDao.deleteFromCart(isbnList)}
+         withContext(ioDispatcher){ cartItemsDao.deleteFromCart(isbnList)}
     }
 
      override suspend fun deleteFromCart(cart: CartItem) {
-         withContext(IO){cartItemsDao.delete(cart)}
+         withContext(ioDispatcher){cartItemsDao.delete(cart)}
     }
     
 }

@@ -8,13 +8,16 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.google.common.base.Optional
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PublishedBooksRepo @Inject constructor(
     private val publishedBooksDao: PublishedBooksDao,
-    private val remoteDataSource: IRemoteDataSource) :
+    private val remoteDataSource: IRemoteDataSource,
+    private val ioDispatcher: CoroutineDispatcher = IO
+) :
     IPublishedBooksRepo {
 
      override fun getALiveOptionalPublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
@@ -22,54 +25,60 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {
-       return remoteDataSource.getDataAsync(
-            RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
-            PublishedBook::class.java)
+        return withContext(ioDispatcher) {
+            remoteDataSource.getDataAsync(
+                RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
+                PublishedBook::class.java
+            )
+        }
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
-        return remoteDataSource.getListOfDataWhereAsync(
+        return withContext(ioDispatcher){remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 RemoteDataFields.PUBLISHED,
                 false,
                 PublishedBook::class.java
             )
     }
+    }
 
     override suspend  fun getRemotePublishedBooks(): List<PublishedBook> {
-      return  remoteDataSource.getListOfDataWhereAsync(
-            RemoteDataFields.PUBLISHED_BOOKS_COLL,
-            whereKey = RemoteDataFields.PUBLISHED, true,
-            whereKey2 = RemoteDataFields.APPROVED, true,
-            orderBy = RemoteDataFields.SERIAL_NO,
-            Query.Direction.ASCENDING,
-            PublishedBook::class.java
-        )
+        return withContext(ioDispatcher) {
+            remoteDataSource.getListOfDataWhereAsync(
+                RemoteDataFields.PUBLISHED_BOOKS_COLL,
+                whereKey = RemoteDataFields.PUBLISHED, true,
+                whereKey2 = RemoteDataFields.APPROVED, true,
+                orderBy = RemoteDataFields.SERIAL_NO,
+                Query.Direction.ASCENDING,
+                PublishedBook::class.java
+            )
+        }
     }
 
      override suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {
 
-        return withContext(IO){publishedBooksDao.getPublishedBook(isbn)}
+        return withContext(ioDispatcher){publishedBooksDao.getPublishedBook(isbn)}
     }
 
      override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
-         withContext(IO){publishedBooksDao.updateRecommendedBooksByCategory(category, isRecommended)}
+         withContext(ioDispatcher){publishedBooksDao.updateRecommendedBooksByCategory(category, isRecommended)}
     }
 
      override suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean){
-         withContext(IO){publishedBooksDao.updateRecommendedBooksByTag(tag,isRecommended)}
+         withContext(ioDispatcher){publishedBooksDao.updateRecommendedBooksByTag(tag,isRecommended)}
     }
 
      override suspend fun addAllPubBooks(pubBooks:List<PublishedBook>){
-         withContext(IO){publishedBooksDao.insertAllOrReplace(pubBooks)}
+         withContext(ioDispatcher){publishedBooksDao.insertAllOrReplace(pubBooks)}
     }
 
      override suspend fun deleteUnPublishedBookRecords(unPublishedBooks : List<PublishedBook>){
-         withContext(IO){publishedBooksDao.deleteAll(unPublishedBooks)}
+         withContext(ioDispatcher){publishedBooksDao.deleteAll(unPublishedBooks)}
     }
 
      override suspend fun getPublishedBooks(): List<PublishedBook> {
-        return withContext(IO){publishedBooksDao.getPublishedBooks()}
+        return withContext(ioDispatcher){publishedBooksDao.getPublishedBooks()}
     }
 
      override suspend fun getTrendingBooks(): List<PublishedBook> {

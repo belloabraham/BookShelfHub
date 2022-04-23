@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers.utils
+package com.bookshelfhub.bookshelfhub.helpers
 
 import android.content.Context
 import android.view.inputmethod.InputMethodManager

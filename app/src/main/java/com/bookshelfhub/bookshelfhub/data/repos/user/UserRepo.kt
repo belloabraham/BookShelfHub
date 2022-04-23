@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.UploadUserData
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -20,29 +21,50 @@ import javax.inject.Inject
 class UserRepo @Inject constructor(
     private val userDao: UserDao,
     private val remoteDataSource: IRemoteDataSource,
-    private val worker: Worker) :
+    private val worker: Worker,
+    private val ioDispatcher: CoroutineDispatcher = IO
+) :
     IUserRepo {
 
 
     override suspend fun getRemoteUserDataSnapshot(userId:String): RemoteUser? {
-       return  remoteDataSource.getDataAsync(RemoteDataFields.USERS_COLL, userId, RemoteUser::class.java)
+       return withContext(ioDispatcher) {
+           remoteDataSource.getDataAsync(
+               RemoteDataFields.USERS_COLL,
+               userId,
+               RemoteUser::class.java
+           )
+       }
     }
 
     override suspend fun uploadNotificationToken(notificationToken:String, userId: String): Void? {
-      return  remoteDataSource.addDataAsync(notificationToken,
-            RemoteDataFields.USERS_COLL, userId, RemoteDataFields.NOTIFICATION_TOKEN)
+      return withContext(ioDispatcher) {
+          remoteDataSource.addDataAsync(
+              notificationToken,
+              RemoteDataFields.USERS_COLL, userId, RemoteDataFields.NOTIFICATION_TOKEN
+          )
+      }
     }
 
     override suspend fun uploadUser(user:User, userId: String): Void? {
-      return  remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, RemoteDataFields.USER, user)
+      return  withContext(ioDispatcher) {
+          remoteDataSource.addDataAsync(
+              RemoteDataFields.USERS_COLL,
+              userId,
+              RemoteDataFields.USER,
+              user
+          )
+      }
     }
 
     override suspend fun uploadRemoteUser(remoteUser: RemoteUser, userId: String): Void? {
-        return remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
+        return withContext(ioDispatcher) {
+            remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
+        }
     }
 
      override suspend fun getUser(userId:String): Optional<User> {
-        return withContext(IO){
+        return withContext(ioDispatcher){
             userDao.getUser(userId)
         }
     }
@@ -53,7 +75,7 @@ class UserRepo @Inject constructor(
 
 
     override suspend fun addUser(user: User){
-        withContext(IO) {
+        withContext(ioDispatcher) {
             userDao.insertOrReplace(user)
         }
 
@@ -68,7 +90,7 @@ class UserRepo @Inject constructor(
     }
 
      override suspend fun deleteUserRecord() {
-        return withContext(IO) { userDao.deleteUserRecord()}
+        return withContext(ioDispatcher) { userDao.deleteUserRecord()}
     }
 
 }

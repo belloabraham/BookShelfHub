@@ -6,8 +6,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.data.models.entities.ApiKeys
 import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.utils.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
