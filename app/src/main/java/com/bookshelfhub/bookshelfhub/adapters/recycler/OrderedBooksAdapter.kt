@@ -5,13 +5,10 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.BookActivity
 import com.bookshelfhub.bookshelfhub.services.BookDownloadService
@@ -19,13 +16,17 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Download
 import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.FileExtension
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
+import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
 import com.bookshelfhub.downloadmanager.*
-import com.bookshelfhub.downloadmanager.request.DownloadRequest
+import com.google.firebase.storage.FileDownloadTask
+import com.google.firebase.storage.StorageTask
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-import java.io.File
 
 /**
  * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
@@ -33,8 +34,7 @@ import java.io.File
 
 class OrderedBooksAdapter(
     private val activity: Activity,
-    private val lifecycleOwner: LifecycleOwner
-
+    private val cloudStorage: FirebaseCloudStorage
 ) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>> {
@@ -50,7 +50,7 @@ class OrderedBooksAdapter(
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, activity, lifecycleOwner)
+                    vh.bindToView(model, activity, cloudStorage)
                 }
             )
         }
@@ -64,104 +64,56 @@ class OrderedBooksAdapter(
         private val darkOverLay: View = view.findViewById(R.id.darkOverlay)
 
 
-        private var downloadRequest: DownloadRequest? = null
+        fun bindToView(model: OrderedBook, activity: Activity, cloudStorage: FirebaseCloudStorage) {
 
-        fun bindToView(model: OrderedBook, activity: Activity, lifecycleOwner: LifecycleOwner) {
-
-            val url = model.downloadUrl
             title.text = model.name
-
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 
-            val isbn = model.bookId
-            val bookName = model.name
+            val bookId = getBookId(model.bookId)
             val pubId = model.pubId
-            val fileName = "$isbn.pdf"
-            val dirPath = "$pubId${File.separator}$isbn"
-            val isFileExist = isFileExist(activity, dirPath, fileName)
+            val fileName = "$bookId${FileExtension.DOT_PDF}"
+            val fileDoesNotExist = !AppExternalStorage.getDocumentFilePath(
+                pubId,
+                bookId,
+                fileName, activity.applicationContext).exists()
 
-            //If file does not exist, user is yet to download book
-            if (!isFileExist) {
-                //Show all download controls
+            if (fileDoesNotExist) {
                 actionIcon.visibility = VISIBLE
                 darkOverLay.visibility = VISIBLE
             }
 
             imageView.setOnClickListener {
-                val downloadId = downloadRequest?.getDownloadId()
-                val downloadStatus = getDownloadStatus(downloadId)
-                when {
-                    isFileExist(activity, dirPath, fileName) -> {
-                        openBook(activity, model)
-                    }
-
-                    downloadStatus == Status.PAUSED -> {
-                        resumeBookDownloading(activity, bookName, downloadId)
-                    }
-                    downloadStatus == Status.RUNNING || downloadStatus == Status.QUEUED -> {
-                        pauseBookDownloading(activity, bookName, downloadId)
-                    }
-                    else -> {
-                        startBookDownloading(activity, url, dirPath, fileName, bookName, model.bookId)
-                    }
+                val fileExist = !fileDoesNotExist
+                if (fileExist){
+                    openBook(activity, model.name, bookId)
                 }
+
+                if(fileDoesNotExist){
+
+
+                    //Start File download back ground service and list for progress here
+               cloudStorage.downloadFile(
+                        pubId,
+                        bookId,
+                        bookId,
+                        FileExtension.DOT_PDF,
+                        onProgress =  {
+
+                        },
+                        onComplete = {
+
+                        },
+                        onError = {
+
+                        }
+                    )
+                }
+
             }
 
-
-            BookDownloadService.getLiveDownloadRequest().observe(lifecycleOwner, Observer {
-                if (it.getUrl() == url && downloadRequest == null) {
-                    downloadRequest = it
-
-                    downloadRequest?.setOnPauseListener(object : OnPauseListener {
-                        override fun onPause() {
-                            //Show Play Icon
-                           val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.reload)
-                            actionIcon.setImageDrawable(pauseDrawable)
-
-                        }
-
-                    })?.setOnProgressListener(object : OnProgressListener {
-                        override fun onProgress(progress: Progress?) {
-                            //Show progress on control
-                            progress?.let { mProgress->
-                                progressBar.visibility = VISIBLE
-                                if(mProgress.currentBytes>0){
-                                    val percentage = (mProgress.currentBytes/mProgress.totalBytes)*100
-                                    progressBar.progress = percentage.toInt()
-                                }
-                            }
-                        }
-
-                    })?.setOnStartOrResumeListener(object : OnStartOrResumeListener {
-                        override fun onStartOrResume() {
-                            //Show pause Icon
-                            val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.pause)
-                            actionIcon.setImageDrawable(pauseDrawable)
-                        }
-
-                    })
-
-                }
-            })
-
-            BookDownloadService.getLiveDownloadResult().observe(lifecycleOwner, Observer {
-                if (it.id == downloadRequest?.getDownloadId()) {
-
-                    it.error?.let {
-                        //Show error controls
-                        val pauseDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
-                        actionIcon.setImageDrawable(pauseDrawable)
-                    }
-
-                    if (it.isComplete && isFileExist(activity, dirPath, fileName)) {
-                        //Hide all download controls
-                        progressBar.visibility = GONE
-                        actionIcon.visibility = GONE
-                        darkOverLay.visibility = GONE
-                    }
-                }
-            })
         }
+
+
 
 
         private fun getDownloadStatus(downloadId: Int?): Status? {
@@ -209,11 +161,11 @@ class OrderedBooksAdapter(
             context.startService(intent)
         }
 
-        private fun openBook(activity: Activity, model: OrderedBook) {
+        private fun openBook(activity: Activity, bookName: String, bookId:String) {
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
-                putExtra(Book.NAME, model.name)
-                putExtra(Book.ID, model.bookId)
+                putExtra(Book.NAME, bookName)
+                putExtra(Book.ID, bookId)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 activity,
@@ -222,6 +174,16 @@ class OrderedBooksAdapter(
             )
             activity.startActivity(intent, options.toBundle())
         }
+
+        private fun getBookId(value:String): String {
+            return if(value.contains("-")){
+                val pubIdAndOrBookId = value.split("-").toTypedArray()
+                pubIdAndOrBookId[1]
+            }else{
+                value
+            }
+        }
     }
+
 
 }

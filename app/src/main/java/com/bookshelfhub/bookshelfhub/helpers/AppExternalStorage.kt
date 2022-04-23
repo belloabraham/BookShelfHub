@@ -31,6 +31,11 @@ object AppExternalStorage {
         return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName+File.separator+pathToFile).absolutePath
     }
 
+    fun getDocumentFilePath(folderName: String, subFolderName:String, fileNameWithExt:String,  applicationContext: Context): File {
+        val path = "$folderName${File.separator}$subFolderName${File.separator}$fileNameWithExt"
+        return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
+    }
+
     fun getAudioFilePath( applicationContext: Context, folderName: String): String {
       return  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
             File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), folderName).absolutePath

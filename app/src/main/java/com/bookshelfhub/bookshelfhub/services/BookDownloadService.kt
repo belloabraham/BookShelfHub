@@ -16,34 +16,6 @@ import com.bookshelfhub.downloadmanager.request.DownloadRequest
 
 class BookDownloadService : LifecycleService() {
 
-    companion object {
-        private val liveDownloadRequest: MutableLiveData<DownloadRequest> = MutableLiveData()
-
-        private val liveDownloadResult: MutableLiveData<DownloadResult> = MutableLiveData()
-
-        private var listOfDownloadItems = mutableListOf<DownloadItems>()
-
-        fun getLiveDownloadRequest(): LiveData<DownloadRequest> {
-            return liveDownloadRequest
-        }
-
-        fun getLiveDownloadResult(): LiveData<DownloadResult> {
-            return liveDownloadResult
-        }
-    }
-
-    data class DownloadItems(
-        val id: Int,
-        var url: String,
-        var hasError: Boolean = false
-    )
-
-
-    data class DownloadResult(
-        val id: Int,
-        val error: Error? = null,
-        val isComplete: Boolean = false
-    )
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
@@ -52,11 +24,13 @@ class BookDownloadService : LifecycleService() {
         val fileName = intent?.getStringExtra(Download.FILE_NAME)
         val downloadId = intent?.getIntExtra(Download.DOWNLOAD_ID, 0)
         val bookName = intent?.getStringExtra(Download.BOOK_NAME)
-        val isbn = intent?.getStringExtra(Book.ID.KEY)
+        val isbn = intent?.getStringExtra(Book.ID)
 
 
 
         intent?.let {
+
+
             when (it.action) {
                 Download.ACTION_START -> {
                     //Called for every new download started
@@ -103,54 +77,6 @@ class BookDownloadService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    override fun onDestroy() {
-        listOfDownloadItems.clear()
-        super.onDestroy()
-    }
-
-
-    private fun getDownloadReq(
-        url: String,
-        dirPath: String,
-        fileName: String,
-        bookName: String
-    ): DownloadRequest {
-        val downloadReq =  DownloadManager.download(url, dirPath, fileName)
-            .build()
-
-
-            downloadReq.setOnProgressListener(object : OnProgressListener {
-
-                override fun onProgress(progress: Progress?) {
-                    //Show Notification Msg for download progressing
-                    progress?.let { mProgress ->
-                        if (mProgress.currentBytes > 0) {
-                            val percentage = (mProgress.currentBytes / mProgress.totalBytes) * 100
-                            val message =
-                                String.format(getString(R.string.download_percent_msg), percentage)
-                            val downloadId = downloadReq.getDownloadId()
-
-                            val pendingIntent = getSendCommandToServiceIntent(
-                                downloadId,
-                                Download.ACTION_PAUSE,
-                                bookName
-                            )
-                            showNotification(
-                                downloadId,
-                                bookName,
-                                message,
-                                true,
-                                R.string.pause,
-                                pendingIntent
-                            )
-                        }
-                    }
-                }
-
-            })
-        return  downloadReq
-    }
-
 
     private fun showNotification(
         downloadId: Int, title: String,
@@ -168,88 +94,6 @@ class BookDownloadService : LifecycleService() {
         }
 
         startForeground(downloadId, notificationBuilder.build())
-    }
-
-    private fun startDownload(downloadReq: DownloadRequest, bookName: String, isbn:String) {
-        downloadReq.start(object : OnDownloadListener {
-            override fun onDownloadComplete() {
-                //Send info to shelf fragment about download state
-                val downloadId = downloadReq.getDownloadId()
-                liveDownloadResult.value =
-                    DownloadResult(downloadReq.getDownloadId(), isComplete = true)
-
-                val downloadItem = listOfDownloadItems.find {
-                    it.id == downloadReq.getDownloadId()
-                }
-
-                val pendingIntent = getOpenBookActivityIntent(downloadId, isbn, bookName)
-                showNotification(
-                    downloadId,
-                    bookName,
-                    getString(R.string.download_complete),
-                    false,
-                    R.string.open,
-                    pendingIntent
-                )
-
-                downloadItem?.let {
-                    listOfDownloadItems.remove(it)
-                }
-
-                if (listOfDownloadItems.isEmpty()) {
-                    //Stop foreground service
-                    stopForeground(true)
-                    stopSelf()
-                }
-
-            }
-
-            override fun onError(error: Error?) {
-                val downloadId = downloadReq.getDownloadId()
-                //Send info to shelf fragment about download state
-                liveDownloadResult.value =
-                    DownloadResult(downloadReq.getDownloadId(), error = error)
-
-                listOfDownloadItems.find {
-                    it.id == downloadId
-                }?.hasError = true
-
-                val itemsWithoutError = listOfDownloadItems.filter {
-                    !it.hasError
-                }
-
-                if (itemsWithoutError.isEmpty()) {
-                    //Stop foreground service
-                    stopForeground(true)
-                    stopSelf()
-                } else {
-                    error?.getConnectionException()?.message?.let {
-                        val errorMsg = String.format(getString(R.string.download_error_msg), it)
-                        val pendingIntent = getSendCommandToServiceIntent(
-                            downloadId,
-                            Download.ACTION_RESUME,
-                            bookName
-                        )
-                        showNotification(
-                            downloadId,
-                            bookName,
-                            errorMsg,
-                            false,
-                            R.string.retry,
-                            pendingIntent
-                        )
-                    }
-                }
-            }
-        })
-
-        val message = getString(R.string.download_starting)
-        val downloadId = downloadReq.getDownloadId()
-        val notificationBuilder = getNotificationBuilder(
-            bookName, message,
-            onGoing = true
-        )
-        startForeground(downloadId, notificationBuilder.getNotificationBuiler().build())
     }
 
 
@@ -270,8 +114,8 @@ class BookDownloadService : LifecycleService() {
 
     private fun getOpenBookActivityIntent(downloadId: Int, isbn: String, bookName: String): PendingIntent? {
         val intent = Intent(this, BookActivity::class.java)
-        intent.putExtra(Book.ID.KEY, isbn)
-        intent.putExtra(Book.NAME.KEY, bookName)
+        intent.putExtra(Book.ID, isbn)
+        intent.putExtra(Book.NAME, bookName)
 
         return PendingIntent.getService(
             this, downloadId, intent, NotificationBuilder.getIntentFlag()

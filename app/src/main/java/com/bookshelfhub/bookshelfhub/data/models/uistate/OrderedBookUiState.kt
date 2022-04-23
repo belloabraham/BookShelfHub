@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.models.uistate
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.data.models.entities.IOrderedBooks
 import com.google.firebase.Timestamp
 
 @Entity(tableName= "OrderedBooks")
