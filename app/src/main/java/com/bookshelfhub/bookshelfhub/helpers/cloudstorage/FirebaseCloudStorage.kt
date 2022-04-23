@@ -29,15 +29,15 @@ class FirebaseCloudStorage (
         }
     }
 
-    fun downloadFile(
+   override suspend fun downloadFile(
         folder:String,
         subfolder:String,
         fileName:String,
         fileExt:String,
-        onProgress:Long.()->Unit,
+        onProgress:(Long)->Unit,
         onComplete:()->Unit,
-        onError:(error:Exception)->Unit
-    ): StorageTask<FileDownloadTask.TaskSnapshot> {
+         onError:(Exception)->Unit
+    ): FileDownloadTask.TaskSnapshot? {
         val remotePath = "$folder${SEPERATOR}${subfolder}${SEPERATOR}$fileName$fileExt"
         val remotePathRef = storageRef.child(remotePath)
 
@@ -68,7 +68,7 @@ class FirebaseCloudStorage (
                 }
             }.addOnFailureListener {
                 onError(it)
-            }
+            }.await()
     }
 
     @Throws(IOException::class)
