@@ -91,75 +91,14 @@ class OrderedBooksAdapter(
                 if(fileDoesNotExist){
 
 
-                    //Start File download back ground service and list for progress here
-               cloudStorage.downloadFile(
-                        pubId,
-                        bookId,
-                        bookId,
-                        FileExtension.DOT_PDF,
-                        onProgress =  {
+                    //Start File download one time uniue expidited work here
 
-                        },
-                        onComplete = {
-
-                        },
-                        onError = {
-
-                        }
-                    )
                 }
 
             }
 
         }
 
-
-
-
-        private fun getDownloadStatus(downloadId: Int?): Status? {
-            if (downloadId == null) {
-                return null
-            }
-            return DownloadManager.getStatus(downloadId)
-        }
-
-        private fun pauseBookDownloading(context: Context, bookName:String, downloadId: Int?) {
-            val intent = Intent(context, BookDownloadService::class.java)
-            intent.action = Download.ACTION_PAUSE
-            intent.putExtra(Download.DOWNLOAD_ID, downloadId)
-            intent.putExtra(Download.BOOK_NAME, bookName)
-            context.startService(intent)
-        }
-
-        private fun isFileExist(context: Context, dirPath: String, fileName: String): Boolean {
-            return AppExternalStorage.isDocumentFileExist(context, dirPath, fileName)
-        }
-
-        private fun resumeBookDownloading(context: Context, bookName:String, downloadId: Int?) {
-            val intent = Intent(context, BookDownloadService::class.java)
-            intent.action = Download.ACTION_RESUME
-            intent.putExtra(Download.DOWNLOAD_ID, downloadId)
-            intent.putExtra(Download.BOOK_NAME, bookName)
-            context.startService(intent)
-        }
-
-        private fun startBookDownloading(
-            context: Context,
-            url: String?,
-            dirPath: String,
-            fileName: String,
-            bookName:String,
-            isbn:String
-        ) {
-            val intent = Intent(context, BookDownloadService::class.java)
-            intent.action = Download.ACTION_START
-            intent.putExtra(Download.URL, url)
-            intent.putExtra(Download.FILE_NAME, fileName)
-            intent.putExtra(Download.DIR_PATH, dirPath)
-            intent.putExtra(Download.BOOK_NAME, bookName)
-            intent.putExtra(Book.ID, isbn)
-            context.startService(intent)
-        }
 
         private fun openBook(activity: Activity, bookName: String, bookId:String) {
             val intent = Intent(activity, BookActivity::class.java)

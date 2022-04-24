@@ -6,11 +6,11 @@ import com.google.firebase.storage.FileDownloadTask
 interface ICloudStorage {
 
     suspend fun getDownloadUrl(childFilePath: String): Uri?
-    suspend fun downloadFile(
+    suspend fun downloadAsTempFile(
         folder:String,
         subfolder:String,
         fileName:String,
-        fileExt:String,
+        remoteFileExt:String,
         onProgress:(Long)->Unit,
         onComplete:()->Unit,
         onError:(Exception)->Unit
