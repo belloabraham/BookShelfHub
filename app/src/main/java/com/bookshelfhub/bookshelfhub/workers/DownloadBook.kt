@@ -53,12 +53,6 @@ class DownloadBook @AssistedInject constructor(
                 return Result.success()
             }
 
-            val initialDownloadProgress = (0..10).random()
-
-            //To give the user the impression that download have started so they do not tap on the download button again
-            bookDownloadStateRepo.addDownloadState(BookDownloadState(bookId, initialDownloadProgress.toLong()))
-
-
             cloudStorage.downloadAsTempFile(
                 folder =  pubId,
                 subfolder =  bookId,
@@ -101,23 +95,22 @@ class DownloadBook @AssistedInject constructor(
         return ForegroundInfo(notificationId, notification)
     }
 
-    private fun getMessage(progress:Long): String {
-      return  if( progress == 100L )  "Download complete" else "Downloading $progress%"
+    private fun getMessage(progress:Int): String {
+      return  if( progress == 100 )  "Download complete" else "Downloading $progress%"
     }
 
     private fun getNotificationBuilder(
         title: String,
         message: String,
     ): NotificationBuilder.Builder {
-        val pendingIntent = WorkManager.getInstance(applicationContext)
-            .createCancelPendingIntent(id)
+      //  val pendingIntent = WorkManager.getInstance(applicationContext)
+         //   .createCancelPendingIntent(id)
         return NotificationBuilder(applicationContext)
             .setAutoCancel(false)
             .setOngoing(true)
             .setMessage(message)
             .setTitle(title)
             .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setPendingIntent(pendingIntent, context.getString(R.string.cancel))
             .Builder(applicationContext)
     }
 

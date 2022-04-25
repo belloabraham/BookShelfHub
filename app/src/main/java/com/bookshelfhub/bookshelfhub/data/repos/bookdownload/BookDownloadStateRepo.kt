@@ -25,7 +25,7 @@ class BookDownloadStateRepo @Inject constructor(
         bookDownloadDao.updateBookDownloadState(bookId, hasError)
     }
 
-    override suspend fun updatedDownloadState(bookId: String, progress:Long){
+    override suspend fun updatedDownloadState(bookId: String, progress:Int){
         bookDownloadDao.updateBookDownloadState(bookId, progress)
     }
 

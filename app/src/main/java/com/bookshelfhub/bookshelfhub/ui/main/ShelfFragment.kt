@@ -25,6 +25,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.material.appbar.AppBarLayout
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,8 +45,11 @@ class ShelfFragment : Fragment() {
     private var orderedBookList:List<OrderedBook> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
+
     @Inject
     lateinit var userAuth: IUserAuth
+    @Inject
+    lateinit var worker: Worker
 
     private var binding: FragmentShelfBinding?=null
     private var mOrderedBooksAdapter: ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>>?=null
@@ -59,7 +63,13 @@ class ShelfFragment : Fragment() {
         val layout = binding!!
 
          mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
-        mOrderedBooksAdapter = OrderedBooksAdapter(requireActivity(), viewLifecycleOwner).getOrderedBooksAdapter()
+        mOrderedBooksAdapter = OrderedBooksAdapter(
+            requireActivity(),
+            worker,
+            shelfViewModel,
+            viewLifecycleOwner)
+            .getOrderedBooksAdapter()
+
         val searchListAdapter = mSearchListAdapter!!
         val orderedBooksAdapter = mOrderedBooksAdapter!!
 
@@ -162,6 +172,7 @@ class ShelfFragment : Fragment() {
                 }
             })
         }
+
 
         mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner, Observer { isBackPressed ->
             if (layout.materialSearchView.hasFocus()){

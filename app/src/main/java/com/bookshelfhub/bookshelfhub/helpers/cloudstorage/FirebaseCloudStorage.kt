@@ -31,7 +31,7 @@ class FirebaseCloudStorage (
        subfolder:String,
        fileName:String,
        remoteFileExt:String,
-       onProgress:(Long)->Unit,
+       onProgress:(Int)->Unit,
        onComplete:()->Unit,
        onError:(Exception)->Unit
     ): FileDownloadTask.TaskSnapshot? {
@@ -47,7 +47,7 @@ class FirebaseCloudStorage (
      return remotePathRef.getFile(tempLocalFilePath)
             .addOnProgressListener {
                 val progress = (it.bytesTransferred/it.totalByteCount)*100
-                onProgress(progress-10)
+                onProgress(progress.toInt()-10)
             }
             .addOnSuccessListener {
                 try {

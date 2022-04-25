@@ -11,7 +11,7 @@ interface ICloudStorage {
         subfolder:String,
         fileName:String,
         remoteFileExt:String,
-        onProgress:(Long)->Unit,
+        onProgress:(Int)->Unit,
         onComplete:()->Unit,
         onError:(Exception)->Unit
     ): FileDownloadTask.TaskSnapshot?

@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 class BookDownloadState(
      @PrimaryKey
      val bookId:String,
-     val progress:Long,
+     val progress:Int,
      val hasError:Boolean = false
 )

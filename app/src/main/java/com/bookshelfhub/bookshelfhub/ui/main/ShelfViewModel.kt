@@ -46,8 +46,8 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    fun getLiveBookDownloadState(bookId:String){
-        bookDownloadStateRepo.getLiveBookDownloadState(bookId)
+    fun getLiveBookDownloadState(bookId:String): LiveData<BookDownloadState> {
+       return bookDownloadStateRepo.getLiveBookDownloadState(bookId)
     }
 
     fun doesUserHaveUnDownloadedPurchasedBooks(): StateFlow<Boolean> {

@@ -10,5 +10,5 @@ interface IBookDownloadStateRepo {
 
     suspend fun updatedDownloadState(bookId: String, hasError:Boolean)
 
-    suspend fun updatedDownloadState(bookId: String, progress:Long)
+    suspend fun updatedDownloadState(bookId: String, progress:Int)
 }

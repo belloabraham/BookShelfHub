@@ -16,7 +16,7 @@ abstract class BookDownloadDao : BaseDao<BookDownloadState> {
     abstract suspend fun updateBookDownloadState(bookId: String, hasError:Boolean)
 
     @Query("UPDATE BookDownloadStates SET progress = :progress WHERE bookId = :bookId")
-    abstract suspend fun updateBookDownloadState(bookId: String, progress:Long)
+    abstract suspend fun updateBookDownloadState(bookId: String, progress:Int)
 
 
 }
