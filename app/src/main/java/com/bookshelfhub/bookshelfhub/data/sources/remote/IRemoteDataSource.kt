@@ -26,6 +26,17 @@ interface IRemoteDataSource {
         direction: Query.Direction,
         type:Class<T>): List<T>
 
+    suspend fun <T: Any> getListOfDataWhereAsync(
+        collection:String,
+        whereKey:String,
+        whereValue:Any,
+        whereKey2:String,
+        whereValue2:Any,
+        orderBy: String,
+        startAt:Int,
+        direction: Query.Direction,
+        type:Class<T>): List<T>
+
     suspend fun <T: Any>  getDataAsync(
         collection:String,
         document: String,
@@ -105,6 +116,7 @@ interface IRemoteDataSource {
         subCollection: String):Void
 
 
+
     suspend fun addListOfDataAsync(
         list: List<IEntityId>,
         collection: String,
@@ -125,14 +137,5 @@ interface IRemoteDataSource {
          onComplete: (dataList: List<T>) -> Unit
     ):ListenerRegistration
 
-     fun <T : Any> getLiveListOfDataAsyncFrom(
-         collection: String,
-         type: Class<T>,
-         startAt: Timestamp,
-         direction: Query.Direction = Query.Direction.DESCENDING,
-         orderBy: String = RemoteDataFields.DATE_TIME_PUBLISHED,
-         shouldRetry: Boolean = true,
-         onComplete: (dataList: List<T>) -> Unit
-    ):ListenerRegistration
 
 }

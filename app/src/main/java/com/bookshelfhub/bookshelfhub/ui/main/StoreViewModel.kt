@@ -12,10 +12,10 @@ import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,12 +26,11 @@ class StoreViewModel @Inject constructor(
     private val  searchHistoryRepo: ISearchHistoryRepo,
     val userAuth: IUserAuth): ViewModel() {
 
-    private var allPublishedBook : LiveData<List<PublishedBook>> = MutableLiveData()
-    private var isNoConnection : MutableLiveData<Boolean> = MutableLiveData()
-    private var isNetworkError : MutableLiveData<Boolean> = MutableLiveData()
+    private var isBookLoadSucessfully : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
     private lateinit var publishedBooks:List<PublishedBook>
+    private lateinit var booksForSearchFiler:List<PublishedBook>
 
 
     private val config  = PagingConfig(
@@ -40,75 +39,52 @@ class StoreViewModel @Inject constructor(
         initialLoadSize = 10
     )
 
-
     init {
 
-        loadPublishedBooks()
         totalCartItems = cartItemsRepo.getLiveTotalCartItemsNo(userId)
 
-        viewModelScope.launch{
+        loadRemotePublishedBooks()
+    }
 
+    fun loadRemotePublishedBooks() {
+        viewModelScope.launch{
             publishedBooks = publishedBooksRepo.getPublishedBooks()
 
-            if (publishedBooks.isEmpty()){
-                remoteDataSource.getLiveListOfDataAsync(
-                    RemoteDataFields.PUBLISHED_BOOKS_COLL,
-                    PublishedBook::class.java,
-                    RemoteDataFields.DATE_TIME_PUBLISHED
-                ) {
-                    addAllBooks(it)
+            try {
+                if (publishedBooks.isEmpty()){
+                     publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
+                    publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
-            }else{
-                publishedBooks[0].publishedDate?.let { timestamp->
-                    remoteDataSource.getLiveListOfDataAsyncFrom(
-                        RemoteDataFields.PUBLISHED_BOOKS_COLL,
-                        PublishedBook::class.java,
-                        timestamp
-                    ){
-                        addAllBooks(it)
-                    }
-                }
-            }
-        }
 
+                if(publishedBooks.isNotEmpty()){
+                    val fromBookSerialNo = publishedBooks.size
+                     publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(fromBookSerialNo)
+                    publishedBooksRepo.addAllPubBooks(publishedBooks)
+                }
+                isBookLoadSucessfully.value = true
+                booksForSearchFiler = publishedBooksRepo.getPublishedBooks()
+            }catch (e:Exception){
+                Timber.e(e)
+                isBookLoadSucessfully.value = false
+           }
+        }
+    }
+
+
+    fun getBooksForSearchFiler(): List<PublishedBook> {
+        return booksForSearchFiler
     }
 
     fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
         return searchHistoryRepo.getLiveStoreSearchHistory(userId)
     }
 
-    fun getPublishedBooks(): List<PublishedBook> {
-        return publishedBooks
-    }
-
-    private fun addAllBooks(publishedBooks: List<PublishedBook>){
-        viewModelScope.launch {
-            publishedBooksRepo.addAllPubBooks(publishedBooks)
-        }
-    }
-
-    fun loadPublishedBooks(){
-        if (connectionUtil.isConnected()){
-            allPublishedBook = publishedBooksRepo.getLivePublishedBooks()
-        }else{
-            isNoConnection.value = true
-        }
-    }
-
     fun getLiveTotalCartItemsNo():LiveData<Int> {
         return totalCartItems
     }
 
-    fun getIsNetworkError():LiveData<Boolean> {
-        return isNetworkError
-    }
-
-    fun getIsNoConnection():LiveData<Boolean> {
-        return isNoConnection
-    }
-
-    fun getAllPublishedBooks():LiveData<List<PublishedBook>> {
-        return allPublishedBook
+    fun getDoesBookLoadSuccessfully():LiveData<Boolean> {
+        return isBookLoadSucessfully
     }
 
     fun getTrendingBooksPageSource(): Flow<PagingData<PublishedBook>> {

@@ -34,7 +34,8 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
-        return withContext(ioDispatcher){remoteDataSource.getListOfDataWhereAsync(
+        return withContext(ioDispatcher){
+            remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 RemoteDataFields.PUBLISHED,
                 false,
@@ -50,6 +51,20 @@ class PublishedBooksRepo @Inject constructor(
                 whereKey = RemoteDataFields.PUBLISHED, true,
                 whereKey2 = RemoteDataFields.APPROVED, true,
                 orderBy = RemoteDataFields.SERIAL_NO,
+                Query.Direction.ASCENDING,
+                PublishedBook::class.java
+            )
+        }
+    }
+
+    override suspend  fun getRemotePublishedBooksFrom(fromSerialNo:Int): List<PublishedBook> {
+        return withContext(ioDispatcher) {
+            remoteDataSource.getListOfDataWhereAsync(
+                RemoteDataFields.PUBLISHED_BOOKS_COLL,
+                whereKey = RemoteDataFields.PUBLISHED, true,
+                whereKey2 = RemoteDataFields.APPROVED, true,
+                orderBy = RemoteDataFields.SERIAL_NO,
+                fromSerialNo,
                 Query.Direction.ASCENDING,
                 PublishedBook::class.java
             )

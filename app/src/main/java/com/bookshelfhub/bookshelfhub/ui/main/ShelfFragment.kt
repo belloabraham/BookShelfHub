@@ -63,7 +63,7 @@ class ShelfFragment : Fragment() {
         binding = FragmentShelfBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-         mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
+        mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
         mOrderedBooksAdapter = OrderedBooksAdapter(
             requireActivity(),
             worker,

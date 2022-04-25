@@ -19,7 +19,6 @@ import javax.inject.Inject
     private val db:FirebaseFirestore = Firebase.firestore
      
      init {
-         //Disable firestore caching
          db.firestoreSettings =  firestoreSettings {
              isPersistenceEnabled=false
          }
@@ -95,29 +94,6 @@ import javax.inject.Inject
      }
 
 
-     override fun <T: Any> getLiveListOfDataAsyncFrom(
-         collection:String, type:Class<T>,
-         startAt: Timestamp,
-         direction: Query.Direction,
-         orderBy:String,
-         shouldRetry: Boolean,
-         onComplete:  (dataList:List<T>)->Unit): ListenerRegistration {
-
-         val subscription = db.collection(collection)
-             .orderBy(orderBy, direction)
-             .startAfter(startAt)
-             .addSnapshotListener { querySnapShot, e ->
-
-                 if (shouldRetry && e!=null){
-                     return@addSnapshotListener
-                 }
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-                 onComplete(dataList)
-             }
-        return subscription
-     }
-
-
      override suspend fun <T: Any> getListOfDataWhereAsync(
          collection:String,
          whereKey: String,
@@ -165,6 +141,26 @@ import javax.inject.Inject
              .whereEqualTo(whereKey,whereValue)
              .whereEqualTo(whereKey2,whereValue2)
              .orderBy(orderBy, direction)
+             .get().await()
+
+         return querySnapshotToListOfType(querySnapShot, type)
+     }
+
+     override suspend fun <T: Any> getListOfDataWhereAsync(
+         collection:String,
+         whereKey:String,
+         whereValue:Any,
+         whereKey2:String,
+         whereValue2:Any,
+         orderBy: String,
+         startAt:Int,
+         direction: Query.Direction,
+         type:Class<T>): List<T> {
+         val querySnapShot =  db.collection(collection)
+             .whereEqualTo(whereKey,whereValue)
+             .whereEqualTo(whereKey2,whereValue2)
+             .orderBy(orderBy, direction)
+             .startAt(startAt)
              .get().await()
 
          return querySnapshotToListOfType(querySnapShot, type)

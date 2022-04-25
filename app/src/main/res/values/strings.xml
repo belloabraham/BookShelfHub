@@ -307,10 +307,7 @@
     <string name="recommended_for">Recommended for you</string>
     <string name="trending">Trending</string>
     <string name="retry">Retry</string>
-    <string name="no_connection_err_msg">Unable to load books from the store as a result of no internet connection,
-        enable mobile data or WIFI and click the retry button below.</string>
-    <string name="bad_connection_err_msg">Unable to load books from the store as a result of poor internet connection,
-        click retry button below to try again or contact your network provider.</string>
+    <string name="bad_connection_err_msg">Unable to load books from the store as a result of poor or no internet connection. Connect to the internet and retry.</string>
 
 
     <!-- TODO: Category Activity -->

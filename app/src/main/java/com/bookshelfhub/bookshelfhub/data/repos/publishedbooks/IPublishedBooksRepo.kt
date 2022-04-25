@@ -16,6 +16,8 @@ interface IPublishedBooksRepo {
 
     suspend fun getPublishedBook(isbn: String): Optional<PublishedBook>
 
+    suspend  fun getRemotePublishedBooksFrom(fromSerialNo:Int): List<PublishedBook>
+
     suspend fun updateRecommendedBooksByCategory(category: String, isRecommended: Boolean = true)
     suspend fun updateRecommendedBooksByTag(tag: String, isRecommended: Boolean = true)
     suspend fun addAllPubBooks(pubBooks: List<PublishedBook>)

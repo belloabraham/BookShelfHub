@@ -45,7 +45,6 @@ class StoreFragment : Fragment() {
     private var binding: FragmentStoreBinding?=null
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val storeViewModel: StoreViewModel by viewModels()
-    private var allBooksLive = emptyList<PublishedBook>()
     private var storeSearchHistory = emptyList<StoreSearchHistory>()
     private var mSearchListAdapter: ListAdapter<Any, RecyclerViewHolder<Any>>?=null
 
@@ -87,16 +86,9 @@ class StoreFragment : Fragment() {
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
 
-        storeViewModel.getIsNoConnection().observe(viewLifecycleOwner, Observer { isNoConnection ->
-           if (isNoConnection){
-               showErrorMsg(R.string.no_connection_err_msg, layout)
-           }
-        })
 
-        storeViewModel.getIsNetworkError().observe(viewLifecycleOwner, Observer { isNetworkError ->
-            if (isNetworkError){
-                showErrorMsg(R.string.bad_connection_err_msg, layout)
-            }
+        storeViewModel.getDoesBookLoadSuccessfully().observe(viewLifecycleOwner, Observer { isSuccess ->
+            showRemoteBooksLoadStatus(isSuccess, layout)
         })
 
         mSearchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
@@ -236,7 +228,7 @@ class StoreFragment : Fragment() {
 
             setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    val result = allBooksLive.filter {
+                    val result = storeViewModel.getBooksForSearchFiler().filter {
                         it.name.contains(newText, true)||it.author.contains(newText, true)
                     }
                    searchListAdapter.submitList(result.plus(BookRequest(bookReqMsg)))
@@ -261,26 +253,8 @@ class StoreFragment : Fragment() {
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = GONE
             layout.progressBar.visibility = VISIBLE
-            storeViewModel.loadPublishedBooks()
+            storeViewModel.loadRemotePublishedBooks()
         }
-
-        storeViewModel.getAllPublishedBooks().observe(viewLifecycleOwner, Observer { books ->
-
-            allBooksLive = books
-
-            if (books.isNotEmpty()){
-                layout.progressBar.visibility = GONE
-                layout.appbarLayout.visibility = VISIBLE
-                layout.errorLayout.visibility = GONE
-                layout.booksNestedScroll.visibility = VISIBLE
-                layout.progressBar.visibility = View.GONE
-
-            }else{
-                layout.booksNestedScroll.visibility = GONE
-                layout.appbarLayout.visibility = INVISIBLE
-                layout.progressBar.visibility = VISIBLE
-            }
-        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getTrendingBooksPageSource().collectLatest { books ->
@@ -318,7 +292,6 @@ class StoreFragment : Fragment() {
                     loadBooks(books, artAndCraftBooksAdapter, layout.artCraftLayout)
                 }
         }
-
         viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getBooksByCategoryPageSource(getString(R.string.news))
                 .collectLatest { books ->
@@ -415,7 +388,6 @@ class StoreFragment : Fragment() {
                     loadBooks(books, travelBooksAdapter, layout.travelLayout)
                 }
         }
-
 
         layout.recommendedCard.setOnClickListener {
             startBookCategoryActivity( getString(R.string.recommended_for))
@@ -536,17 +508,21 @@ class StoreFragment : Fragment() {
 
     override fun onDestroyView() {
         binding=null
-        
         nullifyAllAdapters()
-        
         super.onDestroyView()
     }
-    
-    private fun showErrorMsg(errorMsg:Int, layout: FragmentStoreBinding){
+
+    private fun showRemoteBooksLoadStatus(bookLoadSuccessfully:Boolean, layout: FragmentStoreBinding){
         layout.progressBar.visibility=GONE
-        layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireActivity().applicationContext, R.drawable.ic_network_alert))
-        layout.errorMsgText.text = getString(errorMsg)
-        layout.errorLayout.visibility=VISIBLE
+        if(bookLoadSuccessfully){
+            layout.errorLayout.visibility=GONE
+            layout.booksNestedScroll.visibility = VISIBLE
+            layout.appbarLayout.visibility = VISIBLE
+        }else{
+            layout.errorImg.setImageDrawable(IconUtil.getDrawable(requireActivity().applicationContext, R.drawable.ic_network_alert))
+            layout.errorMsgText.text = getString(R.string.bad_connection_err_msg)
+            layout.errorLayout.visibility=VISIBLE
+        }
     }
 
     private fun nullifyAllAdapters(){
