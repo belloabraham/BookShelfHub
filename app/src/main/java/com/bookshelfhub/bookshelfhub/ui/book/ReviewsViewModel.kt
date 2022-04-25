@@ -1,14 +1,13 @@
 package com.bookshelfhub.bookshelfhub.ui.book
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,8 +21,13 @@ class ReviewsViewModel @Inject constructor(
     val bookId = savedState.get<String>(Book.ID)!!
 
     init {
-        userReviewRepo.getRemoteBookReviews(bookId, userId, limitBy = 300){  reviews, _->
-            userReviews.postValue(reviews)
+        viewModelScope.launch {
+            try {
+                 userReviews.value = userReviewRepo.getListOfBookReviews(bookId, limit = 300, userId)
+            }catch (e:Exception){
+                Timber.e(e)
+                return@launch
+            }
         }
     }
 

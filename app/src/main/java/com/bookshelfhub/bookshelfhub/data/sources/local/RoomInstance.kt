@@ -5,8 +5,9 @@ import androidx.room.*
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
+import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 
-@Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookVideo::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookVideo::class, BookDownloadState::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class RoomInstance: RoomDatabase() {
 
@@ -23,6 +24,7 @@ abstract class RoomInstance: RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun bookVideosDao(): BookVideosDao
     abstract fun bookmarksDao(): BookmarksDao
+    abstract fun bookDownloadStateDao(): BookDownloadDao
 
     companion object{
         @Volatile

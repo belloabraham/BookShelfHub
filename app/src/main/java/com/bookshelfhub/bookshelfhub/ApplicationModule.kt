@@ -7,6 +7,8 @@ import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.BookmarksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.CartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.PaymentTransactionRepo
 import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
@@ -50,6 +52,12 @@ object ApplicationModule {
     @Provides
     fun provideRemoteConfig(): IRemoteConfig {
         return Firebase()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOrderedBooksRepo(roomInstance:RoomInstance, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
+        return OrderedBooksRepo(roomInstance.orderedBooksDao(), remoteDataSource)
     }
 
     @Singleton

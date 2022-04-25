@@ -2,7 +2,6 @@ package com.bookshelfhub.bookshelfhub.adapters.recycler
 
 import android.app.Activity
 import android.app.ActivityOptions
-import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.view.View.VISIBLE
@@ -10,21 +9,20 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
+import androidx.work.*
 import com.bookshelfhub.bookshelfhub.BookActivity
-import com.bookshelfhub.bookshelfhub.services.BookDownloadService
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
-import com.bookshelfhub.bookshelfhub.data.Download
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.FileExtension
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
-import com.bookshelfhub.downloadmanager.*
-import com.google.firebase.storage.FileDownloadTask
-import com.google.firebase.storage.StorageTask
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
+import com.bookshelfhub.bookshelfhub.ui.main.ShelfViewModel
+import com.bookshelfhub.bookshelfhub.workers.Constraint
+import com.bookshelfhub.bookshelfhub.workers.DownloadBook
+import com.bookshelfhub.bookshelfhub.workers.UploadUserData
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -34,7 +32,9 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 class OrderedBooksAdapter(
     private val activity: Activity,
-    private val cloudStorage: FirebaseCloudStorage
+    private val worker: Worker,
+    private val shelfViewModel: ShelfViewModel
+
 ) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>> {
@@ -50,7 +50,7 @@ class OrderedBooksAdapter(
                 layoutResource = R.layout.ordered_books_item,
                 viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, activity, cloudStorage)
+                    vh.bindToView(model, activity, worker, shelfViewModel)
                 }
             )
         }
@@ -64,18 +64,19 @@ class OrderedBooksAdapter(
         private val darkOverLay: View = view.findViewById(R.id.darkOverlay)
 
 
-        fun bindToView(model: OrderedBook, activity: Activity, cloudStorage: FirebaseCloudStorage) {
+        fun bindToView(model: OrderedBook, activity: Activity, worker: Worker, shelfViewModel: ShelfViewModel) {
 
-            title.text = model.name
+            val bookName = model.name
+            title.text = bookName
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 
             val bookId = getBookId(model.bookId)
             val pubId = model.pubId
-            val fileName = "$bookId${FileExtension.DOT_PDF}"
+            val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
             val fileDoesNotExist = !AppExternalStorage.getDocumentFilePath(
                 pubId,
                 bookId,
-                fileName, activity.applicationContext).exists()
+                fileNameWithExt, activity).exists()
 
             if (fileDoesNotExist) {
                 actionIcon.visibility = VISIBLE
@@ -85,13 +86,25 @@ class OrderedBooksAdapter(
             imageView.setOnClickListener {
                 val fileExist = !fileDoesNotExist
                 if (fileExist){
-                    openBook(activity, model.name, bookId)
+                    openBook(activity, bookName, bookId)
                 }
 
                 if(fileDoesNotExist){
 
+                    val workData = workDataOf(
+                        Book.ID to bookId,
+                        Book.SERIAL_NO to model.serialNo.toInt(),
+                        Book.PUB_ID to model.pubId,
+                        Book.NAME to bookName
+                    )
 
-                    //Start File download one time uniue expidited work here
+                    val expeditedDownloadBookWorker =
+                        OneTimeWorkRequestBuilder<DownloadBook>()
+                            .setConstraints(Constraint.getConnected())
+                            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                            .setInputData(workData)
+                            .build()
+                    worker.enqueueUniqueWork(bookId, ExistingWorkPolicy.KEEP, expeditedDownloadBookWorker)
 
                 }
 

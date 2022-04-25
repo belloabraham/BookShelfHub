@@ -18,7 +18,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
 
     private  var url:String? = null
     private  var actionText:String? = null
-    private var largeIcon: Bitmap = IconUtil.getBitmap(context, R.drawable.notification_large_icon)
+    private var largeIcon: Bitmap = IconUtil.getBitmap(context, R.drawable.logo)
     private lateinit var title: String
     private lateinit var message:String
     private var autoCancel = true

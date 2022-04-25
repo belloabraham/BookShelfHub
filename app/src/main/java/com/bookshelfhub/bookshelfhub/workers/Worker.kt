@@ -1,7 +1,9 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.work.*
+import java.util.*
 
 class Worker(private val  context: Context){
 
@@ -15,5 +17,13 @@ class Worker(private val  context: Context){
 
     fun enqueueUniqueWork(tag:String, workPolicy: ExistingWorkPolicy, workReq: OneTimeWorkRequest){
         WorkManager.getInstance(context).enqueueUniqueWork(tag, workPolicy, workReq)
+    }
+
+    fun getWorkInfoById(id:UUID){
+        WorkManager.getInstance(context).getWorkInfoById(id)
+    }
+
+    fun getWorkInfoByIdLiveData(id:UUID): LiveData<WorkInfo> {
+       return WorkManager.getInstance(context).getWorkInfoByIdLiveData(id)
     }
 }

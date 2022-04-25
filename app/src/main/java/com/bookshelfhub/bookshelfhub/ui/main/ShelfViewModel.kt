@@ -5,6 +5,8 @@ import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
@@ -23,19 +25,29 @@ class ShelfViewModel @Inject constructor(
     searchHistoryRepo: ISearchHistoryRepo,
     private val connectionUtil: ConnectionUtil,
     private val settingsUtil: SettingsUtil,
+    private val bookDownloadStateRepo: IBookDownloadStateRepo,
     val userAuth:IUserAuth): ViewModel(){
     
     private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
     private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
-    private val _isNewlyPurchasedBookFlow = MutableStateFlow<Boolean>(false)
+    private val _isNewlyPurchasedBookFlow = MutableStateFlow(false)
     private var doesUserHaveUnDownloadedPurchasedBooks = _isNewlyPurchasedBookFlow.asStateFlow()
-
     private val userId:String = userAuth.getUserId()
 
 
     init {
         shelfShelfSearchHistory = searchHistoryRepo.getLiveShelfSearchHistory(userId)
         liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
+    }
+
+    fun addDownloadState(bookDownloadState:BookDownloadState){
+        viewModelScope.launch {
+            bookDownloadStateRepo.addDownloadState(bookDownloadState)
+        }
+    }
+
+    fun getLiveBookDownloadState(bookId:String){
+        bookDownloadStateRepo.getLiveBookDownloadState(bookId)
     }
 
     fun doesUserHaveUnDownloadedPurchasedBooks(): StateFlow<Boolean> {

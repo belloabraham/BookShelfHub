@@ -1,12 +1,11 @@
 package com.bookshelfhub.bookshelfhub
 
-import android.content.Context
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.BookDownloadStateRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.BookVideosRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.bookshelfhub.data.repos.earnings.EarningsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.earnings.IEarningsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.IPaymentCardRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.PaymentCardRepo
 import com.bookshelfhub.bookshelfhub.data.repos.readhistory.IReadHistoryRepo
@@ -17,9 +16,6 @@ import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.SearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookShareLinkUseCase
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
@@ -35,16 +31,11 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
 
-    @ViewModelScoped
-    @Provides
-    fun provideBookShareLinkUseCase(dynamicLink: IDynamicLink): GetBookShareLinkUseCase {
-        return GetBookShareLinkUseCase(dynamicLink)
-    }
 
     @ViewModelScoped
     @Provides
-    fun provideConnectionUtil(@ApplicationContext context: Context): ConnectionUtil {
-        return ConnectionUtil(context)
+    fun provideBookDownloadRepo(roomInstance:RoomInstance): IBookDownloadStateRepo {
+        return BookDownloadStateRepo(roomInstance.bookDownloadStateDao())
     }
 
 
@@ -66,11 +57,6 @@ object ViewModelModule {
         return PaymentCardRepo(roomInstance.paymentCardDao())
     }
 
-    @ViewModelScoped
-    @Provides
-    fun provideOrderedBooksRepo(roomInstance:RoomInstance, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
-        return OrderedBooksRepo(roomInstance.orderedBooksDao(), remoteDataSource)
-    }
 
     @ViewModelScoped
     @Provides

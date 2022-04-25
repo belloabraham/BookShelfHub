@@ -10,6 +10,8 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.FileExtension
+import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.BookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.ICloudStorage
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
@@ -21,10 +23,11 @@ import java.io.File
 import java.io.IOException
 
 @HiltWorker
-class BookDownloadWorker @AssistedInject constructor(
+class DownloadBook @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val cloudStorage: ICloudStorage,
+    private val bookDownloadStateRepo: BookDownloadStateRepo
 ): CoroutineWorker(context, workerParams){
 
     private var message =""
@@ -50,6 +53,12 @@ class BookDownloadWorker @AssistedInject constructor(
                 return Result.success()
             }
 
+            val initialDownloadProgress = (0..10).random()
+
+            //To give the user the impression that download have started so they do not tap on the download button again
+            bookDownloadStateRepo.addDownloadState(BookDownloadState(bookId, initialDownloadProgress.toLong()))
+
+
             cloudStorage.downloadAsTempFile(
                 folder =  pubId,
                 subfolder =  bookId,
@@ -59,7 +68,7 @@ class BookDownloadWorker @AssistedInject constructor(
                     message = getMessage(progress)
                     runBlocking {
                         setForeground(getForegroundInfo())
-                        //Add download progress to the database
+                        bookDownloadStateRepo.updatedDownloadState(bookId, progress-10)
                     }
                 },
                 onComplete = {
@@ -70,14 +79,13 @@ class BookDownloadWorker @AssistedInject constructor(
                             fileNameWithExt = bookId+FileExtension.DOT_TEMP,
                             applicationContext)
 
-                        createLocalFileFromTempFile(tempFile, localFile)
-                        //Add download progress of 100 to database then
-                        //Add to database that download complete
+                        createLocalFileFromTempFile(tempFile, localFile, bookId)
+                        bookDownloadStateRepo.updatedDownloadState(bookId, 100)
                     }
                 },
                 onError =  {
                     runBlocking {
-                        //Show error to user through database
+                        bookDownloadStateRepo.updatedDownloadState(bookId, true)
                     }
                 })
         }catch (e:Exception){
@@ -94,7 +102,7 @@ class BookDownloadWorker @AssistedInject constructor(
     }
 
     private fun getMessage(progress:Long): String {
-      return  if( progress == 100L ) "Download complete" else "Downloading $progress%"
+      return  if( progress == 100L )  "Download complete" else "Downloading $progress%"
     }
 
     private fun getNotificationBuilder(
@@ -114,19 +122,19 @@ class BookDownloadWorker @AssistedInject constructor(
     }
 
     @Throws(IOException::class)
-    private fun createLocalFileFromTempFile(fromFile: File, renameToFile: File){
+    private fun createLocalFileFromTempFile(fromFile: File, renameToFile: File, bookId:String){
         try {
 
             if(renameToFile.exists()){
                 val unableToDelete =  !renameToFile.delete()
                 if (unableToDelete){
-                    throw IOException("Deletion Failed")
+                    throw IOException("Existing book $bookId deletion Failed")
                 }
             }
 
             val unableToRename = !fromFile.renameTo(renameToFile)
             if(unableToRename){
-                throw IOException("Rename Failed")
+                throw IOException("Unable to rename to $bookId")
             }
 
         }finally {

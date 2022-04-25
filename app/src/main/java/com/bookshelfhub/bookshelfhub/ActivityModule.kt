@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityScoped
 
 
@@ -17,11 +18,10 @@ import dagger.hilt.android.scopes.ActivityScoped
 @InstallIn(ActivityComponent::class)
 object ActivityModule {
 
-
     @ActivityScoped
     @Provides
-    fun getIntentUtil(@ActivityContext context: Context): IntentUtil {
-        return IntentUtil(context)
+    fun provideConnectionUtil(@ActivityContext context: Context): ConnectionUtil {
+        return ConnectionUtil(context)
     }
 
     @ActivityScoped
@@ -30,9 +30,4 @@ object ActivityModule {
         return Firebase(context.getString(R.string.dlink_domain_prefix), context)
     }
 
-    @ActivityScoped
-    @Provides
-    fun getConnectionUtil(@ActivityContext context: Context): ConnectionUtil {
-        return ConnectionUtil(context)
-    }
 }

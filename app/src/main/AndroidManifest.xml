@@ -127,9 +127,6 @@ Set color used with incoming notification messages. This is used when no color i
             </intent-filter>
         </service>
 
-        <service android:exported="false" android:name=".services.BookDownloadService" />
-
-
     </application>
 
 </manifest>
