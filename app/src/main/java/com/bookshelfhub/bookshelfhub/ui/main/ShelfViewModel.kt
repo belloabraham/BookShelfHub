@@ -40,6 +40,9 @@ class ShelfViewModel @Inject constructor(
         liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
     }
 
+    fun isConnected(): Boolean {
+       return connectionUtil.isConnected()
+    }
     fun addDownloadState(bookDownloadState:BookDownloadState){
         viewModelScope.launch {
             bookDownloadStateRepo.addDownloadState(bookDownloadState)

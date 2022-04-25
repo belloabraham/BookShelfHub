@@ -42,7 +42,6 @@ class OrderedBooksAdapter(
     private val worker: Worker,
     private val shelfViewModel: ShelfViewModel,
     private val lifecycleOwner: LifecycleOwner,
-    private val connectionUtil: ConnectionUtil
 ) {
 
     fun getOrderedBooksAdapter(): ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>> {
@@ -64,7 +63,6 @@ class OrderedBooksAdapter(
                         worker,
                         shelfViewModel,
                         lifecycleOwner,
-                        connectionUtil
                     )
                 }
             )
@@ -85,7 +83,6 @@ class OrderedBooksAdapter(
             worker: Worker,
             shelfViewModel: ShelfViewModel,
             lifecycleOwner: LifecycleOwner,
-            connectionUtil: ConnectionUtil
         ) {
 
             val bookName = model.name
@@ -112,7 +109,7 @@ class OrderedBooksAdapter(
 
                 if(fileDoesNotExist){
 
-                    if(connectionUtil.isConnected()){
+                    if(shelfViewModel.isConnected()){
                         val downloadDrawable =  IconUtil.getDrawable(activity, R.drawable.download_outline)
                         downloadActionIcon.setImageDrawable(downloadDrawable)
 
@@ -147,6 +144,8 @@ class OrderedBooksAdapter(
 
                     if(progress==100){
                         setDownloadIconVisibility(GONE)
+                       val message =  String.format(activity.getString(R.string.download_complete), bookName)
+                        activity.showToast(message)
                     }
                 }
             }

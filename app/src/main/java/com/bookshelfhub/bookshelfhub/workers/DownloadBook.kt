@@ -58,11 +58,12 @@ class DownloadBook @AssistedInject constructor(
                 subfolder =  bookId,
                 fileName =  bookId,
                 remoteFileExt = FileExtension.DOT_PDF,
-                onProgress = { progress->
+                onProgress = { it->
+                    val progress = it-10
                     message = getMessage(progress)
                     runBlocking {
                         setForeground(getForegroundInfo())
-                        bookDownloadStateRepo.updatedDownloadState(bookId, progress-10)
+                        bookDownloadStateRepo.updatedDownloadState(bookId, progress)
                     }
                 },
                 onComplete = {
@@ -75,6 +76,8 @@ class DownloadBook @AssistedInject constructor(
 
                         createLocalFileFromTempFile(tempFile, localFile, bookId)
                         bookDownloadStateRepo.updatedDownloadState(bookId, 100)
+                        message = getMessage(100)
+                        setForeground(getForegroundInfo())
                     }
                 },
                 onError =  {

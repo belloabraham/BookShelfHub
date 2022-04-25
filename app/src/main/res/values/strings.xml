@@ -318,14 +318,8 @@
     <string name="valid_full_name">Enter a valid full name</string>
 
     <!-- TODO: Book Download Service -->
-    <string name="pause">Pause</string>
-    <string name="resume">Resume</string>
-    <string name="download_percent_msg">Downloading %d%%</string>
-    <string name="downloading_paused">Downloading paused</string>
-    <string name="downloading_resuming">Download resuming....</string>
-    <string name="download_starting">Download starting</string>
-    <string name="download_complete">Download complete!</string>
-
+    <string name="download_complete">"%s" download completed</string>
     <string name="download_error_msg">Download error %s</string>
+
     <string name="swipe_down">Swipe down load newly purchased books</string>
 </resources>
