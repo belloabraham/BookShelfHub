@@ -63,11 +63,6 @@ class ShelfViewModel @Inject constructor(
        return connectionUtil.isConnected()
     }
 
-    fun addDownloadState(bookDownloadState:BookDownloadState){
-        viewModelScope.launch {
-            bookDownloadStateRepo.addDownloadState(bookDownloadState)
-        }
-    }
 
     fun deleteDownloadState(bookDownloadState: BookDownloadState){
         viewModelScope.launch {

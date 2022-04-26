@@ -20,14 +20,10 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.FileExtension
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
-import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfViewModel
 import com.bookshelfhub.bookshelfhub.views.Toast
-import com.bookshelfhub.bookshelfhub.workers.Constraint
-import com.bookshelfhub.bookshelfhub.workers.DownloadBook
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.adapterOf
@@ -142,12 +138,11 @@ class OrderedBooksAdapter(
 
                         if(progress==100){
                             setDownloadIconVisibility(GONE)
-                            val message =  String.format(activity.getString(R.string.download_complete), bookName)
+                            val message =  String.format(activity.getString(R.string.name_download_complete), bookName)
                             activity.showToast(message)
                             shelfViewModel.deleteDownloadState(downloadBookState)
                         }
                     }
-
 
                 }
             }

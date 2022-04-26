@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
+import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
@@ -62,7 +63,6 @@ class BookItemActivityViewModel @Inject constructor(
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
-  private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
   private var userAlreadyPurchasedBook = false
@@ -84,8 +84,6 @@ class BookItemActivityViewModel @Inject constructor(
   init {
 
     generateBookShareLink()
-
-    localLivePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
 
     liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
 
@@ -119,12 +117,30 @@ class BookItemActivityViewModel @Inject constructor(
       }
     }
 
-    if (isSearchItem){
-      addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
-    }
+    val searchHistory = StoreSearchHistory(
+      bookId, title, userAuth.getUserId(),
+      author, DateTimeUtil.getDateTimeAsString()
+    )
 
+    if (isSearchItem){
+      addStoreSearchHistory(searchHistory)
+    }
   }
 
+
+  suspend fun getAnOrderedBook(): Optional<OrderedBook> {
+    return orderedBooksRepo.getAnOrderedBook(bookId)
+  }
+
+  fun deleteDownloadState(bookDownloadState: BookDownloadState){
+    viewModelScope.launch {
+      bookDownloadStateRepo.deleteDownloadState(bookDownloadState)
+    }
+  }
+
+  fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
+    return bookDownloadStateRepo.getLiveBookDownloadState(bookId)
+  }
 
   fun startBookDownload(workData: Data){
 
@@ -211,10 +227,6 @@ class BookItemActivityViewModel @Inject constructor(
 
   fun getUser(): User {
     return user
-  }
-
-  fun getLiveLocalPublishedBook(): LiveData<Optional<PublishedBook>> {
-    return localLivePublishedBook
   }
 
   fun addUserReview(userReview: UserReview, diffInRating:Double){

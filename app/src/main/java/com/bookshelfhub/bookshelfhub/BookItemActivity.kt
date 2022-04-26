@@ -12,6 +12,7 @@ import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,14 +29,15 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
-import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
+import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -156,12 +158,12 @@ class BookItemActivity : AppCompatActivity() {
                         book.coverUrl,
                         collaboratorId,
                         book.price,
-                        localCurrencyOrUSD, priceInUSD
+                        localCurrencyOrUSD,
+                        priceInUSD
                     )
                     bookItemActivityViewModel.addToCart(cart)
                 }
             }
-
         }
 
         layout.shareBookBtn.setOnClickListener {
@@ -178,6 +180,37 @@ class BookItemActivity : AppCompatActivity() {
             )
 
             bookItemActivityViewModel.startBookDownload(workData)
+        }
+
+
+        lifecycleScope.launch {
+            bookItemActivityViewModel.getLiveBookDownloadState(
+                bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(bookId)
+            ).asFlow().collect{
+                if(it.isPresent){
+
+                    layout.downloadProgressLayout.visibility = VISIBLE
+                    val downloadBookState = it.get()
+                    val progress = downloadBookState.progress
+
+                    layout.downloadProgressBar.progress = progress
+                    layout.downloadProgressTxt.text = getString(R.string.downloading)
+
+                    if(downloadBookState.hasError){
+                        layout.downloadBtn.isEnabled = true
+                        layout.downloadProgressTxt.text = String.format(getString(R.string.unable_to_download_book))
+                    }
+
+                    if(progress>=100){
+                        layout.downloadProgressTxt.text = getString(R.string.download_complete)
+                        layout.downloadProgressLayout.visibility = GONE
+
+                        val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
+                        checkIfBookAlreadyPurchasedByUser(orderedBook)
+                        bookItemActivityViewModel.deleteDownloadState(downloadBookState)
+                    }
+                }
+            }
         }
 
         layout.openBookBtn.setOnClickListener {
@@ -308,7 +341,8 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun addAFreeBook(book:PublishedBook, countryCode:String){
         lifecycleScope.launch {
-            val serialNo = bookItemActivityViewModel.getAllOrderedBooks().size
+            val orderedBooks = bookItemActivityViewModel.getAllOrderedBooks()
+            val serialNo = if(orderedBooks.isEmpty()) 0 else orderedBooks.size
             val additionalInfo = bookItemActivityViewModel.getUser().additionInfo
             val orderedBook = OrderedBook(book.bookId,
                 0.0, userId,
@@ -503,6 +537,5 @@ class BookItemActivity : AppCompatActivity() {
         }
 
     }
-
 
 }

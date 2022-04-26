@@ -315,9 +315,17 @@
     <string name="price_free">Price: Free</string>
 
     <!-- TODO: Book Download Service -->
-    <string name="download_complete">"%s" download completed</string>
+    <string name="name_download_complete">"%s" download completed</string>
     <string name="download_error_msg">Download error %s</string>
 
     <string name="swipe_down">Swipe down load newly purchased books</string>
+
+    <string name="downloading">Downloading...</string>
+
+    <string name="download_complete">Download complete</string>
+    <string name="unable_to_download_book">Network error, unable to download book, try again</string>
+
+
+
 
 </resources>
