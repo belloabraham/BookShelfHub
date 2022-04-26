@@ -89,7 +89,7 @@ class OrderedBooksAdapter(
             title.text = bookName
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 
-            val bookId = getBookId(model.bookId)
+            val bookId = shelfViewModel.getBookIdFromPossiblyMergedIds(model.bookId)
             val pubId = model.pubId
             val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
             val fileDoesNotExist = !AppExternalStorage.getDocumentFilePath(
@@ -199,14 +199,6 @@ class OrderedBooksAdapter(
             activity.startActivity(intent, options.toBundle())
         }
 
-        private fun getBookId(value:String): String {
-            return if(value.contains("-")){
-                val pubIdAndOrBookId = value.split("-").toTypedArray()
-                pubIdAndOrBookId[1]
-            }else{
-                value
-            }
-        }
     }
 
 

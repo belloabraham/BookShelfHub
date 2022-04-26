@@ -9,7 +9,7 @@ interface IOrderedBooksRepo {
     suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook>
 
     suspend fun getOrderedBooks(userId: String): List<OrderedBook>
-
+    suspend fun addAnOrderedBook(orderedBook: OrderedBook)
     fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>>
     fun deleteAllOrderedBooks()
 

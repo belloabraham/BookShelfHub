@@ -312,11 +312,12 @@
 
     <!-- TODO: Category Activity -->
     <string name="search">Search</string>
-    <string name="valid_full_name">Enter a valid full name</string>
+    <string name="price_free">Price: Free</string>
 
     <!-- TODO: Book Download Service -->
     <string name="download_complete">"%s" download completed</string>
     <string name="download_error_msg">Download error %s</string>
 
     <string name="swipe_down">Swipe down load newly purchased books</string>
+
 </resources>

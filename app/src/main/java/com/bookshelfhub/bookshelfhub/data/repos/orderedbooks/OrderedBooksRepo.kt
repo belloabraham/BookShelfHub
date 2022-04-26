@@ -16,10 +16,7 @@ class OrderedBooksRepo @Inject constructor(
     private val orderedBooksDao: OrderedBooksDao,
     private val remoteDataSource: IRemoteDataSource,
     private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IOrderedBooksRepo {
-
-
+) :IOrderedBooksRepo {
 
      override suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook> {
         return  withContext(ioDispatcher){ orderedBooksDao.getAnOrderedBook(bookId)}
@@ -42,8 +39,8 @@ class OrderedBooksRepo @Inject constructor(
     }
 
 
-     override fun getLiveOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
-        return orderedBooksDao.getALiveOrderedBook(isbn)
+   override suspend fun addAnOrderedBook(orderedBook: OrderedBook){
+        orderedBooksDao.insertOrReplace(orderedBook)
     }
 
      override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {

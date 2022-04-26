@@ -9,6 +9,7 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.google.common.base.Optional
@@ -27,6 +28,7 @@ class ShelfViewModel @Inject constructor(
     private val connectionUtil: ConnectionUtil,
     private val settingsUtil: SettingsUtil,
     private val bookDownloadStateRepo: IBookDownloadStateRepo,
+    private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
     val userAuth:IUserAuth): ViewModel(){
     
     private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
@@ -41,9 +43,14 @@ class ShelfViewModel @Inject constructor(
         liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
     }
 
+    fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
+        return getBookIdFromPossibleMergeIdsUseCase(possiblyMergedIds)
+    }
+
     fun isConnected(): Boolean {
        return connectionUtil.isConnected()
     }
+
     fun addDownloadState(bookDownloadState:BookDownloadState){
         viewModelScope.launch {
             bookDownloadStateRepo.addDownloadState(bookDownloadState)

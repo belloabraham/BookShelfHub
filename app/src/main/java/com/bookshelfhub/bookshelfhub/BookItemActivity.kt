@@ -32,12 +32,12 @@ import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
+import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 
@@ -55,10 +55,10 @@ class BookItemActivity : AppCompatActivity() {
     private var canUserPostReview:Boolean = false
     private var priceInUSD:Double = 0.0
     private var visibilityAnimDuration:Long=0
-    private var bookOnlineVersion: PublishedBook? = null
     private lateinit var userId: String
     private lateinit var bookId:String
     private lateinit var localCurrencyOrUSD:String
+    private lateinit var localPublishedBook: PublishedBook
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +74,6 @@ class BookItemActivity : AppCompatActivity() {
         userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getPhotoUrl()
 
-
-
         bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
            checkIfBookAlreadyPurchasedByUser(orderedBook)
         })
@@ -84,17 +82,12 @@ class BookItemActivity : AppCompatActivity() {
             checkIfBookIsAlreadyInCart(cartItems)
         })
 
-        bookItemActivityViewModel.getLiveLocalPublishedBook().observe(this, Observer { pubBook->
-                val book = pubBook.get()
-                layout.title.text = book.name
-                layout.author.text = String.format(getString(R.string.by), book.author)
-                layout.cover.load(book.coverUrl, R.drawable.ic_store_item_place_holder)
-        })
+        lifecycleScope.launch {
+            localPublishedBook = bookItemActivityViewModel.getLocalPublishedBook().get()
+            showBookDetails(localPublishedBook)
+        }
 
-
-        bookItemActivityViewModel.getPublishedBookOnline().observe(this, Observer { book ->
-
-            bookOnlineVersion =  book
+        bookItemActivityViewModel.getBookRemotelyIfNotPurchased().observe(this, Observer { book ->
 
             val countryCode = Location.getCountryCode(this)
 
@@ -119,7 +112,7 @@ class BookItemActivity : AppCompatActivity() {
 
                                 if(response.isSuccessful && response.body()!=null){
                                     priceInUSD = response.body()!!.info.rate*book.price
-                                    showBookDetails(book, localCurrencyOrUSD)
+                                    showBookPrice(book, localCurrencyOrUSD)
                                 }else{
                                     Timber.e(response.message())
                                     return@launch
@@ -134,30 +127,29 @@ class BookItemActivity : AppCompatActivity() {
                     val localCurrencyIsUSD = !localCurrencyIsNotUSD
                     if(localCurrencyIsUSD){
                         priceInUSD = book.price
-                        showBookDetails(book, localCurrencyOrUSD)
+                        showBookPrice(book, localCurrencyOrUSD)
                     }
                 }
 
                 if(bookIsFree){
                     priceInUSD = book.price
-                    showBookDetails(book, localCurrencyOrUSD)
+                    layout.price.text = getString(R.string.price_free)
+                    addAFreeBook(book, countryCode)
+                    showBooksItemLayout()
                 }
 
             }
 
         })
 
-
         layout.addToCartBtn.setOnClickListener {
 
             lifecycleScope.launch {
-                val collaboratorId:String? = bookItemActivityViewModel.getCollaboratorIdForThisBook()
-
-
-                onlineBookPriceInUSD?.let {
-                    val book = bookOnlineVersion!!
-                    val priceInUSD:Double? = if(it == book.price) null else it
-
+                val userHaveNotPurchasedBookBefore = !bookItemActivityViewModel.getBookAlreadyPurchasedByUser()
+                if (userHaveNotPurchasedBookBefore) {
+                    val collaboratorId: String? =
+                        bookItemActivityViewModel.getCollaboratorIdForThisBook()
+                    val book = localPublishedBook
                     val cart = CartItem(
                         userId, book.bookId,
                         book.name,
@@ -168,11 +160,9 @@ class BookItemActivity : AppCompatActivity() {
                         book.price,
                         localCurrencyOrUSD, priceInUSD
                     )
-
                     bookItemActivityViewModel.addToCart(cart)
                 }
             }
-
 
         }
 
@@ -191,14 +181,13 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.aboutBookCard.setOnClickListener {
             lifecycleScope.launch {
-                val book = bookItemActivityViewModel.getLocalPublishedBook().get()
-                startBookInfoActivity(bookId,  title = book.name, R.id.bookInfoFragment)
+                startBookInfoActivity(bookId,  title = localPublishedBook.name, R.id.bookInfoFragment)
             }
         }
 
         layout.similarBooksCard.setOnClickListener {
             val intent = Intent(this, BookCategoryActivity::class.java)
-            intent.putExtra(Category.TITLE, bookOnlineVersion!!.category)
+            intent.putExtra(Category.TITLE, localPublishedBook.category)
             startActivity(intent)
         }
 
@@ -312,12 +301,32 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
+    private fun addAFreeBook(book:PublishedBook, countryCode:String){
+        lifecycleScope.launch {
+            val serialNo = bookItemActivityViewModel.getAllOrderedBooks().size
+            val additionalInfo = bookItemActivityViewModel.getUser().additionInfo
+            val orderedBook = OrderedBook(book.bookId,
+                0.0, userId,
+                book.name, book.coverUrl,
+                book.pubId, null,
+                countryCode,null,
+                getString(R.string.app_name), null,
+                DateTimeUtil.getMonth(), DateTimeUtil.getYear(), serialNo.toLong(),
+                additionalInfo
+            )
+            bookItemActivityViewModel.addAnOrderedBook(orderedBook)
+        }
+    }
+
 
     private fun checkIfBookAlreadyPurchasedByUser(orderedBook: Optional<OrderedBook>){
 
-        canUserPostReview = orderedBook.isPresent
+        val bookId = bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this.bookId)
+        val bookAlreadyPurchasedByUser = bookItemActivityViewModel.getBookAlreadyPurchasedByUser()
 
-        if (orderedBook.isPresent){
+        canUserPostReview = bookAlreadyPurchasedByUser
+
+        if (bookAlreadyPurchasedByUser){
             val book = orderedBook.get()
             val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
 
@@ -332,6 +341,7 @@ class BookItemActivity : AppCompatActivity() {
                 showDownloadBookButtonAndHideOthers()
             }
 
+            showBooksItemLayout()
         }
     }
 
@@ -349,17 +359,19 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun showBookDetails(book: PublishedBook, buyerVisibleCurrency:String){
+    private fun showBookPrice(book: PublishedBook, buyerVisibleCurrency:String){
+        layout.price.text = if(book.price == priceInUSD) String.format(getString(R.string.usd_price), book.price)
+        else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)
 
-        layout.progressBar.visibility = GONE
+        showBooksItemLayout()
+    }
 
-        if(book.price == priceInUSD){
-            layout.price.text = String.format(getString(R.string.usd_price), book.price)
-        }else{
-            layout.price.text = String.format(getString(R.string.local_price_and_usd),
-                buyerVisibleCurrency,book.price,
-                priceInUSD)
-        }
+    private fun showBookDetails(book: PublishedBook){
+
+        layout.title.text = book.name
+        layout.author.text = String.format(getString(R.string.by), book.author)
+
+        layout.cover.setImageBitmap(IconUtil.getBitmap(book.coverUrl))
 
         val similarBooksAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
 
@@ -373,9 +385,11 @@ class BookItemActivity : AppCompatActivity() {
         layout.noRatingTxt.text = "$rating"
         layout.noOfDownloadsText.text = Downloads.getHumanReadable(book.totalDownloads)
 
-
         loadSimilarBooks(book.category, similarBooksAdapter)
+    }
 
+    private fun showBooksItemLayout(){
+        layout.progressBar.visibility = GONE
         layout.bookItemLayout.visibility = VISIBLE
     }
 
@@ -416,7 +430,7 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun shareBook(){
         bookItemActivityViewModel.getBookShareLink()?.let {
-            startActivity(ShareUtil.getShareIntent(it, bookOnlineVersion!!.name))
+            startActivity(ShareUtil.getShareIntent(it, localPublishedBook.name))
         }
     }
 
@@ -474,10 +488,11 @@ class BookItemActivity : AppCompatActivity() {
     private fun startBookActivity(){
         lifecycleScope.launch {
             val book = bookItemActivityViewModel.getOptionalOrderedBook(bookId).get()
+            val bookId = bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(book.bookId)
             val intent = Intent(this@BookItemActivity, BookActivity::class.java)
             with(intent){
                 putExtra(Book.NAME, book.name)
-                putExtra(Book.ID, book.bookId)
+                putExtra(Book.ID, bookId)
             }
             startActivity(intent)
         }

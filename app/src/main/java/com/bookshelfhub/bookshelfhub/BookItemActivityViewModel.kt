@@ -19,10 +19,10 @@ import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -48,6 +48,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val userRepo: IUserRepo,
   private val currencyConversionAPI: ICurrencyConversionAPI,
   private val worker: Worker,
+  private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
   private val referralRepo: IReferralRepo,
   private val searchHistoryRepo: ISearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
@@ -59,6 +60,7 @@ class BookItemActivityViewModel @Inject constructor(
   private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
+  private var userAlreadyPurchasedBook = false
 
 
   private val userId = userAuth.getUserId()
@@ -85,23 +87,27 @@ class BookItemActivityViewModel @Inject constructor(
     orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
     viewModelScope.launch{
+      userAlreadyPurchasedBook = orderedBooksRepo.getAnOrderedBook(bookId).isPresent
       user = userRepo.getUser(userId).get()
       liveUserReview = userReviewRepo.getLiveUserReview(bookId, userId)
     }
 
 
     viewModelScope.launch {
-      try {
-        publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
-      }catch (e:Exception){
-        Timber.e(e)
-        return@launch
+      if(!userAlreadyPurchasedBook){
+        try {
+          publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
+        }catch (e:Exception){
+          Timber.e(e)
+          return@launch
+        }
       }
+
     }
 
     viewModelScope.launch {
       try {
-        userReviews.value  = userReviewRepo.getListOfBookReviews(bookId, 3, excludedDocId =  userId)
+        userReviews.value  = userReviewRepo.getRemoteListOfBookReviews(bookId, 3, excludedDocId =  userId)
       }catch (e:Exception){
         Timber.e(e)
         return@launch
@@ -112,6 +118,11 @@ class BookItemActivityViewModel @Inject constructor(
       addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }
 
+  }
+
+
+  fun getBookAlreadyPurchasedByUser(): Boolean {
+    return userAlreadyPurchasedBook
   }
 
   suspend fun getLocalPublishedBook(): Optional<PublishedBook> {
@@ -148,6 +159,11 @@ class BookItemActivityViewModel @Inject constructor(
     return bookShareUrl
   }
 
+  fun addAnOrderedBook(orderedBook: OrderedBook){
+    viewModelScope.launch {
+      orderedBooksRepo.addAnOrderedBook(orderedBook)
+    }
+  }
 
   suspend fun convertCurrency(fromCurrency:String, toCurrency:String, amount:Double): Response<Fixer> {
     val fixerAccessKey =  settingsUtil.getString(Settings.FIXER_ACCESS_KEY)!!
@@ -156,6 +172,14 @@ class BookItemActivityViewModel @Inject constructor(
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
     return liveUserReview
+  }
+
+  suspend fun getAllOrderedBooks(): List<OrderedBook> {
+    return orderedBooksRepo.getOrderedBooks(userId)
+  }
+
+  fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
+   return getBookIdFromPossibleMergeIdsUseCase(possiblyMergedIds)
   }
 
   fun getBookId():String{
@@ -211,7 +235,7 @@ class BookItemActivityViewModel @Inject constructor(
     return userReviews
   }
 
-  fun getPublishedBookOnline(): LiveData<PublishedBook> {
+  fun getBookRemotelyIfNotPurchased(): LiveData<PublishedBook> {
     return publishedBookOnline
   }
 

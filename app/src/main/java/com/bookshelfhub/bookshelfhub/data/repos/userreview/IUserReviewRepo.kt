@@ -24,7 +24,7 @@ interface IUserReviewRepo {
     ): Void?
 
     suspend fun getRemoteUserReview(bookId: String, userId: String)
-    suspend fun getListOfBookReviews(
+    suspend fun getRemoteListOfBookReviews(
         bookId: String,
         limit: Long,
         excludedDocId: String

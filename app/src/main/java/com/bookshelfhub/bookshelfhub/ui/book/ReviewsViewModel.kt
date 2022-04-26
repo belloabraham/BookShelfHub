@@ -23,7 +23,7 @@ class ReviewsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             try {
-                 userReviews.value = userReviewRepo.getListOfBookReviews(bookId, limit = 300, userId)
+                 userReviews.value = userReviewRepo.getRemoteListOfBookReviews(bookId, limit = 300, userId)
             }catch (e:Exception){
                 Timber.e(e)
                 return@launch

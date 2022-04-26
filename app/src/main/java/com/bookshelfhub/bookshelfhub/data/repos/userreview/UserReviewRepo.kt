@@ -26,7 +26,8 @@ class UserReviewRepo @Inject constructor(
     }
 
       override suspend fun getLiveUserReview(bookId:String, userId:String): LiveData<Optional<UserReview>> {
-           if(!userReviewDao.getUserReview(bookId).isPresent){
+          val noUserReview = !userReviewDao.getUserReview(bookId).isPresent
+           if(noUserReview){
              getRemoteUserReview(bookId, userId)
           }
          return userReviewDao.getOptionalLiveUserReview(bookId)
@@ -88,7 +89,7 @@ class UserReviewRepo @Inject constructor(
         }
     }
 
-    override suspend  fun getListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {
+    override suspend  fun getRemoteListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {
        return withContext(ioDispatcher) {
            remoteDataSource.getListOfDataWhereAsync(
             RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
