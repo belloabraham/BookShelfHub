@@ -5,6 +5,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.sources.local.BookDownloadDao
 import com.bookshelfhub.bookshelfhub.data.sources.local.BookVideosDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
@@ -14,9 +15,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookDownloadStateRepo @Inject constructor(
-    private val bookDownloadDao: BookDownloadDao,
-    private val ioDispatcher: CoroutineDispatcher = IO,
+    roomInstance: RoomInstance
 ) : IBookDownloadStateRepo {
+
+    private val ioDispatcher: CoroutineDispatcher = IO
+    private val bookDownloadDao = roomInstance.bookDownloadStateDao()
+
 
     override fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
         return bookDownloadDao.getLiveBookDownloadState(bookId)

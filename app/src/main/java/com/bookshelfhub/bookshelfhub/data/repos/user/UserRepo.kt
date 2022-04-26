@@ -5,6 +5,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.User
 import com.bookshelfhub.bookshelfhub.data.models.entities.remote.RemoteUser
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.local.UserDao
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
@@ -19,13 +20,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepo @Inject constructor(
-    private val userDao: UserDao,
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
     private val worker: Worker,
-    private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IUserRepo {
 
+) : IUserRepo {
+    private val ioDispatcher: CoroutineDispatcher = IO
+    private val userDao = roomInstance.userDao()
 
     override suspend fun getRemoteUserDataSnapshot(userId:String): RemoteUser? {
        return withContext(ioDispatcher) {

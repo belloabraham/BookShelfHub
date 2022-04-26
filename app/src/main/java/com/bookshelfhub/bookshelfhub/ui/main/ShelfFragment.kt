@@ -24,6 +24,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.android.material.appbar.AppBarLayout
@@ -42,7 +43,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
     private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
-    private var orderedBookList:List<OrderedBook> = emptyList()
+    private var orderedBookList:List<OrderedBookUiState> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
 
@@ -53,7 +54,7 @@ class ShelfFragment : Fragment() {
 
 
     private var binding: FragmentShelfBinding?=null
-    private var mOrderedBooksAdapter: ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>>?=null
+    private var mOrderedBooksAdapter: ListAdapter<OrderedBookUiState, RecyclerViewHolder<OrderedBookUiState>>?=null
     private var mSearchListAdapter: ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>>?=null
 
     override fun onCreateView(
@@ -66,7 +67,6 @@ class ShelfFragment : Fragment() {
         mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
         mOrderedBooksAdapter = OrderedBooksAdapter(
             requireActivity(),
-            worker,
             shelfViewModel,
             viewLifecycleOwner)
             .getOrderedBooksAdapter()
@@ -81,7 +81,7 @@ class ShelfFragment : Fragment() {
 
 
         viewLifecycleOwner.lifecycleScope.launch {
-            shelfViewModel.getLiveOrderedBooks().asFlow()
+            shelfViewModel.getLiveListOfOrderedBooksUiState().asFlow()
                 .collectLatest { orderedBooks ->
                     //Hide just in case data get load by user swipe to refresh
                     layout.swipeRefreshLayout.isRefreshing = false

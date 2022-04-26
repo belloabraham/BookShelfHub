@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.userreview
 
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.local.UserReviewDao
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
@@ -15,11 +16,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class UserReviewRepo @Inject constructor(
-    private val userReviewDao: UserReviewDao,
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
+
+) : IUserReviewRepo {
+    private val userReviewDao = roomInstance.userReviewsDao()
     private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IUserReviewRepo {
 
      override suspend fun addUserReviews(userReviews: List<UserReview>) {
         withContext(ioDispatcher){userReviewDao.insertAllOrReplace(userReviews)}

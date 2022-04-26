@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.Dispatchers
 
 
 @Module
@@ -34,8 +35,8 @@ object ViewModelModule {
 
     @ViewModelScoped
     @Provides
-    fun provideBookDownloadRepo(roomInstance:RoomInstance): IBookDownloadStateRepo {
-        return BookDownloadStateRepo(roomInstance.bookDownloadStateDao())
+    fun provideBookDownloadStateRepo(roomInstance:RoomInstance): IBookDownloadStateRepo {
+        return BookDownloadStateRepo(roomInstance)
     }
 
 
@@ -54,32 +55,32 @@ object ViewModelModule {
     @ViewModelScoped
     @Provides
     fun providePaymentCardRepo(roomInstance:RoomInstance): IPaymentCardRepo {
-        return PaymentCardRepo(roomInstance.paymentCardDao())
+        return PaymentCardRepo(roomInstance)
     }
 
 
     @ViewModelScoped
     @Provides
     fun provideBookVideosRepo(remoteDataSource: IRemoteDataSource, roomInstance:RoomInstance): IBookVideosRepo {
-        return BookVideosRepo(remoteDataSource, roomInstance.bookVideosDao())
+        return BookVideosRepo( roomInstance, remoteDataSource)
     }
 
     @ViewModelScoped
     @Provides
     fun provideReferralRepo(roomInstance:RoomInstance): IReferralRepo {
-        return ReferralRepo(roomInstance.referralDao())
+        return ReferralRepo(roomInstance)
     }
 
     @ViewModelScoped
     @Provides
     fun provideReadHistory(roomInstance:RoomInstance): IReadHistoryRepo {
-        return ReadHistoryRepo(roomInstance.readHistoryDao())
+        return ReadHistoryRepo(roomInstance)
     }
 
     @ViewModelScoped
     @Provides
     fun provideSearHistoryRepo(roomInstance:RoomInstance): ISearchHistoryRepo {
-        return SearchHistoryRepo(roomInstance.searchHistoryDao())
+        return SearchHistoryRepo(roomInstance)
     }
 
 }

@@ -17,7 +17,6 @@ data class PaymentTransaction(
     override val orderedCountryCode: String?,
     override var transactionReference: String?=null,
     override val password: String? = null,
-    override val downloadUrl: String? = null,
     override val dateTime: Timestamp?=null,
     override val additionInfo: String?,
 ): IOrderedBooks

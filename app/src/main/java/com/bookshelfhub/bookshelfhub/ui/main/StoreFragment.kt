@@ -29,6 +29,7 @@ import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -481,7 +482,7 @@ class StoreFragment : Fragment() {
         layout.travelRecView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
-    private  fun loadBooks(list:PagingData<PublishedBook>, adapter: StoreListAdapter, layout:LinearLayoutCompat){
+    private  fun loadBooks(list:PagingData<PublishedBookUiState>, adapter: StoreListAdapter, layout:LinearLayoutCompat){
 
         adapter.addLoadStateListener { loadState ->
             layout.isVisible =

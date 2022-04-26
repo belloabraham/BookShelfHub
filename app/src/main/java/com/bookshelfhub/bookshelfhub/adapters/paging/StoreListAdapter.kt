@@ -13,11 +13,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
-import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
-class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, StoreListAdapter.ViewHolder>(diffCallBack){
+class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBookUiState>): PagingDataAdapter<PublishedBookUiState, StoreListAdapter.ViewHolder>(diffCallBack){
 
 
     override fun onBindViewHolder(vh: ViewHolder, position: Int) {
@@ -37,7 +36,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
        private val title: TextView = itemView.findViewById(R.id.title)
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
-        fun bindToView(model: PublishedBook, activity: Activity){
+        fun bindToView(model: PublishedBookUiState, activity: Activity){
 
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
             title.background = null

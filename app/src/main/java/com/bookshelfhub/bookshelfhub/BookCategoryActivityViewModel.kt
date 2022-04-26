@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,8 +25,8 @@ class BookCategoryActivityViewModel @Inject constructor(
   private  val cartItemsRepo: ICartItemsRepo,
   val userAuth: IUserAuth) : ViewModel(){
 
-  private var booksByCategory: List<PublishedBook> = emptyList()
-  private lateinit var flowOfCategory:Flow<PagingData<PublishedBook>>
+  private var booksByCategory: List<PublishedBookUiState> = emptyList()
+  private lateinit var flowOfCategory:Flow<PagingData<PublishedBookUiState>>
 
   private val userId = userAuth.getUserId()
 
@@ -64,7 +65,7 @@ class BookCategoryActivityViewModel @Inject constructor(
     return category
   }
 
-  fun getFlowOfBookCategory(): Flow<PagingData<PublishedBook>> {
+  fun getFlowOfBookCategory(): Flow<PagingData<PublishedBookUiState>> {
     return flowOfCategory
   }
 
@@ -72,25 +73,25 @@ class BookCategoryActivityViewModel @Inject constructor(
     return cartItemsRepo.getLiveTotalCartItemsNo(userId)
   }
 
-  private fun getFlowOfTrendingBooks(): Flow<PagingData<PublishedBook>> {
+  private fun getFlowOfTrendingBooks(): Flow<PagingData<PublishedBookUiState>> {
     return  Pager(config){
       publishedBooksRepo.getTrendingBooksPageSource()
     }.flow
   }
 
-  private fun getFowOfRecommendedBooks(): Flow<PagingData<PublishedBook>> {
+  private fun getFowOfRecommendedBooks(): Flow<PagingData<PublishedBookUiState>> {
     return  Pager(config){
       publishedBooksRepo.getRecommendedBooksPageSource()
     }.flow
   }
 
-  private fun getFlowOfBooksByCategory(): Flow<PagingData<PublishedBook>> {
+  private fun getFlowOfBooksByCategory(): Flow<PagingData<PublishedBookUiState>> {
     return  Pager(config){
       publishedBooksRepo.getBooksByCategoryPageSource(category)
     }.flow
   }
 
-  fun getBooksByCategory(): List<PublishedBook> {
+  fun getBooksByCategory(): List<PublishedBookUiState> {
     return booksByCategory
   }
 

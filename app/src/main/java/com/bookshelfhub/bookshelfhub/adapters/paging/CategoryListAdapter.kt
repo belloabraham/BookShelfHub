@@ -14,10 +14,11 @@ import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
-class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, CategoryListAdapter.ViewHolder>(diffCallBack){
+class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBookUiState>): PagingDataAdapter<PublishedBookUiState, CategoryListAdapter.ViewHolder>(diffCallBack){
 
 
     override fun onBindViewHolder(vh: ViewHolder, position: Int) {
@@ -37,7 +38,7 @@ class CategoryListAdapter(private val activity: Activity, diffCallBack:DiffUtil.
        private val title: TextView = itemView.findViewById(R.id.title)
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
-        fun bindToView(model: PublishedBook, activity: Activity){
+        fun bindToView(model: PublishedBookUiState, activity: Activity){
 
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
             title.background = null

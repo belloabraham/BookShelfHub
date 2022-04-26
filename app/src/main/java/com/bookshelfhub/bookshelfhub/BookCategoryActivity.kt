@@ -19,6 +19,7 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookCategoryBinding
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 class BookCategoryActivity : AppCompatActivity() {
 
     private lateinit var layout:ActivityBookCategoryBinding
-    private var listOfBooks = emptyList<PublishedBook>()
+    private var listOfBooks = emptyList<PublishedBookUiState>()
     private val bookCategoryActivityViewModel:BookCategoryActivityViewModel by viewModels()
 
     private lateinit var bookRequestMsg:String

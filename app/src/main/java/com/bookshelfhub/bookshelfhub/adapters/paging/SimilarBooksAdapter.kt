@@ -13,10 +13,11 @@ import com.bookshelfhub.bookshelfhub.BookItemActivity
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 
-class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBook>): PagingDataAdapter<PublishedBook, SimilarBooksAdapter.ViewHolder>(diffCallBack){
+class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.ItemCallback<PublishedBookUiState>): PagingDataAdapter<PublishedBookUiState, SimilarBooksAdapter.ViewHolder>(diffCallBack){
 
     override fun onBindViewHolder(vh: ViewHolder, position: Int) {
         val model = getItem(position)
@@ -34,7 +35,7 @@ class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.
     ){
        private val imageView: ImageView = itemView.findViewById(R.id.itemImageView)
 
-        fun bindToView(model: PublishedBook, activity: Activity){
+        fun bindToView(model: PublishedBookUiState, activity: Activity){
 
               imageView.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 

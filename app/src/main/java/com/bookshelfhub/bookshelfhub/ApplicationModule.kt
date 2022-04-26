@@ -1,6 +1,8 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.BookDownloadStateRepo
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.BookmarksRepo
@@ -30,6 +32,8 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessagin
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
+import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.ICloudStorage
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
 import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
 import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
@@ -56,8 +60,15 @@ object ApplicationModule {
 
     @Singleton
     @Provides
+    fun provideCloudStorage(@ApplicationContext context: Context): ICloudStorage {
+        return FirebaseCloudStorage(context)
+    }
+
+
+    @Singleton
+    @Provides
     fun provideOrderedBooksRepo(roomInstance:RoomInstance, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
-        return OrderedBooksRepo(roomInstance.orderedBooksDao(), remoteDataSource)
+        return OrderedBooksRepo(roomInstance, remoteDataSource)
     }
 
     @Singleton
@@ -69,13 +80,13 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun providePublishedBooksRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource): IPublishedBooksRepo {
-        return PublishedBooksRepo(roomInstance.publishedBooksDao(), remoteDataSource)
+        return PublishedBooksRepo(roomInstance, remoteDataSource)
     }
 
     @Singleton
     @Provides
     fun provideUserReviewRepo(roomInstance: RoomInstance, remoteDataSource:IRemoteDataSource): IUserReviewRepo {
-        return UserReviewRepo(roomInstance.userReviewsDao(), remoteDataSource)
+        return UserReviewRepo(roomInstance, remoteDataSource)
     }
 
     @Singleton
@@ -106,32 +117,32 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun provideUserRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IUserRepo {
-        return UserRepo(roomInstance.userDao(), remoteDataSource, worker)
+        return UserRepo(roomInstance, remoteDataSource, worker)
     }
 
     @Singleton
     @Provides
     fun provideCartRepo(roomInstance: RoomInstance, worker: Worker): ICartItemsRepo {
-        return CartItemsRepo(roomInstance.cartItemsDao(), worker)
+        return CartItemsRepo(roomInstance, worker)
     }
 
     @Singleton
     @Provides
     fun providePaymentTransactionRepo(roomInstance: RoomInstance, worker: Worker, remoteDataSource: IRemoteDataSource): IPaymentTransactionRepo {
-        return PaymentTransactionRepo(roomInstance.paymentTransDao(), worker, remoteDataSource)
+        return PaymentTransactionRepo(roomInstance, worker, remoteDataSource)
     }
 
     @Singleton
     @Provides
     fun provideBookmarkRepo(roomInstance: RoomInstance, worker:Worker, remoteDataSource: IRemoteDataSource): IBookmarksRepo {
-        return BookmarksRepo(roomInstance.bookmarksDao(), worker, remoteDataSource)
+        return BookmarksRepo(roomInstance, worker, remoteDataSource)
     }
 
 
     @Singleton
     @Provides
     fun provideBookInterestRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IBookInterestRepo {
-        return BookInterestRepo(roomInstance.bookInterestDao(), remoteDataSource, worker)
+        return BookInterestRepo(roomInstance, remoteDataSource, worker)
     }
 
     @Singleton

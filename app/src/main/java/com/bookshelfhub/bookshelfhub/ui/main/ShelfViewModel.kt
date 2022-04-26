@@ -7,6 +7,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
+import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
@@ -63,6 +64,9 @@ class ShelfViewModel @Inject constructor(
        return connectionUtil.isConnected()
     }
 
+     fun getLiveListOfOrderedBooksUiState(): LiveData<List<OrderedBookUiState>> {
+      return  orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
+    }
 
     fun deleteDownloadState(bookDownloadState: BookDownloadState){
         viewModelScope.launch {
@@ -95,8 +99,7 @@ class ShelfViewModel @Inject constructor(
     fun getRemoteOrderedBooks(){
             viewModelScope.launch {
                 if(connectionUtil.isConnected()){
-                val localOrderedBooks = orderedBooksRepo.getOrderedBooks(userId)
-                val lastOrderedBookSN =  if(localOrderedBooks.isEmpty()) 0 else localOrderedBooks.size
+                val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
                 try {
                    val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
                        userId,
@@ -110,7 +113,6 @@ class ShelfViewModel @Inject constructor(
             }
         }
     }
-
 
     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
         return shelfShelfSearchHistory

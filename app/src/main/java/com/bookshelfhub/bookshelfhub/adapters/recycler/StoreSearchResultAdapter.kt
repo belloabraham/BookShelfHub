@@ -14,12 +14,9 @@ import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-
-/**
- * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
- */
 
 class StoreSearchResultAdapter (private val context:Context) {
 
@@ -76,11 +73,11 @@ class StoreSearchResultAdapter (private val context:Context) {
         }
     }
 
-    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<PublishedBook>(view) {
+    private class SearchResultViewHolder(view: View) : RecyclerViewHolder<PublishedBookUiState>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val author: TextView = view.findViewById(R.id.author)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(model: PublishedBook, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
+        fun bindToView(model: PublishedBookUiState, context: Context, storeSearchResultAdapter: StoreSearchResultAdapter){
             title.text = model.name
             author.text = model.author
             itemCardView.setOnClickListener {

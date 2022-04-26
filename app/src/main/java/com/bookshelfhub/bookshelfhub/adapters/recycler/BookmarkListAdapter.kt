@@ -13,11 +13,6 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-
-/**
- * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
- */
-
 class BookmarkListAdapter( private val context: Context) {
 
      fun getBookmarkListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>> {

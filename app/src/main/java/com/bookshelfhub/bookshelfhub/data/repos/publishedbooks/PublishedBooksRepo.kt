@@ -3,7 +3,9 @@ package com.bookshelfhub.bookshelfhub.data.repos.publishedbooks
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.sources.local.PublishedBooksDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.google.common.base.Optional
@@ -14,14 +16,15 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PublishedBooksRepo @Inject constructor(
-    private val publishedBooksDao: PublishedBooksDao,
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
-    private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IPublishedBooksRepo {
+) : IPublishedBooksRepo {
 
-     override fun getALiveOptionalPublishedBook(isbn: String): LiveData<Optional<PublishedBook>> {
-        return publishedBooksDao.getLivePublishedBook(isbn)
+    private val publishedBooksDao = roomInstance.publishedBooksDao()
+    private val ioDispatcher: CoroutineDispatcher = IO
+
+     override fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>> {
+        return publishedBooksDao.getLivePublishedBook(bookId)
     }
 
     override suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {
@@ -31,6 +34,10 @@ class PublishedBooksRepo @Inject constructor(
                 PublishedBook::class.java
             )
         }
+    }
+
+    override suspend fun getListOfPublishedBooksUiState(): List<PublishedBookUiState> {
+      return  publishedBooksDao.getListOfPublishedBooksUiState()
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
@@ -71,9 +78,12 @@ class PublishedBooksRepo @Inject constructor(
         }
     }
 
-     override suspend fun getPublishedBook(isbn: String): Optional<PublishedBook> {
+     override suspend fun getPublishedBook(bookId: String): Optional<PublishedBook> {
+        return withContext(ioDispatcher){publishedBooksDao.getPublishedBook(bookId)}
+    }
 
-        return withContext(ioDispatcher){publishedBooksDao.getPublishedBook(isbn)}
+    override suspend fun getTotalNoOfPublishedBooks(): Int {
+     return  publishedBooksDao.getTotalNoOfPublishedBooks()
     }
 
      override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
@@ -92,35 +102,29 @@ class PublishedBooksRepo @Inject constructor(
          withContext(ioDispatcher){publishedBooksDao.deleteAll(unPublishedBooks)}
     }
 
-     override suspend fun getPublishedBooks(): List<PublishedBook> {
-        return withContext(ioDispatcher){publishedBooksDao.getPublishedBooks()}
-    }
 
-     override suspend fun getTrendingBooks(): List<PublishedBook> {
+     override suspend fun getTrendingBooks(): List<PublishedBookUiState> {
         return publishedBooksDao.getTrendingBooks()
     }
 
-     override suspend fun getRecommendedBooks(): List<PublishedBook> {
+     override suspend fun getRecommendedBooks(): List<PublishedBookUiState> {
         return publishedBooksDao.getRecommendedBooks()
     }
 
-   override suspend fun getBooksByCategory(category:String): List<PublishedBook>{
+   override suspend fun getBooksByCategory(category:String): List<PublishedBookUiState>{
         return publishedBooksDao.getBooksByCategory(category)
     }
 
-     override fun getLivePublishedBooks(): LiveData<List<PublishedBook>> {
-        return publishedBooksDao.getLivePublishedBooks()
-    }
 
-     override fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBook> {
+     override fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBookUiState> {
         return publishedBooksDao.getBooksByCategoryPageSource(category)
     }
 
-     override fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBook> {
+     override fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBookUiState> {
         return publishedBooksDao.getTrendingBooksPageSource()
     }
 
-     override fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBook> {
+     override fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBookUiState> {
         return publishedBooksDao.getRecommendedBooksPageSource()
     }
     

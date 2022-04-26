@@ -8,9 +8,9 @@ import kotlinx.coroutines.withContext
 
 class PrivateKeysRepo(
     private val databaseRef: DatabaseReference, 
-    private val ioDispatcher: CoroutineDispatcher = IO) :
-    IPrivateKeysRepo {
+    ) : IPrivateKeysRepo {
 
+    private val ioDispatcher: CoroutineDispatcher = IO
      override suspend fun <T : Any> getPrivateKeys(
         key: String,
         type: Class<T>,

@@ -20,6 +20,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.FileExtension
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.ui.main.ShelfViewModel
@@ -29,18 +30,14 @@ import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-/**
- * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
- */
 
 class OrderedBooksAdapter(
     private val activity: Activity,
-    private val worker: Worker,
     private val shelfViewModel: ShelfViewModel,
     private val lifecycleOwner: LifecycleOwner,
 ) {
 
-    fun getOrderedBooksAdapter(): ListAdapter<OrderedBook, RecyclerViewHolder<OrderedBook>> {
+    fun getOrderedBooksAdapter(): ListAdapter<OrderedBookUiState, RecyclerViewHolder<OrderedBookUiState>> {
 
         return adapterOf {
 
@@ -64,7 +61,7 @@ class OrderedBooksAdapter(
         }
     }
 
-    private class OrderedBookViewHolder(view: View) : RecyclerViewHolder<OrderedBook>(view) {
+    private class OrderedBookViewHolder(view: View) : RecyclerViewHolder<OrderedBookUiState>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val imageView: ImageView = view.findViewById(R.id.itemImageView)
         private val progressBar: ProgressBar = view.findViewById(R.id.progress)
@@ -73,7 +70,7 @@ class OrderedBooksAdapter(
 
 
         fun bindToView(
-            model: OrderedBook,
+            model: OrderedBookUiState,
             activity: Activity,
             shelfViewModel: ShelfViewModel,
             lifecycleOwner: LifecycleOwner,

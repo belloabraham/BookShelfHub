@@ -12,9 +12,6 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-/**
- * Custom Recycler View Adapter using Kiel Library @https://github.com/ibrahimyilmaz/kiel
- */
 
 class CartItemsListAdapter(private val context: Context) {
 

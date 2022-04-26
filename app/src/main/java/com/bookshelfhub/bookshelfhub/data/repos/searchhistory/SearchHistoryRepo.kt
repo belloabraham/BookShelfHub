@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.searchhistory
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.local.SearchHistoryDao
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -10,11 +11,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchHistoryRepo @Inject constructor(
-    private val searchHistoryDao: SearchHistoryDao,
+    roomInstance: RoomInstance,
+
+    ) : ISearchHistoryRepo {
+
     private val ioDispatcher: CoroutineDispatcher = IO
-    ) :
-    ISearchHistoryRepo {
-    
+    private val searchHistoryDao = roomInstance.searchHistoryDao()
+
     override fun getLiveStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>> {
         return searchHistoryDao.getLiveStoreSearchHistory(userId)
     }

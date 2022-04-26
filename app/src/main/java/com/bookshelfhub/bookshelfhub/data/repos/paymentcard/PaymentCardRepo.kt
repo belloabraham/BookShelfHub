@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.paymentcard
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.sources.local.PaymentCardDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
@@ -10,10 +11,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PaymentCardRepo @Inject constructor(
-    private val paymentCardDao: PaymentCardDao,
+    roomInstance: RoomInstance,
+) : IPaymentCardRepo {
+
     private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IPaymentCardRepo {
+    private val paymentCardDao = roomInstance.paymentCardDao()
 
      override suspend fun addPaymentCard(paymentCard: PaymentCard) {
         withContext(ioDispatcher){ paymentCardDao.insertOrReplace(paymentCard)}

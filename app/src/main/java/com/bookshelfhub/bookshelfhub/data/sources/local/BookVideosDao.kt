@@ -8,6 +8,6 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
 @Dao
 abstract class BookVideosDao : BaseDao<BookVideo> {
 
-    @Query("SELECT * FROM BookVideos WHERE isbn = :isbn")
-    abstract fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideo>>
+    @Query("SELECT * FROM BookVideos WHERE bookId = :bookId")
+    abstract fun getLiveListOfBookVideos(bookId: String): LiveData<List<BookVideo>>
 }

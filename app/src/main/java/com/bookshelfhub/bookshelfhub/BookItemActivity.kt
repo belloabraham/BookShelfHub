@@ -21,7 +21,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
 import com.bookshelfhub.bookshelfhub.adapters.paging.SimilarBooksAdapter
-import com.bookshelfhub.bookshelfhub.adapters.recycler.ReviewListAdapter
+import com.bookshelfhub.bookshelfhub.adapters.recycler.UserReviewListAdapter
 import com.bookshelfhub.bookshelfhub.data.*
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookItemBinding
@@ -37,7 +37,6 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -180,6 +179,7 @@ class BookItemActivity : AppCompatActivity() {
             )
 
             bookItemActivityViewModel.startBookDownload(workData)
+            layout.downloadBtn.visibility = GONE
         }
 
 
@@ -197,7 +197,7 @@ class BookItemActivity : AppCompatActivity() {
                     layout.downloadProgressTxt.text = getString(R.string.downloading)
 
                     if(downloadBookState.hasError){
-                        layout.downloadBtn.isEnabled = true
+                        layout.downloadBtn.visibility = VISIBLE
                         layout.downloadProgressTxt.text = String.format(getString(R.string.unable_to_download_book))
                     }
 
@@ -207,6 +207,7 @@ class BookItemActivity : AppCompatActivity() {
 
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
                         checkIfBookAlreadyPurchasedByUser(orderedBook)
+                        layout.downloadBtn.visibility = VISIBLE
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
                     }
                 }
@@ -286,7 +287,7 @@ class BookItemActivity : AppCompatActivity() {
 
             if (reviews.isNotEmpty()){
                 layout.ratingsAndReviewLayout.visibility = VISIBLE
-                val reviewsAdapter = ReviewListAdapter().getAdapter()
+                val reviewsAdapter = UserReviewListAdapter().getAdapter()
                 layout.reviewRecView.adapter = reviewsAdapter
                 reviewsAdapter.submitList(reviews)
             }
@@ -341,8 +342,7 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun addAFreeBook(book:PublishedBook, countryCode:String){
         lifecycleScope.launch {
-            val orderedBooks = bookItemActivityViewModel.getAllOrderedBooks()
-            val serialNo = if(orderedBooks.isEmpty()) 0 else orderedBooks.size
+            val serialNo = bookItemActivityViewModel.getTotalNoOfOrderedBooks()
             val additionalInfo = bookItemActivityViewModel.getUser().additionInfo
             val orderedBook = OrderedBook(book.bookId,
                 0.0, userId,

@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.bookvideos
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
 import com.bookshelfhub.bookshelfhub.data.sources.local.BookVideosDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,13 +12,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookVideosRepo @Inject constructor(
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
-    private val bookVideosDao: BookVideosDao,
-    private val ioDispatcher: CoroutineDispatcher = IO,
-) :
+    ) :IBookVideosRepo {
 
-    IBookVideosRepo {
-    
+    private val bookVideosDao = roomInstance.bookVideosDao()
+    private val ioDispatcher: CoroutineDispatcher = IO
      override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideo>> {
         return  bookVideosDao.getLiveListOfBookVideos(isbn)
     }

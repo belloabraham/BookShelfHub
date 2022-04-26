@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class BookVideo(
     @PrimaryKey
     val isbnPageNumber:String,
-    val isbn:String,
+    val bookId:String,
     val pageNumber:Int,
     val link:String
 

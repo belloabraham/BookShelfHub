@@ -31,6 +31,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.ReadHistory
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.FileExtension
 import com.bookshelfhub.bookshelfhub.data.Fragment
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.views.Toast
@@ -85,6 +86,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
       }
     }
 
+    val orderedBook = bookActivityViewModel.getAnOrderedBook()
+    loadBook(isDarkMode, orderedBook)
+
     bookActivityViewModel.getLiveReadHistory().observe(this, Observer { readHistory ->
       if (readHistory.isPresent) {
         showReadProgressDialog(readHistory.get())
@@ -109,7 +113,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     layout.videoListBtn.setOnClickListener {
         if (videoLink!=null){
-          val orderedBook = bookActivityViewModel.getAnOrderedBook()
           val intent = Intent(this, WebViewActivity::class.java)
           with(intent){
             putExtra(WebView.TITLE,orderedBook.name)
@@ -145,9 +148,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     }
 
-    bookActivityViewModel.getLiveOrderedBook().observe(this, Observer { orderedBook ->
-      loadBook(isDarkMode, orderedBook)
-    })
 
     bookActivityViewModel.getLiveListOfBookVideos().observe(this, Observer { bookVideos ->
      this.bookVideos = bookVideos
@@ -164,8 +164,15 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBook){
-    val isbn=orderedBook.bookId
-    val filePath = "$isbn${File.separator}$isbn.pdf"
+    val bookId=orderedBook.bookId
+    val fileNameWithExt = "$bookId+${FileExtension.DOT_PDF}"
+   val filePath = AppExternalStorage.getDocumentFilePath(
+      orderedBook.pubId,
+      bookId,
+      fileNameWithExt,
+      applicationContext
+    ).absolutePath
+
     val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
     layout.pdfView.fromAsset(dirPath)
       .nightMode(isDarkMode)
@@ -199,19 +206,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
 
-  override fun onNewIntent(intent: Intent?) {
-    super.onNewIntent(intent)
-    intent?.let {
-      val bookId = it.getStringExtra(Book.ID)
-      val name = it.getStringExtra(Book.NAME)
-      bookActivityViewModel.loadLiveOrderedBook(bookId!!, name!!)
-    }
-  }
-
   private fun showReadProgressDialog(readHistory: ReadHistory) {
     lifecycleScope.launch {
       val noOfDismiss = settingsUtil.getInt(Settings.NO_OF_TIME_DISMISSED, 0)
-      withContext(Main) {
         val view = View.inflate(this@BookActivity, R.layout.continue_reading, null)
         view.findViewById<TextView>(R.id.bookName).text = readHistory.bookName
         view.findViewById<TextView>(R.id.percentageText).text =
@@ -223,12 +220,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
           .setOnDismissListener {
             if (noOfDismiss < 2) {
               showToast(R.string.dismiss_msg)
-              runBlocking {
-                settingsUtil.setInt(
-                  Settings.NO_OF_TIME_DISMISSED,
-                  noOfDismiss + 1
-                )
-              }
+              bookActivityViewModel.addIntToSettings(Settings.NO_OF_TIME_DISMISSED,
+                noOfDismiss + 1)
             }
           }
           .setPositiveAction(R.string.dismiss) {}
@@ -236,7 +229,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             layout.pdfView.showPage(readHistory.lastPageNumber)
           }
           .showBottomSheet(view)
-      }
     }
   }
 
@@ -288,7 +280,11 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
   private fun setTopMargin(topMargin:Float, view: View){
     val parameter = layout.pageNumLabel.layoutParams as FrameLayout.LayoutParams
-    parameter.setMargins(parameter.leftMargin, DisplayUtil.convertDpToPixels(this, topMargin).toInt(), parameter.rightMargin, parameter.bottomMargin)
+    parameter.setMargins(
+      parameter.leftMargin,
+      DisplayUtil.convertDpToPixels(this, topMargin).toInt(),
+      parameter.rightMargin, parameter.bottomMargin
+    )
     view.layoutParams = parameter
   }
 
@@ -375,7 +371,10 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   }
 
   override fun onDestroy() {
-   bookActivityViewModel.addReadHistory(currentPage.toInt(), totalPages.toInt())
+     bookActivityViewModel.addReadHistory(
+       currentPage.toInt(),
+       totalPages.toInt()
+     )
     super.onDestroy()
   }
 

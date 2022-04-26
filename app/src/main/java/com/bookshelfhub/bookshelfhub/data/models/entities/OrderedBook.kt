@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
+import com.bookshelfhub.bookshelfhub.data.models.uistate.IOrderedBookUiState
 import com.google.firebase.Timestamp
 
 @Entity(tableName= "OrderedBooks")
@@ -21,6 +22,6 @@ data class OrderedBook(
     override val dateTime:Timestamp?=null,
     val month: Int,
     val year: Int,
-    val serialNo:Long,
+    override val serialNo:Long,
     override val additionInfo: String?
-): ISearchResult, IOrderedBooks
+): ISearchResult, IOrderedBooks, IOrderedBookUiState

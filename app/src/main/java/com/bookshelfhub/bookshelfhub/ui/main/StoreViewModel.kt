@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
@@ -29,8 +29,7 @@ class StoreViewModel @Inject constructor(
     private var isBookLoadSucessfully : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
-    private lateinit var publishedBooks:List<PublishedBook>
-    private lateinit var booksForSearchFiler:List<PublishedBook>
+    private lateinit var booksForSearchFiler:List<PublishedBookUiState>
 
 
     private val config  = PagingConfig(
@@ -46,22 +45,27 @@ class StoreViewModel @Inject constructor(
 
     fun loadRemotePublishedBooks() {
         viewModelScope.launch{
-            publishedBooks = publishedBooksRepo.getPublishedBooks()
+
+            val totalNoOfLocalPublishedBooks = publishedBooksRepo.getTotalNoOfPublishedBooks()
+
+            val noLocalPublishedBooks = totalNoOfLocalPublishedBooks <=0
+            val thereAreLocalPublishedBooks = !noLocalPublishedBooks
 
             try {
-                if (publishedBooks.isEmpty()){
-                     publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
+                if (noLocalPublishedBooks){
+                   val  publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
 
-                if(publishedBooks.isNotEmpty()){
-                    val fromBookSerialNo = publishedBooks.size
-                     publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(fromBookSerialNo)
+                if(thereAreLocalPublishedBooks){
+                    val  publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
+                      fromSerialNo =   totalNoOfLocalPublishedBooks
+                    )
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
 
                 isBookLoadSucessfully.value = true
-                booksForSearchFiler = publishedBooksRepo.getPublishedBooks()
+                booksForSearchFiler = publishedBooksRepo.getListOfPublishedBooksUiState()
             }catch (e:Exception){
                 Timber.e(e)
                 isBookLoadSucessfully.value = false
@@ -70,7 +74,7 @@ class StoreViewModel @Inject constructor(
     }
 
 
-    fun getBooksForSearchFiler(): List<PublishedBook> {
+    fun getBooksForSearchFiler(): List<PublishedBookUiState> {
         return booksForSearchFiler
     }
 
@@ -86,19 +90,19 @@ class StoreViewModel @Inject constructor(
         return isBookLoadSucessfully
     }
 
-    fun getTrendingBooksPageSource(): Flow<PagingData<PublishedBook>> {
+    fun getTrendingBooksPageSource(): Flow<PagingData<PublishedBookUiState>> {
         return Pager(config){
             publishedBooksRepo.getTrendingBooksPageSource()
         }.flow
     }
 
-    fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
+    fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBookUiState>> {
         return Pager(config){
             publishedBooksRepo.getBooksByCategoryPageSource(category)
         }.flow
     }
 
-    fun getRecommendedBooksPageSource(): Flow<PagingData<PublishedBook>> {
+    fun getRecommendedBooksPageSource(): Flow<PagingData<PublishedBookUiState>> {
         return Pager(config){
             publishedBooksRepo.getRecommendedBooksPageSource()
         }.flow

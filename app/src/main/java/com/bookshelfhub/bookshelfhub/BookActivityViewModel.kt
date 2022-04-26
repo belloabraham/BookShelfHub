@@ -40,7 +40,7 @@ class BookActivityViewModel @Inject constructor(
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
-    private var liveOrderedBook: LiveData<OrderedBook> = MutableLiveData()
+    private var liveOrderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
     private var readHistory: LiveData<Optional<ReadHistory>> = MutableLiveData()
     private var bookShareLink:String?=null
     private lateinit var book:PublishedBook
@@ -50,7 +50,6 @@ class BookActivityViewModel @Inject constructor(
     private lateinit var orderedBook: OrderedBook
 
     init {
-
 
         viewModelScope.launch {
             bookShareLink = settingsUtil.getString(bookId)
@@ -63,11 +62,12 @@ class BookActivityViewModel @Inject constructor(
             book = publishedBooksRepo.getPublishedBook(bookId).get()
         }
 
-
         livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
-        loadLiveOrderedBook(bookId, bookName)
+        liveOrderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
+
+
         viewModelScope.launch {
-            orderedBook = orderedBooksRepo.getAnOrderedBook(bookId)
+            orderedBook = orderedBooksRepo.getAnOrderedBook(bookId).get()
         }
 
         if (isSearchItem) {
@@ -98,10 +98,10 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
-    fun loadLiveOrderedBook(isbn: String, bookName: String) {
-        this.bookId = isbn
-        this.bookName = bookName
-        liveOrderedBook = orderedBooksRepo.getLiveOrderedBook(isbn)
+    fun addIntToSettings(key:String, value:Int){
+        viewModelScope.launch {
+            settingsUtil.setInt(key, value)
+        }
     }
 
     fun generateBookShareLink(){
@@ -123,7 +123,7 @@ class BookActivityViewModel @Inject constructor(
         return bookShareLink
     }
 
-    fun getLiveOrderedBook(): LiveData<OrderedBook> {
+    fun getLiveOrderedBook(): LiveData<Optional<OrderedBook>> {
         return liveOrderedBook
     }
 

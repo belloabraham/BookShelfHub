@@ -2,7 +2,9 @@ package com.bookshelfhub.bookshelfhub.data.repos.orderedbooks
 
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
+import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
 import com.bookshelfhub.bookshelfhub.data.sources.local.OrderedBooksDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
@@ -13,13 +15,27 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrderedBooksRepo @Inject constructor(
-    private val orderedBooksDao: OrderedBooksDao,
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
-    private val ioDispatcher: CoroutineDispatcher = IO
 ) :IOrderedBooksRepo {
+
+    private val orderedBooksDao = roomInstance.orderedBooksDao()
+    private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook> {
         return  withContext(ioDispatcher){ orderedBooksDao.getAnOrderedBook(bookId)}
+    }
+
+    override suspend fun getTotalNoOfOrderedBooks(): Int {
+       return orderedBooksDao.getTotalNoOfOrderedBooks()
+    }
+
+    override fun getLiveListOfOrderedBooksUiState(userId: String): LiveData<List<OrderedBookUiState>> {
+        return orderedBooksDao.getLiveListOfOrderedBooksUiState(userId)
+    }
+
+    override suspend fun getListOfOrderedBooksUiState(userId: String){
+        orderedBooksDao.getListOfOrderedBooksUiState(userId)
     }
 
     override suspend fun getRemoteListOfOrderedBooks(
@@ -43,11 +59,11 @@ class OrderedBooksRepo @Inject constructor(
         orderedBooksDao.insertOrReplace(orderedBook)
     }
 
-     override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {
+   override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {
         return  withContext(ioDispatcher){ orderedBooksDao.getOrderedBooks(userId)}
-    }
+   }
 
-     override fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
+    override fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
         return orderedBooksDao.getALiveOrderedBook(isbn)
     }
 

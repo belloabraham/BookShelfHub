@@ -5,6 +5,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.BookInterest
 import com.bookshelfhub.bookshelfhub.data.sources.local.BookInterestDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.*
@@ -16,11 +17,15 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookInterestRepo @Inject constructor(
-    private val bookInterestDao: BookInterestDao,
+    roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
     private val worker:Worker,
-    private val ioDispatcher: CoroutineDispatcher = IO,
     ) : IBookInterestRepo {
+
+
+    private val bookInterestDao = roomInstance.bookInterestDao()
+
+    private val ioDispatcher: CoroutineDispatcher = IO
 
     override suspend fun getBookInterest(userId:String): Optional<BookInterest> {
         return withContext(ioDispatcher){

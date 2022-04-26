@@ -128,6 +128,10 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
 
+  suspend fun getTotalNoOfOrderedBooks(): Int {
+    return orderedBooksRepo.getTotalNoOfOrderedBooks()
+  }
+
   suspend fun getAnOrderedBook(): Optional<OrderedBook> {
     return orderedBooksRepo.getAnOrderedBook(bookId)
   }

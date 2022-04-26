@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.sources.local.PaymentTransactionDao
+import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -15,13 +16,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PaymentTransactionRepo @Inject constructor(
-    private  val  paymentTransactionDao: PaymentTransactionDao,
+    roomInstance: RoomInstance,
     private val worker: Worker,
     private val remoteDataSource: IRemoteDataSource,
+    ) : IPaymentTransactionRepo {
+
+    private  val  paymentTransactionDao = roomInstance.paymentTransDao()
     private val ioDispatcher: CoroutineDispatcher = IO
-    ) :
-    IPaymentTransactionRepo {
-    
+
     override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {
         withContext(ioDispatcher){ paymentTransactionDao.insertAllOrReplace(paymentTransactions)}
         val oneTimeVerifyPaymentTrans =

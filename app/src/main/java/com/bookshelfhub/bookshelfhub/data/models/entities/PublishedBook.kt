@@ -2,15 +2,16 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.bookshelfhub.bookshelfhub.data.models.uistate.IPublishedBookUiState
 import com.google.firebase.Timestamp
 
 @Entity(tableName= "PublishedBooks")
 data class PublishedBook(
     @PrimaryKey
-    val bookId: String,
-    val name: String="",
-    val author: String="",
-    val coverUrl: String="",
+    override val bookId: String,
+    override val name: String="",
+    override val author: String="",
+    override val coverUrl: String="",
     val totalDownloads: Long=0,
     val description: String="",
     val publishedDate: Timestamp? = null,
@@ -26,4 +27,4 @@ data class PublishedBook(
     var price: Double=0.0,
     val recommended:Boolean = false,
     val serialNo: Long=0
-    ) 
+    ):IPublishedBookUiState
