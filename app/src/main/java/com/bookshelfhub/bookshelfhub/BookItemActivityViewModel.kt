@@ -42,14 +42,13 @@ class BookItemActivityViewModel @Inject constructor(
   val savedState: SavedStateHandle,
   private val publishedBooksRepo: IPublishedBooksRepo,
   private  val userReviewRepo: IUserReviewRepo,
-  orderedBooksRepo: IOrderedBooksRepo,
+  private val orderedBooksRepo: IOrderedBooksRepo,
   private val cartItemsRepo: ICartItemsRepo,
   private val dynamicLink:IDynamicLink,
   private val userRepo: IUserRepo,
-  private val connectionUtil: ConnectionUtil,
   private val currencyConversionAPI: ICurrencyConversionAPI,
   private val worker: Worker,
-  referralRepo: IReferralRepo,
+  private val referralRepo: IReferralRepo,
   private val searchHistoryRepo: ISearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
 
@@ -58,7 +57,6 @@ class BookItemActivityViewModel @Inject constructor(
   private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
   private var localLivePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
-  private var publisherReferrer: LiveData<Optional<Collaborator>> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
 
@@ -81,8 +79,6 @@ class BookItemActivityViewModel @Inject constructor(
     generateBookShareLink()
 
     localLivePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
-
-    publisherReferrer = referralRepo.getALiveOptionalCollaborator(bookId)
 
     liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
 
@@ -112,12 +108,23 @@ class BookItemActivityViewModel @Inject constructor(
       }
     }
 
-
-
     if (isSearchItem){
       addStoreSearchHistory(StoreSearchHistory(bookId, title, userAuth.getUserId(), author, DateTimeUtil.getDateTimeAsString()))
     }
 
+  }
+
+  suspend fun getLocalPublishedBook(): Optional<PublishedBook> {
+    return publishedBooksRepo.getPublishedBook(bookId)
+  }
+
+  suspend fun getOptionalOrderedBook(bookId:String): Optional<OrderedBook> {
+    return orderedBooksRepo.getAnOrderedBook(bookId)
+  }
+
+  suspend fun getCollaboratorIdForThisBook(): String? {
+    val collaborator = referralRepo.getAnOptionalCollaborator(bookId)
+    return if(collaborator.isPresent) collaborator.get().collabId else null
   }
 
   private fun generateBookShareLink(){
@@ -126,7 +133,8 @@ class BookItemActivityViewModel @Inject constructor(
       if (bookShareUrl == null){
         val book = publishedBooksRepo.getPublishedBook(bookId).get()
         try {
-          bookShareUrl = dynamicLink.generateShortDynamicLinkAsync(book.name , book.description, book.coverUrl, userId).toString()
+          bookShareUrl = dynamicLink.generateShortDynamicLinkAsync(
+            book.name , book.description, book.coverUrl, userId).toString()
           settingsUtil.setString(bookId, bookShareUrl!!.toString())
         }catch (e:Exception){
           Timber.e(e)
@@ -158,9 +166,6 @@ class BookItemActivityViewModel @Inject constructor(
     return orderedBook
   }
 
-  fun getOptionalCollaboratorForThisBook(): LiveData<Optional<Collaborator>> {
-    return publisherReferrer
-  }
 
   fun addToCart(cart: CartItem){
     viewModelScope.launch{
@@ -172,7 +177,7 @@ class BookItemActivityViewModel @Inject constructor(
     return user
   }
 
-  fun getLiveLocalBook(): LiveData<Optional<PublishedBook>> {
+  fun getLiveLocalPublishedBook(): LiveData<Optional<PublishedBook>> {
     return localLivePublishedBook
   }
 

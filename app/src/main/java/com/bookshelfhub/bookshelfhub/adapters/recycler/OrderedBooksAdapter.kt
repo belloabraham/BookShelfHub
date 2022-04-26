@@ -134,19 +134,25 @@ class OrderedBooksAdapter(
             lifecycleOwner.lifecycleScope.launch {
                 shelfViewModel.getLiveBookDownloadState(bookId).asFlow().collect{
 
-                    val progress = it.progress
-                    progressBar.progress = progress
+                    if(it.isPresent){
+                        val downloadBookState = it.get()
+                        val progress = downloadBookState.progress
+                        progressBar.progress = progress
 
-                    if(it.hasError){
-                        val retryDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
-                        downloadActionIcon.setImageDrawable(retryDrawable)
+                        if(downloadBookState.hasError){
+                            val retryDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
+                            downloadActionIcon.setImageDrawable(retryDrawable)
+                        }
+
+                        if(progress==100){
+                            setDownloadIconVisibility(GONE)
+                            val message =  String.format(activity.getString(R.string.download_complete), bookName)
+                            activity.showToast(message)
+                            shelfViewModel.deleteDownloadState(downloadBookState)
+                        }
                     }
 
-                    if(progress==100){
-                        setDownloadIconVisibility(GONE)
-                       val message =  String.format(activity.getString(R.string.download_complete), bookName)
-                        activity.showToast(message)
-                    }
+
                 }
             }
         }

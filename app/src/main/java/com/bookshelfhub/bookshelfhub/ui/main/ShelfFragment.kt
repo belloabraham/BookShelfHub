@@ -199,6 +199,7 @@ class ShelfFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        //Check if more remote ordered books in the case of user just purchasing a book or books
         shelfViewModel.getRemoteOrderedBooks()
         shelfViewModel.checkIfUserHaveUnDownloadedPurchasedBook()
     }

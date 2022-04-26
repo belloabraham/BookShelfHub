@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
+import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +50,13 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    fun getLiveBookDownloadState(bookId:String): LiveData<BookDownloadState> {
+    fun deleteDownloadState(bookDownloadState: BookDownloadState){
+        viewModelScope.launch {
+            bookDownloadStateRepo.deleteDownloadState(bookDownloadState)
+        }
+    }
+
+    fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
        return bookDownloadStateRepo.getLiveBookDownloadState(bookId)
     }
 
@@ -71,10 +78,6 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    suspend fun getOrderedBooks(): List<OrderedBook> {
-        return orderedBooksRepo.getOrderedBooks(userId)
-    }
-
     fun getRemoteOrderedBooks(){
             viewModelScope.launch {
                 if(connectionUtil.isConnected()){
@@ -94,11 +97,6 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    fun addOrderedBooks(orderedBooks: List<OrderedBook>){
-        viewModelScope.launch {
-            orderedBooksRepo.addOrderedBooks(orderedBooks)
-        }
-    }
 
     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
         return shelfShelfSearchHistory

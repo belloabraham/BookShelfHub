@@ -135,7 +135,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {
-            referralRepo.addPubReferrer(collaborator)
+            referralRepo.addCollaboratorOrIgnore(collaborator)
         }
     }
 

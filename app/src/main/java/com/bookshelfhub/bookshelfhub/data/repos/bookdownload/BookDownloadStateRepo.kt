@@ -7,6 +7,7 @@ import com.bookshelfhub.bookshelfhub.data.sources.local.BookDownloadDao
 import com.bookshelfhub.bookshelfhub.data.sources.local.BookVideosDao
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
+import com.google.common.base.Optional
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -17,7 +18,7 @@ class BookDownloadStateRepo @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher = IO,
 ) : IBookDownloadStateRepo {
 
-    override fun getLiveBookDownloadState(bookId:String): LiveData<BookDownloadState> {
+    override fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
         return bookDownloadDao.getLiveBookDownloadState(bookId)
     }
 
@@ -33,5 +34,11 @@ class BookDownloadStateRepo @Inject constructor(
          withContext(ioDispatcher){
              bookDownloadDao.insertOrReplace(bookDownloadState)
          }
+    }
+
+    override suspend fun deleteDownloadState(bookDownloadState: BookDownloadState){
+        return withContext(ioDispatcher){
+            bookDownloadDao.delete(bookDownloadState)
+        }
     }
 }

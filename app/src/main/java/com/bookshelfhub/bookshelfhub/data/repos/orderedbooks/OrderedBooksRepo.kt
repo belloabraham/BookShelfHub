@@ -1,6 +1,5 @@
 package com.bookshelfhub.bookshelfhub.data.repos.orderedbooks
 
-import android.view.View
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.sources.local.OrderedBooksDao
@@ -9,7 +8,6 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,15 +21,16 @@ class OrderedBooksRepo @Inject constructor(
 
 
 
-     override suspend fun getAnOrderedBook(isbn: String): OrderedBook {
-        return  withContext(ioDispatcher){ orderedBooksDao.getAnOrderedBook(isbn)}
+     override suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook> {
+        return  withContext(ioDispatcher){ orderedBooksDao.getAnOrderedBook(bookId)}
     }
 
     override suspend fun getRemoteListOfOrderedBooks(
         userId: String,
         lastOrderedBookBySN:Long,
         direction:Query.Direction): List<OrderedBook> {
-          return  withContext(ioDispatcher){ remoteDataSource.getListOfDataAsync(
+          return  withContext(ioDispatcher){
+              remoteDataSource.getListOfDataAsync(
                 RemoteDataFields.USERS_COLL,
                 userId,
                 RemoteDataFields.ORDERED_BOOKS_COLL,
@@ -43,8 +42,8 @@ class OrderedBooksRepo @Inject constructor(
     }
 
 
-     override fun getLiveOrderedBook(isbn: String): LiveData<OrderedBook> {
-        return orderedBooksDao.getLiveOrderedBook(isbn)
+     override fun getLiveOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
+        return orderedBooksDao.getALiveOrderedBook(isbn)
     }
 
      override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {

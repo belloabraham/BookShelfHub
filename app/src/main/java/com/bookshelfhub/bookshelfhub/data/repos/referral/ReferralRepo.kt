@@ -12,13 +12,16 @@ import javax.inject.Inject
 class ReferralRepo @Inject constructor(
     private val referralDao: ReferralDao,
     private val ioDispatcher: CoroutineDispatcher = IO
-) :
-    IReferralRepo {
+) :IReferralRepo {
 
-    override suspend fun addPubReferrer(collaborator: Collaborator){
+    override suspend fun addCollaboratorOrIgnore(collaborator: Collaborator){
         withContext(ioDispatcher){
-            referralDao.insertOrReplace(collaborator)
+            referralDao.insertOrIgnore(collaborator)
         }
+    }
+
+    override suspend fun getAnOptionalCollaborator(bookId:String): Optional<Collaborator> {
+        return withContext(ioDispatcher){ referralDao.getAnOptionalCollaborator(bookId)}
     }
 
     override fun getALiveOptionalCollaborator(isbn:String): LiveData<Optional<Collaborator>> {

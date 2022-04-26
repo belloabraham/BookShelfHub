@@ -15,7 +15,7 @@ object Currency {
     private const val UGX="UGX"
     private const val TZX="TZX"
 
-    fun getLocalCurrency(countryCode:String): String {
+    fun getLocalCurrencyOrUSD(countryCode:String): String {
         return when (countryCode) {
             SupportedCountries.NIGERIA ->
                 NGN

@@ -40,9 +40,7 @@ class StoreViewModel @Inject constructor(
     )
 
     init {
-
         totalCartItems = cartItemsRepo.getLiveTotalCartItemsNo(userId)
-
         loadRemotePublishedBooks()
     }
 
@@ -61,6 +59,7 @@ class StoreViewModel @Inject constructor(
                      publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(fromBookSerialNo)
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
+
                 isBookLoadSucessfully.value = true
                 booksForSearchFiler = publishedBooksRepo.getPublishedBooks()
             }catch (e:Exception){
