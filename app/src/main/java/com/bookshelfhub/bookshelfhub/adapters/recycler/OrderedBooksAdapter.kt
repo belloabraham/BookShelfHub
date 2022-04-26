@@ -60,7 +60,6 @@ class OrderedBooksAdapter(
                     vh.bindToView(
                         model,
                         activity,
-                        worker,
                         shelfViewModel,
                         lifecycleOwner,
                     )
@@ -80,7 +79,6 @@ class OrderedBooksAdapter(
         fun bindToView(
             model: OrderedBook,
             activity: Activity,
-            worker: Worker,
             shelfViewModel: ShelfViewModel,
             lifecycleOwner: LifecycleOwner,
         ) {
@@ -120,9 +118,7 @@ class OrderedBooksAdapter(
                             Book.NAME to bookName
                         )
 
-                        lifecycleOwner.lifecycleScope.launch {
-                            startDownloadWorker(worker, workData, shelfViewModel)
-                        }
+                        shelfViewModel.startBookDownload(workData)
 
                     }else{
                         activity.showToast(R.string.no_internet_error_msg, Toast.LENGTH_LONG)
@@ -153,29 +149,6 @@ class OrderedBooksAdapter(
                     }
 
 
-                }
-            }
-        }
-
-        private suspend fun startDownloadWorker(worker:Worker, workData:Data, shelfViewModel:ShelfViewModel){
-            val bookId = workData.getString(Book.ID)!!
-            val expeditedDownloadBookWorker =
-                OneTimeWorkRequestBuilder<DownloadBook>()
-                    .setConstraints(Constraint.getConnected())
-                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                    .setInputData(workData)
-                    .build()
-            worker.enqueueUniqueWork(bookId, ExistingWorkPolicy.KEEP, expeditedDownloadBookWorker)
-
-            worker.getWorkInfoByIdLiveData(expeditedDownloadBookWorker.id).asFlow().collect{
-                val workIsEnqueuedButNotStarted = it.state == WorkInfo.State.ENQUEUED
-                if(workIsEnqueuedButNotStarted){
-                    val initialDownloadProgress = (0..10).random()
-                    //To give the user the impression that download
-                    // have started so they do not tap on the download button again
-                    shelfViewModel.addDownloadState(
-                        BookDownloadState(bookId, initialDownloadProgress)
-                    )
                 }
             }
         }

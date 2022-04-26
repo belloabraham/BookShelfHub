@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.ui.main
 
 import androidx.lifecycle.*
+import androidx.work.Data
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
@@ -9,9 +10,11 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
+import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
 import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
+import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +30,10 @@ class ShelfViewModel @Inject constructor(
     searchHistoryRepo: ISearchHistoryRepo,
     private val connectionUtil: ConnectionUtil,
     private val settingsUtil: SettingsUtil,
+    private val worker: Worker,
     private val bookDownloadStateRepo: IBookDownloadStateRepo,
     private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
+    private val downloadBookUseCase: DownloadBookUseCase,
     val userAuth:IUserAuth): ViewModel(){
     
     private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
@@ -41,6 +46,13 @@ class ShelfViewModel @Inject constructor(
     init {
         shelfShelfSearchHistory = searchHistoryRepo.getLiveShelfSearchHistory(userId)
         liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
+    }
+
+
+    fun startBookDownload(workData: Data){
+        viewModelScope.launch {
+            downloadBookUseCase(worker, workData, bookDownloadStateRepo)
+        }
     }
 
     fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {

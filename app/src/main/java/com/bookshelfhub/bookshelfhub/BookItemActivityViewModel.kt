@@ -6,12 +6,14 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.workDataOf
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
+import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
@@ -19,6 +21,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
+import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
 import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
@@ -49,7 +52,9 @@ class BookItemActivityViewModel @Inject constructor(
   private val currencyConversionAPI: ICurrencyConversionAPI,
   private val worker: Worker,
   private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
+  private val downloadBookUseCase: DownloadBookUseCase,
   private val referralRepo: IReferralRepo,
+  private val bookDownloadStateRepo: IBookDownloadStateRepo,
   private val searchHistoryRepo: ISearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
 
@@ -120,6 +125,13 @@ class BookItemActivityViewModel @Inject constructor(
 
   }
 
+
+  fun startBookDownload(workData: Data){
+
+    viewModelScope.launch {
+      downloadBookUseCase(worker, workData, bookDownloadStateRepo)
+    }
+  }
 
   fun getBookAlreadyPurchasedByUser(): Boolean {
     return userAlreadyPurchasedBook

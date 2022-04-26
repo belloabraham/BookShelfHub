@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.workDataOf
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.adapters.paging.DiffUtilItemCallback
@@ -100,7 +101,6 @@ class BookItemActivity : AppCompatActivity() {
 
                 if (bookIsPaid) {
                     showAddToCartButtonAndHideOthers()
-
                     val localCurrencyIsNotUSD = localCurrencyOrUSD != Currency.USD
 
                     if (localCurrencyIsNotUSD){
@@ -137,9 +137,7 @@ class BookItemActivity : AppCompatActivity() {
                     addAFreeBook(book, countryCode)
                     showBooksItemLayout()
                 }
-
             }
-
         })
 
         layout.addToCartBtn.setOnClickListener {
@@ -172,12 +170,19 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.downloadBtn.setOnClickListener {
 
+            val workData = workDataOf(
+                Book.ID to bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this.bookId),
+                Book.SERIAL_NO to localPublishedBook.serialNo.toInt(),
+                Book.PUB_ID to localPublishedBook.pubId,
+                Book.NAME to localPublishedBook.name
+            )
+
+            bookItemActivityViewModel.startBookDownload(workData)
         }
 
         layout.openBookBtn.setOnClickListener {
             startBookActivity()
         }
-
 
         layout.aboutBookCard.setOnClickListener {
             lifecycleScope.launch {
