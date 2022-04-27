@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers.payment
 
-import com.bookshelfhub.bookshelfhub.BuildConfig
+import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.flutterwave.raveandroid.rave_java_commons.Meta
 import com.flutterwave.raveandroid.rave_presentation.RaveNonUIManager
@@ -13,10 +13,10 @@ class FlutterWave(private val encryptionKey:String,
                   private val userFirstname:String,
                   private val userLastName:String,
                   private val email:String,
-                  private val isbns:String,
+                  private val bookIds:String,
                   private val metaList:List<Meta>,
                   private val paymentCallBack:CardPaymentCallback,
-                  private val isDebugMode:Boolean = BuildConfig.DEBUG
+                  private val isDebugMode:Boolean = Config.isDevMode()
 ):IPayment {
 
     override fun chargeCard(publicKey:String, paymentCard: PaymentCard, amount:Double, currency:String){
@@ -29,7 +29,7 @@ class FlutterWave(private val encryptionKey:String,
             .setlName(userLastName)
             .setPublicKey(publicKey)
             .setEncryptionKey(encryptionKey)
-            .setTxRef(isbns)
+            .setTxRef(bookIds)
             .setMeta(metaList)
             .onStagingEnv(isDebugMode)
             .setUniqueDeviceId(deviceBrandAndModel)

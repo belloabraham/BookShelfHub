@@ -34,13 +34,10 @@ class GetRemotePrivateKeys  @AssistedInject constructor (
                     Settings.FIXER_ACCESS_KEY,
                     it.fixerAccessKey!!
                 )
+
                 settingsUtil.setString(
-                    Settings.FLUTTER_ENCRYPTION,
-                    it.flutterEncKey!!
-                )
-                settingsUtil.setString(
-                    Settings.FLUTTER_PUBLIC,
-                    it.flutterPublicKey!!
+                    Settings.PAYSTACK_LIVE_PUBLIC_KEY,
+                    it.payStackLivePublicKey!!
                 )
             }
              Result.success()

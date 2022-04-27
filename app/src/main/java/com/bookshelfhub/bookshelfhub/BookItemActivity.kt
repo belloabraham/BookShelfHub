@@ -30,7 +30,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.Currency
+import com.bookshelfhub.bookshelfhub.helpers.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.helpers.utils.*

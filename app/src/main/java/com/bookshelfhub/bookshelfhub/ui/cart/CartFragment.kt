@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import co.paystack.android.Paystack
+import co.paystack.android.Transaction
 import com.bookshelfhub.bookshelfhub.R
-import com.bookshelfhub.bookshelfhub.helpers.utils.DeviceUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
+import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
@@ -27,10 +29,8 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
+import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.payment.*
-import com.bookshelfhub.bookshelfhub.workers.Worker
-import com.flutterwave.raveandroid.rave_java_commons.Meta
-import com.flutterwave.raveandroid.rave_presentation.card.CardPaymentCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FieldValue
@@ -47,14 +47,13 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartViewModel: CartViewModel by activityViewModels()
     @Inject
-    lateinit var worker: Worker
+    lateinit var json: Json
     @Inject
     lateinit var userAuth: IUserAuth
 
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
-   // private var bookIdsAndCollaboratorIds=""
     private var bookIds =""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
@@ -98,6 +97,7 @@ class CartFragment : Fragment() {
 
 
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
+
        cartViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
            val countryCode = Location.getCountryCode(requireActivity().applicationContext)
@@ -106,19 +106,18 @@ class CartFragment : Fragment() {
 
            totalAmountInLocalCurrency = 0.0
            totalAmountInUSD = 0.0
-           bookIdsAndCollaboratorIds = ""
            bookIds = ""
 
            if (cartItems.isNotEmpty()){
                listOfCartItems = cartItems as ArrayList<CartItem>
                cartListAdapter.submitList(listOfCartItems)
 
-               val anItemInCart = cartItems[0]
 
                val userAdditionalInfo = cartViewModel.getUser().additionInfo
 
                for(cartItem in cartItems){
-                   val priceInUSD = anItemInCart.priceInUsd ?: anItemInCart.price
+
+                   val priceInUSD = cartItem.priceInUsd ?: cartItem.price
 
                    paymentTransaction.plus(PaymentTransaction(
                        cartItem.bookId,
@@ -135,13 +134,15 @@ class CartFragment : Fragment() {
                    totalAmountInUSD.plus(priceInUSD)
                    totalAmountInLocalCurrency.plus(cartItem.price)
                    bookIds.plus("${cartItem.bookId}, ")
-                 //  bookIdsAndCollaboratorIds.plus("${cartItem.bookId} (${cartItem.collaboratorsId}), ")
                }
 
-               showTotalAmountOfBooks(totalAmountInUSD, anItemInCart.currency, totalAmountInLocalCurrency)
+               showTotalAmountOfBooks(
+                   totalAmountInUSD,
+                   localCurrency =  cartItems[0].currency,
+                   totalAmountInLocalCurrency
+               )
            }
        })
-
 
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
@@ -169,9 +170,9 @@ class CartFragment : Fragment() {
         return layout.root
     }
 
-    private fun getPaymentSDK(): SDKType? {
+    private fun getPaymentSDK(): PaymentSDKType? {
         val countryCode = Location.getCountryCode(requireContext())
-        return if(countryCode==null) null else PaymentSDK.get(countryCode)
+        return if(countryCode==null) null else PaymentSDK.getType(countryCode)
     }
 
     private fun showSavedPaymentCardList(){
@@ -215,12 +216,12 @@ class CartFragment : Fragment() {
 
         val paymentSDKDoesNotExistForUserCountry = !paymentSDKExistForUserCountry
         if (paymentSDKDoesNotExistForUserCountry){
-          showPaymentNotSupportedForYourRegion()
+          showPaymentNotSupportedForYourRegionDialog()
         }
 
     }
 
-    private fun showPaymentNotSupportedForYourRegion(){
+    private fun showPaymentNotSupportedForYourRegionDialog(){
         AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
             .setCancelable(false)
             .setPositiveAction(R.string.ok){}
@@ -229,47 +230,32 @@ class CartFragment : Fragment() {
     }
 
 
-    private fun getFlutterPaymentCallBack(): CardPaymentCallback {
-        return object : CardPaymentCallback{
-            override fun showProgressIndicator(active: Boolean) {}
-
-            override fun collectCardPin() {}
-
-            override fun collectOtp(message: String?) {}
-
-            override fun collectAddress() {}
-
-            override fun showAuthenticationWebPage(authenticationUrl: String?) {}
-
-            override fun onError(errorMessage: String?, flwRef: String?) {
-                showTransactionFailedMsg(errorMessage)
-            }
-
-            override fun onSuccessful(flwRef: String?) {
-                flwRef?.let {
-                    val length = paymentTransaction.size -1
-
-                    //Pass transaction reference to all the transaction record that is created
-                    for (i in 0..length){
-                        paymentTransaction[i].transactionReference = it
-                    }
-
-                    cartViewModel.addPaymentTransactions(paymentTransaction)
-                    showPaymentProcessingMsg()
-                }
-            }
-
-        }
-    }
-
 
     private fun showTotalAmountOfBooks(
-        totalAmountInUSD:Double,
-        localCurrency:String,
+        totalAmountInUSD:Double, localCurrency:String,
         totalAmountInLocalCurrency:Double){
 
-        val totalEarnings = cartViewModel.getTotalEarnings()
-        layout.totalCostTxt.text =  if (totalAmountInUSD == totalAmountInLocalCurrency) String.format(getString(R.string.total_usd),totalAmountInLocalCurrency, totalEarnings) else String.format(getString(R.string.total_local_and_usd), localCurrency,totalAmountInLocalCurrency,totalAmountInUSD, totalEarnings)
+        val totalEarningsInUSD = cartViewModel.getTotalEarningsInUSD()
+        val totalAmountAfterEarningsInUSD = totalAmountInUSD - totalEarningsInUSD
+
+        val totalUSD = String.format(
+            getString(R.string.total_usd),
+            totalAmountInUSD,
+            totalEarningsInUSD,
+            totalAmountAfterEarningsInUSD
+        )
+
+        val totalLocalCurrency = String.format(
+            getString(R.string.total_local_and_usd),
+            localCurrency,
+            totalAmountInLocalCurrency,
+            totalAmountInUSD,
+            totalEarningsInUSD,
+            totalAmountAfterEarningsInUSD
+        )
+
+        val bookWasPurchasedInUSD = totalAmountInUSD == totalAmountInLocalCurrency
+        layout.totalCostTxt.text =  if (bookWasPurchasedInUSD) totalUSD else totalLocalCurrency
 
     }
 
@@ -285,9 +271,7 @@ class CartFragment : Fragment() {
         }
     }
 
-
     private fun showPaymentProcessingMsg(){
-        //Show user a message that their transaction is processing and close Cart activity when the click ok
         AlertDialogBuilder.with(R.string.transaction_processing, requireActivity())
             .setCancelable(false)
             .setPositiveAction(R.string.ok){
@@ -310,49 +294,37 @@ class CartFragment : Fragment() {
     }
 
 
-    private fun chargeCard(paymentSDKType: SDKType, paymentCard: PaymentCard){
-        val amountToChargeInUSD = if (totalAmountInUSD==0.0){
-            //User local currency must be in USD
-            totalAmountInLocalCurrency
-        }else{
-            totalAmountInUSD
-        } - cartViewModel.getTotalEarnings()
+    private fun chargeCard(paymentPaymentSDKType: PaymentSDKType, paymentCard: PaymentCard){
+        val totalAmountToChargeInUSD = totalAmountInUSD - cartViewModel.getTotalEarningsInUSD()
 
-        if (paymentSDKType == SDKType.FLUTTER_WAVE){
-            //Meta data containing who bought book and who the referrer for the each book is
-            val metaList = listOf(Meta(Payment.USER_ID.KEY, userId), Meta(Payment.BOOKS_AND_REF.KEY, bookIdsAndCollaboratorIds.trim()))
-            chargeCardWithFlutter(paymentCard, amountToChargeInUSD, metaList)
-        }else{
-            //Meta data containing who bought book and  and who the referrer for the book is
-            val userData = hashMapOf(
-                Payment.USER_ID to userId,
-                Payment.BOOKS_AND_REF to bookIdsAndCollaboratorIds.trim()
-            )
+        val userMetaData = hashMapOf(
+            Payment.USER_ID.KEY to userId,
+            Payment.IDS_OF_BOOKS_BOUGHT.KEY to bookIds
+        )
+
+        if(paymentPaymentSDKType == PaymentSDKType.PAYSTACK){
+            chargeCardWithPayStack(paymentCard, totalAmountToChargeInUSD, userMetaData)
         }
     }
 
-    private fun chargeCardWithFlutter(paymentCard: PaymentCard, amountToChargeInUSD:Double, metaList:List<Meta>){
-        val user =  cartViewModel.getUser()
-        val callback = getFlutterPaymentCallBack()
+    private fun chargeCardWithPayStack(
+        paymentCard:PaymentCard,
+        amountToChargeInUSD:Double,
+        metaData: HashMap<String, String>
+    ){
 
-        val firstName = user.firstName
-        val lastName = user.lastName
+        val payStackLivePublicKey = cartViewModel.getPayStackLivePublicKey()
 
-        val payment = FlutterWave(
-            cartViewModel.getFlutterEncKey()!!,
-            DeviceUtil.getDeviceBrandAndModel(),
-            firstName,
-            lastName,
-            user.email,
-            bookIds.trim(),
-            metaList,
-            callback
-        )
-        payment.chargeCard(
-            cartViewModel.getFlutterPublicKey()!!,
-            paymentCard,
-            amountToChargeInUSD,
-        )
+        val payment:IPayment = PayStack(
+            Payment.USER_DATA.KEY,
+            metaData,
+            requireActivity(),
+            json,
+            getPayStackPaymentCallBack())
+
+        val payStackPublicKey = if (Config.isDevMode()) getString(R.string.paystack_test_public_key) else payStackLivePublicKey
+
+        payment.chargeCard(payStackPublicKey!!, paymentCard, amountToChargeInUSD)
     }
 
     override fun onResume() {
@@ -370,6 +342,41 @@ class CartFragment : Fragment() {
         paymentCardsAdapter =null
         super.onDestroyView()
     }
+
+    private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
+
+        return object : Paystack.TransactionCallback{
+
+            override fun onSuccess(transaction: Transaction?) {
+
+                transaction?.let {
+                    val length = paymentTransaction.size -1
+
+                    //Pass transaction reference to all the transaction record that is created
+                    for (i in 0..length){
+                        paymentTransaction[i].transactionReference = it.reference
+                    }
+
+                    cartViewModel.addPaymentTransactions(paymentTransaction)
+
+                    //Show user a message that their transaction is processing and close Cart activity when the click ok
+                   showPaymentProcessingMsg()
+                }
+
+            }
+
+            override fun beforeValidate(transaction: Transaction?) {}
+
+            override fun onError(error: Throwable?, transaction: Transaction?) {
+                error?.let {
+                    val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
+                    showTransactionFailedMsg(errorMsg)
+                }
+            }
+
+        }
+    }
+
 
     private fun showRemoveCartItemMsg():Boolean{
         Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)

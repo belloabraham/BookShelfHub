@@ -35,8 +35,7 @@ class CartViewModel @Inject constructor(
   private val userId = userAuth.getUserId()
   private var livePaymentCards: LiveData<List<PaymentCard>> = MutableLiveData()
   private var isNewCardAdded: Boolean = false
-  private var flutterEncKey:String?=null
-  private var flutterPublicKey:String?=null
+  private var payStackPublicKey:String?=null
   private lateinit var user: User
   private var earnings: MutableLiveData<Earnings?> = MutableLiveData()
   private var totalEarnings = 0.0
@@ -46,14 +45,13 @@ class CartViewModel @Inject constructor(
     livePaymentCards = paymentCardRepo.getLivePaymentCards()
 
     viewModelScope.launch{
-      flutterPublicKey = settingsUtil.getString(Settings.FLUTTER_PUBLIC)
-      flutterEncKey = settingsUtil.getString(Settings.FLUTTER_ENCRYPTION)
+      payStackPublicKey = settingsUtil.getString(Settings.PAYSTACK_LIVE_PUBLIC_KEY)
 
       user =  userRepo.getUser(userId).get()
     }
   }
 
-  fun getTotalEarnings(): Double {
+  fun getTotalEarningsInUSD(): Double {
     return totalEarnings
   }
 
@@ -87,13 +85,10 @@ class CartViewModel @Inject constructor(
     return user
   }
 
-  fun getFlutterPublicKey(): String? {
-    return flutterPublicKey
+  fun getPayStackLivePublicKey(): String? {
+    return payStackPublicKey
   }
 
-  fun getFlutterEncKey(): String? {
-    return flutterEncKey
-  }
 
   fun setIsNewCard(value:Boolean){
     isNewCardAdded = value

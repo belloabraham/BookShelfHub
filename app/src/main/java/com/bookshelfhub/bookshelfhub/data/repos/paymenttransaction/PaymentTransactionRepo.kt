@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction
 
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.data.sources.local.PaymentTransactionDao
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
@@ -29,6 +30,7 @@ class PaymentTransactionRepo @Inject constructor(
         val oneTimeVerifyPaymentTrans =
             OneTimeWorkRequestBuilder<UploadPaymentTransactions>()
                 .setConstraints(Constraint.getConnected())
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
         worker.enqueue(oneTimeVerifyPaymentTrans)
     }

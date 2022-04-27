@@ -7,8 +7,7 @@ object Settings {
     const val LAST_BOOK_PERCENTAGE = "last_book_percentage"
     const val NO_OF_TIME_DISMISSED = "no_of_time_dismissed"
 
-    const val FLUTTER_ENCRYPTION = "flutterEncKey"
-    const val FLUTTER_PUBLIC = "flutterPublicKey"
+    const val PAYSTACK_LIVE_PUBLIC_KEY = "payStackLivePublicKey"
 
     const val  API_KEYS = "api_keys"
     const val  FIXER_ACCESS_KEY = "fixerAccessKey"
