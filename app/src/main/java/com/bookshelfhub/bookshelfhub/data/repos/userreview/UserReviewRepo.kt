@@ -74,7 +74,7 @@ class UserReviewRepo @Inject constructor(
             val userReview = withContext(ioDispatcher) {
                 remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
                     bookId, RemoteDataFields.REVIEWS_COLL,
-                    userId, true, UserReview::class.java)
+                    userId, UserReview::class.java)
             }
 
             userReview?.let {

@@ -5,6 +5,5 @@ interface IOrderedBookUiState {
     val name: String
     val coverUrl: String
     val pubId: String
-    val referrerId: String?
     val serialNo: Long
 }

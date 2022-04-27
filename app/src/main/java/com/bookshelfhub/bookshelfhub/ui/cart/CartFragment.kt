@@ -33,6 +33,7 @@ import com.flutterwave.raveandroid.rave_java_commons.Meta
 import com.flutterwave.raveandroid.rave_presentation.card.CardPaymentCallback
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
@@ -53,7 +54,7 @@ class CartFragment : Fragment() {
     private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
     private var totalAmountInUSD:Double =0.0
-    private var bookIsbnsAndReferrerIds=""
+   // private var bookIdsAndCollaboratorIds=""
     private var bookIds =""
     private lateinit var userId:String
     private var paymentTransaction = emptyList<PaymentTransaction>()
@@ -74,6 +75,7 @@ class CartFragment : Fragment() {
         mCartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
             showRemoveCartItemMsg()
         }
+
         val cartListAdapter = mCartListAdapter!!
 
         layout.cartItemsRecView.adapter = cartListAdapter
@@ -83,13 +85,6 @@ class CartFragment : Fragment() {
             this.savedPaymentCards = savedPaymentCards
         })
 
-
-        //When the User clicks checkout button show saved cards if there be one
-        layout.checkoutBtn.setOnClickListener {
-            showSavedPaymentCardList()
-        }
-
-
         layout.cartItemsRecView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -97,15 +92,21 @@ class CartFragment : Fragment() {
             )
         )
 
+        layout.checkoutBtn.setOnClickListener {
+            showSavedPaymentCardList()
+        }
+
+
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
        cartViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
            val countryCode = Location.getCountryCode(requireActivity().applicationContext)
+
            showCartItemsState(cartItems)
 
            totalAmountInLocalCurrency = 0.0
            totalAmountInUSD = 0.0
-           bookIsbnsAndReferrerIds = ""
+           bookIdsAndCollaboratorIds = ""
            bookIds = ""
 
            if (cartItems.isNotEmpty()){
@@ -113,18 +114,28 @@ class CartFragment : Fragment() {
                cartListAdapter.submitList(listOfCartItems)
 
                val anItemInCart = cartItems[0]
-               val priceInUSD = anItemInCart.priceInUsd ?: anItemInCart.price
 
                val userAdditionalInfo = cartViewModel.getUser().additionInfo
 
                for(cartItem in cartItems){
+                   val priceInUSD = anItemInCart.priceInUsd ?: anItemInCart.price
 
-                   paymentTransaction.plus(PaymentTransaction(cartItem.bookId, priceInUSD, cartItem.title, cartItem.pubId, userId,cartItem.coverUrl,  cartItem.referrerId, countryCode, userAdditionalInfo))
+                   paymentTransaction.plus(PaymentTransaction(
+                       cartItem.bookId,
+                       priceInUSD,
+                       userId,
+                       cartItem.name,
+                       cartItem.coverUrl,
+                       cartItem.pubId,
+                       cartItem.collaboratorsId,
+                       countryCode,
+                       FieldValue.serverTimestamp(),
+                       userAdditionalInfo))
 
                    totalAmountInUSD.plus(priceInUSD)
                    totalAmountInLocalCurrency.plus(cartItem.price)
                    bookIds.plus("${cartItem.bookId}, ")
-                   bookIsbnsAndReferrerIds.plus("${cartItem.bookId} (${cartItem.referrerId}), ")
+                 //  bookIdsAndCollaboratorIds.plus("${cartItem.bookId} (${cartItem.collaboratorsId}), ")
                }
 
                showTotalAmountOfBooks(totalAmountInUSD, anItemInCart.currency, totalAmountInLocalCurrency)
@@ -158,65 +169,65 @@ class CartFragment : Fragment() {
         return layout.root
     }
 
+    private fun getPaymentSDK(): SDKType? {
+        val countryCode = Location.getCountryCode(requireContext())
+        return if(countryCode==null) null else PaymentSDK.get(countryCode)
+    }
 
     private fun showSavedPaymentCardList(){
 
-        val country = Location.getCountryCode(requireActivity().applicationContext)
+        val paymentSDKType = getPaymentSDK()
+        val paymentSDKExistForUserCountry = paymentSDKType!=null
 
-        //Get country code value that will not change irrespective of it is is null or not as country code is a reference type
-        country.let { countryCode ->
+        if(paymentSDKExistForUserCountry){
 
-            //Get nullable recommended payment SDK to be used for a user based on their location
-            val paymentSDKType = PaymentSDK.get(countryCode)
+            mView = View.inflate(requireContext(), R.layout.saved_cards, layout.root)
+            val addCardBtn = mView!!.findViewById<MaterialButton>(R.id.addNewCardBtn)
 
-            //If their is a payment service for user location proceed with Payment
-            paymentSDKType?.let { paymentSdk->
+            if (savedPaymentCards.isNotEmpty()){
 
-                 mView = View.inflate(requireContext(), R.layout.saved_cards, layout.root)
-                val addCardBtn = mView!!.findViewById<MaterialButton>(R.id.addNewCardBtn)
+                val recyclerView = mView!!.findViewById<RecyclerView>(R.id.paymentCardsRecView)
 
-                if (savedPaymentCards.isNotEmpty()){
+                paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
+                    //Callback for when user click on any of the payment cards on the list
+                    chargeCard(paymentSDKType!!, paymentCard)
+                }
 
-                    val recyclerView = mView!!.findViewById<RecyclerView>(R.id.paymentCardsRecView)
-
-                     paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
-                        //Callback for when user click on any of the payment cards on the list
-                        chargeCard(paymentSdk, paymentCard)
-
-                    }
-
-                    recyclerView.addItemDecoration(
-                        DividerItemDecoration(
-                            requireContext(),
-                            DividerItemDecoration.VERTICAL
-                        )
+                recyclerView.addItemDecoration(
+                    DividerItemDecoration(
+                        requireContext(),
+                        DividerItemDecoration.VERTICAL
                     )
-                    recyclerView.adapter = paymentCardsAdapter!!
-                    paymentCardsAdapter!!.submitList(savedPaymentCards)
-                }
-
-                addCardBtn.setOnClickListener {
-                    val actionCardInfo = CartFragmentDirections.actionCartFragmentToCardInfoFragment()
-                    findNavController().navigate(actionCardInfo)
-                }
-
-                MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
-                    .setPositiveAction(R.string.dismiss){}
-                    .showBottomSheet(mView)
+                )
+                recyclerView.adapter = paymentCardsAdapter!!
+                paymentCardsAdapter!!.submitList(savedPaymentCards)
             }
 
-            //If their is no payment service available for the user
-            if (paymentSDKType==null){
-
-                AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
-                    .setCancelable(false)
-                    .setPositiveAction(R.string.ok){}
-                    .build()
-                    .showDialog(R.string.unsupported_region)
+            addCardBtn.setOnClickListener {
+                val actionCardInfo = CartFragmentDirections.actionCartFragmentToCardInfoFragment()
+                findNavController().navigate(actionCardInfo)
             }
+
+            MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
+                .setPositiveAction(R.string.dismiss){}
+                .showBottomSheet(mView)
+        }
+
+        val paymentSDKDoesNotExistForUserCountry = !paymentSDKExistForUserCountry
+        if (paymentSDKDoesNotExistForUserCountry){
+          showPaymentNotSupportedForYourRegion()
         }
 
     }
+
+    private fun showPaymentNotSupportedForYourRegion(){
+        AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
+            .setCancelable(false)
+            .setPositiveAction(R.string.ok){}
+            .build()
+            .showDialog(R.string.unsupported_region)
+    }
+
 
     private fun getFlutterPaymentCallBack(): CardPaymentCallback {
         return object : CardPaymentCallback{
@@ -309,13 +320,13 @@ class CartFragment : Fragment() {
 
         if (paymentSDKType == SDKType.FLUTTER_WAVE){
             //Meta data containing who bought book and who the referrer for the each book is
-            val metaList = listOf(Meta(Payment.USER_ID.KEY, userId), Meta(Payment.BOOKS_AND_REF.KEY, bookIsbnsAndReferrerIds.trim()))
+            val metaList = listOf(Meta(Payment.USER_ID.KEY, userId), Meta(Payment.BOOKS_AND_REF.KEY, bookIdsAndCollaboratorIds.trim()))
             chargeCardWithFlutter(paymentCard, amountToChargeInUSD, metaList)
         }else{
             //Meta data containing who bought book and  and who the referrer for the book is
             val userData = hashMapOf(
                 Payment.USER_ID to userId,
-                Payment.BOOKS_AND_REF to bookIsbnsAndReferrerIds.trim()
+                Payment.BOOKS_AND_REF to bookIdsAndCollaboratorIds.trim()
             )
         }
     }
@@ -346,7 +357,6 @@ class CartFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        //Listen for a live view model from CardInfo for a newly added card
         if (cartViewModel.getIsNewCardAdded()){
             showSavedPaymentCardList()
             cartViewModel.setIsNewCard(false)

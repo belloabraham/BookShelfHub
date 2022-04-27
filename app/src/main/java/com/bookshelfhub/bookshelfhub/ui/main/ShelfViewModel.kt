@@ -12,7 +12,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateR
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
-import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.workers.Worker
@@ -33,7 +33,7 @@ class ShelfViewModel @Inject constructor(
     private val settingsUtil: SettingsUtil,
     private val worker: Worker,
     private val bookDownloadStateRepo: IBookDownloadStateRepo,
-    private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
+    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val downloadBookUseCase: DownloadBookUseCase,
     val userAuth:IUserAuth): ViewModel(){
     
@@ -57,7 +57,7 @@ class ShelfViewModel @Inject constructor(
     }
 
     fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
-        return getBookIdFromPossibleMergeIdsUseCase(possiblyMergedIds)
+        return getBookIdFromCompoundId(possiblyMergedIds)
     }
 
     fun isConnected(): Boolean {

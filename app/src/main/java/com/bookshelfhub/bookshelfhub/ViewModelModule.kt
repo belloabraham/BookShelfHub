@@ -16,6 +16,8 @@ import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.SearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
+import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
@@ -23,9 +25,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.Dispatchers
 
 
 @Module
@@ -37,6 +37,18 @@ object ViewModelModule {
     @Provides
     fun provideBookDownloadStateRepo(roomInstance:RoomInstance): IBookDownloadStateRepo {
         return BookDownloadStateRepo(roomInstance)
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideDownloadBookUseCase(): DownloadBookUseCase {
+        return DownloadBookUseCase()
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideGetBookIdCompoundId(): GetBookIdFromCompoundId {
+        return GetBookIdFromCompoundId()
     }
 
 

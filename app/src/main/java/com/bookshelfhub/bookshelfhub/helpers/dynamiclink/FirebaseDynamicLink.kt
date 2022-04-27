@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class Firebase @Inject constructor(private val domainPrefix:String, private val context:Context) :
+class FirebaseDynamicLink @Inject constructor(private val domainPrefix:String, private val context:Context) :
     IDynamicLink {
 
     override suspend fun generateShortDynamicLinkAsync(socialTitle:String,

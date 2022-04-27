@@ -8,11 +8,11 @@ data class CartItem(
     var userId:String,
     @PrimaryKey
     val bookId: String,
-    val title: String,
+    val name: String,
     val author:String,
     val pubId:String,
     val coverUrl: String,
-    val referrerId:String?,
+    val collaboratorsId:String?,
     val price: Double=0.0,
     val currency:String,
     val priceInUsd: Double?

@@ -6,7 +6,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.workDataOf
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
@@ -14,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
+import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
@@ -23,7 +23,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
-import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromPossibleMergeIdsUseCase
+import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
@@ -42,22 +42,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookItemActivityViewModel @Inject constructor(
-  val settingsUtil: SettingsUtil,
-  val savedState: SavedStateHandle,
-  private val publishedBooksRepo: IPublishedBooksRepo,
-  private  val userReviewRepo: IUserReviewRepo,
-  private val orderedBooksRepo: IOrderedBooksRepo,
-  private val cartItemsRepo: ICartItemsRepo,
-  private val dynamicLink:IDynamicLink,
-  private val userRepo: IUserRepo,
-  private val currencyConversionAPI: ICurrencyConversionAPI,
-  private val worker: Worker,
-  private val getBookIdFromPossibleMergeIdsUseCase: GetBookIdFromPossibleMergeIdsUseCase,
-  private val downloadBookUseCase: DownloadBookUseCase,
-  private val referralRepo: IReferralRepo,
-  private val bookDownloadStateRepo: IBookDownloadStateRepo,
-  private val searchHistoryRepo: ISearchHistoryRepo,
-  userAuth: IUserAuth): ViewModel(){
+    val settingsUtil: SettingsUtil,
+    val savedState: SavedStateHandle,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    private  val userReviewRepo: IUserReviewRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
+    private val cartItemsRepo: ICartItemsRepo,
+    private val dynamicLink:IDynamicLink,
+    private val userRepo: IUserRepo,
+    private val currencyConversionAPI: ICurrencyConversionAPI,
+    private val worker: Worker,
+    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
+    private val downloadBookUseCase: DownloadBookUseCase,
+    private val referralRepo: IReferralRepo,
+    private val bookDownloadStateRepo: IBookDownloadStateRepo,
+    private val searchHistoryRepo: ISearchHistoryRepo,
+    userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
@@ -211,7 +211,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
-   return getBookIdFromPossibleMergeIdsUseCase(possiblyMergedIds)
+   return getBookIdFromCompoundId(possiblyMergedIds)
   }
 
   fun getBookId():String{
@@ -271,7 +271,7 @@ class BookItemActivityViewModel @Inject constructor(
     return liveCartItems
   }
 
-  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBook>> {
+  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBookUiState>> {
    return Pager(config){
       publishedBooksRepo.getBooksByCategoryPageSource(category)
     }.flow

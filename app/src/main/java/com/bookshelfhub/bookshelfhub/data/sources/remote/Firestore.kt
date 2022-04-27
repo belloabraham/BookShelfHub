@@ -84,7 +84,6 @@ import javax.inject.Inject
          document: String,
          subCollection: String,
          subDocument:String,
-         shouldRetry:Boolean,
          type:Class<T>): T? {
 
          val documentSnapshot = db.collection(collection).document(document).collection(subCollection).document(subDocument).get().await()

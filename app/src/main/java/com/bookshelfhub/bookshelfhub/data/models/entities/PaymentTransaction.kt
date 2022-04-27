@@ -13,10 +13,10 @@ data class PaymentTransaction(
     override val name: String,
     override val coverUrl: String,
     override val pubId: String,
-    override val referrerId:String?,
+    val collaboratorsId:String?,
     override val orderedCountryCode: String?,
-    override var transactionReference: String?=null,
-    override val password: String? = null,
-    override val dateTime: Timestamp?=null,
+    override val dateTime: Any?=null,
     override val additionInfo: String?,
-): IOrderedBooks
+): IOrderedBooks{
+    override var transactionReference: String?=null
+}

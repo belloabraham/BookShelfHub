@@ -348,9 +348,11 @@ class BookItemActivity : AppCompatActivity() {
                 0.0, userId,
                 book.name, book.coverUrl,
                 book.pubId, null,
-                countryCode,null,
+                countryCode,
                 getString(R.string.app_name), null,
-                DateTimeUtil.getMonth(), DateTimeUtil.getYear(), serialNo.toLong(),
+                DateTimeUtil.getMonth(),
+                DateTimeUtil.getYear(),
+                serialNo.toLong(),
                 additionalInfo
             )
             bookItemActivityViewModel.addAnOrderedBook(orderedBook)

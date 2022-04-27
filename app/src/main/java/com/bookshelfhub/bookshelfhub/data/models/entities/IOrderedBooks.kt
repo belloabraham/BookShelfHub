@@ -10,11 +10,9 @@ interface IOrderedBooks {
     val userId: String
     val name: String
     val coverUrl: String
-    val referrerId: String?
     val pubId:String
     val orderedCountryCode: String?
     var transactionReference: String?
-    val password: String?
     val additionInfo:String?
     val dateTime: Any?
 }

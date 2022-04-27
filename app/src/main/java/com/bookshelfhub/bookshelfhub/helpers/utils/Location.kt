@@ -26,4 +26,5 @@ object Location {
             null
         }
     }
+
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bookshelfhub.bookshelfhub.R
@@ -25,8 +26,11 @@ class CardInfoFragment : Fragment() {
 
     private var binding: FragmentCardInfoBinding?=null
     private val cartViewModel: CartViewModel by activityViewModels()
+    private val cardViewModels: CardInfoViewModel by viewModels()
     private val cardNoSeparator = "-"
     private val cardExpDateSeparator = "/"
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,8 +88,10 @@ class CardInfoFragment : Fragment() {
             val cardMMYY = layout.cardExpiryDateTxt.toString()
             val cardExpMonth:Int
             val cardExpYear:Int
-            //***If cardMMYY is properly formatted
-            if (cardMMYY.length==5 && cardMMYY.contains(cardExpDateSeparator)){
+
+            val isValidCardDate = cardMMYY.length==5 && cardMMYY.contains(cardExpDateSeparator)
+
+            if (isValidCardDate){
                 cardExpMonth = cardMMYY.split(cardExpDateSeparator)[0].toInt()
                 cardExpYear = cardMMYY.split(cardExpDateSeparator)[1].toInt()
 
@@ -103,16 +109,11 @@ class CardInfoFragment : Fragment() {
                     paymentCard.cardType = cardUtil.getCardType()
                     paymentCard.lastFourDigit = cardUtil.getLastForDigit()
 
-                    /**
-                     * Card is added here with lifecycleScope instead of with viewModel
-                     * to ensure data is completely added before nav controller navigates back
-                     */
+                         cardViewModels.addPaymentCard(paymentCard)
+                         cartViewModel.setIsNewCard(true)
 
-                    viewLifecycleOwner.lifecycleScope.launch{
-                        localDb.addPaymentCard(paymentCard)
-                            cartViewModel.setIsNewCard(true)
-                            findNavController().navigateUp()
-                    }
+                         //Go back to the previous fragment
+                          findNavController().navigateUp()
                 }
 
             }else{

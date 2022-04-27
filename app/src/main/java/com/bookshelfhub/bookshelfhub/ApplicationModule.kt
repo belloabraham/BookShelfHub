@@ -1,8 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.BookDownloadStateRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.BookInterestRepo
 import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.BookmarksRepo
@@ -34,17 +32,21 @@ import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.ICloudStorage
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
 import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
 import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
 import com.bookshelfhub.bookshelfhub.workers.Worker
-import com.google.firebase.database.DatabaseReference
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ActivityContext
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -104,8 +106,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun providePrivateKeyRepo(databaseRef: DatabaseReference): IPrivateKeysRepo {
-        return PrivateKeysRepo(databaseRef)
+    fun providePrivateKeyRepo(): IPrivateKeysRepo {
+        return PrivateKeysRepo()
     }
 
     @Singleton
@@ -173,6 +175,21 @@ object ApplicationModule {
     @Provides
     fun provideSettingsUtil(@ApplicationContext context: Context): SettingsUtil {
         return SettingsUtil(context)
+    }
+
+    @Singleton
+    @Provides
+    fun getDynamicLink(@ApplicationContext context: Context): IDynamicLink {
+        return FirebaseDynamicLink(
+            context.getString(R.string.dlink_domain_prefix),
+            context
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideConnectionUtil(@ApplicationContext context: Context): ConnectionUtil {
+        return ConnectionUtil(context)
     }
 
 }

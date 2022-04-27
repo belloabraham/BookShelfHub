@@ -62,7 +62,6 @@ interface IRemoteDataSource {
         document: String,
         subCollection: String,
         subDocument:String,
-        shouldRetry:Boolean,
         type:Class<T>): T?
 
     suspend fun <T: Any> getListOfDataAsync(

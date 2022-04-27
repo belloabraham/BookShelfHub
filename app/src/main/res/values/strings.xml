@@ -20,7 +20,7 @@
     <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again after some time.</string>
     <string name="payment_unsuccessful_title">Error processing your transaction</string>
 
-    <string name="location_not_supported">You can not purchase book from this location at the moment.</string>
+    <string name="location_not_supported">Your location or region is not yet supported for book purchase at the moment.</string>
     <string name="unsupported_region">Unsupported region</string>
 
 

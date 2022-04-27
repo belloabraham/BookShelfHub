@@ -38,7 +38,7 @@ class CartViewModel @Inject constructor(
   private var flutterEncKey:String?=null
   private var flutterPublicKey:String?=null
   private lateinit var user: User
-  private var earnings: MutableLiveData<List<Earnings>> = MutableLiveData()
+  private var earnings: MutableLiveData<Earnings?> = MutableLiveData()
   private var totalEarnings = 0.0
 
   init {
@@ -65,14 +65,12 @@ class CartViewModel @Inject constructor(
 
   fun getLiveListOfCartItemsAfterEarnings(): LiveData<List<CartItem>> {
     return Transformations.switchMap(getLiveTotalEarnings()) { earnings ->
-      for (earning in earnings){
-        totalEarnings.plus(earning.earned)
-      }
+      totalEarnings = earnings?.total ?: 0.0
       cartItemsRepo.getLiveListOfCartItems(userId)
     }
   }
 
-  private fun getLiveTotalEarnings(): LiveData<List<Earnings>> {
+  private fun getLiveTotalEarnings(): LiveData<Earnings?> {
     viewModelScope.launch {
       try {
         earnings.value = earningsRepo.getRemoteEarnings(userId)

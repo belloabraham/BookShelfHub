@@ -15,12 +15,15 @@ class EarningsRepo @Inject constructor(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
-    override suspend fun getRemoteEarnings(userId:String): List<Earnings> {
+    override suspend fun getRemoteEarnings(userId:String): Earnings? {
        return withContext(ioDispatcher){
-           remoteDataSource.getListOfDataAsync(
+           remoteDataSource.getDataAsync(
+               RemoteDataFields.USERS_COLL,
+               userId,
                RemoteDataFields.EARNINGS,
-               RemoteDataFields.REFERRER_ID,
-               userId, Earnings::class.java)
+               userId,
+               Earnings::class.java
+           )
        }
     }
 

@@ -47,11 +47,6 @@ class ShelfFragment : Fragment() {
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
 
-    @Inject
-    lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var worker: Worker
-
 
     private var binding: FragmentShelfBinding?=null
     private var mOrderedBooksAdapter: ListAdapter<OrderedBookUiState, RecyclerViewHolder<OrderedBookUiState>>?=null
