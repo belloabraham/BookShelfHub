@@ -320,12 +320,13 @@
 
     <string name="swipe_down">Swipe down load newly purchased books</string>
 
-    <string name="downloading">Downloading...</string>
+    <string name="downloading">Downloading…</string>
 
     <string name="download_complete">Download complete</string>
     <string name="unable_to_download_book">Network error, unable to download book, try again</string>
 
-
+    <string name="unable_to_process_payment">Unable to process payment transaction: %s</string>
+    <string name="payment_trans_failed">Payment transaction failed</string>
 
 
 </resources>

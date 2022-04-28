@@ -1,9 +1,11 @@
 package com.bookshelfhub.bookshelfhub.workers
 
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.CloudFunctions
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
@@ -16,10 +18,12 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase.FirebaseCloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
+import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
 import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.payment.Payment
 import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.functions.FirebaseFunctionsException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
@@ -73,8 +77,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
                 orderedBooks.plus(orderedBook)
                 totalNoOfOrderedBooks.plus(1)
             }
-            val userNotificationToken = cloudMessaging.getNotificationTokenAsync()
 
+          val userNotificationToken = cloudMessaging.getNotificationTokenAsync()
           val jsonOfOrderedBooks = json.getJsonString(orderedBooks)
 
           val data = hashMapOf(
@@ -85,16 +89,30 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
           cloudFunctions.call(functionName = CloudFunctions.chargeCard, data)
 
-            //Run a callable cloud function with payment ref, notification token, and list of ordered books
+          cartItemsRepo.deleteFromCart(transactionBooksIds)
 
-            cartItemsRepo.deleteFromCart(transactionBooksIds)
-            Result.success()
+          Result.success()
+
         } catch (e: Exception) {
+            val errorIsNotCloudFunctionException = e !is FirebaseFunctionsException
+            if(errorIsNotCloudFunctionException){
+                val message = String.format(applicationContext.getString(R.string.unable_to_process_payment), e.message)
+                showNotification(message, R.string.payment_trans_failed)
+            }
             Timber.e(e)
             return Result.success()
         } finally {
             paymentTransactionRepo.deletePaymentTransactions(paymentTransactions)
             Result.success()
         }
+    }
+
+    private fun showNotification(message:String, @StringRes title:Int){
+        val notificationId = (2..20).random()
+        NotificationBuilder(applicationContext)
+            .setMessage(message)
+            .setTitle(title)
+            .Builder(applicationContext)
+            .showNotification(notificationId)
     }
 }
