@@ -10,7 +10,8 @@ interface IPaymentTransactionRepo {
         userId: String
     ): Void?
 
+    suspend fun deletePaymentTransactions(paymentTransactions:List<PaymentTransaction>)
     suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
-
+    suspend fun getPaymentTransactions(transactionRef:String): List<PaymentTransaction>
     suspend fun deleteAllPaymentTransactions()
 }

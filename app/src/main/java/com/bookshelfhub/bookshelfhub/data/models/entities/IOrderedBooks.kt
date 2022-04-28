@@ -14,5 +14,4 @@ interface IOrderedBooks {
     val orderedCountryCode: String?
     var transactionReference: String?
     val additionInfo:String?
-    val dateTime: Any?
 }

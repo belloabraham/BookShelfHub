@@ -268,13 +268,16 @@ class MoreFragment : Fragment() {
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
 
-        remoteDataSource.getLiveListOfDataAsync(requireActivity(), RemoteDataFields.EARNINGS, RemoteDataFields.REFERRER_ID, userId, Earnings::class.java, shouldRetry = true) { earnings ->
-            progressBar.visibility = GONE
-            val totalEarnings = 0.0
-            for (earning in earnings){
-                totalEarnings.plus(earning.earn)
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val earnings =   moreViewModel.getLiveTotalEarnings()
+                val total = earnings?.total ?: 0
+                earningsText.text = String.format(getString(R.string.total_earnings), total)
+                progressBar.visibility = GONE
+            }catch (e:Exception){
+                Timber.e(e)
+                return@launch
             }
-            earningsText.text = String.format(getString(R.string.total_earnings), totalEarnings)
         }
 
         MaterialBottomSheetDialogBuilder(requireActivity(), viewLifecycleOwner)

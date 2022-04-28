@@ -15,7 +15,6 @@ data class PaymentTransaction(
     override val pubId: String,
     val collaboratorsId:String?,
     override val orderedCountryCode: String?,
-    override val dateTime: Any?=null,
     override val additionInfo: String?,
 ): IOrderedBooks{
     override var transactionReference: String?=null

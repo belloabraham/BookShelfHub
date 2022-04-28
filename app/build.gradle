@@ -201,6 +201,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
     //--Remote config
     implementation 'com.google.firebase:firebase-config-ktx'
+    //--Cloud function
+    implementation 'com.google.firebase:firebase-functions-ktx'
 
     //---App Check
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06'

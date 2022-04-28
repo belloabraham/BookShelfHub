@@ -18,7 +18,7 @@ data class OrderedBook(
     override val orderedCountryCode:String?,
     override var transactionReference:String?,
     val password:String?=null,
-    override val dateTime:Timestamp?=null,
+    val dateTime:Timestamp?=null,
     val month: Int,
     val year: Int,
     override val serialNo:Long,

@@ -11,6 +11,5 @@ data class OrderedBookUiState(
     override val name:String,
     override val coverUrl:String,
     override val pubId: String,
-    override val referrerId:String?,
     override val serialNo:Long,
 ) : IOrderedBookUiState, ISearchResult

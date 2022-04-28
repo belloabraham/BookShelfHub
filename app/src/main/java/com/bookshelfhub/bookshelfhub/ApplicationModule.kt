@@ -30,6 +30,8 @@ import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessagin
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
+import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase.FirebaseCloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.ICloudStorage
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDynamicLink
@@ -71,6 +73,12 @@ object ApplicationModule {
     @Provides
     fun provideOrderedBooksRepo(roomInstance:RoomInstance, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
         return OrderedBooksRepo(roomInstance, remoteDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCloudFunctions(): ICloudFunctions {
+        return FirebaseCloudFunctions()
     }
 
     @Singleton

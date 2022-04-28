@@ -128,7 +128,6 @@ class CartFragment : Fragment() {
                        cartItem.pubId,
                        cartItem.collaboratorsId,
                        countryCode,
-                       FieldValue.serverTimestamp(),
                        userAdditionalInfo))
 
                    totalAmountInUSD.plus(priceInUSD)
