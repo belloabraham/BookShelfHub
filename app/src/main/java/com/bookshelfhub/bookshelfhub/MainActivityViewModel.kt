@@ -31,7 +31,7 @@ class MainActivityViewModel @Inject constructor(
     private val settingsUtil: SettingsUtil,
     private val bookInterestRepo: IBookInterestRepo,
     private val connectionUtil: ConnectionUtil,
-    private val referralRepo: IReferralRepo
+    private val referralRepo: IReferralRepo,
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
@@ -52,6 +52,7 @@ class MainActivityViewModel @Inject constructor(
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
         getRemotePrivateKeys()
+
     }
 
     fun getBookIdFromACollaboratorReferrerId(): String? {
@@ -68,7 +69,6 @@ class MainActivityViewModel @Inject constructor(
         }
         return null
     }
-
 
      fun getAndSaveAppShareDynamicLink(){
         viewModelScope.launch {

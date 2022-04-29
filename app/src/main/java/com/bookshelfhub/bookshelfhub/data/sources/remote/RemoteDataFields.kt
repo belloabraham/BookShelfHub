@@ -10,7 +10,7 @@ object RemoteDataFields{
     //published_books/bookId/{book}
     const val PUBLISHED_BOOKS_COLL = "published_books"
 
-    //users/userId/{userdata}/ordered_books/{docIds}/{docData}
+    //users/userId/{userdata}/ordered_books/{bookId}/{docData}
     const val ORDERED_BOOKS_COLL = "ordered_books"
 
     //users/userId/{userdata}/bookmarks/{docIds}/{docData}

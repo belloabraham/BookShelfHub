@@ -176,7 +176,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
     layout.pdfView.fromAsset(dirPath)
       .nightMode(isDarkMode)
-      .password(orderedBook.password!!)
       .fitEachPage(true)
       .defaultPage(0)
       .onPageChange(object:OnPageChangeListener{

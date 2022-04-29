@@ -7,7 +7,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.CloudFunctions
+import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.CloudFunctions
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
@@ -16,13 +16,10 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
-import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase.FirebaseCloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationBuilder
-import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.payment.Payment
-import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
-import com.google.firebase.firestore.FieldValue
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.google.firebase.functions.FirebaseFunctionsException
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -39,6 +36,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
     private val cloudMessaging: ICloudMessaging,
     private val cloudFunctions: ICloudFunctions,
     private val json: Json,
+    private val settingsUtil: SettingsUtil,
 ) : CoroutineWorker(
     context,
     workerParams
@@ -60,6 +58,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
       return  try {
             val orderedBooks = emptyList<OrderedBook>()
             val transactionBooksIds = emptyList<String>()
+            val bookNames = "";
             val totalNoOfOrderedBooks = orderedBooksRepo.getTotalNoOfOrderedBooks()
 
             for (trans in paymentTransactions) {
@@ -70,10 +69,10 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     trans.userId, trans.name,
                     trans.coverUrl, trans.pubId,
                     trans.orderedCountryCode,
-                    transactionRef, null,
-                    null, 0, 0,
+                    transactionRef, null,  0, 0,
                     totalNoOfOrderedBooks.toLong(), trans.additionInfo
                 )
+                bookNames.plus("${trans.name}, ")
                 orderedBooks.plus(orderedBook)
                 totalNoOfOrderedBooks.plus(1)
             }
@@ -84,12 +83,15 @@ class UploadPaymentTransactions @AssistedInject constructor(
           val data = hashMapOf(
               Payment.TRANSACTION_REF.KEY to transactionRef,
               RemoteDataFields.NOTIFICATION_TOKEN to userNotificationToken,
-              Payment.ORDERED_BOOKS.KEY to jsonOfOrderedBooks
+              Payment.ORDERED_BOOKS.KEY to jsonOfOrderedBooks,
+              Payment.BOOK_NAMES.KEY to bookNames
           )
 
-          cloudFunctions.call(functionName = CloudFunctions.chargeCard, data)
+          cloudFunctions.call(functionName = CloudFunctions.completePayStackPaymentTransaction, data)
 
           cartItemsRepo.deleteFromCart(transactionBooksIds)
+
+          settingsUtil.setBoolean(Book.IS_NEWLY_PURCHASED, true)
 
           Result.success()
 

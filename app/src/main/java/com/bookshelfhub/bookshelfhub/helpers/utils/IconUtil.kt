@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 
 object IconUtil {
 
-    fun getBitmap(context: Context, res: Int): Bitmap {
+    fun getBitmap(context: Context, @DrawableRes res: Int): Bitmap {
         return BitmapFactory.decodeResource(context.resources, res)
     }
 

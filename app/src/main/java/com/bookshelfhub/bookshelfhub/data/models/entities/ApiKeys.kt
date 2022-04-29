@@ -7,7 +7,6 @@ data class ApiKeys(
     var fixerAccessKey: String? = "",
     var flutterEncKey: String? = "",
     var flutterPublicKey: String? = "",
-    var payStackLivePrivateKey: String? = "",
     var payStackLivePublicKey: String? = "",
     var perspectiveKey: String? = "",
 )

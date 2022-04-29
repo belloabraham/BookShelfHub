@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
@@ -16,7 +17,8 @@ class UploadUserData  @AssistedInject constructor (
     @Assisted workerParams: WorkerParameters,
     private val userRepo: IUserRepo,
     private val userAuth:IUserAuth,
-): CoroutineWorker(context,
+    private val cloudMessaging: ICloudMessaging
+    ): CoroutineWorker(context,
     workerParams
 ) {
 
@@ -32,7 +34,10 @@ class UploadUserData  @AssistedInject constructor (
         }
 
        return  try {
-                userRepo.uploadUser(userData, userId)
+                userData.gender?.let {
+                    cloudMessaging.subscribeTo(it.lowercase())
+                }
+                 userRepo.uploadUser(userData, userId)
                  userData.uploaded = true
                  userRepo.addUser(userData)
                  Result.success()

@@ -1,6 +1,6 @@
 package com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase
 
-import com.bookshelfhub.bookshelfhub.data.CloudFunctions
+import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.CloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
 import com.google.firebase.functions.HttpsCallableResult
 import com.google.firebase.functions.ktx.functions

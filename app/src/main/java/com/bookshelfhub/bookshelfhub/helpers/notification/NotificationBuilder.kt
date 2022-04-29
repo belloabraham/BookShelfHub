@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -65,7 +67,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-    fun setMessage(value:Int): NotificationBuilder {
+    fun setMessage(@StringRes value:Int): NotificationBuilder {
         setMessage(getString(value))
         return this
     }
@@ -76,7 +78,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     }
 
 
-    fun setTitle(value:Int): NotificationBuilder {
+    fun setTitle(@StringRes value:Int): NotificationBuilder {
         setTitle(getString(value))
         return this
     }
@@ -86,7 +88,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-    fun setLargeIcon(value: Int): NotificationBuilder {
+    fun setLargeIcon(@DrawableRes value: Int): NotificationBuilder {
        largeIcon = IconUtil.getBitmap(context, value)
         return this
     }
@@ -96,7 +98,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-    fun setActionText(value:Int): NotificationBuilder {
+    fun setActionText(@StringRes value:Int): NotificationBuilder {
         setActionText(getString(value))
         return this
     }
@@ -106,7 +108,7 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
         return this
     }
 
-    fun setUrl(value:Int): NotificationBuilder {
+    fun setUrl(@StringRes value:Int): NotificationBuilder {
         setUrl(getString(value))
         return this
     }

@@ -9,10 +9,9 @@ import kotlinx.coroutines.tasks.await
 
 open class CloudMessaging : ICloudMessaging {
 
-
   override fun subscribeTo(topic:String){
        Firebase.messaging.subscribeToTopic(topic);
-   }
+  }
 
     override fun unsubscribeFrom(topic:String){
         Firebase.messaging.unsubscribeFromTopic(topic)

@@ -5,6 +5,7 @@ import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
+import co.paystack.android.PaystackSdk
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.bookshelfhub.downloadmanager.DownloadManager
@@ -57,6 +58,8 @@ class Application: android.app.Application(), Configuration.Provider {
 
         setupFirebaseRemoteConfig()
 
+        // Initializing PayStack
+        PaystackSdk.initialize(applicationContext)
 
         NotificationChannelBuilder(this, getString(R.string.notif_channel_id))
             .createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
