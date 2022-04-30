@@ -20,7 +20,7 @@ object RemoteDataFields{
     const val REVIEWS_COLL = "reviews"
 
 
-    //users/userId/{userData}/earnings/{total:0}
+    //users/userId/earnings/userId/{total:0}
     const val EARNINGS = "earnings"
 
 

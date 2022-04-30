@@ -328,5 +328,7 @@
     <string name="unable_to_process_payment">Unable to process payment transaction: %s</string>
     <string name="payment_trans_failed">Payment transaction failed</string>
 
+    <string name="profile_updated">Profile updated</string>
+    <string name="profile_updated_msg">Your profile have been updated successfully.</string>
 
 </resources>

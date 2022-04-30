@@ -7,4 +7,6 @@ enum class Payment(val KEY:String) {
     IDS_OF_BOOKS_BOUGHT("ids_of_books_bought"),
     TRANSACTION_REF("transactionReference"),
     BOOK_NAMES("bookNames"),
+    USER_REFERRER_ID("userReferrerId"),
+    USER_REFERRER_COMMISSION("userReferrerCommission"),
 }

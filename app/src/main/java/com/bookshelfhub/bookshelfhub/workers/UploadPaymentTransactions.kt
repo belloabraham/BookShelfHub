@@ -12,6 +12,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.user.UserRepo
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
@@ -35,6 +36,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
     private val paymentTransactionRepo: IPaymentTransactionRepo,
     private val cloudMessaging: ICloudMessaging,
     private val cloudFunctions: ICloudFunctions,
+    private val userRepo: UserRepo,
     private val json: Json,
     private val settingsUtil: SettingsUtil,
 ) : CoroutineWorker(
@@ -58,9 +60,9 @@ class UploadPaymentTransactions @AssistedInject constructor(
       return  try {
             val orderedBooks = emptyList<OrderedBook>()
             val transactionBooksIds = emptyList<String>()
-            val bookNames = "";
-            val totalNoOfOrderedBooks = orderedBooksRepo.getTotalNoOfOrderedBooks()
-
+            val bookNames = ""
+            val totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
+            val isFirstPurchase = totalNoOfOrderedBooksAsSerialNo <=0
             for (trans in paymentTransactions) {
                 transactionBooksIds.plus(trans.bookId)
 
@@ -70,21 +72,32 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     trans.coverUrl, trans.pubId,
                     trans.orderedCountryCode,
                     transactionRef, null,  0, 0,
-                    totalNoOfOrderedBooks.toLong(), trans.additionInfo
+                    totalNoOfOrderedBooksAsSerialNo, trans.additionInfo
                 )
                 bookNames.plus("${trans.name}, ")
                 orderedBooks.plus(orderedBook)
-                totalNoOfOrderedBooks.plus(1)
+                totalNoOfOrderedBooksAsSerialNo.plus(1)
             }
 
           val userNotificationToken = cloudMessaging.getNotificationTokenAsync()
-          val jsonOfOrderedBooks = json.getJsonString(orderedBooks)
+          val jsonStringOfOrderedBooks = json.getJsonString(orderedBooks)
 
-          val data = hashMapOf(
+
+          var userReferralId:String? = null
+          var userReferrerCommission = 0.0
+          if(isFirstPurchase){
+              val userId = userAuth.getUserId()
+              userReferralId = userRepo.getUser(userId).get().referrerId
+              userReferrerCommission = paymentTransactions[0].priceInUSD * 0.1
+          }
+
+          val data = hashMapOf<String, Any?>(
               Payment.TRANSACTION_REF.KEY to transactionRef,
               RemoteDataFields.NOTIFICATION_TOKEN to userNotificationToken,
-              Payment.ORDERED_BOOKS.KEY to jsonOfOrderedBooks,
-              Payment.BOOK_NAMES.KEY to bookNames
+              Payment.ORDERED_BOOKS.KEY to jsonStringOfOrderedBooks,
+              Payment.BOOK_NAMES.KEY to bookNames,
+              Payment.USER_REFERRER_ID.KEY to userReferralId,
+              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission
           )
 
           cloudFunctions.call(functionName = CloudFunctions.completePayStackPaymentTransaction, data)

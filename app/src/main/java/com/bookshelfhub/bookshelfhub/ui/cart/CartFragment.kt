@@ -119,7 +119,8 @@ class CartFragment : Fragment() {
 
                    val priceInUSD = cartItem.priceInUsd ?: cartItem.price
 
-                   paymentTransaction.plus(PaymentTransaction(
+                   paymentTransaction.plus(
+                       PaymentTransaction(
                        cartItem.bookId,
                        priceInUSD,
                        userId,
@@ -128,7 +129,8 @@ class CartFragment : Fragment() {
                        cartItem.pubId,
                        cartItem.collaboratorsId,
                        countryCode,
-                       userAdditionalInfo))
+                       userAdditionalInfo)
+                   )
 
                    totalAmountInUSD.plus(priceInUSD)
                    totalAmountInLocalCurrency.plus(cartItem.price)

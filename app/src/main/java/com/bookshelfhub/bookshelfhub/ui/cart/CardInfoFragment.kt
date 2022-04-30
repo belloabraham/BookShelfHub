@@ -30,8 +30,6 @@ class CardInfoFragment : Fragment() {
     private val cardNoSeparator = "-"
     private val cardExpDateSeparator = "/"
 
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
