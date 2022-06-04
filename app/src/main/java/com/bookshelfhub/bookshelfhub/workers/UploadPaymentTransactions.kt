@@ -12,6 +12,7 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
+import com.bookshelfhub.bookshelfhub.data.repos.referral.ReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.UserRepo
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -37,6 +38,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
     private val cloudMessaging: ICloudMessaging,
     private val cloudFunctions: ICloudFunctions,
     private val userRepo: UserRepo,
+    private val referralRepo: ReferralRepo,
     private val json: Json,
     private val settingsUtil: SettingsUtil,
 ) : CoroutineWorker(
@@ -58,25 +60,37 @@ class UploadPaymentTransactions @AssistedInject constructor(
         }
 
       return  try {
-            val orderedBooks = emptyList<OrderedBook>()
-            val transactionBooksIds = emptyList<String>()
-            val bookNames = ""
-            val totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
+            var orderedBooks = emptyList<OrderedBook>()
+            var transactionBooksIds = emptyList<String>()
+            var bookNames = ""
+            var totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
             val isFirstPurchase = totalNoOfOrderedBooksAsSerialNo <=0
+            var totalAmountInUSD = 0.0
             for (trans in paymentTransactions) {
-                transactionBooksIds.plus(trans.bookId)
+                var collabCommissionInPercentage:Double? = null
+                var collabId:String? = null
+                val optionalCollab = referralRepo.getAnOptionalCollaborator(trans.bookId)
+                if(optionalCollab.isPresent){
+                  val  collab = optionalCollab.get()
+                    collabId = collab.collabId
+                    collabCommissionInPercentage = collab.commissionInPercentage
+                }
 
+                totalAmountInUSD = totalAmountInUSD.plus(trans.priceInUSD)
+                transactionBooksIds = transactionBooksIds.plus(trans.bookId)
                 val orderedBook = OrderedBook(
                     trans.bookId, trans.priceInUSD,
                     trans.userId, trans.name,
                     trans.coverUrl, trans.pubId,
                     trans.orderedCountryCode,
                     transactionRef, null,  0, 0,
-                    totalNoOfOrderedBooksAsSerialNo, trans.additionInfo
+                    totalNoOfOrderedBooksAsSerialNo, trans.additionInfo,
+                    collabCommissionInPercentage,
+                    collabId
                 )
-                bookNames.plus("${trans.name}, ")
-                orderedBooks.plus(orderedBook)
-                totalNoOfOrderedBooksAsSerialNo.plus(1)
+               bookNames =  bookNames.plus("${trans.name}, ")
+                orderedBooks = orderedBooks.plus(orderedBook)
+                totalNoOfOrderedBooksAsSerialNo = totalNoOfOrderedBooksAsSerialNo.plus(1)
             }
 
           val userNotificationToken = cloudMessaging.getNotificationTokenAsync()
@@ -97,8 +111,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
               Payment.ORDERED_BOOKS.KEY to jsonStringOfOrderedBooks,
               Payment.BOOK_NAMES.KEY to bookNames,
               Payment.USER_REFERRER_ID.KEY to userReferralId,
-              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission
-          )
+              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission,
+      )
 
           cloudFunctions.call(functionName = CloudFunctions.completePayStackPaymentTransaction, data)
 

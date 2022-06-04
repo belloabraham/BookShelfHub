@@ -21,5 +21,7 @@ data class OrderedBook(
     val month: Int,
     val year: Int,
     override val serialNo:Long,
-    override val additionInfo: String?
+    override val additionInfo: String?,
+    val collabCommission: Double?,
+    val collabId:String?
 ): ISearchResult, IOrderedBooks, IOrderedBookUiState

@@ -6,6 +6,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import co.paystack.android.PaystackSdk
+import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.bookshelfhub.downloadmanager.DownloadManager
@@ -47,7 +48,7 @@ class Application: android.app.Application(), Configuration.Provider {
         setUpAppCheck()
 
         //Setup Timber
-        if (BuildConfig.DEBUG) {
+        if (Config.isDevMode()) {
             Timber.plant(DebugTree())
         }
 
@@ -106,7 +107,7 @@ class Application: android.app.Application(), Configuration.Provider {
         // ***Setup App Check ***//
         val firebaseAppCheck = FirebaseAppCheck.getInstance()
 
-        if(BuildConfig.DEBUG){
+        if(Config.isDevMode()){
             firebaseAppCheck.installAppCheckProviderFactory(
                 DebugAppCheckProviderFactory.getInstance()
             )
@@ -128,7 +129,7 @@ class Application: android.app.Application(), Configuration.Provider {
 
     private fun setupFirebaseRemoteConfig(){
         val remoteConfig = Firebase.remoteConfig
-        if(BuildConfig.DEBUG){
+        if(Config.isDevMode()){
             val configSettings = remoteConfigSettings {
                 this.minimumFetchIntervalInSeconds = 1800L
             }

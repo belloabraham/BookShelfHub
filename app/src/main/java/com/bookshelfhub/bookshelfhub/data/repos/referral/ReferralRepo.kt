@@ -18,7 +18,7 @@ class ReferralRepo @Inject constructor(
 
     override suspend fun addCollaboratorOrIgnore(collaborator: Collaborator){
         withContext(ioDispatcher){
-            referralDao.insertOrIgnore(collaborator)
+            referralDao.insertOrReplace(collaborator)
         }
     }
 

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class Collaborator(
     val collabId:String,
     @PrimaryKey
-    val bookId:String
+    val bookId:String,
+    val commissionInPercentage: Double
 )

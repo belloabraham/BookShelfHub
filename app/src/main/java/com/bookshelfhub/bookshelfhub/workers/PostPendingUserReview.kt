@@ -60,14 +60,14 @@ class PostPendingUserReview @AssistedInject constructor(
         }
 
 
-           val listOfUpdatedBookValues = emptyList<HashMap<String, FieldValue>>()
+           var listOfUpdatedBookValues = emptyList<HashMap<String, FieldValue>>()
            for (review in verifiedReviews){
 
                val dynamicBookAttr =  hashMapOf(
                    RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(1),
                    RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(review.userRating)
                )
-                listOfUpdatedBookValues.plus(dynamicBookAttr)
+               listOfUpdatedBookValues = listOfUpdatedBookValues.plus(dynamicBookAttr)
            }
 
           return try {

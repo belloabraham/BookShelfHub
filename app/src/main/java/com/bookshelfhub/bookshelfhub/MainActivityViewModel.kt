@@ -52,7 +52,6 @@ class MainActivityViewModel @Inject constructor(
         newAppUpdateNotifNo.value=0
         bookInterestNotifNo.value=0
         getRemotePrivateKeys()
-
     }
 
     fun getBookIdFromACollaboratorReferrerId(): String? {
@@ -62,8 +61,9 @@ class MainActivityViewModel @Inject constructor(
             val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.split(Referrer.SEPARATOR)
             val collaboratorId = collaboratorAndBookId[0]
             val bookId = collaboratorAndBookId[1]
+            val collabCommission =   collaboratorAndBookId[2]
 
-            val collaborator = Collaborator(collaboratorId, bookId)
+            val collaborator = Collaborator(collaboratorId, bookId, collabCommission.toDouble())
             addCollaborator(collaborator)
             return bookId
         }
