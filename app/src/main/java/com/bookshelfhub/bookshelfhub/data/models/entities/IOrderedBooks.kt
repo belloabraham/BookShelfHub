@@ -7,6 +7,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
 interface IOrderedBooks {
     val bookId: String
     val priceInUSD: Double
+    val priceInBookCurrency:Double
     val userId: String
     val name: String
     val coverUrl: String

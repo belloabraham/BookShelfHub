@@ -86,7 +86,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     transactionRef, null,  0, 0,
                     totalNoOfOrderedBooksAsSerialNo, trans.additionInfo,
                     collabCommissionInPercentage,
-                    collabId
+                    collabId,
+                    trans.priceInBookCurrency
                 )
                bookNames =  bookNames.plus("${trans.name}, ")
                 orderedBooks = orderedBooks.plus(orderedBook)

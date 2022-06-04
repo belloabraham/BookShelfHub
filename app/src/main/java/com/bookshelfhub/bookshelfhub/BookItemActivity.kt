@@ -353,7 +353,8 @@ class BookItemActivity : AppCompatActivity() {
                 DateTimeUtil.getMonth(),
                 DateTimeUtil.getYear(),
                 serialNo.toLong(),
-                additionalInfo
+                additionalInfo,
+                null, null, 0.0
             )
             bookItemActivityViewModel.addAnOrderedBook(orderedBook)
         }

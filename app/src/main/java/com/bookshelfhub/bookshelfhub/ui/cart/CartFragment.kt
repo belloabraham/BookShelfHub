@@ -129,7 +129,8 @@ class CartFragment : Fragment() {
                        cartItem.pubId,
                        cartItem.collaboratorsId,
                        countryCode,
-                       userAdditionalInfo)
+                       userAdditionalInfo,
+                       cartItem.price )
                    )
 
                    totalAmountInUSD = totalAmountInUSD.plus(priceInUSD)
