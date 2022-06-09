@@ -7,6 +7,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
@@ -66,8 +67,7 @@ class MainActivity : AppCompatActivity() {
             mainActivityViewModel.updatedRecommendedBooks(bookInterest)
         })
 
-        setUpShelfStoreViewPager()
-        setUpCartMoreViewPager()
+        setUpViewPager()
 
         layout.bottomBar.setOnTabSelectListener(object : AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
@@ -76,19 +76,7 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
-
-                if (newIndex > 1) {
-                    layout.shelfStoreViewPager.visibility = INVISIBLE
-                    layout.cartMoreViewPager.visibility = VISIBLE
-                    mainActivityViewModel.setActiveViewPager(1)
-                } else {
-                    layout.shelfStoreViewPager.visibility = VISIBLE
-                    layout.cartMoreViewPager.visibility = INVISIBLE
-                    mainActivityViewModel.setActiveViewPager(0)
-                }
-
                 setViewPagerPosition(newIndex)
-
             }
 
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {}
@@ -99,21 +87,16 @@ class MainActivity : AppCompatActivity() {
     private fun setViewPagerPosition(tabIndex:Int){
         when (tabIndex) {
             0 -> {
-                //set active page to get the last active page in the case of activity recreate when theme changes
-                mainActivityViewModel.setActivePage(0)
-                layout.shelfStoreViewPager.setCurrentItem(0, true)
+                layout.viewPager.setCurrentItem(0, true)
             }
             1 -> {
-                mainActivityViewModel.setActivePage(1)
-                layout.shelfStoreViewPager.setCurrentItem(1, true)
+                layout.viewPager.setCurrentItem(1, true)
             }
             2 -> {
-                mainActivityViewModel.setActivePage(0)
-                layout.cartMoreViewPager.setCurrentItem(0, true)
+                layout.viewPager.setCurrentItem(2, true)
             }
             3 -> {
-                mainActivityViewModel.setActivePage(1)
-                layout.cartMoreViewPager.setCurrentItem(1, true)
+                layout.viewPager.setCurrentItem(3, true)
             }
         }
     }
@@ -188,45 +171,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {
-        if (mainActivityViewModel.getActiveViewPager() == 0) {
-            layout.bottomBar.selectTabAt(
-                if (mainActivityViewModel.getActivePage() == 0) 0 else 1,
-                false
-            )
-            layout.shelfStoreViewPager.visibility = VISIBLE
-            layout.cartMoreViewPager.visibility = INVISIBLE
-            layout.shelfStoreViewPager.currentItem = mainActivityViewModel.getActivePage()!!
-        } else if (mainActivityViewModel.getActiveViewPager() == 1) {
-            layout.bottomBar.selectTabAt(
-                if (mainActivityViewModel.getActivePage() == 0) 2 else 3,
-                false
-            )
-            layout.cartMoreViewPager.currentItem = mainActivityViewModel.getActivePage()!!
-            layout.shelfStoreViewPager.visibility = INVISIBLE
-            layout.cartMoreViewPager.visibility = VISIBLE
+        layout.bottomBar.selectTabAt(layout.viewPager.currentItem, false)
+    }
+
+
+    private fun setUpViewPager() {
+        val viewPagerAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle)
+        if(supportFragmentManager.fragments.isEmpty()){
+           viewPagerAdapter.addFragment(listOf(
+               ShelfFragment.newInstance(),
+               StoreFragment.newInstance(),
+               BookmarkFragment.newInstance(),
+               MoreFragment.newInstance()
+           ))
         }
-    }
 
-
-    private fun setUpShelfStoreViewPager() {
-        val fragmentList = listOf(ShelfFragment.newInstance(), StoreFragment.newInstance())
-        val shelfStoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
         //Disables Swipe left and right for viewpager
-        layout.shelfStoreViewPager.isUserInputEnabled = false
-        layout.shelfStoreViewPager.adapter = shelfStoreAdapter
+        layout.viewPager.isUserInputEnabled = false
+        layout.viewPager.offscreenPageLimit = 4
+        layout.viewPager.adapter = viewPagerAdapter
     }
 
-    private fun setUpCartMoreViewPager() {
-        val fragmentList = listOf(BookmarkFragment.newInstance(), MoreFragment.newInstance())
-        val cartMoreAdapter = ViewPagerAdapter(supportFragmentManager, lifecycle, fragmentList)
-        //Disables Swipe left and right for viewpager
-        layout.cartMoreViewPager.isUserInputEnabled = false
-        layout.cartMoreViewPager.adapter = cartMoreAdapter
-    }
 
     override fun onDestroy() {
-        layout.shelfStoreViewPager.adapter = null
-        layout.cartMoreViewPager.adapter = null
+        layout.viewPager.adapter = null
         super.onDestroy()
     }
 

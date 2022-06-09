@@ -116,21 +116,21 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-    fun setActivePage(value:Int){
+/*  fun setActivePage(value:Int){
         savedState.set(ACTIVE_PAGE,value)
     }
 
     fun getActivePage(): Int? {
         return  savedState.get<Int>(ACTIVE_PAGE)
-    }
+    }*/
 
     fun getActiveViewPager(): Int? {
       return savedState.get<Int>(ACTIVE_VIEW_PAGER)
     }
 
-    fun setActiveViewPager(value:Int){
+    /*fun setActiveViewPager(value:Int){
         savedState.set(ACTIVE_VIEW_PAGER,value)
-    }
+    }*/
 
 
     private fun addCollaborator(collaborator: Collaborator){
