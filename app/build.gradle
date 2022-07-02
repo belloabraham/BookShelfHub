@@ -82,6 +82,10 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    def work_version = "2.7.1"
+    def room_version = "2.4.2"
+    def paging_version = "3.1.1"
+
 
     //--Testing
     testImplementation 'junit:junit:4.+'
@@ -110,8 +114,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     //--Data Store
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+
     //--Android - Room
-    def room_version = "2.4.2"
     implementation("androidx.room:room-runtime:$room_version")
     //---Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
@@ -121,7 +125,6 @@ dependencies {
     implementation("androidx.room:room-paging:$room_version")
 
     //--Work Manager
-    def work_version = "2.7.1"
     implementation("androidx.work:work-runtime-ktx:$work_version")
     //--Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -130,7 +133,6 @@ dependencies {
     implementation("androidx.hilt:hilt-work:$hilt_work_version")
     kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
 
-    def paging_version = "3.1.1"
     implementation("androidx.paging:paging-runtime-ktx:$paging_version") // For Kotlin use paging-runtime-ktx
 
     //Google Gson

@@ -1,11 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright 2017 The Android Open Source Project
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~      http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applic
+package com.bookshelfhub.bookshelfhub
+
+import org.junit.Assert
+import org.junit.Test
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * @see [Testing documentation](http://d.android.com/tools/testing)
+ */
+class ExampleUnitTest {
+  @Test
+  fun addition_isCorrect() {
+    Assert.assertEquals(4, (2 + 2).toLong())
+  }
+}
