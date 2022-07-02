@@ -14,7 +14,4 @@ import dagger.hilt.android.scopes.ActivityScoped
 @InstallIn(ActivityComponent::class)
 object ActivityModule {
 
-
-
-
 }

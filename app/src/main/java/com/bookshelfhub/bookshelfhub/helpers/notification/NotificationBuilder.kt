@@ -123,35 +123,33 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
     }
 
 
-   inner class Builder(
+    inner class Builder(
        val context: Context,
        private val notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)
        ){
 
-        private val mNotificationBuilder = this@NotificationBuilder
-
         fun getNotificationBuilder(): NotificationCompat.Builder {
-            val notificationBuilder =  NotificationCompat.Builder(context, mNotificationBuilder.notifChannelId)
-                    .setSmallIcon(mNotificationBuilder.smallIcon)
+            val notificationBuilder =  NotificationCompat.Builder(context, notifChannelId)
+                    .setSmallIcon(smallIcon)
                     .setLargeIcon(
-                        mNotificationBuilder.largeIcon
+                        largeIcon
                     )
-                    .setContentTitle(mNotificationBuilder.title)
+                    .setContentTitle(title)
                     .setShowWhen(true)
-                    .setContentText(mNotificationBuilder.message)
-                    .setOngoing(mNotificationBuilder.onGoing)
+                    .setContentText(message)
+                    .setOngoing(onGoing)
                     .setStyle(notificationStyle)
-                    .setColor(ContextCompat.getColor(context, mNotificationBuilder.notificationColor))
-                    .setPriority(mNotificationBuilder.priority)
+                    .setColor(ContextCompat.getColor(context, notificationColor))
+                    .setPriority(priority)
                     .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setAutoCancel(mNotificationBuilder.autoCancel)
+                    .setAutoCancel(autoCancel)
 
-            mNotificationBuilder.getContentIntent()?.let {
+            getContentIntent()?.let {
                 notificationBuilder.setContentIntent(it)
             }
 
-            mNotificationBuilder.getPendingIntent()?.let {
-                notificationBuilder.addAction(0, mNotificationBuilder.actionText, it)
+            getPendingIntent()?.let {
+                notificationBuilder.addAction(0, actionText, it)
             }
 
             return notificationBuilder
@@ -165,15 +163,15 @@ class NotificationBuilder(private val context:Context, private val notifChannelI
          @SuppressLint("UnspecifiedImmutableFlag")
          fun showNotification(notificationId:Int, getUrlIntent:String.()->Intent) {
             var pendingIntent: PendingIntent? = null
-            mNotificationBuilder.url?.let {
+            url?.let {
                 val intent = getUrlIntent(it)
-                pendingIntent = mNotificationBuilder.getPendingIntent(intent, context)
+                pendingIntent = getPendingIntent(intent, context)
             }
 
              val builder = getNotificationBuilder()
 
              pendingIntent?.let {
-                builder.addAction(0, mNotificationBuilder.actionText, it)
+                builder.addAction(0, actionText, it)
              }
 
             val notificationManager = NotificationManagerCompat.from(context)
