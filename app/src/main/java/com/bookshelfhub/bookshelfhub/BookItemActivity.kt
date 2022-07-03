@@ -306,7 +306,7 @@ class BookItemActivity : AppCompatActivity() {
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
                     userReview.dateTime?.let {
-                        val  localDate = DateUtil.getHumanReaddable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                        val  localDate = DateUtil.getHumanReadable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                         layout.date.text = localDate
                     }
 

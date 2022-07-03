@@ -50,7 +50,7 @@ class UserReviewListAdapter {
             userRatingBar.rating = model.userRating.toFloat()
             userReviewTxt.text = model.review
             model.dateTime?.let {
-                val  date = DateUtil.getHumanReaddable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                val  date = DateUtil.getHumanReadable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
                 dateTxt.text = date
             }
             if (model.userPhoto!=null){

@@ -74,7 +74,7 @@ class ProfileFragment : Fragment() {
         })
 
         layout.dobDatePicker.setOnDatePickListener {
-            dateOfBirth = DateUtil.getHumanReaddable(it, DateFormat.MM_DD_YYYY.completeFormatValue)
+            dateOfBirth = DateUtil.getHumanReadable(it, DateFormat.MM_DD_YYYY.completeFormatValue)
         }
 
         layout.genderDropDown.setOnFocusChangeListener { v, hasFocus ->

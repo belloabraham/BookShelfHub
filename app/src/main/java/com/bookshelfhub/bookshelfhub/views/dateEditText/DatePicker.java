@@ -213,7 +213,7 @@ public class DatePicker extends RelativeLayout {
         if (!hasFocus && date.length() == LENGTH_DATE_COMPLETE) {
             layoutDatePicker.setVisibility(View.INVISIBLE);
             textDatePickerDate.setVisibility(View.VISIBLE);
-            textDatePickerDate.setText(DateUtil.getHumanReaddable(getDate(),
+            textDatePickerDate.setText(DateUtil.getHumanReadable(getDate(),
                     dateFormat.getCompleteFormatValue()));
 
         } else if (layoutDatePicker.getVisibility() == View.INVISIBLE) {
@@ -456,7 +456,7 @@ public class DatePicker extends RelativeLayout {
 
     protected boolean checkSameDate(StringBuilder dateToCheckTmp) {
         Date realDateToCheckTmp = DateUtil.stringToDate(dateToCheckTmp.toString(), dateFormat.getValue());
-        return DateUtil.getHumanReaddable(realDateToCheckTmp, dateFormat.getValue()).equals(dateToCheckTmp.toString());
+        return DateUtil.getHumanReadable(realDateToCheckTmp, dateFormat.getValue()).equals(dateToCheckTmp.toString());
     }
 
     protected void fillDate() {
@@ -505,7 +505,7 @@ public class DatePicker extends RelativeLayout {
     }
 
     public boolean setDate(Date newDate) {
-        String tmpDate = DateUtil.getHumanReaddable(newDate, dateFormat.getValue());
+        String tmpDate = DateUtil.getHumanReadable(newDate, dateFormat.getValue());
         if (tmpDate.length() != LENGTH_DATE_COMPLETE
                 || (minDate != null && newDate.before(minDate))
                 || (maxDate != null && newDate.after(maxDate))) {
