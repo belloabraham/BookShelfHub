@@ -14,9 +14,10 @@ object DisplayUtil {
     }
 
     fun convertDpToPixels(context: Context, dp: Float): Float {
-        if(dp==0f){
-            return 0f
-        }
-        return dp * context.resources.displayMetrics.density
+       return if(dp==0f){
+             0f
+       }else {
+           dp * context.resources.displayMetrics.density
+       }
     }
 }

@@ -1,6 +1,4 @@
-package com.bookshelfhub.bookshelfhub.helpers
-
-import com.bookshelfhub.bookshelfhub.helpers.payment.PaystackSupportedCountriesCode
+package com.bookshelfhub.bookshelfhub.helpers.payment
 
 
 object Currency {

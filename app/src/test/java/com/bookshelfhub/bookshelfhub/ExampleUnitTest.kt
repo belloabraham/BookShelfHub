@@ -8,9 +8,11 @@ import org.junit.Test
  *
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
+
 class ExampleUnitTest {
-  //Possible test class Repo, ColorUtil, CardUtil,
-  // DeviceUtil, Clipboard, PaymentSDK, Currency, RegexWebLinkInText, Location, IconUtil, DisplayUtil
+  //Possible test class
+  // DeviceUtil, Repo
+
 
   @Test
   fun addition_isCorrect() {
