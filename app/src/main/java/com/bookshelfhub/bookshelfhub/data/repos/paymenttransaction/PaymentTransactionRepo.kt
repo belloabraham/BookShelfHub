@@ -23,7 +23,7 @@ class PaymentTransactionRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
     ) : IPaymentTransactionRepo {
 
-    private  val  paymentTransactionDao = roomInstance.paymentTransDao()
+    private  val  paymentTransactionDao = roomInstance.getPaymentTransDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
     override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {

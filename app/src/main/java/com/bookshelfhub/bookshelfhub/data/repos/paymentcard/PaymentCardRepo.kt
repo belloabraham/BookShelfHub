@@ -15,7 +15,7 @@ class PaymentCardRepo @Inject constructor(
 ) : IPaymentCardRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val paymentCardDao = roomInstance.paymentCardDao()
+    private val paymentCardDao = roomInstance.getPaymentCardDao()
 
      override suspend fun addPaymentCard(paymentCard: PaymentCard) {
         withContext(ioDispatcher){ paymentCardDao.insertOrReplace(paymentCard)}

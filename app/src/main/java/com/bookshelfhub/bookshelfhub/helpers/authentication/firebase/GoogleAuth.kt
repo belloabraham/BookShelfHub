@@ -13,7 +13,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-open class GoogleAuth(activity: Activity, private val gcpWebClient:Int) :
+open class GoogleAuth(activity: Activity, gcpWebClient:Int) :
     IGoogleAuth {
 
 

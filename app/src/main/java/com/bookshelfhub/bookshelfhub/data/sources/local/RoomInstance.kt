@@ -11,20 +11,20 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 @TypeConverters(Converters::class)
 abstract class RoomInstance: RoomDatabase() {
 
-    abstract fun userDao(): UserDao
-    abstract fun orderedBooksDao(): OrderedBooksDao
-    abstract fun bookInterestDao(): BookInterestDao
-    abstract fun cartItemsDao(): CartItemsDao
-    abstract fun paymentCardDao(): PaymentCardDao
-    abstract fun paymentTransDao(): PaymentTransactionDao
-    abstract fun publishedBooksDao(): PublishedBooksDao
-    abstract fun readHistoryDao(): ReadHistoryDao
-    abstract fun referralDao(): ReferralDao
-    abstract fun userReviewsDao(): UserReviewDao
-    abstract fun searchHistoryDao(): SearchHistoryDao
-    abstract fun bookVideosDao(): BookVideosDao
-    abstract fun bookmarksDao(): BookmarksDao
-    abstract fun bookDownloadStateDao(): BookDownloadDao
+    abstract fun getUserDao(): UserDao
+    abstract fun getOrderedBooksDao(): OrderedBooksDao
+    abstract fun getBookInterestDao(): BookInterestDao
+    abstract fun getCartItemsDao(): CartItemsDao
+    abstract fun getPaymentCardDao(): PaymentCardDao
+    abstract fun getPaymentTransDao(): PaymentTransactionDao
+    abstract fun getPublishedBooksDao(): PublishedBooksDao
+    abstract fun getReadHistoryDao(): ReadHistoryDao
+    abstract fun getReferralDao(): ReferralDao
+    abstract fun getUserReviewsDao(): UserReviewDao
+    abstract fun getSearchHistoryDao(): SearchHistoryDao
+    abstract fun getBookVideosDao(): BookVideosDao
+    abstract fun getBookmarksDao(): BookmarksDao
+    abstract fun getBookDownloadStateDao(): BookDownloadDao
 
     companion object{
         @Volatile

@@ -20,7 +20,7 @@ class UserReviewRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
 
 ) : IUserReviewRepo {
-    private val userReviewDao = roomInstance.userReviewsDao()
+    private val userReviewDao = roomInstance.getUserReviewsDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun addUserReviews(userReviews: List<UserReview>) {

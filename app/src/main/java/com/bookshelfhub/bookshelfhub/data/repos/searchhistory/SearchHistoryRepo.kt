@@ -16,7 +16,7 @@ class SearchHistoryRepo @Inject constructor(
     ) : ISearchHistoryRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val searchHistoryDao = roomInstance.searchHistoryDao()
+    private val searchHistoryDao = roomInstance.getSearchHistoryDao()
 
     override fun getLiveStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>> {
         return searchHistoryDao.getLiveStoreSearchHistory(userId)

@@ -16,12 +16,13 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CartItemsRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    private val roomInstance: RoomInstance,
     private val worker: Worker,
    ) : ICartItemsRepo {
 
-    private val cartItemsDao = roomInstance.cartItemsDao()
     private val ioDispatcher: CoroutineDispatcher = IO
+    private val cartItemsDao = roomInstance.getCartItemsDao()
+
      override fun getLiveListOfCartItems(userId: String): LiveData<List<CartItem>> {
         return  cartItemsDao.getLiveListOfCartItems(userId)
     }

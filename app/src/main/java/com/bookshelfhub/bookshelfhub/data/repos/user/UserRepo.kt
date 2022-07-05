@@ -26,7 +26,7 @@ class UserRepo @Inject constructor(
 
 ) : IUserRepo {
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val userDao = roomInstance.userDao()
+    private val userDao = roomInstance.getUserDao()
 
     override suspend fun getRemoteUserDataSnapshot(userId:String): RemoteUser? {
        return withContext(ioDispatcher) {

@@ -14,7 +14,7 @@ class ReadHistoryRepo @Inject constructor(
     roomInstance: RoomInstance,
    ) :
     IReadHistoryRepo {
-    private val readHistoryDao = roomInstance.readHistoryDao()
+    private val readHistoryDao = roomInstance.getReadHistoryDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun addReadHistory(history: ReadHistory) {

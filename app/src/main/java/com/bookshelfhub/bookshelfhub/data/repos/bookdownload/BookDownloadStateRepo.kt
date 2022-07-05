@@ -15,12 +15,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookDownloadStateRepo @Inject constructor(
-    roomInstance: RoomInstance
+    private val roomInstance: RoomInstance
 ) : IBookDownloadStateRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val bookDownloadDao = roomInstance.bookDownloadStateDao()
-
+    private val bookDownloadDao= roomInstance.getBookDownloadStateDao()
 
     override fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
         return bookDownloadDao.getLiveBookDownloadState(bookId)

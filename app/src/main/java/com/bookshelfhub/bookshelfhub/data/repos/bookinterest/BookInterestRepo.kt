@@ -17,15 +17,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookInterestRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    private val roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
     private val worker:Worker,
     ) : IBookInterestRepo {
 
-
-    private val bookInterestDao = roomInstance.bookInterestDao()
-
     private val ioDispatcher: CoroutineDispatcher = IO
+    private val bookInterestDao = roomInstance.getBookInterestDao()
 
     override suspend fun getBookInterest(userId:String): Optional<BookInterest> {
         return withContext(ioDispatcher){

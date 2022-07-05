@@ -10,10 +10,6 @@ import org.junit.Test
  */
 
 class ExampleUnitTest {
-  //Possible test class
-  // DeviceUtil, Repo
-
-
   @Test
   fun addition_isCorrect() {
     Assert.assertEquals(4, (2 + 2).toLong())

@@ -12,13 +12,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookVideosRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    private val roomInstance: RoomInstance,
     private val remoteDataSource: IRemoteDataSource,
     ) :IBookVideosRepo {
 
-    private val bookVideosDao = roomInstance.bookVideosDao()
     private val ioDispatcher: CoroutineDispatcher = IO
-     override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideo>> {
+    private val bookVideosDao = roomInstance.getBookVideosDao()
+
+    override fun getLiveListOfBookVideos(isbn: String): LiveData<List<BookVideo>> {
         return  bookVideosDao.getLiveListOfBookVideos(isbn)
     }
 

@@ -19,7 +19,7 @@ class OrderedBooksRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
 ) :IOrderedBooksRepo {
 
-    private val orderedBooksDao = roomInstance.orderedBooksDao()
+    private val orderedBooksDao = roomInstance.getOrderedBooksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook> {

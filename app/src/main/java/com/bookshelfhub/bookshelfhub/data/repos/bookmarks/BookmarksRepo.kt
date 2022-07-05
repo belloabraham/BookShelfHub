@@ -18,13 +18,13 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookmarksRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    private val roomInstance: RoomInstance,
     private val worker: Worker,
     private val remoteDataSource: IRemoteDataSource,
     ) :
     IBookmarksRepo {
-    private val bookmarksDao = roomInstance.bookmarksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
+    private val bookmarksDao= roomInstance.getBookmarksDao()
 
      override suspend fun getBookmarks(deleted: Boolean): List<Bookmark> {
         return withContext(ioDispatcher){

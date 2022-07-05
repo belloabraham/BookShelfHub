@@ -13,7 +13,7 @@ import javax.inject.Inject
 class ReferralRepo @Inject constructor(
     roomInstance: RoomInstance,
 ) :IReferralRepo {
-    private val referralDao = roomInstance.referralDao()
+    private val referralDao = roomInstance.getReferralDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
     override suspend fun addCollaboratorOrIgnore(collaborator: Collaborator){

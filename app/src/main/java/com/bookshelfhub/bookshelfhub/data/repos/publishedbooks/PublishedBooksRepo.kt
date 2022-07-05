@@ -20,7 +20,7 @@ class PublishedBooksRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
 ) : IPublishedBooksRepo {
 
-    private val publishedBooksDao = roomInstance.publishedBooksDao()
+    private val publishedBooksDao = roomInstance.getPublishedBooksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>> {
