@@ -86,15 +86,24 @@ dependencies {
     def room_version = "2.4.2"
     def paging_version = "3.1.1"
 
-    //Local Test
+    //Local Test (Unit Test)
     //--JUnit
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.13.2'
+    //--Google
+    testImplementation "com.google.truth:truth:1.1.3"
+    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
+
+    //Instrumented Test (Integrated Test)
+    //--WorkManager
+    androidTestImplementation("androidx.work:work-testing:$work_version")
+    //--Espresso
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     //--Room
     testImplementation("androidx.room:room-testing:$room_version")
     //--Paging
     testImplementation("androidx.paging:paging-common-ktx:$paging_version")
 
-    //UI Test
+    //Instrumented Test (UI Test(a.k.a E2E))
     //--AndroidX
     def androidXTestVersion = "1.4.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -102,12 +111,12 @@ dependencies {
     androidTestImplementation("androidx.test:core:$androidXTestVersion")
     androidTestImplementation("androidx.test:core-ktx:$androidXTestVersion")
     androidTestImplementation("androidx.test:runner:$androidXTestVersion")
-    //--WorkManager
-    androidTestImplementation("androidx.work:work-testing:$work_version")
-    //--Espresso
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
 
+    //Coroutines
+    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3")
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3"
 
     //Android Jetpack
     //--Navigation Component
@@ -144,6 +153,7 @@ dependencies {
     def hilt_work_version = "1.0.0"
     implementation("androidx.hilt:hilt-work:$hilt_work_version")
     kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
+
 
     implementation("androidx.paging:paging-runtime-ktx:$paging_version") // For Kotlin use paging-runtime-ktx
 
@@ -220,8 +230,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions-ktx'
 
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta06'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
 
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
@@ -237,13 +247,13 @@ dependencies {
 
     //Google Play Services
     //--Google Sign in auth
-    implementation 'com.google.android.gms:play-services-auth:20.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
     //---In App Update
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
 
     //---Task
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0-native-mt'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
