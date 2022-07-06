@@ -9,7 +9,7 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 
 @Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookVideo::class, BookDownloadState::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
-abstract class RoomInstance: RoomDatabase() {
+abstract class AppDatabase: RoomDatabase() {
 
     abstract fun getUserDao(): UserDao
     abstract fun getOrderedBooksDao(): OrderedBooksDao
@@ -28,15 +28,15 @@ abstract class RoomInstance: RoomDatabase() {
 
     companion object{
         @Volatile
-        private var INSTANCE: RoomInstance?=null
-        fun getDatabase(context:Context): RoomInstance {
+        private var INSTANCE: AppDatabase?=null
+        fun getDatabase(context:Context): AppDatabase {
             if (INSTANCE !=null){
                 return  INSTANCE!!
             }
             synchronized(this){
                 val newInstance = Room.databaseBuilder(
                     context.applicationContext,
-                    RoomInstance::class.java,
+                    AppDatabase::class.java,
                     context.getString(R.string.db_name)
                 ).build()
                 INSTANCE =newInstance

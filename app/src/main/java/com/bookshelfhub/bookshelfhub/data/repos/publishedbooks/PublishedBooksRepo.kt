@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
-import com.bookshelfhub.bookshelfhub.data.sources.local.PublishedBooksDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.google.common.base.Optional
@@ -16,11 +15,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PublishedBooksRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    appDatabase: AppDatabase,
     private val remoteDataSource: IRemoteDataSource,
 ) : IPublishedBooksRepo {
 
-    private val publishedBooksDao = roomInstance.getPublishedBooksDao()
+    private val publishedBooksDao = appDatabase.getPublishedBooksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>> {

@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub.data.repos.earnings
 
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import kotlinx.coroutines.CoroutineDispatcher

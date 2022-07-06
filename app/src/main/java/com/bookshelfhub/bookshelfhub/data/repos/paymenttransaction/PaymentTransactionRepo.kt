@@ -5,7 +5,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.workDataOf
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.payment.Payment
@@ -18,12 +18,12 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PaymentTransactionRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    appDatabase: AppDatabase,
     private val worker: Worker,
     private val remoteDataSource: IRemoteDataSource,
     ) : IPaymentTransactionRepo {
 
-    private  val  paymentTransactionDao = roomInstance.getPaymentTransDao()
+    private  val  paymentTransactionDao = appDatabase.getPaymentTransDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
     override suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>) {

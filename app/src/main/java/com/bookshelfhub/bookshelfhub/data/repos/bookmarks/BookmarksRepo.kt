@@ -5,26 +5,24 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.Bookmark
 import com.bookshelfhub.bookshelfhub.data.models.entities.IEntityId
-import com.bookshelfhub.bookshelfhub.data.sources.local.BookmarksDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookmarksRepo @Inject constructor(
-    private val roomInstance: RoomInstance,
+    private val appDatabase: AppDatabase,
     private val worker: Worker,
     private val remoteDataSource: IRemoteDataSource,
     ) :
     IBookmarksRepo {
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val bookmarksDao= roomInstance.getBookmarksDao()
+    private val bookmarksDao= appDatabase.getBookmarksDao()
 
      override suspend fun getBookmarks(deleted: Boolean): List<Bookmark> {
         return withContext(ioDispatcher){

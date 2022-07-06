@@ -4,8 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
-import com.bookshelfhub.bookshelfhub.data.sources.local.CartItemsDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.Worker
@@ -16,12 +15,12 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CartItemsRepo @Inject constructor(
-    private val roomInstance: RoomInstance,
+    private val appDatabase: AppDatabase,
     private val worker: Worker,
    ) : ICartItemsRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val cartItemsDao = roomInstance.getCartItemsDao()
+    private val cartItemsDao = appDatabase.getCartItemsDao()
 
      override fun getLiveListOfCartItems(userId: String): LiveData<List<CartItem>> {
         return  cartItemsDao.getLiveListOfCartItems(userId)

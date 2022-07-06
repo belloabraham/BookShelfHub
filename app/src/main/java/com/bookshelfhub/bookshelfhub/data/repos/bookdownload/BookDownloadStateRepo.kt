@@ -1,13 +1,8 @@
 package com.bookshelfhub.bookshelfhub.data.repos.bookdownload
 
 import androidx.lifecycle.LiveData
-import com.bookshelfhub.bookshelfhub.data.models.entities.BookVideo
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
-import com.bookshelfhub.bookshelfhub.data.sources.local.BookDownloadDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.BookVideosDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
-import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.google.common.base.Optional
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -15,11 +10,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookDownloadStateRepo @Inject constructor(
-    private val roomInstance: RoomInstance
+    private val appDatabase: AppDatabase
 ) : IBookDownloadStateRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val bookDownloadDao= roomInstance.getBookDownloadStateDao()
+    private val bookDownloadDao= appDatabase.getBookDownloadStateDao()
 
     override fun getLiveBookDownloadState(bookId:String): LiveData<Optional<BookDownloadState>> {
         return bookDownloadDao.getLiveBookDownloadState(bookId)

@@ -29,7 +29,7 @@ import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase.FirebaseCloudFunctions
 import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
@@ -69,8 +69,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideOrderedBooksRepo(roomInstance:RoomInstance, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
-        return OrderedBooksRepo(roomInstance, remoteDataSource)
+    fun provideOrderedBooksRepo(appDatabase:AppDatabase, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {
+        return OrderedBooksRepo(appDatabase, remoteDataSource)
     }
 
     @Singleton
@@ -87,14 +87,14 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun providePublishedBooksRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource): IPublishedBooksRepo {
-        return PublishedBooksRepo(roomInstance, remoteDataSource)
+    fun providePublishedBooksRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource): IPublishedBooksRepo {
+        return PublishedBooksRepo(appDatabase, remoteDataSource)
     }
 
     @Singleton
     @Provides
-    fun provideUserReviewRepo(roomInstance: RoomInstance, remoteDataSource:IRemoteDataSource): IUserReviewRepo {
-        return UserReviewRepo(roomInstance, remoteDataSource)
+    fun provideUserReviewRepo(appDatabase: AppDatabase, remoteDataSource:IRemoteDataSource): IUserReviewRepo {
+        return UserReviewRepo(appDatabase, remoteDataSource)
     }
 
     @Singleton
@@ -118,39 +118,39 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideRoomInstance(@ApplicationContext context: Context): RoomInstance {
-        return RoomInstance.getDatabase(context)
+    fun provideRoomInstance(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getDatabase(context)
     }
 
     @Singleton
     @Provides
-    fun provideUserRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IUserRepo {
-        return UserRepo(roomInstance, remoteDataSource, worker)
+    fun provideUserRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource, worker:Worker): IUserRepo {
+        return UserRepo(appDatabase, remoteDataSource, worker)
     }
 
     @Singleton
     @Provides
-    fun provideCartRepo(roomInstance: RoomInstance, worker: Worker): ICartItemsRepo {
-        return CartItemsRepo(roomInstance, worker)
+    fun provideCartRepo(appDatabase: AppDatabase, worker: Worker): ICartItemsRepo {
+        return CartItemsRepo(appDatabase, worker)
     }
 
     @Singleton
     @Provides
-    fun providePaymentTransactionRepo(roomInstance: RoomInstance, worker: Worker, remoteDataSource: IRemoteDataSource): IPaymentTransactionRepo {
-        return PaymentTransactionRepo(roomInstance, worker, remoteDataSource)
+    fun providePaymentTransactionRepo(appDatabase: AppDatabase, worker: Worker, remoteDataSource: IRemoteDataSource): IPaymentTransactionRepo {
+        return PaymentTransactionRepo(appDatabase, worker, remoteDataSource)
     }
 
     @Singleton
     @Provides
-    fun provideBookmarkRepo(roomInstance: RoomInstance, worker:Worker, remoteDataSource: IRemoteDataSource): IBookmarksRepo {
-        return BookmarksRepo(roomInstance, worker, remoteDataSource)
+    fun provideBookmarkRepo(appDatabase: AppDatabase, worker:Worker, remoteDataSource: IRemoteDataSource): IBookmarksRepo {
+        return BookmarksRepo(appDatabase, worker, remoteDataSource)
     }
 
 
     @Singleton
     @Provides
-    fun provideBookInterestRepo(roomInstance: RoomInstance, remoteDataSource: IRemoteDataSource, worker:Worker): IBookInterestRepo {
-        return BookInterestRepo(roomInstance, remoteDataSource, worker)
+    fun provideBookInterestRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource, worker:Worker): IBookInterestRepo {
+        return BookInterestRepo(appDatabase, remoteDataSource, worker)
     }
 
     @Singleton

@@ -2,20 +2,18 @@ package com.bookshelfhub.bookshelfhub.data.repos.paymentcard
 
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
-import com.bookshelfhub.bookshelfhub.data.sources.local.PaymentCardDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PaymentCardRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    appDatabase: AppDatabase,
 ) : IPaymentCardRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val paymentCardDao = roomInstance.getPaymentCardDao()
+    private val paymentCardDao = appDatabase.getPaymentCardDao()
 
      override suspend fun addPaymentCard(paymentCard: PaymentCard) {
         withContext(ioDispatcher){ paymentCardDao.insertOrReplace(paymentCard)}

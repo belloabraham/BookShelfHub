@@ -3,8 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.orderedbooks
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
-import com.bookshelfhub.bookshelfhub.data.sources.local.OrderedBooksDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.google.common.base.Optional
@@ -15,11 +14,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class OrderedBooksRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    appDatabase: AppDatabase,
     private val remoteDataSource: IRemoteDataSource,
 ) :IOrderedBooksRepo {
 
-    private val orderedBooksDao = roomInstance.getOrderedBooksDao()
+    private val orderedBooksDao = appDatabase.getOrderedBooksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook> {
