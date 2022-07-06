@@ -36,7 +36,6 @@ class Application: android.app.Application(), Configuration.Provider {
         Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
-
     @Inject
     lateinit var worker: Worker
 
@@ -45,7 +44,7 @@ class Application: android.app.Application(), Configuration.Provider {
         super.onCreate()
 
         // Should come first
-        setUpAppCheck()
+        setupFirebaseAppCheck()
 
         //Setup Timber
         if (Config.isDevMode()) {
@@ -100,7 +99,7 @@ class Application: android.app.Application(), Configuration.Provider {
        worker.enqueueUniquePeriodicWork(tag, workRequest, workPolicy)
     }
 
-    private fun setUpAppCheck(){
+    private fun setupFirebaseAppCheck(){
         // ***Initialize firebase (Required by App Check)***//
         FirebaseApp.initializeApp(this)
 

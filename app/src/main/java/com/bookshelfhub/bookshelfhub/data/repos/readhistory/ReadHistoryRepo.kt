@@ -2,8 +2,7 @@ package com.bookshelfhub.bookshelfhub.data.repos.readhistory
 
 import androidx.lifecycle.LiveData
 import com.bookshelfhub.bookshelfhub.data.models.entities.ReadHistory
-import com.bookshelfhub.bookshelfhub.data.sources.local.ReadHistoryDao
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.google.common.base.Optional
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -11,10 +10,10 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ReadHistoryRepo @Inject constructor(
-    roomInstance: RoomInstance,
+    appDatabase: AppDatabase,
    ) :
     IReadHistoryRepo {
-    private val readHistoryDao = roomInstance.getReadHistoryDao()
+    private val readHistoryDao = appDatabase.getReadHistoryDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun addReadHistory(history: ReadHistory) {

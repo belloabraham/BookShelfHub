@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.helpers.payment
 
 import org.junit.Assert.assertTrue
+import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class PaymentSDKTest {

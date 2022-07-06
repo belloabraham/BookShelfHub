@@ -11,7 +11,6 @@ interface BaseDao<T> {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOrIgnore(entity: T)
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllOrReplace(entities: List<T>)
 

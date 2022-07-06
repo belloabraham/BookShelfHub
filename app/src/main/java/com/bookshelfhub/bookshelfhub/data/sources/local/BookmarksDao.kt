@@ -11,11 +11,11 @@ abstract class BookmarksDao : BaseDao<Bookmark> {
     @Query("SELECT * FROM Bookmarks WHERE deleted = :deleted")
     abstract suspend fun getBookmarks(deleted: Boolean):List<Bookmark>
 
-    @Query("DELETE FROM Bookmarks WHERE pageNumb = :pageNumb AND isbn =:isbn")
-    abstract suspend fun deleteFromBookmark(pageNumb: Int, isbn:String)
+    @Query("DELETE FROM Bookmarks WHERE pageNumb = :pageNumb AND bookId =:bookId")
+    abstract suspend fun deleteFromBookmark(pageNumb: Int, bookId:String)
 
-    @Query("SELECT * FROM Bookmarks WHERE pageNumb = :pageNumb AND isbn =:isbn")
-    abstract suspend fun getBookmark(pageNumb:Int, isbn:String): Optional<Bookmark>
+    @Query("SELECT * FROM Bookmarks WHERE pageNumb = :pageNumb AND bookId =:bookId")
+    abstract suspend fun getBookmark(pageNumb:Int, bookId:String): Optional<Bookmark>
 
     @Query("SELECT * FROM Bookmarks WHERE deleted = :deleted")
     abstract fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>>

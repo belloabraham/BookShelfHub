@@ -14,7 +14,7 @@ import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.referral.ReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.SearchHistoryRepo
-import com.bookshelfhub.bookshelfhub.data.sources.local.RoomInstance
+import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
 import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
@@ -35,8 +35,8 @@ object ViewModelModule {
 
     @ViewModelScoped
     @Provides
-    fun provideBookDownloadStateRepo(roomInstance:RoomInstance): IBookDownloadStateRepo {
-        return BookDownloadStateRepo(roomInstance)
+    fun provideBookDownloadStateRepo(appDatabase:AppDatabase): IBookDownloadStateRepo {
+        return BookDownloadStateRepo(appDatabase)
     }
 
     @ViewModelScoped
@@ -66,33 +66,33 @@ object ViewModelModule {
 
     @ViewModelScoped
     @Provides
-    fun providePaymentCardRepo(roomInstance:RoomInstance): IPaymentCardRepo {
-        return PaymentCardRepo(roomInstance)
+    fun providePaymentCardRepo(appDatabase:AppDatabase): IPaymentCardRepo {
+        return PaymentCardRepo(appDatabase)
     }
 
 
     @ViewModelScoped
     @Provides
-    fun provideBookVideosRepo(remoteDataSource: IRemoteDataSource, roomInstance:RoomInstance): IBookVideosRepo {
-        return BookVideosRepo( roomInstance, remoteDataSource)
+    fun provideBookVideosRepo(remoteDataSource: IRemoteDataSource, appDatabase:AppDatabase): IBookVideosRepo {
+        return BookVideosRepo( appDatabase, remoteDataSource)
     }
 
     @ViewModelScoped
     @Provides
-    fun provideReferralRepo(roomInstance:RoomInstance): IReferralRepo {
-        return ReferralRepo(roomInstance)
+    fun provideReferralRepo(appDatabase:AppDatabase): IReferralRepo {
+        return ReferralRepo(appDatabase)
     }
 
     @ViewModelScoped
     @Provides
-    fun provideReadHistory(roomInstance:RoomInstance): IReadHistoryRepo {
-        return ReadHistoryRepo(roomInstance)
+    fun provideReadHistory(appDatabase:AppDatabase): IReadHistoryRepo {
+        return ReadHistoryRepo(appDatabase)
     }
 
     @ViewModelScoped
     @Provides
-    fun provideSearHistoryRepo(roomInstance:RoomInstance): ISearchHistoryRepo {
-        return SearchHistoryRepo(roomInstance)
+    fun provideSearHistoryRepo(appDatabase:AppDatabase): ISearchHistoryRepo {
+        return SearchHistoryRepo(appDatabase)
     }
 
 }

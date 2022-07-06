@@ -13,10 +13,10 @@ class GetBookIdFromCompoundIdTest {
         getBookIdFromCompoundId = GetBookIdFromCompoundId()
     }
 
-      @Test
-      fun outputShouldEqualsInputIfInputNotContainsHyphen(){
-         Assert.assertTrue("Hello" == getBookIdFromCompoundId("Hello"))
-      }
+    @Test
+    fun outputShouldEqualsInputIfInputNotContainsHyphen(){
+        Assert.assertTrue("Hello" == getBookIdFromCompoundId("Hello"))
+    }
 
     @Test
     fun inputLengthShouldBeGreaterThanOutputLengthIfInputContainsHyphen(){
