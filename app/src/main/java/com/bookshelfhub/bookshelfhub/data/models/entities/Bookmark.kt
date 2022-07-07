@@ -14,16 +14,4 @@ data class Bookmark(
     override val id:Long=0,
     var deleted:Boolean=false,
     var uploaded:Boolean=false
-): IEntityId{
-    init {
-        if(userId.isBlank()){
-            throw IllegalArgumentException("User ID can not be empty or blank")
-        }
-        if(bookId.isBlank()){
-            throw IllegalArgumentException("Book ID can not be empty or blank")
-        }
-        if(title.isBlank()){
-            throw IllegalArgumentException("Bookmark title can not be empty or blank")
-        }
-    }
-}
+): IEntityId

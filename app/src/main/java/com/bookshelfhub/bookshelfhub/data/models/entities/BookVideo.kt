@@ -6,9 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName= "BookVideos")
 data class BookVideo(
     @PrimaryKey
-    val isbnPageNumber:String,
+    val bookIdPageNumber:String,
     val bookId:String,
     val pageNumber:Int,
     val link:String
-
 )

@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookVideosRepo @Inject constructor(
-    private val appDatabase: AppDatabase,
+    appDatabase: AppDatabase,
     private val remoteDataSource: IRemoteDataSource,
     ) :IBookVideosRepo {
 

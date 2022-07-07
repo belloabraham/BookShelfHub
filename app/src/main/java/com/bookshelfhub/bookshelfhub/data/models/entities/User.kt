@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Users")
 data class User(
     @PrimaryKey
-     val userId: String,
+    val userId: String,
     val authType:String,
     var uploaded: Boolean = false,
     var firstName:String = "",

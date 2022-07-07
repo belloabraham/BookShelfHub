@@ -44,10 +44,4 @@ data class BookInterest(
      var civilEngChecked: Boolean = false,
      var archeologyChecked: Boolean = false,
      var added: Boolean = false
-){
-     init {
-          if(userId.isBlank()){
-               throw IllegalArgumentException("User ID can not be empty or blank")
-          }
-     }
-}
+)

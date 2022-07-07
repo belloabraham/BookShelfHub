@@ -5,16 +5,6 @@ import org.junit.Test
 
 class BookInterestTest{
 
-    @Test(expected = IllegalArgumentException::class)
-    fun userIdCanNotBeEmpty(){
-        BookInterest("")
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun userIdCanNotBeBlank(){
-        BookInterest(" ")
-    }
-
     @Test
     fun isBookInterestUploadedDefaultsToFalse(){
         val bookInterest = BookInterest("56789")
