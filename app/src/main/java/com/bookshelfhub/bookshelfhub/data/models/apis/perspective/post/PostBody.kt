@@ -14,4 +14,4 @@ data class RequestedAttributes(
     val TOXICITY: TOXICITY
 )
 
-class TOXICITY()
+class TOXICITY
