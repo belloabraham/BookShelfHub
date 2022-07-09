@@ -28,13 +28,23 @@ class BookmarksDaoTest {
 
     @Test
     fun addBookmark() = runBlocking {
-        val bookmark = Bookmark("1", "jkhfjgk", 1, "kgjjh")
-        bookmarksDao.insertOrReplace(bookmark)
+        val bookmark = Bookmark("1", "2", 1, "kgjjh")
         bookmarksDao.insertOrIgnore(bookmark)
-        assertThat(bookmarksDao.getBookmark(1, "1")).isPresent()
+
+        assertThat(bookmarksDao.getBookmark(1, "2")).isPresent()
         assertThat(bookmarksDao.getLocalBookmarks(false, false)).isNotEmpty()
-        bookmarksDao.delete(bookmark)
-        assertThat(bookmarksDao.getBookmark(1, "1")).isAbsent()
+
+        bookmarksDao.deleteFromBookmark(1, "2")
+        assertThat(bookmarksDao.getBookmark(1, "2")).isAbsent()
+
+        val bookmark2 = bookmark.copy(bookId = "3", deleted = true)
+        bookmarksDao.insertOrReplace(bookmark2)
+
+        assertThat(bookmarksDao.getDeletedBookmarks(true, false)).isNotEmpty()
+        bookmarksDao.deleteAllBookmarks()
+        assertThat(bookmarksDao.getBookmark(1, "3")).isAbsent()
+
     }
+
 
 }
