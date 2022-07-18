@@ -21,12 +21,11 @@ class WelcomeActivityViewModel @Inject constructor(
     val savedState: SavedStateHandle,
     private val bookInterestRepo: IBookInterestRepo,
     private val userRepo: IUserRepo,
-    userAuth: IUserAuth,
+    private val userAuth: IUserAuth,
     private val appUtil: AppUtil,
 ): ViewModel() {
 
     private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
-    private val userId = userAuth.getUserId()
     private var remoteUser: MutableLiveData<RemoteUser?> = MutableLiveData()
 
     fun getACollaboratorOrUserReferralId(): String? {
@@ -80,7 +79,7 @@ class WelcomeActivityViewModel @Inject constructor(
      fun getRemoteUser(): LiveData<RemoteUser?> {
          viewModelScope.launch {
              try {
-                 val docSnapshot = userRepo.getRemoteUserDataSnapshot(userId)
+                 val docSnapshot = userRepo.getRemoteUserDataSnapshot(userAuth.getUserId())
                  remoteUser.value = docSnapshot
              }catch (e:Exception){
                  Timber.e(e)

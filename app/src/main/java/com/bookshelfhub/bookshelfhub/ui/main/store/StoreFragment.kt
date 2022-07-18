@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.store
 
 import android.app.ActivityOptions
 import android.content.Intent
@@ -27,7 +27,6 @@ import com.bookshelfhub.bookshelfhub.adapters.paging.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
-import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout

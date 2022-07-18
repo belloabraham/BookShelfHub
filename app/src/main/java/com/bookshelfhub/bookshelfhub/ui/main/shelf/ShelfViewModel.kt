@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.shelf
 
 import androidx.lifecycle.*
 import androidx.work.Data
@@ -17,6 +17,7 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.workers.Worker
 import com.google.common.base.Optional
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -107,8 +108,11 @@ class ShelfViewModel @Inject constructor(
                    )
                    orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
                 }catch (e:Exception){
-                    Timber.e(e)
-                    return@launch
+                    val userHaveAtLeastOneBooksInDatabaseShelf = !(e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                    if(userHaveAtLeastOneBooksInDatabaseShelf){
+                        Timber.e(e)
+                        return@launch
+                    }
                 }
             }
         }

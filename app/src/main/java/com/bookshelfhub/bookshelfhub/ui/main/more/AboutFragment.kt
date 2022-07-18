@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.more
+package com.bookshelfhub.bookshelfhub.ui.main.more
 
 import android.os.Bundle
 import android.view.LayoutInflater

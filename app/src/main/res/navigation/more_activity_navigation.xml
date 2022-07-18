@@ -6,19 +6,19 @@
     app:startDestination="@+id/aboutFragment">
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.more.AboutFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.more.AboutFragment"
         android:label="@string/about"
         tools:layout="@layout/fragment_about">
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.more.ProfileFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.more.ProfileFragment"
         android:label="@string/profile"
         tools:layout="@layout/fragment_profile">
     </fragment>
     <fragment
         android:id="@+id/interestFragment"
-        android:name="com.bookshelfhub.bookshelfhub.ui.more.BookInterestFragment"
+        android:name="com.bookshelfhub.bookshelfhub.ui.main.more.BookInterestFragment"
         android:label="@string/book_interest"
         tools:layout="@layout/fragment_interest">
     </fragment>

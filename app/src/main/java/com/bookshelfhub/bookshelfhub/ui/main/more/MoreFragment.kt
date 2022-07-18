@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.more
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -30,12 +30,10 @@ import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.data.models.Earnings
 import com.bookshelfhub.bookshelfhub.helpers.authentication.AuthType
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IGoogleAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.GoogleAuth
-import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
@@ -71,7 +69,7 @@ class MoreFragment : Fragment() {
     lateinit var dynamicLink: IDynamicLink
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
-    private val moreViewModel:MoreViewModel by viewModels()
+    private val moreViewModel: MoreViewModel by viewModels()
     private lateinit var userId:String
 
     private var binding: FragmentMoreBinding?=null

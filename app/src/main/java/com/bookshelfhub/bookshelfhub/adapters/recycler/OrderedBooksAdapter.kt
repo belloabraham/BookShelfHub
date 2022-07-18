@@ -19,13 +19,11 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.data.FileExtension
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
-import com.bookshelfhub.bookshelfhub.ui.main.ShelfViewModel
+import com.bookshelfhub.bookshelfhub.ui.main.shelf.ShelfViewModel
 import com.bookshelfhub.bookshelfhub.views.Toast
-import com.bookshelfhub.bookshelfhub.workers.Worker
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder

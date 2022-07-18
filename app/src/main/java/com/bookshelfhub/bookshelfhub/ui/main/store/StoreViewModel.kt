@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.store
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

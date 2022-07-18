@@ -7,7 +7,7 @@
     android:id="@+id/container"
     android:paddingTop="@dimen/size_16"
     android:background="?backgroundColor"
-    tools:context=".ui.main.MoreFragment">
+    tools:context=".ui.main.more.MoreFragment">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.more
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

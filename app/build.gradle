@@ -9,7 +9,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.firebase.crashlytics'
+//apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     signingConfigs {
@@ -96,8 +96,6 @@ dependencies {
     //Instrumented Test (Integrated Test)
     //--WorkManager
     androidTestImplementation("androidx.work:work-testing:$work_version")
-    //--Espresso
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     //--Room
     testImplementation("androidx.room:room-testing:$room_version")
     //--Paging
@@ -106,6 +104,8 @@ dependencies {
     //Instrumented Test (UI Test(a.k.a E2E))
     //--AndroidX
     def androidXTestVersion = "1.4.0"
+    //--Espresso
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.3'
     androidTestImplementation("androidx.test:core:$androidXTestVersion")
@@ -217,7 +217,7 @@ dependencies {
 
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:29.0.2')
+    implementation platform('com.google.firebase:firebase-bom:30.2.0')
     //--Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
     //--Authentication
@@ -240,7 +240,7 @@ dependencies {
     //--Realtime Db
     implementation 'com.google.firebase:firebase-database-ktx'
     //--Crashlytics
-    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    releaseImplementation 'com.google.firebase:firebase-crashlytics-ktx'
     //--Cloud Storage
     implementation 'com.google.firebase:firebase-storage-ktx'
 

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="bookInterest"
-            type="com.bookshelfhub.bookshelfhub.ui.more.BookInterestObservable" />
+            type="com.bookshelfhub.bookshelfhub.ui.main.more.BookInterestObservable" />
     </data>
 
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
-        tools:context=".ui.more.BookInterestFragment">
+        tools:context=".ui.main.more.BookInterestFragment">
 
 
     <androidx.core.widget.NestedScrollView

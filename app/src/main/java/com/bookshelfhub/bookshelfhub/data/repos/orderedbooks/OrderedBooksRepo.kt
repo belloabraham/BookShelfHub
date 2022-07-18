@@ -39,16 +39,16 @@ class OrderedBooksRepo @Inject constructor(
 
     override suspend fun getRemoteListOfOrderedBooks(
         userId: String,
-        lastOrderedBookBySN:Long,
+        lastOrderedBookSN:Long,
         direction:Query.Direction): List<OrderedBook> {
           return  withContext(ioDispatcher){
               remoteDataSource.getListOfDataAsync(
                 RemoteDataFields.USERS_COLL,
                 userId,
                 RemoteDataFields.ORDERED_BOOKS_COLL,
-                RemoteDataFields.SERIAL_NO,
+                orderBy = RemoteDataFields.SERIAL_NO,
                 direction,
-                lastOrderedBookBySN,
+                 startAfter =  lastOrderedBookSN,
                 OrderedBook::class.java
             )}
     }

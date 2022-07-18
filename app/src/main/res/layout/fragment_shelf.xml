@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
-    tools:context=".ui.main.ShelfFragment">
+    tools:context=".ui.main.shelf.ShelfFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

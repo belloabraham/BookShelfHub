@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.more
+package com.bookshelfhub.bookshelfhub.ui.main.more
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -36,7 +36,7 @@ class ProfileFragment : Fragment() {
 
     private var gender:String?=null
     private var dateOfBirth:String?=null
-    private val profileViewModel:ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
     private var binding: FragmentProfileBinding?=null
     private lateinit var layout: FragmentProfileBinding
 

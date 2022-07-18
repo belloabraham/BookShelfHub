@@ -6,7 +6,7 @@
     android:animateLayoutChanges="true"
     android:id="@+id/rootCoordinateLayout"
     android:paddingTop="@dimen/size_25"
-    tools:context=".ui.main.BookmarkFragment"
+    tools:context=".ui.main.bookmark.BookmarkFragment"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
 

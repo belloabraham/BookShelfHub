@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.main
+package com.bookshelfhub.bookshelfhub.ui.main.bookmark
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,7 +27,7 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 class BookmarkFragment : Fragment() {
 
     private var binding: FragmentBookmarkBinding?=null
-    private val bookmarkViewModel:BookmarkViewModel by viewModels()
+    private val bookmarkViewModel: BookmarkViewModel by viewModels()
     private var mAdapter:ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>>?=null
 
     override fun onCreateView(

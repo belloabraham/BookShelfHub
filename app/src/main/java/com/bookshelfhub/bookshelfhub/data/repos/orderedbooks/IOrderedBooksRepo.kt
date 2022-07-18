@@ -17,7 +17,7 @@ interface IOrderedBooksRepo {
     suspend fun getTotalNoOfOrderedBooks(): Int
     suspend fun getRemoteListOfOrderedBooks(
         userId: String,
-        lastOrderedBookBySN:Long,
+        lastOrderedBookSN:Long,
         direction: Query.Direction = Query.Direction.ASCENDING ): List<OrderedBook>
     suspend fun getListOfOrderedBooksUiState(userId: String)
     suspend fun addOrderedBooks(OrderedBooks: List<OrderedBook>)
