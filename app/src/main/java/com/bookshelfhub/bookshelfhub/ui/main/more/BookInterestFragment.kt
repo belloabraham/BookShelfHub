@@ -77,7 +77,8 @@ class BookInterestFragment : Fragment() {
     }
 
     private fun saveBookInterest(view:View, layout:FragmentInterestBinding){
-       if (layout.chipGroup.checkedChipIds.size<4){
+        val userSelectedLessThanFourBookInterest = layout.chipGroup.checkedChipIds.size<4
+       if (userSelectedLessThanFourBookInterest){
            Snackbar.make(view, R.string.select_more_than_3_msg, Snackbar.LENGTH_LONG)
                .show()
         }else{

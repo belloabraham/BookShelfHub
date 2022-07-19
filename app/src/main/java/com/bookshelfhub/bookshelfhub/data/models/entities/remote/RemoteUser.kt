@@ -6,12 +6,5 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.User
 class RemoteUser(
     val user: User,
     val bookInterest:BookInterest?,
-    notificationToken: String?
-){
-    init {
-        notificationToken?.let {
-            if(it.isBlank())
-               throw IllegalArgumentException("Invalid notification token")
-        }
-    }
-}
+    val notificationToken: String?
+)

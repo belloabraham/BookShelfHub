@@ -117,8 +117,8 @@
 
 
     <!-- TODO: Form field data -->
-    <string name="last_name">First Name</string>
-    <string name="first_name">Last Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
     <string name="phone_number">Phone number</string>
     <string name="valid_phone_error">Enter a valid phone number</string>
     <string name="valid_email_error">Enter a valid email address</string>

@@ -37,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lastNameEditTxtLayout"
-        android:layout_marginVertical="@dimen/size_16"
+        android:layout_marginBottom="@dimen/size_16"
         style="@style/Widget.Design.TextInputLayout">
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"

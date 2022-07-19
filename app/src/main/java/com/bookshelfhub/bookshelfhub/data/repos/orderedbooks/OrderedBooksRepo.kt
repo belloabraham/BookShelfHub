@@ -66,8 +66,8 @@ class OrderedBooksRepo @Inject constructor(
         return orderedBooksDao.getALiveOrderedBook(isbn)
     }
 
-     override fun deleteAllOrderedBooks() {
-        orderedBooksDao.deleteAllOrderedBooks()
+     override suspend fun deleteAllOrderedBooks() {
+         withContext(ioDispatcher){ orderedBooksDao.deleteAllOrderedBooks()}
     }
 
      override suspend fun addOrderedBooks(OrderedBooks: List<OrderedBook>){

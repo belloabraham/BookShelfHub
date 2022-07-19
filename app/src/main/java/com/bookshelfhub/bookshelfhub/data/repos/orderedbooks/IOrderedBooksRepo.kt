@@ -13,7 +13,7 @@ interface IOrderedBooksRepo {
     suspend fun getOrderedBooks(userId: String): List<OrderedBook>
     suspend fun addAnOrderedBook(orderedBook: OrderedBook)
     fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>>
-    fun deleteAllOrderedBooks()
+    suspend fun deleteAllOrderedBooks()
     suspend fun getTotalNoOfOrderedBooks(): Int
     suspend fun getRemoteListOfOrderedBooks(
         userId: String,
