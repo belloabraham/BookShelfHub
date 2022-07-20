@@ -13,7 +13,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_16"
         android:layout_gravity="top"
-        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textSize="16sp"
+        android:textAllCaps="true"
+        style="@style/TextAppearance.MaterialComponents.Subtitle2"
         android:id="@+id/totalCostTxt"/>
 
     <androidx.recyclerview.widget.RecyclerView

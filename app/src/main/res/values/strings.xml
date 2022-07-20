@@ -44,7 +44,7 @@
     <string name="check_out">Checkout</string>
     <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
     <string name="add_new_card">Add new card</string>
-    <string name="total_local_and_usd">Total: %s%,.2f ($%,.2f - $%,.2f earnings = $%,.2f )</string>
+    <string name="total_local_and_usd">Total: %s%,.2f ($%,.2f - $%,.2f = $%,.2f )</string>
     <string name="total_usd">Total: $%,.2f - $%,.2f earnings = $%,.2f </string>
     <string name="payment_error">There was an error processing your payment</string>
     <string name="by">By: %s</string>

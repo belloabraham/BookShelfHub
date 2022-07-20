@@ -3,6 +3,12 @@
 
     <!-- TODO: Customer support -->
     <entry>
+        <key>enable_trending</key>
+        <value>false</value>
+    </entry>
+
+    <!-- TODO: Customer support -->
+    <entry>
         <key>wa_customer_support_link</key>
         <value>https://wa.me/+2349014817860</value>
     </entry>

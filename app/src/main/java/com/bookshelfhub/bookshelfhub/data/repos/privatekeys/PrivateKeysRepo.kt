@@ -12,18 +12,15 @@ class PrivateKeysRepo() : IPrivateKeysRepo {
 
     private val databaseRef = Firebase.database.reference
 
-    private val ioDispatcher: CoroutineDispatcher = IO
      override suspend fun <T : Any> getPrivateKeys(
         key: String,
         type: Class<T>,
     ): T? {
-        return  withContext(ioDispatcher){
             val dataSnapshot = databaseRef.child(key).get().await()
-            if(dataSnapshot.exists()){
+            return   if(dataSnapshot.exists()){
                 dataSnapshot.getValue(type)
+            }else{
+                null
             }
-            null
-        }
-
     }
 }

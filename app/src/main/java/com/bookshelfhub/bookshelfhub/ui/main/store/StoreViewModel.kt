@@ -5,13 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -20,16 +20,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreViewModel @Inject constructor(
-    val connectionUtil: ConnectionUtil,
     private val publishedBooksRepo: IPublishedBooksRepo,
     cartItemsRepo: ICartItemsRepo,
+    private val remoteConfig: IRemoteConfig,
     private val  searchHistoryRepo: ISearchHistoryRepo,
     val userAuth: IUserAuth): ViewModel() {
 
     private var isBookLoadSucessfully : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
-    private lateinit var booksForSearchFiler:List<PublishedBookUiState>
+    private lateinit var booksForSearchFilter:List<PublishedBookUiState>
 
 
     private val config  = PagingConfig(
@@ -65,7 +65,7 @@ class StoreViewModel @Inject constructor(
                 }
 
                 isBookLoadSucessfully.value = true
-                booksForSearchFiler = publishedBooksRepo.getListOfPublishedBooksUiState()
+                booksForSearchFilter = publishedBooksRepo.getListOfPublishedBooksUiState()
             }catch (e:Exception){
                 Timber.e(e)
                 isBookLoadSucessfully.value = false
@@ -73,9 +73,13 @@ class StoreViewModel @Inject constructor(
         }
     }
 
+    fun shouldEnableTrending(): Boolean{
+       return  remoteConfig.getBoolean(com.bookshelfhub.bookshelfhub.data.Config.ENABLE_TRENDING)
+    }
+
 
     fun getBooksForSearchFiler(): List<PublishedBookUiState> {
-        return booksForSearchFiler
+        return booksForSearchFilter
     }
 
     fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{

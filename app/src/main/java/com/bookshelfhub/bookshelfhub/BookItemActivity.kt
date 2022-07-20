@@ -109,19 +109,23 @@ class BookItemActivity : AppCompatActivity() {
                             try {
                                 val response =  bookItemActivityViewModel.convertCurrency(
                                     fromCurrency =  localCurrencyOrUSD,
-                                    toCurrency = Currency.USD, amount = book.price)
+                                    toCurrency = Currency.USD,
+                                    amount = book.price
+                                )
 
                                 if(response.isSuccessful && response.body()!=null){
-                                    priceInUSD = response.body()!!.info.rate*book.price
+                                    priceInUSD = book.price/response.body()!!.info.rate
                                     showBookPrice(book, localCurrencyOrUSD)
                                 }else{
                                     Timber.e(response.message())
-                                    return@launch
+                                   // return@launch
                                 }
                             }catch (e:Exception){
                                 Timber.e(e)
-                                return@launch
+                               // return@launch
                             }
+                            priceInUSD = book.price/415
+                            showBookPrice(book, localCurrencyOrUSD)
                         }
                     }
 
@@ -423,11 +427,15 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
 
-        val rating = book.totalRatings/book.totalReviews
+       val rating =  if(book.totalRatings == 0f) 0 else book.totalRatings/book.totalReviews
+
         layout.noRatingTxt.text = "$rating"
+
+        layout.descText.text = book.description
+
         layout.noOfDownloadsText.text = Downloads.getHumanReadable(book.totalDownloads)
 
-        loadSimilarBooks(book.category, similarBooksAdapter)
+        loadSimilarBooks(book.category, excludedBookId = book.bookId, similarBooksAdapter)
     }
 
     private fun showBooksItemLayout(){
@@ -487,10 +495,10 @@ class BookItemActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun loadSimilarBooks(category: String, similarBooksAdapter:SimilarBooksAdapter){
+    private fun loadSimilarBooks(category: String, excludedBookId:String, similarBooksAdapter:SimilarBooksAdapter){
         lifecycleScope.launch {
             bookItemActivityViewModel.
-            getBooksByCategoryPageSource(category).collectLatest { similarBooks ->
+            getSimilarBooksByCategoryPageSource(category, excludedBookId).collectLatest { similarBooks ->
 
                 similarBooksAdapter.addLoadStateListener { loadState ->
                     val isVisible =

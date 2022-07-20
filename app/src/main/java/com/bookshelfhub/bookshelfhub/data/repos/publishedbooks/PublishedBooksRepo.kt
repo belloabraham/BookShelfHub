@@ -119,6 +119,10 @@ class PublishedBooksRepo @Inject constructor(
         return publishedBooksDao.getBooksByCategoryPageSource(category)
     }
 
+    override fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): PagingSource<Int, PublishedBookUiState> {
+        return publishedBooksDao.getSimilarBooksByCategoryPageSource(category, bookId)
+    }
+
      override fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBookUiState> {
         return publishedBooksDao.getTrendingBooksPageSource()
     }

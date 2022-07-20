@@ -39,6 +39,9 @@ abstract class PublishedBooksDao:BaseDao<PublishedBook>  {
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY publishedDate DESC")
     abstract fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBookUiState>
 
+    @Query("SELECT * FROM PublishedBooks WHERE category = :category AND bookId != :bookId ORDER BY publishedDate DESC")
+    abstract fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): PagingSource<Int, PublishedBookUiState>
+
     @Query("SELECT * FROM PublishedBooks ORDER BY totalDownloads DESC LIMIT 100")
     abstract fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBookUiState>
 

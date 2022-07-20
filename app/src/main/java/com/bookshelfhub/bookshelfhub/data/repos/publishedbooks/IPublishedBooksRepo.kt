@@ -26,6 +26,7 @@ interface IPublishedBooksRepo {
 
     suspend fun getTrendingBooks(): List<PublishedBookUiState>
 
+    fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): PagingSource<Int, PublishedBookUiState>
     suspend fun getRecommendedBooks(): List<PublishedBookUiState>
     suspend fun getBooksByCategory(category: String): List<PublishedBookUiState>
     fun getBooksByCategoryPageSource(category: String): PagingSource<Int, PublishedBookUiState>

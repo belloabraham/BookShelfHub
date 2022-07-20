@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.extensions.load
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
+import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -50,7 +51,7 @@ class CartItemsListAdapter(private val context: Context) {
             }
 
             author.text = String.format(context.getString(R.string.by), model.author)
-            cover.load(model.coverUrl, R.drawable.ic_store_item_place_holder)
+            cover.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
 
            itemCardView.setOnLongClickListener {
                onLongClickListener()

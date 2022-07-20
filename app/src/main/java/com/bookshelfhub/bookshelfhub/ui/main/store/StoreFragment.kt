@@ -69,10 +69,7 @@ class StoreFragment : Fragment() {
     private var mTravelBooksAdapter : StoreListAdapter?=null
     private var mFictionBooksAdapter : StoreListAdapter?=null
     private var mEntertainmentBooksAdapter : StoreListAdapter?=null
-    
 
-    @Inject
-    lateinit var connectionUtil: ConnectionUtil
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -162,7 +159,6 @@ class StoreFragment : Fragment() {
         layout.educationRecView.adapter= educationBooksAdapter
         
         layout.recommendedRecView.adapter = recommendBooksAdapter
-        layout.trendingRecView.adapter=trendingBooksAdapter
         layout.sciAndTechRecView.adapter=scienceAndTechBooksAdapter
         layout.comicRecView.adapter=comicBooksAdapter
         layout.religionRecView.adapter=religionBooksAdapter
@@ -178,6 +174,9 @@ class StoreFragment : Fragment() {
         layout.newsRecView.adapter = newsBooksAdapter
         layout.langAndRefRecView.adapter=languageAndRefBooksAdapter
 
+        if(storeViewModel.shouldEnableTrending()){
+            layout.trendingRecView.adapter=trendingBooksAdapter
+        }
 
         val bookReqMsg = getString(R.string.cant_find_book)
 
@@ -202,7 +201,7 @@ class StoreFragment : Fragment() {
             })
 
             setMenuIconImageResource(R.drawable.ic_cart)
-            setMenuIconVisibility(View.VISIBLE)
+            setMenuIconVisibility(VISIBLE)
             setOnMenuClickListener(object:SearchLayout.OnMenuClickListener{
                 override fun onMenuClick() {
                     val intent = Intent(activity, CartActivity::class.java)
@@ -256,11 +255,14 @@ class StoreFragment : Fragment() {
             storeViewModel.loadRemotePublishedBooks()
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            storeViewModel.getTrendingBooksPageSource().collectLatest { books ->
-                loadBooks(books, trendingBooksAdapter, layout.trendingLayout)
+        if(storeViewModel.shouldEnableTrending()){
+            viewLifecycleOwner.lifecycleScope.launch {
+                storeViewModel.getTrendingBooksPageSource().collectLatest { books ->
+                    loadBooks(books, trendingBooksAdapter, layout.trendingLayout)
+                }
             }
         }
+
 
         viewLifecycleOwner.lifecycleScope.launch {
             storeViewModel.getRecommendedBooksPageSource().collectLatest { books ->

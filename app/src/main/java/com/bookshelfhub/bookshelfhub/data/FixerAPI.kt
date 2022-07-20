@@ -1,7 +1,7 @@
 package com.bookshelfhub.bookshelfhub.data
 
 object FixerAPI {
-    const val ENDPOINT = "http://data.fixer.io"
+    const val ENDPOINT = "https://data.fixer.io"
     const val CONVERSION_PATH = "api/convert"
     const val ACCESS_KEY_PARAM = "access_key"
     const val FROM_PARAM = "from"

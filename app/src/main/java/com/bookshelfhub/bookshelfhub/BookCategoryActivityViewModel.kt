@@ -26,9 +26,10 @@ class BookCategoryActivityViewModel @Inject constructor(
   val userAuth: IUserAuth) : ViewModel(){
 
   private var booksByCategory: List<PublishedBookUiState> = emptyList()
-  private lateinit var flowOfCategory:Flow<PagingData<PublishedBookUiState>>
 
   private val userId = userAuth.getUserId()
+  private val trendingCategory = context.getString(R.string.trending)
+  private val recommendedCategory =  context.getString(R.string.recommended_for)
 
   private val category = savedState.get<String>(Category.TITLE)!!
 
@@ -42,22 +43,18 @@ class BookCategoryActivityViewModel @Inject constructor(
   init {
 
     viewModelScope.launch {
-      when (category) {
-        context.getString(R.string.trending) -> {
-          booksByCategory = publishedBooksRepo.getTrendingBooks()
-          flowOfCategory = getFlowOfTrendingBooks()
-        }
-        context.getString(R.string.recommended_for) -> {
-          booksByCategory =publishedBooksRepo.getRecommendedBooks()
-          flowOfCategory = getFowOfRecommendedBooks()
-        }
-        else -> {
-          booksByCategory = publishedBooksRepo.getBooksByCategory(category)
-          flowOfCategory = getFlowOfBooksByCategory()
-        }
+      booksByCategory = when (category) {
+          context.getString(R.string.trending) -> {
+            publishedBooksRepo.getTrendingBooks()
+          }
+          context.getString(R.string.recommended_for) -> {
+            publishedBooksRepo.getRecommendedBooks()
+          }
+          else -> {
+            publishedBooksRepo.getBooksByCategory(category)
+          }
       }
     }
-
 
   }
 
@@ -65,8 +62,18 @@ class BookCategoryActivityViewModel @Inject constructor(
     return category
   }
 
-  fun getFlowOfBookCategory(): Flow<PagingData<PublishedBookUiState>> {
-    return flowOfCategory
+   fun getFlowOfBookCategory(): Flow<PagingData<PublishedBookUiState>> {
+    return when (category) {
+      trendingCategory -> {
+         getFlowOfTrendingBooks()
+      }
+      recommendedCategory -> {
+        getFowOfRecommendedBooks()
+      }
+      else -> {
+        getFlowOfBooksByCategory()
+      }
+    }
   }
 
   fun getLiveTotalCartItemsNo(): LiveData<Int> {

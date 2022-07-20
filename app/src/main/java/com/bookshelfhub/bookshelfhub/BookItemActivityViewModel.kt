@@ -17,6 +17,8 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
+import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
+import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.PrivateKeysRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
@@ -42,22 +44,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookItemActivityViewModel @Inject constructor(
-    val settingsUtil: SettingsUtil,
-    val savedState: SavedStateHandle,
-    private val publishedBooksRepo: IPublishedBooksRepo,
-    private  val userReviewRepo: IUserReviewRepo,
-    private val orderedBooksRepo: IOrderedBooksRepo,
-    private val cartItemsRepo: ICartItemsRepo,
-    private val dynamicLink:IDynamicLink,
-    private val userRepo: IUserRepo,
-    private val currencyConversionAPI: ICurrencyConversionAPI,
-    private val worker: Worker,
-    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
-    private val downloadBookUseCase: DownloadBookUseCase,
-    private val referralRepo: IReferralRepo,
-    private val bookDownloadStateRepo: IBookDownloadStateRepo,
-    private val searchHistoryRepo: ISearchHistoryRepo,
-    userAuth: IUserAuth): ViewModel(){
+  val settingsUtil: SettingsUtil,
+  val savedState: SavedStateHandle,
+  private val publishedBooksRepo: IPublishedBooksRepo,
+  private  val userReviewRepo: IUserReviewRepo,
+  private val orderedBooksRepo: IOrderedBooksRepo,
+  private val cartItemsRepo: ICartItemsRepo,
+  private val dynamicLink:IDynamicLink,
+  private  val privateKeysRepo: IPrivateKeysRepo,
+  private val userRepo: IUserRepo,
+  private val currencyConversionAPI: ICurrencyConversionAPI,
+  private val worker: Worker,
+  private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
+  private val downloadBookUseCase: DownloadBookUseCase,
+  private val referralRepo: IReferralRepo,
+  private val bookDownloadStateRepo: IBookDownloadStateRepo,
+  private val searchHistoryRepo: ISearchHistoryRepo,
+  userAuth: IUserAuth): ViewModel(){
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
@@ -126,7 +129,6 @@ class BookItemActivityViewModel @Inject constructor(
       addStoreSearchHistory(searchHistory)
     }
   }
-
 
   suspend fun getTotalNoOfOrderedBooks(): Int {
     return orderedBooksRepo.getTotalNoOfOrderedBooks()
@@ -198,8 +200,29 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   suspend fun convertCurrency(fromCurrency:String, toCurrency:String, amount:Double): Response<Fixer> {
-    val fixerAccessKey =  settingsUtil.getString(Settings.FIXER_ACCESS_KEY)!!
-    return currencyConversionAPI.convert(fixerAccessKey, fromCurrency, toCurrency, amount)
+    val fixerAccessKey =  settingsUtil.getString(Settings.FIXER_ACCESS_KEY)
+
+    return if(fixerAccessKey == null){
+      val apiKeys  = privateKeysRepo.getPrivateKeys(Settings.API_KEYS, ApiKeys::class.java)!!
+
+          settingsUtil.setString(
+            Settings.PERSPECTIVE_API,
+            apiKeys.perspectiveKey!!
+          )
+          settingsUtil.setString(
+            Settings.FIXER_ACCESS_KEY,
+            apiKeys.fixerAccessKey!!
+          )
+
+          settingsUtil.setString(
+            Settings.PAYSTACK_LIVE_PUBLIC_KEY,
+            apiKeys.payStackLivePublicKey!!
+          )
+
+      currencyConversionAPI.convert(apiKeys.fixerAccessKey!!, fromCurrency, toCurrency, amount)
+    }else{
+       currencyConversionAPI.convert(fixerAccessKey, fromCurrency, toCurrency, amount)
+    }
   }
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
@@ -269,6 +292,12 @@ class BookItemActivityViewModel @Inject constructor(
 
   fun getLiveListOfCartItems(): LiveData<List<CartItem>> {
     return liveCartItems
+  }
+
+  fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): Flow<PagingData<PublishedBookUiState>> {
+    return Pager(config){
+      publishedBooksRepo.getSimilarBooksByCategoryPageSource(category, bookId)
+    }.flow
   }
 
   fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBookUiState>> {
