@@ -7,6 +7,8 @@ interface ICartItemsRepo {
     fun getLiveListOfCartItems(userId: String): LiveData<List<CartItem>>
     fun getLiveTotalCartItemsNo(userId: String): LiveData<Int>
 
+    suspend fun getListOfCartItems(userId: String): List<CartItem>
+
     suspend fun addToCart(cart: CartItem)
 
     suspend fun deleteAllCartItems()

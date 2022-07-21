@@ -39,11 +39,11 @@ class BookInfoActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
-        navController.popBackStack()
+       // navController.popBackStack()
 
-        val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getBookId())
+       // val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getBookId())
 
-        navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)
+       // navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)
     }
 
 

@@ -522,6 +522,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/size_8"
+            android:visibility="gone"
             android:id="@+id/addToCartBtn"
             android:text="@string/add_to_Cart"/>
 
@@ -549,6 +550,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                android:backgroundTint="?colorAccent"
                 android:id="@+id/viewCartButton"
                 android:text="@string/view_cart"/>
 

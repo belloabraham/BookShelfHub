@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import co.paystack.android.Paystack
 import co.paystack.android.Transaction
+import com.afollestad.materialdialogs.LayoutMode
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
@@ -162,7 +163,6 @@ class CartFragment : Fragment() {
                     listOfCartItems.add(position, cart)
                     cartListAdapter.notifyItemInserted(position)
                     cartViewModel.addToCart(cart)
-
                 }.show()
             }
         }
@@ -212,8 +212,8 @@ class CartFragment : Fragment() {
             }
 
             MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
-                .setPositiveAction(R.string.dismiss){}
-                .showBottomSheet(mView)
+                .setPositiveAction(R.string.cancel){}
+                .showBottomSheet(mView, cornerRadius = 0f, layoutMode = LayoutMode.MATCH_PARENT)
         }
 
         val paymentSDKDoesNotExistForUserCountry = !paymentSDKExistForUserCountry

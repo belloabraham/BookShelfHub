@@ -73,8 +73,7 @@ class CartViewModel @Inject constructor(
       try {
         earnings.value = earningsRepo.getRemoteEarnings(userId)
       }catch (e:Exception){
-        Timber.e(e)
-        return@launch
+        earnings.value = Earnings(0.0)
       }
     }
     return earnings

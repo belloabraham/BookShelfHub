@@ -31,7 +31,7 @@ class BookCategoryActivityViewModel @Inject constructor(
   private val trendingCategory = context.getString(R.string.trending)
   private val recommendedCategory =  context.getString(R.string.recommended_for)
 
-  private val category = savedState.get<String>(Category.TITLE)!!
+   private val category = savedState.get<String>(Category.TITLE)!!
 
   private val config  = PagingConfig(
     pageSize = 10,
@@ -43,9 +43,9 @@ class BookCategoryActivityViewModel @Inject constructor(
   init {
 
     viewModelScope.launch {
-      booksByCategory = when (category) {
+      val categoryList = when (category) {
           context.getString(R.string.trending) -> {
-            publishedBooksRepo.getTrendingBooks()
+             publishedBooksRepo.getTrendingBooks()
           }
           context.getString(R.string.recommended_for) -> {
             publishedBooksRepo.getRecommendedBooks()
@@ -54,6 +54,9 @@ class BookCategoryActivityViewModel @Inject constructor(
             publishedBooksRepo.getBooksByCategory(category)
           }
       }
+
+      booksByCategory = booksByCategory.plus(categoryList)
+
     }
 
   }
@@ -98,8 +101,19 @@ class BookCategoryActivityViewModel @Inject constructor(
     }.flow
   }
 
-  fun getBooksByCategory(): List<PublishedBookUiState> {
-    return booksByCategory
+  suspend fun getBooksByCategory(): List<PublishedBookUiState> {
+    return when (category) {
+      trendingCategory -> {
+        publishedBooksRepo.getTrendingBooks()
+      }
+      recommendedCategory -> {
+        publishedBooksRepo.getRecommendedBooks()
+      }
+      else -> {
+        publishedBooksRepo.getBooksByCategory(category)
+      }
+    }
+
   }
 
 }

@@ -27,32 +27,29 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {
-        return withContext(ioDispatcher) {
-            remoteDataSource.getDataAsync(
+           return remoteDataSource.getDataAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
                 PublishedBook::class.java
             )
-        }
     }
 
     override suspend fun getListOfPublishedBooksUiState(): List<PublishedBookUiState> {
-      return  publishedBooksDao.getListOfPublishedBooksUiState()
+      return withContext(ioDispatcher) { publishedBooksDao.getListOfPublishedBooksUiState()}
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
-        return withContext(ioDispatcher){
-            remoteDataSource.getListOfDataWhereAsync(
+
+          return  remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 RemoteDataFields.PUBLISHED,
                 false,
                 PublishedBook::class.java
             )
     }
-    }
 
     override suspend  fun getRemotePublishedBooks(): List<PublishedBook> {
-        return withContext(ioDispatcher) {
-            remoteDataSource.getListOfDataWhereAsync(
+
+        return   remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 whereKey = RemoteDataFields.PUBLISHED, true,
                 whereKey2 = RemoteDataFields.APPROVED, true,
@@ -60,12 +57,10 @@ class PublishedBooksRepo @Inject constructor(
                 Query.Direction.ASCENDING,
                 PublishedBook::class.java
             )
-        }
     }
 
     override suspend  fun getRemotePublishedBooksFrom(fromSerialNo:Int): List<PublishedBook> {
-        return withContext(ioDispatcher) {
-            remoteDataSource.getListOfDataWhereAsync(
+        return  remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 whereKey = RemoteDataFields.PUBLISHED, true,
                 whereKey2 = RemoteDataFields.APPROVED, true,
@@ -74,7 +69,7 @@ class PublishedBooksRepo @Inject constructor(
                 Query.Direction.ASCENDING,
                 PublishedBook::class.java
             )
-        }
+
     }
 
      override suspend fun getPublishedBook(bookId: String): Optional<PublishedBook> {
@@ -82,7 +77,7 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getTotalNoOfPublishedBooks(): Int {
-     return  publishedBooksDao.getTotalNoOfPublishedBooks()
+     return  withContext(ioDispatcher) {publishedBooksDao.getTotalNoOfPublishedBooks()}
     }
 
      override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
@@ -103,15 +98,15 @@ class PublishedBooksRepo @Inject constructor(
 
 
      override suspend fun getTrendingBooks(): List<PublishedBookUiState> {
-        return publishedBooksDao.getTrendingBooks()
+        return withContext(ioDispatcher) {publishedBooksDao.getTrendingBooks()}
     }
 
      override suspend fun getRecommendedBooks(): List<PublishedBookUiState> {
-        return publishedBooksDao.getRecommendedBooks()
+        return withContext(ioDispatcher) {publishedBooksDao.getRecommendedBooks()}
     }
 
    override suspend fun getBooksByCategory(category:String): List<PublishedBookUiState>{
-        return publishedBooksDao.getBooksByCategory(category)
+        return withContext(ioDispatcher) {publishedBooksDao.getBooksByCategory(category)}
     }
 
 

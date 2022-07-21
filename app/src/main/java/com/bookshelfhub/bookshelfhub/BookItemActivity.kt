@@ -80,9 +80,6 @@ class BookItemActivity : AppCompatActivity() {
            checkIfBookAlreadyPurchasedByUser(orderedBook)
         })
 
-        bookItemActivityViewModel.getLiveListOfCartItems().observe(this, Observer { cartItems ->
-            checkIfBookIsAlreadyInCart(cartItems)
-        })
 
         lifecycleScope.launch {
             localPublishedBook = bookItemActivityViewModel.getLocalPublishedBook().get()
@@ -100,48 +97,54 @@ class BookItemActivity : AppCompatActivity() {
 
                 localCurrencyOrUSD = Currency.getLocalCurrencyOrUSD(countryCode)
 
-                if (bookIsPaid) {
-                    showAddToCartButtonAndHideOthers()
-                    val localCurrencyIsNotUSD = localCurrencyOrUSD != Currency.USD
+                lifecycleScope.launch {
 
-                    if (localCurrencyIsNotUSD){
-                        lifecycleScope.launch {
-                            try {
-                                val response =  bookItemActivityViewModel.convertCurrency(
-                                    fromCurrency =  localCurrencyOrUSD,
-                                    toCurrency = Currency.USD,
-                                    amount = book.price
-                                )
+                    if (bookIsPaid) {
 
-                                if(response.isSuccessful && response.body()!=null){
-                                    priceInUSD = book.price/response.body()!!.info.rate
-                                    showBookPrice(book, localCurrencyOrUSD)
-                                }else{
-                                    Timber.e(response.message())
-                                   // return@launch
+                        val localCurrencyIsNotUSD = localCurrencyOrUSD != Currency.USD
+
+                        if (localCurrencyIsNotUSD){
+                            lifecycleScope.launch {
+                                try {
+                                    val response =  bookItemActivityViewModel.convertCurrency(
+                                        fromCurrency =  localCurrencyOrUSD,
+                                        toCurrency = Currency.USD,
+                                        amount = book.price
+                                    )
+
+                                    if(response.isSuccessful && response.body()!=null){
+                                        priceInUSD = book.price/response.body()!!.info.rate
+                                        showBookPrice(book, localCurrencyOrUSD)
+                                    }else{
+                                        Timber.e(response.message())
+                                        // return@launch
+                                    }
+                                }catch (e:Exception){
+                                    Timber.e(e)
+                                    // return@launch
                                 }
-                            }catch (e:Exception){
-                                Timber.e(e)
-                               // return@launch
+                                priceInUSD = book.price/415
+                                showBookPrice(book, localCurrencyOrUSD)
                             }
-                            priceInUSD = book.price/415
+                        }
+
+                        val localCurrencyIsUSD = !localCurrencyIsNotUSD
+                        if(localCurrencyIsUSD){
+                            priceInUSD = book.price
                             showBookPrice(book, localCurrencyOrUSD)
                         }
                     }
 
-                    val localCurrencyIsUSD = !localCurrencyIsNotUSD
-                    if(localCurrencyIsUSD){
+                    if(bookIsFree){
                         priceInUSD = book.price
-                        showBookPrice(book, localCurrencyOrUSD)
+                        layout.price.text = getString(R.string.price_free)
+                        addAFreeBook(book, countryCode)
+                        showBooksItemLayout()
                     }
                 }
 
-                if(bookIsFree){
-                    priceInUSD = book.price
-                    layout.price.text = getString(R.string.price_free)
-                    addAFreeBook(book, countryCode)
-                    showBooksItemLayout()
-                }
+
+
             }
         })
 
@@ -165,6 +168,7 @@ class BookItemActivity : AppCompatActivity() {
                         priceInUSD
                     )
                     bookItemActivityViewModel.addToCart(cart)
+                    showViewCartButtonAndHideOthers()
                 }
             }
         }
@@ -183,6 +187,7 @@ class BookItemActivity : AppCompatActivity() {
             )
 
             bookItemActivityViewModel.startBookDownload(workData)
+            layout.downloadProgressBar.visibility = VISIBLE
             layout.downloadBtn.visibility = GONE
         }
 
@@ -391,17 +396,20 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkIfBookIsAlreadyInCart(cartItems:List<CartItem>){
-        if(cartItems.isNotEmpty()){
+    private fun checkIfBookIsAlreadyInCart(cartItems:List<CartItem>):Boolean{
+        if(cartItems.isNotEmpty()) {
             layout.checkoutNotifText.text = "${cartItems.size}"
+        }
 
-           val bookInCart = cartItems.filter {
-                it.bookId == bookId
-            }
+        val bookInCart = cartItems.filter {
+            it.bookId == bookId
+        }
 
-            if (bookInCart.isNotEmpty()){
-                showViewCartButtonAndHideOthers()
-            }
+        return  if (bookInCart.isNotEmpty()){
+            showViewCartButtonAndHideOthers()
+            true
+        } else{
+            false
         }
     }
 
@@ -439,8 +447,17 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun showBooksItemLayout(){
-        layout.progressBar.visibility = GONE
+        layout.progressBar.isVisible = false
         layout.bookItemLayout.visibility = VISIBLE
+
+        lifecycleScope.launch {
+            val booksInCart = bookItemActivityViewModel.getListOfCartItems()
+            val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(booksInCart)
+            if(bookIsNotInCart){
+                showAddToCartButtonAndHideOthers()
+            }
+        }
+
     }
 
     private fun showAddToCartButtonAndHideOthers(){
@@ -485,13 +502,13 @@ class BookItemActivity : AppCompatActivity() {
     }
 
 
-    private fun startBookInfoActivity(isbn: String, title:String, fragmentID:Int){
+    private fun startBookInfoActivity(bookId: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
-        with(intent){
+            /* with(intent){
             putExtra(Book.NAME,title)
             putExtra(Fragment.ID, fragmentID)
-            putExtra(Book.ID, isbn)
-        }
+            putExtra(Book.ID, bookId)
+        }*/
         startActivity(intent)
     }
 

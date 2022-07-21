@@ -29,6 +29,7 @@ import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint

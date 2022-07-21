@@ -26,6 +26,10 @@ class CartItemsRepo @Inject constructor(
         return  cartItemsDao.getLiveListOfCartItems(userId)
     }
 
+    override suspend fun getListOfCartItems(userId: String): List<CartItem> {
+        return  withContext(ioDispatcher){cartItemsDao.getListOfCartItems(userId)}
+    }
+
      override fun getLiveTotalCartItemsNo(userId: String): LiveData<Int> {
         return  cartItemsDao.getLiveTotalCartItemsNo(userId)
     }

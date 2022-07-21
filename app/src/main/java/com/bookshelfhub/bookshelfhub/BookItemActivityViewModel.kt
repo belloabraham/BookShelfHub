@@ -149,7 +149,6 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun startBookDownload(workData: Data){
-
     viewModelScope.launch {
       downloadBookUseCase(worker, workData, bookDownloadStateRepo)
     }
@@ -292,6 +291,10 @@ class BookItemActivityViewModel @Inject constructor(
 
   fun getLiveListOfCartItems(): LiveData<List<CartItem>> {
     return liveCartItems
+  }
+
+  suspend fun getListOfCartItems(): List<CartItem> {
+    return cartItemsRepo.getListOfCartItems(userId)
   }
 
   fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): Flow<PagingData<PublishedBookUiState>> {
