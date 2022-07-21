@@ -123,7 +123,7 @@ class BookCategoryActivity : AppCompatActivity() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_category_activity_menu, menu)
         return true
     }

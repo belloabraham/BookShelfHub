@@ -113,7 +113,6 @@ class CartFragment : Fragment() {
                listOfCartItems = cartItems as ArrayList<CartItem>
                cartListAdapter.submitList(listOfCartItems)
 
-
                val userAdditionalInfo = cartViewModel.getUser().additionInfo
 
                for(cartItem in cartItems){

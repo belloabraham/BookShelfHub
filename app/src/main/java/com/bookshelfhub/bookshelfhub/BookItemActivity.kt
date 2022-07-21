@@ -33,6 +33,7 @@ import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.payment.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
@@ -228,9 +229,7 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         layout.aboutBookCard.setOnClickListener {
-            lifecycleScope.launch {
-                startBookInfoActivity(bookId,  title = localPublishedBook.name, R.id.bookInfoFragment)
-            }
+            startBookInfoActivity(bookId,  title = localPublishedBook.name, R.id.bookInfoFragment)
         }
 
         layout.similarBooksCard.setOnClickListener {
@@ -304,11 +303,9 @@ class BookItemActivity : AppCompatActivity() {
         })
 
         bookItemActivityViewModel.getLiveUserReview().observe(this, Observer { review ->
-
             layout.ratingInfoLayout.visibility = GONE
 
             if (review.isPresent){
-
                 AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, visibilityAnimDuration)
 
                 review.get().let { userReview ->
@@ -328,6 +325,8 @@ class BookItemActivity : AppCompatActivity() {
 
                     setUserReviewProfilePhoto(userPhotoUri, userReview.userName)
                 }
+            }else{
+                layout.rateBookLayout.visibility = VISIBLE
             }
 
             val reviewLength = layout.userReviewEditText.text.toString().length
@@ -504,11 +503,11 @@ class BookItemActivity : AppCompatActivity() {
 
     private fun startBookInfoActivity(bookId: String, title:String, fragmentID:Int){
         val intent = Intent(this, BookInfoActivity::class.java)
-            /* with(intent){
-            putExtra(Book.NAME,title)
+        with(intent){
+            putExtra(Book.NAME, title)
             putExtra(Fragment.ID, fragmentID)
             putExtra(Book.ID, bookId)
-        }*/
+        }
         startActivity(intent)
     }
 
@@ -529,7 +528,7 @@ class BookItemActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.book_item_activity_menu, menu)
         return true
     }

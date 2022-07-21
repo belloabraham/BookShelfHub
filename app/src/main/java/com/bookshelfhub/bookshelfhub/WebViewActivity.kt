@@ -68,8 +68,7 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
         layout.webView.loadUrl(url)
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.web_view_activity_menu, menu)
         return true
     }
@@ -78,7 +77,6 @@ class WebViewActivity : AppCompatActivity(), LifecycleOwner {
         layout.webView.reload()
         return super.onOptionsItemSelected(item)
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
        goBack()

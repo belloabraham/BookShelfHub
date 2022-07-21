@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.bookshelfhub.bookshelfhub.databinding.ActivityBookInfoBinding
 import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -39,11 +40,9 @@ class BookInfoActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
 
-       // navController.popBackStack()
+        navController.popBackStack()
 
-       // val bundle = bundleOf(Book.ID to bookInfoActivityViewModel.getBookId())
-
-       // navController.navigate(bookInfoActivityViewModel.getFragmentId(), bundle)
+        navController.navigate(bookInfoActivityViewModel.getFragmentId())
     }
 
 

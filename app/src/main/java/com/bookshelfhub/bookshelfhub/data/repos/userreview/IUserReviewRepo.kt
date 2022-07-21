@@ -8,7 +8,7 @@ import com.google.firebase.firestore.FieldValue
 interface IUserReviewRepo {
     suspend fun addUserReviews(userReviews: List<UserReview>)
 
-    suspend fun getLiveUserReview(bookId: String, userId: String): LiveData<Optional<UserReview>>
+    fun getLiveUserReview(bookId: String ): LiveData<Optional<UserReview>>
 
     suspend fun updateRemoteUserReview(
         userReview: UserReview,
@@ -23,7 +23,7 @@ interface IUserReviewRepo {
         userId: String
     ): Void?
 
-    suspend fun getRemoteUserReview(bookId: String, userId: String)
+    suspend fun getRemoteUserReview(bookId: String, userId: String):UserReview?
     suspend fun getRemoteListOfBookReviews(
         bookId: String,
         limit: Long,

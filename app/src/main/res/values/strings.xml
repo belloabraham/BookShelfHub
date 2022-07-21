@@ -63,7 +63,7 @@
     <string name="published_date">Published date: %s</string>
     <string name="author">Author: %s</string>
     <string name="category">Category: %s</string>
-    <string name="isbn">ISBN: %s</string>
+    <string name="isbn">BOOK ID / ISBN: %s</string>
 
     <!-- TODO: Book Item Activity-->
     <string name="open">Open</string>
@@ -152,7 +152,6 @@
     <!-- Todo App Update -->
     <string name="install">INSTALL</string>
     <string name="new_update_downloaded">&appname; has just downloaded a new update</string>
-
 
 
     <!-- TODO: Main Activity Bottom Navigation -->

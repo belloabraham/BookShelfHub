@@ -41,13 +41,13 @@ class PostUserReview @AssistedInject constructor(
         val updatedBookValues: HashMap<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
 
 
-       return try {
+        try {
              val postBody = PerspectiveAPI.getPostBody(userReview.review)
              val response = wordAnalyzerAPI.analyze(postBody, apiKey)
 
                val requestNotSuccessful = !response.isSuccessful || response.body() == null
                if (requestNotSuccessful){
-                   Result.retry()
+                  return Result.retry()
                }
 
                 val responseBody = response.body()!!
@@ -62,11 +62,11 @@ class PostUserReview @AssistedInject constructor(
                     }
                 }
 
-                Result.success()
+               return Result.success()
 
         }catch (e:Exception){
            Timber.e(e)
-            Result.retry()
+            return Result.retry()
         }
 
     }

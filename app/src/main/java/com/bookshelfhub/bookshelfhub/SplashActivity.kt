@@ -67,7 +67,8 @@ class SplashActivity : AppCompatActivity() {
         var aCollaboratorOrUserReferralId:String?=null
 
         dynamicLink.getDeepLinkFromDynamicLinkAsync(this){
-            if(it!=null){
+            val userLaunchedAppByClickingALink = it!=null
+            if(userLaunchedAppByClickingALink){
                 val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
 
                 aCollaboratorOrUserReferralId = it.toString().replace(deeplinkDomainPrefix,"").trim()

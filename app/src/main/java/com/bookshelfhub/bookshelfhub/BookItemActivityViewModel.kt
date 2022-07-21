@@ -18,7 +18,6 @@ import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateR
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
-import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.PrivateKeysRepo
 import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
 import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
 import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
@@ -64,7 +63,7 @@ class BookItemActivityViewModel @Inject constructor(
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
-  private var liveUserReview: LiveData<Optional<UserReview>> = MutableLiveData()
+  private var liveUserReview: MutableLiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
@@ -95,9 +94,17 @@ class BookItemActivityViewModel @Inject constructor(
     viewModelScope.launch{
       userAlreadyPurchasedBook = orderedBooksRepo.getAnOrderedBook(bookId).isPresent
       user = userRepo.getUser(userId).get()
-      liveUserReview = userReviewRepo.getLiveUserReview(bookId, userId)
-    }
 
+      liveUserReview.value = userReviewRepo.getLiveUserReview(bookId).value
+      val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
+      if(noUserReview){
+        userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
+          liveUserReview.value = Optional.of(it)
+          userReviewRepo.addUserReview(it)
+        }
+      }
+
+    }
 
     viewModelScope.launch {
       if(!userAlreadyPurchasedBook){
@@ -108,7 +115,6 @@ class BookItemActivityViewModel @Inject constructor(
           return@launch
         }
       }
-
     }
 
     viewModelScope.launch {
@@ -225,7 +231,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
-    return liveUserReview
+    return userReviewRepo.getLiveUserReview(bookId)
   }
 
   suspend fun getAllOrderedBooks(): List<OrderedBook> {
@@ -258,8 +264,8 @@ class BookItemActivityViewModel @Inject constructor(
   fun addUserReview(userReview: UserReview, diffInRating:Double){
     viewModelScope.launch{
       userReviewRepo.addUserReview(userReview)
-      val isSpamUrlInReview = !userReview.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
-      if (isSpamUrlInReview){
+      val urlNotInReview = !userReview.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
+      if (urlNotInReview){
 
         val data = Data.Builder()
         data.putString(Book.ID, userReview.bookId)

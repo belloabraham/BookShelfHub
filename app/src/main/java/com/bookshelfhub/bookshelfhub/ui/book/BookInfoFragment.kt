@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.bookshelfhub.bookshelfhub.BookInfoActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
@@ -25,7 +27,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class BookInfoFragment : Fragment() {
 
-    private val bookInfoViewModel: BookInfoViewModel by viewModels()
+    private val bookInfoActivityViewModel:BookInfoActivityViewModel by activityViewModels()
     private var binding: BookInfoFragmentBinding? =null
     @Inject
     lateinit var intentUtil: IntentUtil
@@ -41,7 +43,7 @@ class BookInfoFragment : Fragment() {
         binding = BookInfoFragmentBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-            bookInfoViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { pubBook->
+            bookInfoActivityViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer { pubBook->
                 val book = pubBook.get()
                 val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.WEB_LINK)) { link ->
                     openLink(link)
@@ -53,7 +55,7 @@ class BookInfoFragment : Fragment() {
                 }
 
                 layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-                layout.isbnTxt.text = String.format(getString(R.string.isbn),book.bookId)
+                layout.isbnTxt.text = String.format(getString(R.string.isbn), bookInfoActivityViewModel.getBookIdFromCompoundId())
                 layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
 
                 layout.descriptionTxt.text =  book.description

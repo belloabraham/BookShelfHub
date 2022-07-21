@@ -26,11 +26,7 @@ class UserReviewRepo @Inject constructor(
         withContext(ioDispatcher){userReviewDao.insertAllOrReplace(userReviews)}
     }
 
-      override suspend fun getLiveUserReview(bookId:String, userId:String): LiveData<Optional<UserReview>> {
-          val noUserReview = !userReviewDao.getUserReview(bookId).isPresent
-           if(noUserReview){
-             getRemoteUserReview(bookId, userId)
-          }
+      override fun getLiveUserReview(bookId:String): LiveData<Optional<UserReview>> {
          return userReviewDao.getOptionalLiveUserReview(bookId)
     }
 
@@ -66,28 +62,11 @@ class UserReviewRepo @Inject constructor(
       }
    }
 
-    private var remoteUserRetryInterval:Long = 1
-    private val maxNoOfRetires = 5_000
-    override suspend fun getRemoteUserReview(bookId:String, userId:String){
-        try {
-            val userReview = withContext(ioDispatcher) {
-                remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
-                    bookId, RemoteDataFields.REVIEWS_COLL,
-                    userId, UserReview::class.java)
-            }
 
-            userReview?.let {
-                userReviewDao.insertOrReplace(it)
-            }
-            remoteUserRetryInterval = 1
-        }catch (e:Exception){
-            Timber.e(e)
-            if(remoteUserRetryInterval < maxNoOfRetires){
-                delay(200*remoteUserRetryInterval)
-                remoteUserRetryInterval++
-                getRemoteUserReview(bookId, userId)
-            }
-        }
+    override suspend fun getRemoteUserReview(bookId:String, userId:String): UserReview? {
+       return remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
+            bookId, RemoteDataFields.REVIEWS_COLL,
+            userId, UserReview::class.java)
     }
 
     override suspend  fun getRemoteListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {

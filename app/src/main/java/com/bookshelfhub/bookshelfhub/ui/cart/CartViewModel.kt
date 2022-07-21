@@ -69,11 +69,12 @@ class CartViewModel @Inject constructor(
   }
 
   private fun getLiveTotalEarnings(): LiveData<Earnings?> {
+    earnings.value = Earnings(0.0)
     viewModelScope.launch {
       try {
         earnings.value = earningsRepo.getRemoteEarnings(userId)
       }catch (e:Exception){
-        earnings.value = Earnings(0.0)
+        return@launch
       }
     }
     return earnings

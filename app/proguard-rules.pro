@@ -30,3 +30,8 @@
 
 #PDFViewer
 -keep class com.shockwave.**
+
+#Starting Activity Parceable Error
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}
