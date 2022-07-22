@@ -33,7 +33,6 @@ import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.payment.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
@@ -72,7 +71,7 @@ class BookItemActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
         bookId = bookItemActivityViewModel.getBookId()
-        visibilityAnimDuration = resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
+        visibilityAnimDuration = 200L // resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getPhotoUrl()
@@ -123,6 +122,15 @@ class BookItemActivity : AppCompatActivity() {
                                 }catch (e:Exception){
                                     Timber.e(e)
                                     // return@launch
+                                }finally {
+
+                                    bookItemActivityViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
+
+                                       val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(cartItems)
+                                        if(bookIsNotInCart){
+                                            showAddToCartButtonAndHideOthers()
+                                        }
+                                    })
                                 }
                                 priceInUSD = book.price/415
                                 showBookPrice(book, localCurrencyOrUSD)
@@ -247,7 +255,7 @@ class BookItemActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
+       layout.ratingBar.setOnRatingChangeListener { ratingBar, rating ->
             val userRated = rating > 0
             layout.ratingInfoLayout.isVisible = userRated
         }
@@ -286,9 +294,10 @@ class BookItemActivity : AppCompatActivity() {
         
 
         layout.editYourReviewBtn.setOnClickListener {
-            layout.yourReviewLayout.visibility = GONE
-            layout.rateBookLayout.visibility = VISIBLE
-            AnimUtil(this).crossFade(layout.rateBookLayout, layout.yourReviewLayout, visibilityAnimDuration)
+          layout.yourReviewLayout.visibility = GONE
+            layout.ratingInfoLayout.visibility = VISIBLE
+           layout.rateBookLayout.visibility = VISIBLE
+
         }
 
         bookItemActivityViewModel.getTwoUserReviewsForBook().observe(this, Observer { reviews ->
@@ -303,10 +312,11 @@ class BookItemActivity : AppCompatActivity() {
         })
 
         bookItemActivityViewModel.getLiveUserReview().observe(this, Observer { review ->
-            layout.ratingInfoLayout.visibility = GONE
 
             if (review.isPresent){
-                AnimUtil(this).crossFade(layout.yourReviewLayout, layout.rateBookLayout, visibilityAnimDuration)
+                layout.ratingInfoLayout.visibility = VISIBLE
+                layout.yourReviewLayout.visibility = VISIBLE
+                layout.rateBookLayout.visibility = GONE
 
                 review.get().let { userReview ->
                     layout.ratingBar.rating = userReview.userRating.toFloat()
@@ -417,6 +427,7 @@ class BookItemActivity : AppCompatActivity() {
         else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)
 
         showBooksItemLayout()
+        checkIfBookInCart()
     }
 
     private fun showBookDetails(book: PublishedBook){
@@ -448,7 +459,9 @@ class BookItemActivity : AppCompatActivity() {
     private fun showBooksItemLayout(){
         layout.progressBar.isVisible = false
         layout.bookItemLayout.visibility = VISIBLE
+    }
 
+    private fun checkIfBookInCart(){
         lifecycleScope.launch {
             val booksInCart = bookItemActivityViewModel.getListOfCartItems()
             val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(booksInCart)
@@ -456,7 +469,6 @@ class BookItemActivity : AppCompatActivity() {
                 showAddToCartButtonAndHideOthers()
             }
         }
-
     }
 
     private fun showAddToCartButtonAndHideOthers(){
@@ -550,6 +562,7 @@ class BookItemActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
+
 
     private fun startBookActivity(){
         lifecycleScope.launch {

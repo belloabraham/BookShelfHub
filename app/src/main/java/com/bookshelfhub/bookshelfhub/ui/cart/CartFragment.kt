@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import co.paystack.android.Paystack
 import co.paystack.android.Transaction
 import com.afollestad.materialdialogs.LayoutMode
+import com.bookshelfhub.bookshelfhub.CartActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
@@ -34,9 +36,9 @@ import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.bookshelfhub.bookshelfhub.helpers.payment.*
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
@@ -46,7 +48,7 @@ class CartFragment : Fragment() {
 
     private var binding: FragmentCartBinding?=null
     private lateinit var layout: FragmentCartBinding
-    private val cartViewModel: CartViewModel by activityViewModels()
+    private val cartActivityViewModel: CartActivityViewModel by activityViewModels()
     @Inject
     lateinit var json: Json
     @Inject
@@ -81,7 +83,7 @@ class CartFragment : Fragment() {
         layout.cartItemsRecView.adapter = cartListAdapter
 
 
-        cartViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
+        cartActivityViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
             this.savedPaymentCards = savedPaymentCards
         })
 
@@ -99,7 +101,7 @@ class CartFragment : Fragment() {
 
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
 
-       cartViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
+       cartActivityViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
            val countryCode = Location.getCountryCode(requireActivity().applicationContext)
 
@@ -113,36 +115,38 @@ class CartFragment : Fragment() {
                listOfCartItems = cartItems as ArrayList<CartItem>
                cartListAdapter.submitList(listOfCartItems)
 
-               val userAdditionalInfo = cartViewModel.getUser().additionInfo
 
-               for(cartItem in cartItems){
+               lifecycleScope.launch {
+                   val userAdditionalInfo = cartActivityViewModel.getUser().additionInfo
+                   for(cartItem in cartItems){
 
-                   val priceInUSD = cartItem.priceInUsd ?: cartItem.price
+                       val priceInUSD = cartItem.priceInUsd ?: cartItem.price
 
-                   paymentTransaction = paymentTransaction.plus(
-                       PaymentTransaction(
-                       cartItem.bookId,
-                       priceInUSD,
-                       userId,
-                       cartItem.name,
-                       cartItem.coverUrl,
-                       cartItem.pubId,
-                       cartItem.collaboratorsId,
-                       countryCode,
-                       userAdditionalInfo,
-                       cartItem.price )
+                       paymentTransaction = paymentTransaction.plus(
+                           PaymentTransaction(
+                               cartItem.bookId,
+                               priceInUSD,
+                               userId,
+                               cartItem.name,
+                               cartItem.coverUrl,
+                               cartItem.pubId,
+                               cartItem.collaboratorsId,
+                               countryCode,
+                               userAdditionalInfo,
+                               cartItem.price )
+                       )
+
+                       totalAmountInUSD = totalAmountInUSD.plus(priceInUSD)
+                       totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
+                       bookIds = bookIds.plus("${cartItem.bookId}, ")
+                   }
+                   showTotalAmountOfBooks(
+                       totalAmountInUSD,
+                       localCurrency =  cartItems[0].currency,
+                       totalAmountInLocalCurrency
                    )
-
-                   totalAmountInUSD = totalAmountInUSD.plus(priceInUSD)
-                   totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
-                   bookIds = bookIds.plus("${cartItem.bookId}, ")
                }
 
-               showTotalAmountOfBooks(
-                   totalAmountInUSD,
-                   localCurrency =  cartItems[0].currency,
-                   totalAmountInLocalCurrency
-               )
            }
        })
 
@@ -156,12 +160,12 @@ class CartFragment : Fragment() {
                 listOfCartItems.removeAt(position)
                 cartListAdapter.notifyItemRemoved(position)
 
-                cartViewModel.deleteFromCart(cart)
-                val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
-                snackBar.setAction(R.string.undo) {
+                cartActivityViewModel.deleteFromCart(cart)
+                 Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
+                     .setAction(R.string.undo) {
                     listOfCartItems.add(position, cart)
                     cartListAdapter.notifyItemInserted(position)
-                    cartViewModel.addToCart(cart)
+                    cartActivityViewModel.addToCart(cart)
                 }.show()
             }
         }
@@ -236,7 +240,7 @@ class CartFragment : Fragment() {
         totalAmountInUSD:Double, localCurrency:String,
         totalAmountInLocalCurrency:Double){
 
-        val totalEarningsInUSD = cartViewModel.getTotalEarningsInUSD()
+        val totalEarningsInUSD = cartActivityViewModel.getTotalEarningsInUSD()
         val totalAmountAfterEarningsInUSD = totalAmountInUSD - totalEarningsInUSD
 
         val totalUSD = String.format(
@@ -256,7 +260,7 @@ class CartFragment : Fragment() {
         )
 
         val bookWasPurchasedInUSD = totalAmountInUSD == totalAmountInLocalCurrency
-        layout.totalCostTxt.text =  if (bookWasPurchasedInUSD) totalUSD else totalLocalCurrency
+       layout.totalCostTxt.text =  if (bookWasPurchasedInUSD) totalUSD else totalLocalCurrency
 
     }
 
@@ -268,7 +272,7 @@ class CartFragment : Fragment() {
         }else{
             layout.checkoutBtn.isEnabled = true
             layout.emptyCartLayout.visibility = GONE
-            layout.cartItemsRecView.visibility = VISIBLE
+           layout.cartItemsRecView.visibility = VISIBLE
         }
     }
 
@@ -296,7 +300,7 @@ class CartFragment : Fragment() {
 
 
     private fun chargeCard(paymentPaymentSDKType: PaymentSDKType, paymentCard: PaymentCard){
-        val totalAmountToChargeInUSD = totalAmountInUSD - cartViewModel.getTotalEarningsInUSD()
+        val totalAmountToChargeInUSD = totalAmountInUSD - cartActivityViewModel.getTotalEarningsInUSD()
 
         val userMetaData = hashMapOf(
             Payment.USER_ID.KEY to userId,
@@ -314,7 +318,7 @@ class CartFragment : Fragment() {
         metaData: HashMap<String, String>
     ){
 
-        val payStackLivePublicKey = cartViewModel.getPayStackLivePublicKey()
+        val payStackLivePublicKey = cartActivityViewModel.getPayStackLivePublicKey()
 
         val payment:IPayment = PayStack(
             Payment.USER_DATA.KEY,
@@ -330,9 +334,9 @@ class CartFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (cartViewModel.getIsNewCardAdded()){
+        if (cartActivityViewModel.getIsNewCardAdded()){
             showSavedPaymentCardList()
-            cartViewModel.setIsNewCard(false)
+            cartActivityViewModel.setIsNewCard(false)
         }
     }
 
@@ -358,7 +362,7 @@ class CartFragment : Fragment() {
                         paymentTransaction[i].transactionReference = it.reference
                     }
 
-                    cartViewModel.addPaymentTransactions(paymentTransaction)
+                    cartActivityViewModel.addPaymentTransactions(paymentTransaction)
 
                     //Show user a message that their transaction is processing and close Cart activity when the click ok
                    showPaymentProcessingMsg()

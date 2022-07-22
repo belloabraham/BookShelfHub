@@ -25,4 +25,5 @@
             android:id="@+id/action_cardInfoFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
     </fragment>
+
 </navigation>

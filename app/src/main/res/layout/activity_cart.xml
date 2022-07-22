@@ -33,8 +33,8 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/cart_activity_navigation"
-        android:paddingBottom="?actionBarSize"
-        app:defaultNavHost="true" />
+        app:defaultNavHost="true"
+        android:paddingBottom="?actionBarSize" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

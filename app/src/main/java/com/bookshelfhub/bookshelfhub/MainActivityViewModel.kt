@@ -44,8 +44,6 @@ class MainActivityViewModel @Inject constructor(
 
 
     private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
-    private val ACTIVE_VIEW_PAGER="active_view_pager"
-    private val ACTIVE_PAGE="active_page"
 
     init {
         verifyPhoneOrEmailNotifNo.value=0
@@ -115,22 +113,6 @@ class MainActivityViewModel @Inject constructor(
             setBookInterestNotifNo(1)
         }
     }
-
-/*  fun setActivePage(value:Int){
-        savedState.set(ACTIVE_PAGE,value)
-    }
-
-    fun getActivePage(): Int? {
-        return  savedState.get<Int>(ACTIVE_PAGE)
-    }*/
-
-    fun getActiveViewPager(): Int? {
-      return savedState.get<Int>(ACTIVE_VIEW_PAGER)
-    }
-
-    /*fun setActiveViewPager(value:Int){
-        savedState.set(ACTIVE_VIEW_PAGER,value)
-    }*/
 
 
     private fun addCollaborator(collaborator: Collaborator){

@@ -32,22 +32,4 @@ class AnimUtil (private val activity:Activity) {
         }
     }
 
-    fun crossFade(invisibleView: View, visibleView: View, duration:Long){
-        invisibleView.apply {
-            alpha =0f
-            visibility = VISIBLE
-            animate()
-                .alpha(1f)
-                .setDuration(duration)
-                .setListener(null)
-        }
-        visibleView.animate()
-            .alpha(0f)
-            .setDuration(duration)
-            .setListener(object : AnimatorListenerAdapter(){
-                override fun onAnimationEnd(animation: Animator?) {
-                    visibleView.visibility = GONE
-                }
-            })
-    }
 }

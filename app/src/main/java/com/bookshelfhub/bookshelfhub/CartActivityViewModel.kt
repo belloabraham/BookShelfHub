@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub.ui.cart
+package com.bookshelfhub.bookshelfhub
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
@@ -21,11 +21,11 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor(
+class CartActivityViewModel @Inject constructor(
   val remoteDataSource: IRemoteDataSource,
   paymentCardRepo: IPaymentCardRepo,
   private val cartItemsRepo: ICartItemsRepo,
-  userRepo: IUserRepo,
+  private val userRepo: IUserRepo,
   private val paymentTransactionRepo: IPaymentTransactionRepo,
   private val earningsRepo: IEarningsRepo,
   val settingsUtil: SettingsUtil,
@@ -46,8 +46,6 @@ class CartViewModel @Inject constructor(
 
     viewModelScope.launch{
       payStackPublicKey = settingsUtil.getString(Settings.PAYSTACK_LIVE_PUBLIC_KEY)
-
-      user =  userRepo.getUser(userId).get()
     }
   }
 
@@ -81,8 +79,8 @@ class CartViewModel @Inject constructor(
   }
 
 
-  fun getUser(): User {
-    return user
+  suspend fun getUser(): User {
+    return userRepo.getUser(userId).get()
   }
 
   fun getPayStackLivePublicKey(): String? {

@@ -7,17 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bookshelfhub.bookshelfhub.CartActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.payment.CardUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCardInfoBinding
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
+import com.bookshelfhub.bookshelfhub.helpers.Json
+import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.views.EditTextCreditCardNumberFormatterWatcher
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -25,10 +27,14 @@ import kotlinx.coroutines.launch
 class CardInfoFragment : Fragment() {
 
     private var binding: FragmentCardInfoBinding?=null
-    private val cartViewModel: CartViewModel by activityViewModels()
+    private val cartActivityViewModel: CartActivityViewModel by activityViewModels()
     private val cardViewModels: CardInfoViewModel by viewModels()
     private val cardNoSeparator = "-"
     private val cardExpDateSeparator = "/"
+    @Inject
+    lateinit var json: Json
+    @Inject
+    lateinit var userAuth: IUserAuth
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -108,7 +114,7 @@ class CardInfoFragment : Fragment() {
                     paymentCard.lastFourDigit = cardUtil.getLastForDigit()
 
                          cardViewModels.addPaymentCard(paymentCard)
-                         cartViewModel.setIsNewCard(true)
+                         cartActivityViewModel.setIsNewCard(true)
 
                          //Go back to the previous fragment
                           findNavController().navigateUp()
