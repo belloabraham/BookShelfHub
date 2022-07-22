@@ -491,13 +491,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:paddingBottom="@dimen/size_16"
-        android:paddingHorizontal="@dimen/size_16"
+        android:paddingHorizontal="@dimen/size_24"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/size_8"
             android:orientation="vertical"
             android:visibility="gone"
             android:id="@+id/downloadProgressLayout">
@@ -521,7 +520,6 @@
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/size_8"
             android:visibility="gone"
             android:id="@+id/addToCartBtn"
             android:text="@string/add_to_Cart"/>
@@ -540,42 +538,13 @@
             android:id="@+id/downloadBtn"
             android:text="@string/download"/>
 
-        <FrameLayout
+        <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
-            android:id="@+id/viewCartFrame"
+            android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:backgroundTint="?colorAccent"
-                android:id="@+id/viewCartButton"
-                android:text="@string/view_cart"/>
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/checkoutNotifCard"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="@dimen/size_8"
-                android:layout_gravity="end|top"
-                app:cardBackgroundColor="?colorError"
-                app:cardCornerRadius="@dimen/notif_circle_size">
-
-                <TextView
-                    android:id="@+id/checkoutNotifText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="?colorOnError"
-                    android:textSize="10sp"
-                    tools:ignore="HardcodedText,SmallSp" />
-            </com.google.android.material.card.MaterialCardView>
-
-        </FrameLayout>
+            android:backgroundTint="?colorAccent"
+            android:id="@+id/viewCartButton"
+            android:text="@string/view_cart"/>
 
     </LinearLayout>
 

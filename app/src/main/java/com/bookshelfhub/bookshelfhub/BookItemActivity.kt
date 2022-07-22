@@ -125,7 +125,6 @@ class BookItemActivity : AppCompatActivity() {
                                 }finally {
 
                                     bookItemActivityViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
-
                                        val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(cartItems)
                                         if(bookIsNotInCart){
                                             showAddToCartButtonAndHideOthers()
@@ -406,9 +405,6 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun checkIfBookIsAlreadyInCart(cartItems:List<CartItem>):Boolean{
-        if(cartItems.isNotEmpty()) {
-            layout.checkoutNotifText.text = "${cartItems.size}"
-        }
 
         val bookInCart = cartItems.filter {
             it.bookId == bookId
@@ -427,7 +423,6 @@ class BookItemActivity : AppCompatActivity() {
         else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)
 
         showBooksItemLayout()
-        checkIfBookInCart()
     }
 
     private fun showBookDetails(book: PublishedBook){
@@ -461,40 +456,31 @@ class BookItemActivity : AppCompatActivity() {
         layout.bookItemLayout.visibility = VISIBLE
     }
 
-    private fun checkIfBookInCart(){
-        lifecycleScope.launch {
-            val booksInCart = bookItemActivityViewModel.getListOfCartItems()
-            val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(booksInCart)
-            if(bookIsNotInCart){
-                showAddToCartButtonAndHideOthers()
-            }
-        }
-    }
 
     private fun showAddToCartButtonAndHideOthers(){
         layout.openBookBtn.visibility = GONE
         layout.downloadBtn.visibility = GONE
-        layout.viewCartFrame.visibility = GONE
+        layout.viewCartButton.visibility = GONE
         layout.addToCartBtn.visibility= VISIBLE
     }
 
     private fun showDownloadBookButtonAndHideOthers(){
         layout.openBookBtn.visibility = GONE
         layout.downloadBtn.visibility = VISIBLE
-        layout.viewCartFrame.visibility = GONE
+        layout.viewCartButton.visibility = GONE
         layout.addToCartBtn.visibility= GONE
     }
 
     private fun showOpenBookButtonAndHideOthers(){
         layout.openBookBtn.visibility = VISIBLE
         layout.downloadBtn.visibility = GONE
-        layout.viewCartFrame.visibility = GONE
+        layout.viewCartButton.visibility = GONE
         layout.addToCartBtn.visibility= GONE
     }
 
    private  fun showViewCartButtonAndHideOthers(){
        layout.viewCartButton.visibility = VISIBLE
-       layout.viewCartFrame.visibility = VISIBLE
+       layout.viewCartButton.visibility = VISIBLE
        layout.openBookBtn.visibility = GONE
        layout.downloadBtn.visibility = GONE
        layout.addToCartBtn.visibility= GONE
