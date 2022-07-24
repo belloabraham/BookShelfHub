@@ -53,7 +53,6 @@ class MaterialBottomSheetDialogBuilder(private val context: Context, private val
                     it()
                 }
             }
-
             positiveAction?.let {
                 positiveButton(positiveActionText){
                     it()

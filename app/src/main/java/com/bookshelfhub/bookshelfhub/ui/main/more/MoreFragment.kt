@@ -143,19 +143,19 @@ class MoreFragment : Fragment() {
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
                      userAuth.signOut()
-                     if (authType == AuthType.GOOGLE.ID){
+                     if(authType == AuthType.PHONE.ID){
+                           moreViewModel.deleteUserData()
+                           startSplashActivity()
+                     }else{
                          viewLifecycleOwner.lifecycleScope.launch{
                              try {
                                  googleAuth.signOut().await()
-                                     moreViewModel.deleteUserData()
-                                     startSplashActivity()
+                                 moreViewModel.deleteUserData()
+                                 startSplashActivity()
                              }catch (e:Exception){
                                  Timber.e(e)
                              }
                          }
-                     }else{
-                         moreViewModel.deleteUserData()
-                         startSplashActivity()
                      }
 
                  }.build()

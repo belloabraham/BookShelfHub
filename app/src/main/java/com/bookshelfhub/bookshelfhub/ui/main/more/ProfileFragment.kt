@@ -54,10 +54,10 @@ class ProfileFragment : Fragment() {
             user = liveUser
             layout.firstNameEditTxt.setText(liveUser!!.firstName)
             layout.lastNameEditTxt.setText(liveUser.lastName)
-            if (userAuthType == AuthType.GOOGLE.ID){
-                layout.phoneEditTxtLayout.visibility=View.VISIBLE
-            }else{
+            if (userAuthType == AuthType.PHONE.ID){
                 layout.emailEditTxtLayout.visibility=VISIBLE
+            }else{
+                layout.phoneEditTxtLayout.visibility=VISIBLE
             }
             layout.phoneEditTxt.setText(liveUser.phone)
             layout.emailEditTxt.setText(liveUser.email)
@@ -112,7 +112,7 @@ class ProfileFragment : Fragment() {
                     updatedUserRecord.firstName = firstName
                     updatedUserRecord.lastName = lastName
                     updatedUserRecord.additionInfo = additionalInfo
-                    if (userAuthType == AuthType.GOOGLE.ID) {
+                    if (userAuthType != AuthType.PHONE.ID) {
                         if (phone != updatedUserRecord.phone) {
                             updatedUserRecord.mailOrPhoneVerified = false
                             updatedUserRecord.phone = phone

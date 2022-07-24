@@ -1,4 +1,4 @@
-package com.bookshelfhub.bookshelfhub
+package com.bookshelfhub.bookshelfhub.ui.cart
 
 import androidx.lifecycle.*
 import com.bookshelfhub.bookshelfhub.data.models.Earnings
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartActivityViewModel @Inject constructor(
+class SavedCardsViewModel @Inject constructor(
   val remoteDataSource: IRemoteDataSource,
   paymentCardRepo: IPaymentCardRepo,
   private val cartItemsRepo: ICartItemsRepo,

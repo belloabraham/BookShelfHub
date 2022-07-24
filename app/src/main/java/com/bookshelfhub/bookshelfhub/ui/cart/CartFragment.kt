@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.cart
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,26 +16,16 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import co.paystack.android.Paystack
-import co.paystack.android.Transaction
-import com.afollestad.materialdialogs.LayoutMode
 import com.bookshelfhub.bookshelfhub.CartActivityViewModel
 import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.helpers.utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
-import com.bookshelfhub.bookshelfhub.adapters.recycler.PaymentCardsAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
-import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
-import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
-import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
-import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentCard
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.helpers.payment.*
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -51,18 +42,10 @@ class CartFragment : Fragment() {
     private val cartActivityViewModel: CartActivityViewModel by activityViewModels()
     @Inject
     lateinit var json: Json
-    @Inject
-    lateinit var userAuth: IUserAuth
 
-    private var savedPaymentCards = emptyList<PaymentCard>()
     private var totalAmountInLocalCurrency:Double=0.0
-    private var totalAmountInUSD:Double =0.0
-    private var bookIds =""
     private lateinit var userId:String
-    private var paymentTransaction = emptyList<PaymentTransaction>()
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
-    private var paymentCardsAdapter:ListAdapter<PaymentCard, RecyclerViewHolder<PaymentCard>>?=null
-    private var mView:View?=null
 
 
     override fun onCreateView(
@@ -70,7 +53,6 @@ class CartFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        userId = userAuth.getUserId()
         binding = FragmentCartBinding.inflate(inflater, container, false)
         layout = binding!!
 
@@ -82,11 +64,6 @@ class CartFragment : Fragment() {
 
         layout.cartItemsRecView.adapter = cartListAdapter
 
-
-        cartActivityViewModel.getLivePaymentCards().observe(viewLifecycleOwner, Observer { savedPaymentCards->
-            this.savedPaymentCards = savedPaymentCards
-        })
-
         layout.cartItemsRecView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -95,7 +72,8 @@ class CartFragment : Fragment() {
         )
 
         layout.checkoutBtn.setOnClickListener {
-            showSavedPaymentCardList()
+            val savedCardsAction =  CartFragmentDirections.actionCartFragmentToSavedCardsFragment()
+            findNavController().navigate(savedCardsAction)
         }
 
 
@@ -108,8 +86,8 @@ class CartFragment : Fragment() {
            showCartItemsState(cartItems)
 
            totalAmountInLocalCurrency = 0.0
-           totalAmountInUSD = 0.0
-           bookIds = ""
+           cartActivityViewModel.setTotalAmountInUSD(0.0)
+           cartActivityViewModel.setCombinedBookIds("")
 
            if (cartItems.isNotEmpty()){
                listOfCartItems = cartItems as ArrayList<CartItem>
@@ -122,7 +100,8 @@ class CartFragment : Fragment() {
 
                        val priceInUSD = cartItem.priceInUsd ?: cartItem.price
 
-                       paymentTransaction = paymentTransaction.plus(
+                       cartActivityViewModel.setPaymentTransactions(
+                           cartActivityViewModel.getPaymentTransactions().plus(
                            PaymentTransaction(
                                cartItem.bookId,
                                priceInUSD,
@@ -134,14 +113,14 @@ class CartFragment : Fragment() {
                                countryCode,
                                userAdditionalInfo,
                                cartItem.price )
-                       )
+                       ))
 
-                       totalAmountInUSD = totalAmountInUSD.plus(priceInUSD)
+                       cartActivityViewModel.setTotalAmountInUSD(cartActivityViewModel.getTotalAmountInUSD().plus(priceInUSD))
                        totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
-                       bookIds = bookIds.plus("${cartItem.bookId}, ")
+                       cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cartItem.bookId}, "))
                    }
                    showTotalAmountOfBooks(
-                       totalAmountInUSD,
+                       cartActivityViewModel.getTotalAmountInUSD(),
                        localCurrency =  cartItems[0].currency,
                        totalAmountInLocalCurrency
                    )
@@ -153,6 +132,7 @@ class CartFragment : Fragment() {
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
 
+            @SuppressLint("ShowToast")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
                 val position: Int = viewHolder.bindingAdapterPosition
                 val cart: CartItem = cartListAdapter.currentList[position]
@@ -173,65 +153,6 @@ class CartFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
 
         return layout.root
-    }
-
-    private fun getPaymentSDK(): PaymentSDKType? {
-        val countryCode = Location.getCountryCode(requireContext())
-        return if(countryCode==null) null else PaymentSDK.getType(countryCode)
-    }
-
-    private fun showSavedPaymentCardList(){
-
-        val paymentSDKType = getPaymentSDK()
-        val paymentSDKExistForUserCountry = paymentSDKType!=null
-
-        if(paymentSDKExistForUserCountry){
-
-            mView = View.inflate(requireContext(), R.layout.saved_cards, layout.root)
-            val addCardBtn = mView!!.findViewById<MaterialButton>(R.id.addNewCardBtn)
-
-            if (savedPaymentCards.isNotEmpty()){
-
-                val recyclerView = mView!!.findViewById<RecyclerView>(R.id.paymentCardsRecView)
-
-                paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter{ paymentCard->
-                    //Callback for when user click on any of the payment cards on the list
-                    chargeCard(paymentSDKType!!, paymentCard)
-                }
-
-                recyclerView.addItemDecoration(
-                    DividerItemDecoration(
-                        requireContext(),
-                        DividerItemDecoration.VERTICAL
-                    )
-                )
-                recyclerView.adapter = paymentCardsAdapter!!
-                paymentCardsAdapter!!.submitList(savedPaymentCards)
-            }
-
-            addCardBtn.setOnClickListener {
-                val actionCardInfo = CartFragmentDirections.actionCartFragmentToCardInfoFragment()
-                findNavController().navigate(actionCardInfo)
-            }
-
-            MaterialBottomSheetDialogBuilder(requireContext(), viewLifecycleOwner)
-                .setPositiveAction(R.string.cancel){}
-                .showBottomSheet(mView, cornerRadius = 0f, layoutMode = LayoutMode.MATCH_PARENT)
-        }
-
-        val paymentSDKDoesNotExistForUserCountry = !paymentSDKExistForUserCountry
-        if (paymentSDKDoesNotExistForUserCountry){
-          showPaymentNotSupportedForYourRegionDialog()
-        }
-
-    }
-
-    private fun showPaymentNotSupportedForYourRegionDialog(){
-        AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
-            .setCancelable(false)
-            .setPositiveAction(R.string.ok){}
-            .build()
-            .showDialog(R.string.unsupported_region)
     }
 
 
@@ -276,110 +197,18 @@ class CartFragment : Fragment() {
         }
     }
 
-    private fun showPaymentProcessingMsg(){
-        AlertDialogBuilder.with(R.string.transaction_processing, requireActivity())
-            .setCancelable(false)
-            .setPositiveAction(R.string.ok){
-                requireActivity().finish()
-            }
-            .build()
-            .showDialog(R.string.processing_transaction)
-    }
-
-    private fun showTransactionFailedMsg(sdkErrorMsg:String?){
-        sdkErrorMsg?.let {
-            val errorMsg = String.format(getString(R.string.transaction_error), it)
-            AlertDialogBuilder.with(errorMsg, requireActivity())
-                .setCancelable(false)
-                .setPositiveAction(R.string.ok){}
-                .build()
-                .showDialog(R.string.transaction_failed)
-        }
-
-    }
-
-
-    private fun chargeCard(paymentPaymentSDKType: PaymentSDKType, paymentCard: PaymentCard){
-        val totalAmountToChargeInUSD = totalAmountInUSD - cartActivityViewModel.getTotalEarningsInUSD()
-
-        val userMetaData = hashMapOf(
-            Payment.USER_ID.KEY to userId,
-            Payment.IDS_OF_BOOKS_BOUGHT.KEY to bookIds
-        )
-
-        if(paymentPaymentSDKType == PaymentSDKType.PAYSTACK){
-            chargeCardWithPayStack(paymentCard, totalAmountToChargeInUSD, userMetaData)
-        }
-    }
-
-    private fun chargeCardWithPayStack(
-        paymentCard:PaymentCard,
-        amountToChargeInUSD:Double,
-        metaData: HashMap<String, String>
-    ){
-
-        val payStackLivePublicKey = cartActivityViewModel.getPayStackLivePublicKey()
-
-        val payment:IPayment = PayStack(
-            Payment.USER_DATA.KEY,
-            metaData,
-            requireActivity(),
-            json,
-            getPayStackPaymentCallBack())
-
-        val payStackPublicKey = if (Config.isDevMode()) getString(R.string.paystack_test_public_key) else payStackLivePublicKey
-
-        payment.chargeCard(payStackPublicKey!!, paymentCard, amountToChargeInUSD)
-    }
 
     override fun onResume() {
         super.onResume()
         if (cartActivityViewModel.getIsNewCardAdded()){
-            showSavedPaymentCardList()
             cartActivityViewModel.setIsNewCard(false)
         }
     }
 
     override fun onDestroyView() {
         binding=null
-        mView=null
         mCartListAdapter = null
-        paymentCardsAdapter =null
         super.onDestroyView()
-    }
-
-    private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
-
-        return object : Paystack.TransactionCallback{
-
-            override fun onSuccess(transaction: Transaction?) {
-
-                transaction?.let {
-                    val length = paymentTransaction.size -1
-
-                    //Pass transaction reference to all the transaction record that is created
-                    for (i in 0..length){
-                        paymentTransaction[i].transactionReference = it.reference
-                    }
-
-                    cartActivityViewModel.addPaymentTransactions(paymentTransaction)
-
-                    //Show user a message that their transaction is processing and close Cart activity when the click ok
-                   showPaymentProcessingMsg()
-                }
-
-            }
-
-            override fun beforeValidate(transaction: Transaction?) {}
-
-            override fun onError(error: Throwable?, transaction: Transaction?) {
-                error?.let {
-                    val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
-                    showTransactionFailedMsg(errorMsg)
-                }
-            }
-
-        }
     }
 
 

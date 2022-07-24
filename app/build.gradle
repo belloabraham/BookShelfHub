@@ -221,7 +221,7 @@ dependencies {
 
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:30.2.0')
+    implementation platform('com.google.firebase:firebase-bom:30.3.0')
     //--Analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
     //--Authentication

@@ -58,12 +58,12 @@ class UserInfoFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
-        if (userAuthType== AuthType.GOOGLE.ID){
-            layout.phoneEditTxtLayout.visibility=View.VISIBLE
-            layout.emailEditTxt.setText(userAuth.getEmail())
-        }else{
+        if (userAuthType == AuthType.PHONE.ID){
             layout.emailEditTxtLayout.visibility=View.VISIBLE
             layout.phoneEditTxt.setText(userAuth.getPhone())
+        }else{
+            layout.phoneEditTxtLayout.visibility=View.VISIBLE
+            layout.emailEditTxt.setText(userAuth.getEmail())
         }
 
         layout.btnContinue.setOnClickListener {

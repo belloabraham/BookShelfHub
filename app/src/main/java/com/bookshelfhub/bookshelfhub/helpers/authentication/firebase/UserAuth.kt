@@ -64,7 +64,7 @@ open class UserAuth() : IUserAuth {
     }
 
     override fun signOut() {
-        auth.signOut()
+         auth.signOut()
     }
 
 }
