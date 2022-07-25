@@ -17,5 +17,4 @@ class MoreActivityViewModel @Inject constructor(
         return fragmentId
     }
 
-
 }

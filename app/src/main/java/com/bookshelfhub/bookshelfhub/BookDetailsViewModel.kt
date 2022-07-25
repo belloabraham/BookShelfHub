@@ -16,7 +16,6 @@ class BookDetailsViewModel @Inject constructor(
     private val fragmentId = savedState.get<Int>(Fragment.ID)!!
     private val bookId =  savedState.get<String>(Book.ID)!!
 
-
     fun getBookId(): String {
         return bookId
     }

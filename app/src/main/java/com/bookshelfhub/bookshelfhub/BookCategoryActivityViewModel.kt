@@ -41,24 +41,24 @@ class BookCategoryActivityViewModel @Inject constructor(
   )
 
   init {
+    loadBooksByCategory()
+  }
 
+  private fun loadBooksByCategory(){
     viewModelScope.launch {
       val categoryList = when (category) {
-          context.getString(R.string.trending) -> {
-             publishedBooksRepo.getTrendingBooks()
-          }
-          context.getString(R.string.recommended_for) -> {
-            publishedBooksRepo.getRecommendedBooks()
-          }
-          else -> {
-            publishedBooksRepo.getBooksByCategory(category)
-          }
+        trendingCategory -> {
+          publishedBooksRepo.getTrendingBooks()
+        }
+        recommendedCategory -> {
+          publishedBooksRepo.getRecommendedBooks()
+        }
+        else -> {
+          publishedBooksRepo.getBooksByCategory(category)
+        }
       }
-
       booksByCategory = booksByCategory.plus(categoryList)
-
     }
-
   }
 
   fun getCategory(): String {

@@ -84,7 +84,7 @@ class BookItemActivity : AppCompatActivity() {
             showBookDetails(localPublishedBook)
         }
 
-        bookItemActivityViewModel.getBookRemotelyIfNotPurchased().observe(this, Observer { book ->
+        bookItemActivityViewModel.getOnlinePublishedBook().observe(this, Observer { book ->
 
             val countryCode = Location.getCountryCode(this)
 

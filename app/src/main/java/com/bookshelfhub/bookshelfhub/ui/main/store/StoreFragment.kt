@@ -241,6 +241,7 @@ class StoreFragment : Fragment() {
 
         }
 
+        //Store fragment can listen to onBackPressed for shelf fragment
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()

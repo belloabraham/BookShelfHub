@@ -59,7 +59,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val referralRepo: IReferralRepo,
   private val bookDownloadStateRepo: IBookDownloadStateRepo,
   private val searchHistoryRepo: ISearchHistoryRepo,
-  userAuth: IUserAuth): ViewModel(){
+  val userAuth: IUserAuth): ViewModel(){
 
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
@@ -99,6 +99,28 @@ class BookItemActivityViewModel @Inject constructor(
 
     if (isSearchItem){
       addStoreSearchHistory(searchHistory)
+    }
+
+    getBookRemotelyIfUserNotPurchasedBook()
+
+
+     getTwoBookReviewsRemotely()
+     getRemoteUserReview()
+  }
+
+  private fun getRemoteUserReview(){
+    viewModelScope.launch {
+      val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
+      if(noUserReview){
+        try {
+          userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
+            userReviewRepo.addUserReview(it)
+          }
+        }catch (e:Exception){
+          Timber.e(e)
+          return@launch
+        }
+      }
     }
   }
 
@@ -197,24 +219,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
-     viewModelScope.launch {
-       val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
-       if(noUserReview){
-         try {
-           userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
-             userReviewRepo.addUserReview(it)
-           }
-         }catch (e:Exception){
-           Timber.e(e)
-           return@launch
-         }
-       }
-     }
-    return userReviewRepo.getLiveUserReview(bookId)
-  }
-
-  suspend fun getAllOrderedBooks(): List<OrderedBook> {
-    return orderedBooksRepo.getOrderedBooks(userId)
+     return userReviewRepo.getLiveUserReview(bookId)
   }
 
   fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
@@ -266,7 +271,8 @@ class BookItemActivityViewModel @Inject constructor(
     }
   }
 
-  fun getTwoUserReviewsForBook(): LiveData<List<UserReview>> {
+
+  private fun getTwoBookReviewsRemotely(){
     viewModelScope.launch {
       try {
         userReviews.value  = userReviewRepo.getRemoteListOfBookReviews(bookId, 3, excludedDocId =  userId)
@@ -275,10 +281,13 @@ class BookItemActivityViewModel @Inject constructor(
         return@launch
       }
     }
+  }
+
+  fun getTwoUserReviewsForBook(): LiveData<List<UserReview>> {
     return userReviews
   }
 
-  fun getBookRemotelyIfNotPurchased(): LiveData<PublishedBook> {
+  private fun getBookRemotelyIfUserNotPurchasedBook(){
     viewModelScope.launch {
       val userIsYetToBuyBook = !orderedBooksRepo.getAnOrderedBook(bookId).isPresent
       if(userIsYetToBuyBook){
@@ -290,6 +299,9 @@ class BookItemActivityViewModel @Inject constructor(
         }
       }
     }
+  }
+
+  fun getOnlinePublishedBook(): LiveData<PublishedBook> {
     return publishedBookOnline
   }
 

@@ -7,6 +7,7 @@ interface IPayment {
         publicKey:String,
         paymentCard: PaymentCard,
         amount:Double,
-        currency: String = Currency.USD
+        userEmail:String,
+        currency: String = Currency.USD,
     )
 }

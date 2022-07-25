@@ -12,6 +12,7 @@ object Settings {
     const val  API_KEYS = "api_keys"
     const val  FIXER_ACCESS_KEY = "fixerAccessKey"
     const val  PERSPECTIVE_API = "perspectiveKey"
+    const val IS_DARK_THEME ="id_dark_mode"
 
     const val PHONE = "phone"
     const val DIALING_CODE="dialingCode"

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,16 +39,15 @@ class ShelfViewModel @Inject constructor(
     private val downloadBookUseCase: DownloadBookUseCase,
     val userAuth:IUserAuth): ViewModel(){
     
-    private var liveOrderedBooks: LiveData<List<OrderedBook>> = MutableLiveData()
+    private var liveOrderedBooksUiState: LiveData<List<OrderedBookUiState>> = MutableLiveData()
     private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
     private val _isNewlyPurchasedBookFlow = MutableStateFlow(false)
     private var doesUserHaveUnDownloadedPurchasedBooks = _isNewlyPurchasedBookFlow.asStateFlow()
     private val userId:String = userAuth.getUserId()
 
-
     init {
         shelfShelfSearchHistory = searchHistoryRepo.getLiveShelfSearchHistory(userId)
-        liveOrderedBooks = orderedBooksRepo.getLiveOrderedBooks(userId)
+        liveOrderedBooksUiState = orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
     }
 
 
@@ -66,7 +66,7 @@ class ShelfViewModel @Inject constructor(
     }
 
      fun getLiveListOfOrderedBooksUiState(): LiveData<List<OrderedBookUiState>> {
-      return  orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
+      return  liveOrderedBooksUiState
     }
 
     fun deleteDownloadState(bookDownloadState: BookDownloadState){
@@ -99,7 +99,6 @@ class ShelfViewModel @Inject constructor(
 
     fun getRemoteOrderedBooks(){
             viewModelScope.launch {
-                if(connectionUtil.isConnected()){
                 val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
                 try {
                    val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
@@ -108,22 +107,17 @@ class ShelfViewModel @Inject constructor(
                    )
                    orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
                 }catch (e:Exception){
-                    val userHaveAtLeastOneBooksInDatabaseShelf = !(e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                    val userHaveAtLeastOneBooksInDatabaseShelf = (e is IOException) ||  !(e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
                     if(userHaveAtLeastOneBooksInDatabaseShelf){
                         Timber.e(e)
                         return@launch
                     }
                 }
-            }
         }
     }
 
     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
         return shelfShelfSearchHistory
-    }
-
-    fun getLiveOrderedBooks():LiveData<List<OrderedBook>>{
-        return liveOrderedBooks
     }
 
 }

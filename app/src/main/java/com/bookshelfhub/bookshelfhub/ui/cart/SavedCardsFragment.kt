@@ -130,7 +130,12 @@ class SavedCardsFragment : Fragment(){
 
         val payStackPublicKey = if (Config.isDevMode()) getString(R.string.paystack_test_public_key) else payStackLivePublicKey
 
-        payment.chargeCard(payStackPublicKey!!, paymentCard, amountToChargeInUSD)
+        payment.chargeCard(
+            payStackPublicKey!!,
+            paymentCard,
+            amountToChargeInUSD,
+            cartActivityViewModel.getUserEmail()!!
+        )
     }
 
     private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {

@@ -9,6 +9,14 @@ fun Fragment.showToast(msg:String, toastLength:Int = Toast.LENGTH_LONG){
     requireActivity().showToast(msg, toastLength)
 }
 
+fun Fragment.isDarkTheme(): Boolean {
+    return requireActivity().isDarkTheme()
+}
+
+fun Fragment.enableDarkTheme(){
+    requireActivity().enableDarkTheme()
+}
+
 fun Fragment.showToast(msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     requireActivity().showToast(msg, toastLength)
 }

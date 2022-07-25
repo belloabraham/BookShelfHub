@@ -20,7 +20,6 @@ class BookmarkViewModel @Inject constructor(
     val userId = userAuth.getUserId()
     private var liveBookmarks: LiveData<List<Bookmark>> = MutableLiveData()
 
-
     init{
        liveBookmarks = bookmarksRepo.getLiveBookmarks(false)
     }

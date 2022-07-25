@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@android:color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.cart.SavedCardsFragment" >
 

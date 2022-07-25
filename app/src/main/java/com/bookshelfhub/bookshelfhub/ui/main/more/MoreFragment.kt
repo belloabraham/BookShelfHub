@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub.ui.main.more
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -24,6 +25,7 @@ import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
+import com.bookshelfhub.bookshelfhub.extensions.isDarkTheme
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
@@ -74,6 +76,7 @@ class MoreFragment : Fragment() {
 
     private var binding: FragmentMoreBinding?=null
 
+    @SuppressLint("ShowToast")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -97,14 +100,11 @@ class MoreFragment : Fragment() {
             val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
                 progressPopupToggle.setChecked(isChecked, false)
         }
-        val isDarkMode =  when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-            Configuration.UI_MODE_NIGHT_NO -> {
-                false
-            }
-            else -> true
-        }
 
-        darkModeToggle.setChecked(isDarkMode, withAnimation = false)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isDarkTheme = isDarkTheme() || mainActivityViewModel.getIsDarkTheme()
+            darkModeToggle.setChecked(isDarkTheme, withAnimation = false)
+        }
 
         darkModeToggle.setOnCheckedChangeListener { isChecked->
             setAppThem(isChecked)
@@ -286,6 +286,9 @@ class MoreFragment : Fragment() {
 
     private fun setAppThem(isDarkTheme: Boolean) {
         //change activity theme when user switch the theme in more fragment
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainActivityViewModel.setIsDarkTheme(isDarkTheme)
+        }
         val mode = if (isDarkTheme) {
             AppCompatDelegate.MODE_NIGHT_YES
         } else {

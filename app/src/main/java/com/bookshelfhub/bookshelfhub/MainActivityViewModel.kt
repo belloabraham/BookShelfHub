@@ -13,6 +13,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
 import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
+import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.google.common.base.Optional
@@ -68,6 +69,15 @@ class MainActivityViewModel @Inject constructor(
         return null
     }
 
+
+    suspend fun getIsDarkTheme(): Boolean {
+        return settingsUtil.getBoolean(Settings.IS_DARK_THEME, false)
+    }
+
+    suspend fun setIsDarkTheme(value:Boolean){
+        settingsUtil.setBoolean(Settings.IS_DARK_THEME, value)
+    }
+
      fun getAndSaveAppShareDynamicLink(){
         viewModelScope.launch {
             if(settingsUtil.getString(Referrer.REF_LINK) == null && connectionUtil.isConnected()){
@@ -114,13 +124,11 @@ class MainActivityViewModel @Inject constructor(
         }
     }
 
-
     private fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {
             referralRepo.addCollaboratorOrIgnore(collaborator)
         }
     }
-
 
 
     fun getTotalMoreTabNotification(): Int {

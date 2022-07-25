@@ -16,8 +16,8 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
 import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.google.common.base.Optional
+import com.google.firebase.FirebaseException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -85,7 +85,6 @@ class BookActivityViewModel @Inject constructor(
 
      fun getBookVideos(){
         viewModelScope.launch {
-            if(connectionUtil.isConnected()){
                 try {
                     val bookVideos =  bookVideosRepo.getRemoteBookVideos(bookId)
                     if(bookVideos.isNotEmpty()){
@@ -93,9 +92,11 @@ class BookActivityViewModel @Inject constructor(
                     }
                 }catch (e:Exception){
                     Timber.e(e)
-                    return@launch
+                    val theresIsInternetConnection = e is FirebaseException
+                    if(theresIsInternetConnection){
+                        return@launch
+                    }
                 }
-            }
         }
     }
 

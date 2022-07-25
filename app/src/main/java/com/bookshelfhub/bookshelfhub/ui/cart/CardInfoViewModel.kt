@@ -13,7 +13,6 @@ class CardInfoViewModel @Inject constructor(
     private val paymentCardRepo: IPaymentCardRepo
 ): ViewModel(){
 
-
     fun addPaymentCard(paymentCard:PaymentCard){
         viewModelScope.launch {
             paymentCardRepo.addPaymentCard(paymentCard)

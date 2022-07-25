@@ -19,7 +19,7 @@ class FlutterWave(private val encryptionKey:String,
                   private val isDebugMode:Boolean = Config.isDevMode()
 ):IPayment {
 
-    override fun chargeCard(publicKey:String, paymentCard: PaymentCard, amount:Double, currency:String){
+    override fun chargeCard(publicKey:String, paymentCard: PaymentCard, amount:Double, userEmail:String, currency:String){
 
         val raveNonUIManager = RaveNonUIManager()
             .setCurrency(currency)

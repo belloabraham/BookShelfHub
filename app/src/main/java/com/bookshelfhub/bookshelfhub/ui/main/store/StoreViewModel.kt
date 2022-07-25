@@ -62,7 +62,6 @@ class StoreViewModel @Inject constructor(
                     val  publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
                       fromSerialNo =   totalNoOfLocalPublishedBooks
                     )
-                  //  hello = totalNoOfLocalPublishedBooks
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
 

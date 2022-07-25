@@ -20,14 +20,16 @@ class PayStack(
         publicKey:String,
         paymentCard: PaymentCard,
         amount:Double,
-        currency:String
-    ) {
+        userEmail:String,
+        currency:String,
+        ) {
         val card = Card(paymentCard.cardNo, paymentCard.expiryMonth, paymentCard.expiryYear, paymentCard.cvv)
         PaystackSdk.setPublicKey(publicKey)
         val charge = Charge()
         charge.card = card
         charge.amount = (amount*100).toInt()
         charge.currency = currency
+        charge.email = userEmail
         charge.putMetadata(userDataKey, json.getJsonObject(metaData))
         PaystackSdk.chargeCard(activity, charge, callBack)
     }

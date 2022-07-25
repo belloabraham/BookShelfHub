@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
@@ -78,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {}
         })
-
     }
 
     private fun setViewPagerPosition(tabIndex:Int){
@@ -156,6 +156,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setAppThem(isDarkTheme: Boolean) {
+        //change activity theme when user switch the theme in more fragment
+        val mode = if (isDarkTheme) {
+            AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            AppCompatDelegate.MODE_NIGHT_NO
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
+    }
+
     override fun onResume() {
         super.onResume()
         mainActivityViewModel.getAndSaveAppShareDynamicLink()
@@ -164,7 +174,7 @@ class MainActivity : AppCompatActivity() {
             newUpdateDownloadedCompleteMessage()
         }
 
-        setActiveViewPagerAndPageAfterMainActivityThemeChange()
+       setActiveViewPagerAndPageAfterMainActivityThemeChange()
     }
 
     private fun setActiveViewPagerAndPageAfterMainActivityThemeChange() {

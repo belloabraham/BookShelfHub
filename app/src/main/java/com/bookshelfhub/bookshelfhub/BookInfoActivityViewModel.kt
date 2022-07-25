@@ -19,7 +19,7 @@ import javax.inject.Inject
 class BookInfoActivityViewModel @Inject constructor(
     val savedState: SavedStateHandle,
     publishedBooksRepo: IPublishedBooksRepo,
-    userReviewRepo: IUserReviewRepo,
+    private val userReviewRepo: IUserReviewRepo,
     val userAuth: IUserAuth,
     private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
 ): ViewModel() {
@@ -35,6 +35,10 @@ class BookInfoActivityViewModel @Inject constructor(
     init {
         localLivePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
 
+        get300RemoteBookReviews()
+    }
+
+    private fun get300RemoteBookReviews(){
         viewModelScope.launch {
             try {
                 userReviews.value = userReviewRepo.getRemoteListOfBookReviews(bookId, limit = 300, userId)
@@ -49,9 +53,6 @@ class BookInfoActivityViewModel @Inject constructor(
         return localLivePublishedBook
     }
 
-    fun getBookId(): String {
-        return bookId
-    }
 
     fun getFragmentId(): Int {
         return fragmentId

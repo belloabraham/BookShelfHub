@@ -161,7 +161,7 @@ class ShelfFragment : Fragment() {
             })
         }
 
-
+        //Only shelf fragment can listen to onBackpressed
         mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner, Observer { isBackPressed ->
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
