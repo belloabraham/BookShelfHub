@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/card_others"
                 android:inputType="number"
-                android:maxLength="19"
+                android:maxLength="25"
                 android:id="@+id/cardNoTxt"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,7 +69,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/size_16"
+            android:layout_marginTop="@dimen/size_8"
             android:textColor="@color/red"
             android:id="@+id/errorTxt"/>
 
@@ -79,10 +79,8 @@
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="?colorPrimaryVariant"
         android:text="@string/proceed"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="@dimen/size_16"
         android:id="@+id/proceedBtn"/>
 
 </FrameLayout>

@@ -167,8 +167,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideCloudDb(json: Json): IRemoteDataSource {
-        return Firestore(json)
+    fun provideCloudDb(json: Json, connectionUtil: ConnectionUtil): IRemoteDataSource {
+        return Firestore(json, connectionUtil)
     }
 
     @Singleton

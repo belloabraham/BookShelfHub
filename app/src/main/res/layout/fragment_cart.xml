@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:padding="@dimen/size_24">
+        android:paddingHorizontal="@dimen/size_24">
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"

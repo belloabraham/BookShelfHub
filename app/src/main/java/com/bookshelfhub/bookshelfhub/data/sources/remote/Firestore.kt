@@ -3,19 +3,20 @@ package com.bookshelfhub.bookshelfhub.data.sources.remote
 import com.bookshelfhub.bookshelfhub.data.models.entities.IEntityId
 import com.bookshelfhub.bookshelfhub.data.models.entities.UserReview
 import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.google.android.gms.tasks.Task
-import com.google.firebase.Timestamp
+import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.tasks.await
+import java.io.IOException
 import javax.inject.Inject
 
 
  class Firestore @Inject constructor(
-     private val json: Json): IRemoteDataSource {
+     private val json: Json,
+     private val connectionUtil: ConnectionUtil,
+     ): IRemoteDataSource {
     private val db:FirebaseFirestore = Firebase.firestore
      
      init {
@@ -33,6 +34,7 @@ import javax.inject.Inject
         val newData = hashMapOf(
             field to data,
         )
+        throwNoInternetConnectionError()
           return  db.collection(collection)
                 .document(document)
                 .set(newData, SetOptions.merge()).await()
@@ -43,36 +45,17 @@ import javax.inject.Inject
          collection:String,
          document:String,
          data: Any): Void? {
+         throwNoInternetConnectionError()
          return  db.collection(collection)
              .document(document)
              .set(data, SetOptions.merge()).await()
      }
 
-     override fun <T: Any> getLiveListOfDataAsync(
-         collection:String,
-         type:Class<T>,
-         orderBy:String,
-         shouldRetry: Boolean,
-         onComplete: (dataList:List<T>)->Unit): ListenerRegistration {
-         val subscription = db.collection(collection)
-             .orderBy(orderBy)
-             .addSnapshotListener { querySnapShot, e ->
-
-                 if (shouldRetry && e!=null){
-                     return@addSnapshotListener
-                 }
-
-                 val dataList = querySnapshotToListOfType(querySnapShot, type)
-                 onComplete(dataList)
-             }
-         return subscription
-     }
-
-
-     override suspend fun <T: Any>  getDataAsync(
+     override suspend fun <T: Any> getDataAsync(
          collection:String,
          document: String,
          type:Class<T>): T? {
+         throwNoInternetConnectionError()
          val docSnapshot =  db.collection(collection)
              .document(document).get().await()
         return docSnapshotToType(docSnapshot, type)
@@ -85,7 +68,7 @@ import javax.inject.Inject
          subCollection: String,
          subDocument:String,
          type:Class<T>): T? {
-
+         throwNoInternetConnectionError()
          val documentSnapshot = db.collection(collection).document(document).collection(subCollection).document(subDocument).get().await()
         return docSnapshotToType(documentSnapshot, type)
      }
@@ -96,6 +79,7 @@ import javax.inject.Inject
          whereKey: String,
          whereValue: Any,
          type:Class<T>): List<T> {
+         throwNoInternetConnectionError()
        val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey, whereValue)
              .get().await()
@@ -112,7 +96,7 @@ import javax.inject.Inject
          whereValue:Any,
          limit:Long,
          excludedDocId:String): List<T> {
-
+         throwNoInternetConnectionError()
          val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .limit(limit)
@@ -134,6 +118,7 @@ import javax.inject.Inject
          orderBy: String,
          direction: Query.Direction,
          type:Class<T>): List<T> {
+         throwNoInternetConnectionError()
          val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey,whereValue)
              .whereEqualTo(whereKey2,whereValue2)
@@ -153,6 +138,7 @@ import javax.inject.Inject
          startAt:Int,
          direction: Query.Direction,
          type:Class<T>): List<T> {
+        throwNoInternetConnectionError()
          val querySnapShot =  db.collection(collection)
              .whereEqualTo(whereKey,whereValue)
              .whereEqualTo(whereKey2,whereValue2)
@@ -172,7 +158,7 @@ import javax.inject.Inject
          whereKey:String, whereValue:Any,
          limit:Long, orderBy: String,
          direction: Query.Direction): List<T> {
-
+         throwNoInternetConnectionError()
         val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
@@ -190,7 +176,7 @@ import javax.inject.Inject
          direction: Query.Direction,
          startAfter:Any,
          type:Class<T>): List<T> {
-
+         throwNoInternetConnectionError()
          val querySnapshot = db.collection(collection).document(document).collection(subCollection)
              .orderBy(orderBy, direction)
              .startAfter(startAfter)
@@ -202,7 +188,7 @@ import javax.inject.Inject
          collection:String, document:String,
          subCollection:String,
          type:Class<T>): List<T> {
-
+         throwNoInternetConnectionError()
          val querySnapshot = db.collection(collection).document(document).collection(subCollection)
              .get().await()
          return   querySnapshotToListOfType(querySnapshot, type)
@@ -216,7 +202,7 @@ import javax.inject.Inject
          document:String,
          subCollection: String,
          subDocument: String): Void? {
-
+         throwNoInternetConnectionError()
          return db.runBatch { batch->
              val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
              val bookDynamicAttrDocRef = db.collection(collection).document(document)
@@ -224,7 +210,6 @@ import javax.inject.Inject
              val reviewDate = hashMapOf(
                  RemoteDataFields.REVIEW_DATE_TIME to FieldValue.serverTimestamp()
              )
-
              batch.set(reviewDocRef, userReview)
              batch.set(reviewDocRef, reviewDate, SetOptions.merge())
              bookUpdatedValues?.let {
@@ -241,7 +226,7 @@ import javax.inject.Inject
          subCollection: String,
          subDocument: String,
          bookUpdatedValues: List<HashMap<String, FieldValue>>): Void? {
-
+         throwNoInternetConnectionError()
        return  db.runBatch { batch->
              val length = userReviews.size - 1
              for (i in 0..length){
@@ -260,7 +245,7 @@ import javax.inject.Inject
          document:String,
          subCollection: String,
          list: List<Any>): Void? {
-
+         throwNoInternetConnectionError()
         return  db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document()
@@ -275,7 +260,7 @@ import javax.inject.Inject
          collection: String,
          document:String,
          subCollection: String): Void? {
-
+         throwNoInternetConnectionError()
        return  db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
@@ -290,7 +275,7 @@ import javax.inject.Inject
          collection: String,
          document:String,
          subCollection: String):Void {
-
+         throwNoInternetConnectionError()
         return db.runBatch { batch->
              for (item in list){
                  val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
@@ -326,7 +311,12 @@ import javax.inject.Inject
              }
          }
          return dataList
-
      }
 
+     private fun throwNoInternetConnectionError(){
+         val noInternetConnection = !connectionUtil.isConnected()
+         if(noInternetConnection){
+             throw IOException("No internet connection")
+         }
+     }
 }

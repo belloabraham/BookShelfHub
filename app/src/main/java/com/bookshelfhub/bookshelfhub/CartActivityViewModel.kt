@@ -17,6 +17,7 @@ import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -96,12 +97,13 @@ class CartActivityViewModel @Inject constructor(
   }
 
   private fun getLiveTotalEarnings(): LiveData<Earnings?> {
-    earnings.value = Earnings(0.0)
     viewModelScope.launch {
       try {
         earnings.value = earningsRepo.getRemoteEarnings(userId)
       }catch (e:Exception){
-        return@launch
+        Timber.e(e)
+        earnings.value = Earnings(0.0)
+       // return@launch
       }
     }
     return earnings
@@ -114,15 +116,6 @@ class CartActivityViewModel @Inject constructor(
 
   fun getPayStackLivePublicKey(): String? {
     return payStackPublicKey
-  }
-
-
-  fun setIsNewCard(value:Boolean){
-    isNewCardAdded = value
-  }
-
-  fun getIsNewCardAdded(): Boolean {
-    return isNewCardAdded
   }
 
   fun getLivePaymentCards(): LiveData<List<PaymentCard>> {

@@ -128,13 +128,4 @@ interface IRemoteDataSource {
         field:String, data: Any): Void?
 
 
-     fun <T : Any> getLiveListOfDataAsync(
-         collection: String,
-         type: Class<T>,
-         orderBy: String,
-         shouldRetry: Boolean = true,
-         onComplete: (dataList: List<T>) -> Unit
-    ):ListenerRegistration
-
-
 }

@@ -490,7 +490,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:paddingBottom="@dimen/size_16"
         android:paddingHorizontal="@dimen/size_24"
         android:orientation="vertical">
 

@@ -3,6 +3,7 @@ package com.bookshelfhub.bookshelfhub.data.sources.local
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
+import com.google.common.base.Optional
 
 @Dao
 abstract class CartItemsDao : BaseDao<CartItem> {
@@ -21,4 +22,7 @@ abstract class CartItemsDao : BaseDao<CartItem> {
 
     @Query("SELECT * FROM CartItems WHERE userId =:userId")
     abstract suspend fun getListOfCartItems(userId: String):List<CartItem>
+
+    @Query("SELECT * FROM CartItems WHERE bookId =:bookId")
+    abstract fun getLiveCartItem(bookId:String):LiveData<Optional<CartItem>>
 }

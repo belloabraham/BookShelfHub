@@ -8,6 +8,7 @@ import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
 import com.bookshelfhub.bookshelfhub.workers.ClearCart
 import com.bookshelfhub.bookshelfhub.workers.Tag
 import com.bookshelfhub.bookshelfhub.workers.Worker
+import com.google.common.base.Optional
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CartItemsRepo @Inject constructor(
-    private val appDatabase: AppDatabase,
+    appDatabase: AppDatabase,
     private val worker: Worker,
    ) : ICartItemsRepo {
 
@@ -24,6 +25,10 @@ class CartItemsRepo @Inject constructor(
 
      override fun getLiveListOfCartItems(userId: String): LiveData<List<CartItem>> {
         return  cartItemsDao.getLiveListOfCartItems(userId)
+    }
+
+    override fun getLiveCartItem(bookId: String): LiveData<Optional<CartItem>> {
+        return  cartItemsDao.getLiveCartItem(bookId)
     }
 
     override suspend fun getListOfCartItems(userId: String): List<CartItem> {

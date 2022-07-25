@@ -56,7 +56,6 @@ class BookItemActivity : AppCompatActivity() {
     private var userReview: UserReview?=null
     private var canUserPostReview:Boolean = false
     private var priceInUSD:Double = 0.0
-    private var visibilityAnimDuration:Long=0
     private lateinit var userId: String
     private lateinit var bookId:String
     private lateinit var localCurrencyOrUSD:String
@@ -71,7 +70,6 @@ class BookItemActivity : AppCompatActivity() {
         supportActionBar?.title = null
 
         bookId = bookItemActivityViewModel.getBookId()
-        visibilityAnimDuration = 200L // resources.getInteger(android.R.integer.config_shortAnimTime).toLong()
 
         userId = userAuth.getUserId()
         val userPhotoUri = userAuth.getPhotoUrl()
@@ -124,9 +122,11 @@ class BookItemActivity : AppCompatActivity() {
                                     // return@launch
                                 }finally {
 
-                                    bookItemActivityViewModel.getLiveListOfCartItems().observe(this@BookItemActivity, Observer { cartItems ->
-                                       val bookIsNotInCart =  !checkIfBookIsAlreadyInCart(cartItems)
-                                        if(bookIsNotInCart){
+                                    bookItemActivityViewModel.getLiveOptionalCartItem().observe(this@BookItemActivity, Observer { cartItems ->
+                                        val bookIsInCart = cartItems.isPresent
+                                        if(bookIsInCart){
+                                            showViewCartButtonAndHideOthers()
+                                        }else{
                                             showAddToCartButtonAndHideOthers()
                                         }
                                     })
@@ -401,20 +401,6 @@ class BookItemActivity : AppCompatActivity() {
             }
 
             showBooksItemLayout()
-        }
-    }
-
-    private fun checkIfBookIsAlreadyInCart(cartItems:List<CartItem>):Boolean{
-
-        val bookInCart = cartItems.filter {
-            it.bookId == bookId
-        }
-
-        return  if (bookInCart.isNotEmpty()){
-            showViewCartButtonAndHideOthers()
-            true
-        } else{
-            false
         }
     }
 

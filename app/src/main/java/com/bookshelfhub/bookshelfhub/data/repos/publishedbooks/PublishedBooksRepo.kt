@@ -48,7 +48,6 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend  fun getRemotePublishedBooks(): List<PublishedBook> {
-
         return   remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 whereKey = RemoteDataFields.PUBLISHED, true,
@@ -60,7 +59,7 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend  fun getRemotePublishedBooksFrom(fromSerialNo:Int): List<PublishedBook> {
-        return  remoteDataSource.getListOfDataWhereAsync(
+        return remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 whereKey = RemoteDataFields.PUBLISHED, true,
                 whereKey2 = RemoteDataFields.APPROVED, true,
@@ -69,7 +68,6 @@ class PublishedBooksRepo @Inject constructor(
                 Query.Direction.ASCENDING,
                 PublishedBook::class.java
             )
-
     }
 
      override suspend fun getPublishedBook(bookId: String): Optional<PublishedBook> {

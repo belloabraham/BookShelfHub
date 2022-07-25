@@ -84,7 +84,6 @@ class StoreFragment : Fragment() {
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
         })
 
-
         storeViewModel.getDoesBookLoadSuccessfully().observe(viewLifecycleOwner, Observer { isSuccess ->
             showRemoteBooksLoadStatus(isSuccess, layout)
         })

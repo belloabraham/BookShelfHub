@@ -61,9 +61,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val searchHistoryRepo: ISearchHistoryRepo,
   userAuth: IUserAuth): ViewModel(){
 
-  private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
-  private var liveUserReview: MutableLiveData<Optional<UserReview>> = MutableLiveData()
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
@@ -87,43 +85,11 @@ class BookItemActivityViewModel @Inject constructor(
 
     generateBookShareLink()
 
-    liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
-
     orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
     viewModelScope.launch{
       userAlreadyPurchasedBook = orderedBooksRepo.getAnOrderedBook(bookId).isPresent
       user = userRepo.getUser(userId).get()
-
-      liveUserReview.value = userReviewRepo.getLiveUserReview(bookId).value
-      val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
-      if(noUserReview){
-        userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
-          liveUserReview.value = Optional.of(it)
-          userReviewRepo.addUserReview(it)
-        }
-      }
-
-    }
-
-    viewModelScope.launch {
-      if(!userAlreadyPurchasedBook){
-        try {
-          publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
-        }catch (e:Exception){
-          Timber.e(e)
-          return@launch
-        }
-      }
-    }
-
-    viewModelScope.launch {
-      try {
-        userReviews.value  = userReviewRepo.getRemoteListOfBookReviews(bookId, 3, excludedDocId =  userId)
-      }catch (e:Exception){
-        Timber.e(e)
-        return@launch
-      }
     }
 
     val searchHistory = StoreSearchHistory(
@@ -231,6 +197,19 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
    fun getLiveUserReview(): LiveData<Optional<UserReview>> {
+     viewModelScope.launch {
+       val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
+       if(noUserReview){
+         try {
+           userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
+             userReviewRepo.addUserReview(it)
+           }
+         }catch (e:Exception){
+           Timber.e(e)
+           return@launch
+         }
+       }
+     }
     return userReviewRepo.getLiveUserReview(bookId)
   }
 
@@ -288,19 +267,34 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun getTwoUserReviewsForBook(): LiveData<List<UserReview>> {
+    viewModelScope.launch {
+      try {
+        userReviews.value  = userReviewRepo.getRemoteListOfBookReviews(bookId, 3, excludedDocId =  userId)
+      }catch (e:Exception){
+        Timber.e(e)
+        return@launch
+      }
+    }
     return userReviews
   }
 
   fun getBookRemotelyIfNotPurchased(): LiveData<PublishedBook> {
+    viewModelScope.launch {
+      val userIsYetToBuyBook = !orderedBooksRepo.getAnOrderedBook(bookId).isPresent
+      if(userIsYetToBuyBook){
+        try {
+          publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
+        }catch (e:Exception){
+          Timber.e(e)
+          return@launch
+        }
+      }
+    }
     return publishedBookOnline
   }
 
-  fun getLiveListOfCartItems(): LiveData<List<CartItem>> {
-    return liveCartItems
-  }
-
-  suspend fun getListOfCartItems(): List<CartItem> {
-    return cartItemsRepo.getListOfCartItems(userId)
+  fun getLiveOptionalCartItem(): LiveData<Optional<CartItem>> {
+    return cartItemsRepo.getLiveCartItem(bookId)
   }
 
   fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): Flow<PagingData<PublishedBookUiState>> {
@@ -309,10 +303,5 @@ class BookItemActivityViewModel @Inject constructor(
     }.flow
   }
 
-  fun getBooksByCategoryPageSource(category:String): Flow<PagingData<PublishedBookUiState>> {
-   return Pager(config){
-      publishedBooksRepo.getBooksByCategoryPageSource(category)
-    }.flow
-  }
 
 }

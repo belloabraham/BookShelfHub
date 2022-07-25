@@ -10,10 +10,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/size_16"
         android:visibility="gone"
-        android:paddingBottom="@dimen/size_24"
+        android:paddingBottom="@dimen/size_50"
+        android:layout_gravity="bottom"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:id="@+id/paymentCardsRecView"/>
 
@@ -24,12 +25,13 @@
         android:layout_margin="@dimen/size_16"
         android:id="@+id/noSavedCardsLayout"
         android:orientation="vertical"
+        android:visibility="gone"
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
             android:layout_width="@dimen/size_150"
             android:layout_height="@dimen/size_150"
-            android:src="@drawable/ic_bookmark_border_150"
+            android:src="@drawable/credit_card_plus_outline"
             android:layout_gravity="center_horizontal"
             android:contentDescription="@null" />
 
@@ -41,14 +43,12 @@
 
     </LinearLayout>
 
-
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/add_new_card"
         android:layout_gravity="bottom"
         android:layout_marginHorizontal="@dimen/size_16"
-        android:backgroundTint="?colorPrimaryVariant"
         android:id="@+id/addNewCardBtn"/>
 
 </FrameLayout>

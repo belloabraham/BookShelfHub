@@ -22,8 +22,7 @@
         tools:layout="@layout/fragment_cart" >
         <action
             android:id="@+id/action_cartFragment_to_cardInfoFragment"
-            app:destination="@id/cardInfoFragment"
-            app:enterAnim="@anim/enter_from_right" />
+            app:destination="@id/cardInfoFragment"/>
         <action
             android:id="@+id/action_cartFragment_to_savedCardsFragment"
             app:destination="@id/savedCardsFragment" />

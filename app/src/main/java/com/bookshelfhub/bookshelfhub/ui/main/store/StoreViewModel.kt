@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
+import com.bookshelfhub.bookshelfhub.data.models.entities.PublishedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
@@ -61,10 +62,12 @@ class StoreViewModel @Inject constructor(
                     val  publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
                       fromSerialNo =   totalNoOfLocalPublishedBooks
                     )
+                  //  hello = totalNoOfLocalPublishedBooks
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
 
                 isBookLoadSucessfully.value = true
+
                 booksForSearchFilter = publishedBooksRepo.getListOfPublishedBooksUiState()
             }catch (e:Exception){
                 Timber.e(e)

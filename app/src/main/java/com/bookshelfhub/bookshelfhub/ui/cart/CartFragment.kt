@@ -22,7 +22,6 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.Location
 import com.bookshelfhub.bookshelfhub.adapters.recycler.CartItemsListAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
 import com.bookshelfhub.bookshelfhub.helpers.Json
@@ -44,7 +43,6 @@ class CartFragment : Fragment() {
     lateinit var json: Json
 
     private var totalAmountInLocalCurrency:Double=0.0
-    private lateinit var userId:String
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
 
 
@@ -72,62 +70,62 @@ class CartFragment : Fragment() {
         )
 
         layout.checkoutBtn.setOnClickListener {
-            val savedCardsAction =  CartFragmentDirections.actionCartFragmentToSavedCardsFragment()
-            findNavController().navigate(savedCardsAction)
+                val savedCardsAction =  CartFragmentDirections.actionCartFragmentToSavedCardsFragment()
+                findNavController().navigate(savedCardsAction)
         }
 
 
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
 
-       cartActivityViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
+        cartActivityViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
-           val countryCode = Location.getCountryCode(requireActivity().applicationContext)
+                val countryCode = Location.getCountryCode(requireActivity().applicationContext)
 
-           showCartItemsState(cartItems)
+                showCartItemsState(cartItems)
 
-           totalAmountInLocalCurrency = 0.0
-           cartActivityViewModel.setTotalAmountInUSD(0.0)
-           cartActivityViewModel.setCombinedBookIds("")
+                totalAmountInLocalCurrency = 0.0
+                cartActivityViewModel.setTotalAmountInUSD(0.0)
+                cartActivityViewModel.setCombinedBookIds("")
 
-           if (cartItems.isNotEmpty()){
-               listOfCartItems = cartItems as ArrayList<CartItem>
-               cartListAdapter.submitList(listOfCartItems)
+                if (cartItems.isNotEmpty()){
+                    listOfCartItems = cartItems as ArrayList<CartItem>
+                    cartListAdapter.submitList(listOfCartItems)
 
 
-               lifecycleScope.launch {
-                   val userAdditionalInfo = cartActivityViewModel.getUser().additionInfo
-                   for(cartItem in cartItems){
+                    lifecycleScope.launch {
+                        val userAdditionalInfo = cartActivityViewModel.getUser().additionInfo
+                        for(cartItem in cartItems){
 
-                       val priceInUSD = cartItem.priceInUsd ?: cartItem.price
+                            val priceInUSD = cartItem.priceInUsd ?: cartItem.price
 
-                       cartActivityViewModel.setPaymentTransactions(
-                           cartActivityViewModel.getPaymentTransactions().plus(
-                           PaymentTransaction(
-                               cartItem.bookId,
-                               priceInUSD,
-                               userId,
-                               cartItem.name,
-                               cartItem.coverUrl,
-                               cartItem.pubId,
-                               cartItem.collaboratorsId,
-                               countryCode,
-                               userAdditionalInfo,
-                               cartItem.price )
-                       ))
+                            cartActivityViewModel.setPaymentTransactions(
+                                cartActivityViewModel.getPaymentTransactions().plus(
+                                    PaymentTransaction(
+                                        cartItem.bookId,
+                                        priceInUSD,
+                                        cartActivityViewModel.getUserId(),
+                                        cartItem.name,
+                                        cartItem.coverUrl,
+                                        cartItem.pubId,
+                                        cartItem.collaboratorsId,
+                                        countryCode,
+                                        userAdditionalInfo,
+                                        cartItem.price )
+                                ))
 
-                       cartActivityViewModel.setTotalAmountInUSD(cartActivityViewModel.getTotalAmountInUSD().plus(priceInUSD))
-                       totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
-                       cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cartItem.bookId}, "))
-                   }
-                   showTotalAmountOfBooks(
-                       cartActivityViewModel.getTotalAmountInUSD(),
-                       localCurrency =  cartItems[0].currency,
-                       totalAmountInLocalCurrency
-                   )
-               }
+                            cartActivityViewModel.setTotalAmountInUSD(cartActivityViewModel.getTotalAmountInUSD().plus(priceInUSD))
+                            totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
+                            cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cartItem.bookId}, "))
+                        }
+                        showTotalAmountOfBooks(
+                            cartActivityViewModel.getTotalAmountInUSD(),
+                            localCurrency =  cartItems[0].currency,
+                            totalAmountInLocalCurrency
+                        )
+                    }
 
-           }
-       })
+                }
+            })
 
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
@@ -154,7 +152,6 @@ class CartFragment : Fragment() {
 
         return layout.root
     }
-
 
 
     private fun showTotalAmountOfBooks(
@@ -194,14 +191,6 @@ class CartFragment : Fragment() {
             layout.checkoutBtn.isEnabled = true
             layout.emptyCartLayout.visibility = GONE
            layout.cartItemsRecView.visibility = VISIBLE
-        }
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        if (cartActivityViewModel.getIsNewCardAdded()){
-            cartActivityViewModel.setIsNewCard(false)
         }
     }
 
