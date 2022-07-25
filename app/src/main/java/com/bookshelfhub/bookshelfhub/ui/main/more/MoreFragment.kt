@@ -2,7 +2,6 @@ package com.bookshelfhub.bookshelfhub.ui.main.more
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,7 @@ import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
-import com.bookshelfhub.bookshelfhub.extensions.isDarkTheme
+import com.bookshelfhub.bookshelfhub.extensions.isDarkMode
 import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.AlertDialogBuilder
 import com.bookshelfhub.bookshelfhub.views.MaterialBottomSheetDialogBuilder
@@ -102,12 +101,12 @@ class MoreFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val isDarkTheme = isDarkTheme() || mainActivityViewModel.getIsDarkTheme()
+            val isDarkTheme = isDarkMode() || mainActivityViewModel.getIsDarkTheme()
             darkModeToggle.setChecked(isDarkTheme, withAnimation = false)
         }
 
         darkModeToggle.setOnCheckedChangeListener { isChecked->
-            setAppThem(isChecked)
+            setAppTheme(isChecked)
         }
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->
@@ -284,17 +283,21 @@ class MoreFragment : Fragment() {
 
     }
 
-    private fun setAppThem(isDarkTheme: Boolean) {
+    private fun setAppTheme(isDarkTheme: Boolean) {
         //change activity theme when user switch the theme in more fragment
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivityViewModel.setIsDarkTheme(isDarkTheme)
         }
-        val mode = if (isDarkTheme) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
+        val isLightMode = !isDarkMode()
+        val isLightTheme = !isDarkTheme
+
+        if (isDarkTheme && isLightMode) {
+            //Set darkTheme
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }else if (isLightTheme && isDarkMode()){
+            //Set Light theme
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
-        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     private fun startSplashActivity(){

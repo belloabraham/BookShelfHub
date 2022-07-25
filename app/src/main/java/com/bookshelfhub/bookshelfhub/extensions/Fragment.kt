@@ -9,7 +9,7 @@ fun Fragment.showToast(msg:String, toastLength:Int = Toast.LENGTH_LONG){
     requireActivity().showToast(msg, toastLength)
 }
 
-fun Fragment.isDarkTheme(): Boolean {
+fun Fragment.isDarkMode(): Boolean {
     return requireActivity().isDarkTheme()
 }
 
