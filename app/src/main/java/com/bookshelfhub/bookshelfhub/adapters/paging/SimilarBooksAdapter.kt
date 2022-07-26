@@ -46,8 +46,7 @@ class SimilarBooksAdapter(private val activity: Activity, diffCallBack:DiffUtil.
                         putExtra(Book.AUTHOR, model.author)
                         putExtra(Book.ID, model.bookId)
                     }
-                    val options = ActivityOptions.makeSceneTransitionAnimation(activity, it, activity.getString(R.string.trans_book))
-                    activity.startActivity(intent, options.toBundle())
+                    activity.startActivity(intent,ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
             }
         }
     }

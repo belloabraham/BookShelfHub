@@ -18,10 +18,6 @@ fun Activity.isDarkMode(): Boolean {
     }
 }
 
-fun Activity.enableDarkTheme(){
-    val mode =  AppCompatDelegate.MODE_NIGHT_YES
-    AppCompatDelegate.setDefaultNightMode(mode)
-}
 
 fun Activity.showToast(msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     Toast(this).showToast(msg, toastLength)

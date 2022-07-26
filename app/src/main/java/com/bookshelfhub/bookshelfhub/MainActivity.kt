@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import com.bookshelfhub.bookshelfhub.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.bookshelfhub.databinding.ActivityMainBinding
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.google.InAppUpdate
 import com.bookshelfhub.bookshelfhub.ui.main.bookmark.BookmarkFragment
@@ -74,7 +75,13 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
-                setViewPagerPosition(newIndex)
+
+                if(newIndex < 0){
+                    showToast("$newIndex")
+                }else{
+                    setViewPagerPosition(newIndex)
+                }
+
             }
 
             override fun onTabReselected(index: Int, tab: AnimatedBottomBar.Tab) {}
@@ -84,16 +91,16 @@ class MainActivity : AppCompatActivity() {
     private fun setViewPagerPosition(tabIndex:Int){
         when (tabIndex) {
             0 -> {
-                layout.viewPager.setCurrentItem(0, true)
+                layout.viewPager.setCurrentItem(0, false)
             }
             1 -> {
-                layout.viewPager.setCurrentItem(1, true)
+                layout.viewPager.setCurrentItem(1, false)
             }
             2 -> {
-                layout.viewPager.setCurrentItem(2, true)
+                layout.viewPager.setCurrentItem(2, false)
             }
             3 -> {
-                layout.viewPager.setCurrentItem(3, true)
+                layout.viewPager.setCurrentItem(3, false)
             }
         }
     }

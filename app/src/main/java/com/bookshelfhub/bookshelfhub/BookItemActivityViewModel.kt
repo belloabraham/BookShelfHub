@@ -11,6 +11,7 @@ import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
+import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
@@ -28,6 +29,8 @@ import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.bookshelfhub.extensions.containsUrl
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Social
+import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import com.bookshelfhub.bookshelfhub.helpers.utils.Regex
 import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
 import com.bookshelfhub.bookshelfhub.workers.Constraint
@@ -59,6 +62,7 @@ class BookItemActivityViewModel @Inject constructor(
   private val referralRepo: IReferralRepo,
   private val bookDownloadStateRepo: IBookDownloadStateRepo,
   private val searchHistoryRepo: ISearchHistoryRepo,
+  private val remoteConfig:IRemoteConfig,
   val userAuth: IUserAuth): ViewModel(){
 
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()
@@ -168,11 +172,12 @@ class BookItemActivityViewModel @Inject constructor(
   private fun generateBookShareLink(){
     viewModelScope.launch {
       bookShareUrl = settingsUtil.getString(bookId)
+      val appCoverUrl = remoteConfig.getString(Social.IMAGE_URL)
       if (bookShareUrl == null){
         val book = publishedBooksRepo.getPublishedBook(bookId).get()
         try {
           bookShareUrl = dynamicLink.generateShortDynamicLinkAsync(
-            book.name , book.description, book.coverUrl, userId).toString()
+            book.name , book.description, appCoverUrl, userId).toString()
           settingsUtil.setString(bookId, bookShareUrl!!.toString())
         }catch (e:Exception){
           Timber.e(e)

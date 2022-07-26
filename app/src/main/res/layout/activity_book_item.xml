@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/size_8"
     tools:context=".BookItemActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -45,7 +46,6 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:transitionName="@string/trans_book"
                     app:strokeColor="@color/icon_color"
                     app:cardElevation="3dp"
                     app:cardMaxElevation="3dp"
@@ -511,6 +511,7 @@
                 android:layout_height="wrap_content"
                 android:indeterminate="false"
                 android:max="100"
+                android:visibility="gone"
                 android:layout_marginTop="@dimen/size_8"
                 android:id="@+id/downloadProgressBar" />
 

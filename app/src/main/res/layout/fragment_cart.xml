@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:id="@+id/rootCoordinateLayout"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/size_8"
     tools:context=".ui.cart.CartFragment">
 
     <TextView

@@ -78,14 +78,12 @@ class BookItemActivity : AppCompatActivity() {
            checkIfBookAlreadyPurchasedByUser(orderedBook)
         })
 
-
         lifecycleScope.launch {
             localPublishedBook = bookItemActivityViewModel.getLocalPublishedBook().get()
             showBookDetails(localPublishedBook)
         }
 
         bookItemActivityViewModel.getOnlinePublishedBook().observe(this, Observer { book ->
-
             val countryCode = Location.getCountryCode(this)
 
             if(countryCode != null){
@@ -113,6 +111,7 @@ class BookItemActivity : AppCompatActivity() {
                                     if(response.isSuccessful && response.body()!=null){
                                         priceInUSD = book.price/response.body()!!.info.rate
                                         showBookPrice(book, localCurrencyOrUSD)
+                                        showBooksItemLayout()
                                     }else{
                                         Timber.e(response.message())
                                         // return@launch
@@ -133,6 +132,7 @@ class BookItemActivity : AppCompatActivity() {
                                 }
                                 priceInUSD = book.price/415
                                 showBookPrice(book, localCurrencyOrUSD)
+                                    showBooksItemLayout()
                             }
                         }
 
@@ -140,6 +140,8 @@ class BookItemActivity : AppCompatActivity() {
                         if(localCurrencyIsUSD){
                             priceInUSD = book.price
                             showBookPrice(book, localCurrencyOrUSD)
+                            showBooksItemLayout()
+
                         }
                     }
 
@@ -407,8 +409,6 @@ class BookItemActivity : AppCompatActivity() {
     private fun showBookPrice(book: PublishedBook, buyerVisibleCurrency:String){
         layout.price.text = if(book.price == priceInUSD) String.format(getString(R.string.usd_price), book.price)
         else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)
-
-        showBooksItemLayout()
     }
 
     private fun showBookDetails(book: PublishedBook){
@@ -438,8 +438,8 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun showBooksItemLayout(){
-        layout.progressBar.isVisible = false
-        layout.bookItemLayout.visibility = VISIBLE
+            layout.progressBar.visibility = GONE
+            layout.bookItemLayout.visibility = VISIBLE
     }
 
 
