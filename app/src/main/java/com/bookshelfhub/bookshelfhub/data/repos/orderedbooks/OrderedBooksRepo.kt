@@ -26,15 +26,11 @@ class OrderedBooksRepo @Inject constructor(
     }
 
     override suspend fun getTotalNoOfOrderedBooks(): Int {
-       return orderedBooksDao.getTotalNoOfOrderedBooks()
+       return withContext(ioDispatcher){ orderedBooksDao.getTotalNoOfOrderedBooks()}
     }
 
     override fun getLiveListOfOrderedBooksUiState(userId: String): LiveData<List<OrderedBookUiState>> {
         return orderedBooksDao.getLiveListOfOrderedBooksUiState(userId)
-    }
-
-    override suspend fun getListOfOrderedBooksUiState(userId: String){
-        orderedBooksDao.getListOfOrderedBooksUiState(userId)
     }
 
     override suspend fun getRemoteListOfOrderedBooks(

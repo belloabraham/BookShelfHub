@@ -97,23 +97,38 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    fun getRemoteOrderedBooks(){
-            viewModelScope.launch {
-                val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
-                try {
-                   val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
-                       userId,
-                       lastOrderedBookSN.toLong()
-                   )
-                   orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
-                }catch (e:Exception){
-                    val userHaveAtLeastOneBooksInDatabaseShelf = (e is IOException) ||  !(e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
-                    if(userHaveAtLeastOneBooksInDatabaseShelf){
-                        Timber.e(e)
-                        return@launch
-                    }
-                }
-        }
+
+     fun getRemoteOrderedBooksRepeatedly(){
+         viewModelScope.launch {
+             try {
+                 val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
+                 val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
+                     userId,
+                     lastOrderedBookSN.toLong()
+                 )
+                 orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
+             }catch (e:Exception){
+                 val isFirebasePermissionDeniedError = (e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                 //User have no ordered books in record, likely a new user
+                 val isNotFirebasePermissionDeniedError  = !isFirebasePermissionDeniedError
+                 val isNetworkError = (e is IOException)
+                 if(isNotFirebasePermissionDeniedError && isNetworkError){
+                     Timber.e(e)
+                     return@launch
+                 }
+             }
+
+         }
+
+    }
+
+   suspend fun getRemoteOrderedBooks(){
+       val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
+       val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
+           userId,
+           lastOrderedBookSN.toLong()
+       )
+       return orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
     }
 
     fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{

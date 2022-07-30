@@ -29,6 +29,7 @@ import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
+import timber.log.Timber
 
 
 @AndroidEntryPoint
@@ -38,8 +39,6 @@ class ShelfFragment : Fragment() {
     private var orderedBookList:List<OrderedBookUiState> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
-
-
     private var binding: FragmentShelfBinding?=null
     private var mOrderedBooksAdapter: ListAdapter<OrderedBookUiState, RecyclerViewHolder<OrderedBookUiState>>?=null
     private var mSearchListAdapter: ListAdapter<ISearchResult, RecyclerViewHolder<ISearchResult>>?=null
@@ -51,7 +50,7 @@ class ShelfFragment : Fragment() {
         binding = FragmentShelfBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-        mSearchListAdapter = ShelfSearchResultAdapter(requireContext()).getSearchResultAdapter()
+        mSearchListAdapter = ShelfSearchResultAdapter(requireActivity()).getSearchResultAdapter()
         mOrderedBooksAdapter = OrderedBooksAdapter(
             requireActivity(),
             shelfViewModel,
@@ -61,27 +60,30 @@ class ShelfFragment : Fragment() {
         val searchListAdapter = mSearchListAdapter!!
         val orderedBooksAdapter = mOrderedBooksAdapter!!
 
+        layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
+        layout.orderedBooksRecView.adapter = orderedBooksAdapter
+
         shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
             searchListAdapter.submitList(shelfSearchHistory)
             shelfSearchHistoryList=shelfSearchHistory
         })
 
-
         viewLifecycleOwner.lifecycleScope.launch {
             shelfViewModel.getLiveListOfOrderedBooksUiState().asFlow()
-                .collectLatest { orderedBooks ->
+                .collectLatest { orderedBooksUiStates ->
                     //Hide just in case data get load by user swipe to refresh
                     layout.swipeRefreshLayout.isRefreshing = false
                     //Hide as this is visible by default
                     layout.progressBar.visibility = GONE
-                    if (orderedBooks.isNotEmpty()) {
+                    if (orderedBooksUiStates.isNotEmpty()) {
                         shelfViewModel.updateBookPurchaseState(isNewlyPurchased = false)
                         layout.orderedBooksRecView.visibility = VISIBLE
                         layout.emptyShelf.visibility = GONE
                         layout.appbarLayout.visibility = VISIBLE
-                        orderedBooksAdapter.submitList(orderedBooks)
-                        orderedBookList = orderedBooks
+                        orderedBooksAdapter.submitList(orderedBooksUiStates)
+                        orderedBookList = orderedBooksUiStates
                     } else {
+
                         layout.emptyShelf.visibility = VISIBLE
                         layout.appbarLayout.visibility = INVISIBLE
                         layout.orderedBooksRecView.visibility = GONE
@@ -95,7 +97,15 @@ class ShelfFragment : Fragment() {
             R.color.purple_700)
 
         layout.swipeRefreshLayout.setOnRefreshListener {
-            shelfViewModel.getRemoteOrderedBooks()
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    shelfViewModel.getRemoteOrderedBooks()
+                }catch (e:Exception){
+                    Timber.e(e)
+                }finally {
+                    layout.swipeRefreshLayout.isRefreshing = false
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -103,10 +113,6 @@ class ShelfFragment : Fragment() {
                 layout.newlyPurchasedBooksMsgTxt.isVisible = ifUserHaveUnDownloadedPurchasedBooks
             }
         }
-
-
-        layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
-        layout.orderedBooksRecView.adapter = orderedBooksAdapter
 
 
         layout.materialSearchView.apply {
@@ -135,10 +141,9 @@ class ShelfFragment : Fragment() {
                         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
                                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 
-                        /**
-                         * Fill the searchList Adapter with the default value after being changed
-                         * by @setOnQueryTextListener when user exits search view
-                         */
+                        // Fill the searchList Adapter with the default value after being changed
+                        // by @setOnQueryTextListener when user exits search view
+
                         searchListAdapter.submitList(shelfSearchHistoryList)
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
@@ -187,7 +192,7 @@ class ShelfFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         //Check if more remote ordered books in the case of user just purchasing a book or books
-        shelfViewModel.getRemoteOrderedBooks()
+            shelfViewModel.getRemoteOrderedBooksRepeatedly()
         shelfViewModel.checkIfUserHaveUnDownloadedPurchasedBook()
     }
 

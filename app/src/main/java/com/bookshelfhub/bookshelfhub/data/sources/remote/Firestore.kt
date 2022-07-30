@@ -159,7 +159,7 @@ import javax.inject.Inject
          limit:Long, orderBy: String,
          direction: Query.Direction): List<T> {
          throwNoInternetConnectionError()
-        val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
+         val querySnapShot =  db.collection(collection).document(document).collection(subCollection)
              .whereEqualTo(whereKey,whereValue)
              .orderBy(orderBy, direction)
              .limit(limit)

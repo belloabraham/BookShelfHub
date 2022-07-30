@@ -49,7 +49,7 @@ class StoreListAdapter(private val activity: Activity, diffCallBack:DiffUtil.Ite
                         putExtra(Book.AUTHOR, model.author)
                         putExtra(Book.ID, model.bookId)
                     }
-                    activity.startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(activity).toBundle())
+                    activity.startActivity(intent)
             }
         }
     }

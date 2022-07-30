@@ -46,7 +46,7 @@ class OrderedBooksAdapter(
 
             register(
                 layoutResource = R.layout.ordered_books_item,
-                viewHolder = OrderedBooksAdapter::OrderedBookViewHolder,
+                viewHolder =::OrderedBookViewHolder,
                 onBindViewHolder = { vh, _, model ->
                     vh.bindToView(
                         model,
@@ -65,7 +65,6 @@ class OrderedBooksAdapter(
         private val progressBar: ProgressBar = view.findViewById(R.id.progress)
         private val downloadActionIcon: ImageView = view.findViewById(R.id.actionAction)
         private val darkOverLay: View = view.findViewById(R.id.darkOverlay)
-
 
         fun bindToView(
             model: OrderedBookUiState,

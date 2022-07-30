@@ -19,7 +19,6 @@ interface IOrderedBooksRepo {
         userId: String,
         lastOrderedBookSN:Long,
         direction: Query.Direction = Query.Direction.ASCENDING ): List<OrderedBook>
-    suspend fun getListOfOrderedBooksUiState(userId: String)
     suspend fun addOrderedBooks(OrderedBooks: List<OrderedBook>)
     fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBook>>
 }
