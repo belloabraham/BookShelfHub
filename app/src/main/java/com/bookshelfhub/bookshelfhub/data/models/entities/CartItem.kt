@@ -15,5 +15,6 @@ data class CartItem(
     val collaboratorsId:String?,
     val price: Double=0.0,
     val currency:String,
+    // I left this variable just in case there will be a need for it in the future for global transaction in USD
     val priceInUsd: Double?
 )

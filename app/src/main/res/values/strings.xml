@@ -74,6 +74,7 @@
     <string name="buy_now">Buy Now</string>
     <string name="download">Download</string>
     <string name="local_price_and_usd">Price: %s%,.2f ($%,.2f)</string>
+    <string name="local_price">Price: %s%,.2f </string>
     <string name="usd_price">Price: $%,.2f</string>
     <string name="downloads">Downloads</string>
     <string name="review_no">%d reviews</string>

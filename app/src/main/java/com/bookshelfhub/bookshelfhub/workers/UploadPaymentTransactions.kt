@@ -65,7 +65,6 @@ class UploadPaymentTransactions @AssistedInject constructor(
             var bookNames = ""
             var totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
             val isFirstPurchase = totalNoOfOrderedBooksAsSerialNo <=0
-            var totalAmountInUSD = 0.0
             for (trans in paymentTransactions) {
                 var collabCommissionInPercentage:Double? = null
                 var collabId:String? = null
@@ -76,7 +75,6 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     collabCommissionInPercentage = collab.commissionInPercentage
                 }
 
-                totalAmountInUSD = totalAmountInUSD.plus(trans.priceInUSD)
                 transactionBooksIds = transactionBooksIds.plus(trans.bookId)
                 val orderedBook = OrderedBook(
                     trans.bookId, trans.priceInUSD,
@@ -103,7 +101,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
           if(isFirstPurchase){
               val userId = userAuth.getUserId()
               userReferralId = userRepo.getUser(userId).get().referrerId
-              userReferrerCommission = paymentTransactions[0].priceInUSD * 0.1
+           //   userReferrerCommission = paymentTransactions[0].priceInUSD * 0.1
+              userReferrerCommission = paymentTransactions[0].priceInBookCurrency * 0.1
           }
 
           val data = hashMapOf<String, Any?>(

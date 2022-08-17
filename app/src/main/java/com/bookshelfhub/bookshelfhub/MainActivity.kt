@@ -75,12 +75,7 @@ class MainActivity : AppCompatActivity() {
                 newIndex: Int,
                 newTab: AnimatedBottomBar.Tab
             ) {
-
-                if(newIndex < 0){
-                    showToast("$newIndex")
-                }else{
-                    setViewPagerPosition(newIndex)
-                }
+                setViewPagerPosition(newIndex)
 
             }
 

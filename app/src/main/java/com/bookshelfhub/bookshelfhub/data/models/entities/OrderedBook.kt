@@ -10,6 +10,7 @@ import com.google.firebase.Timestamp
 data class OrderedBook(
     @PrimaryKey
     override val bookId:String,
+    // I left this variable just in case there will be a need for it in the future for global transaction in USD
     override val priceInUSD: Double,
     override val userId:String,
     override val name:String,

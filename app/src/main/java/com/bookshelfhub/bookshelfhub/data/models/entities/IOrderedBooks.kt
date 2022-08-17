@@ -6,6 +6,7 @@ package com.bookshelfhub.bookshelfhub.data.models.entities
  */
 interface IOrderedBooks {
     val bookId: String
+    // I left this variable just in case there will be a need for it in the future for global transaction in USD
     val priceInUSD: Double
     val priceInBookCurrency:Double
     val userId: String
