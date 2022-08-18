@@ -38,7 +38,6 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
-
           return  remoteDataSource.getListOfDataWhereAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
                 RemoteDataFields.PUBLISHED,
@@ -72,6 +71,10 @@ class PublishedBooksRepo @Inject constructor(
 
      override suspend fun getPublishedBook(bookId: String): Optional<PublishedBook> {
         return withContext(ioDispatcher){publishedBooksDao.getPublishedBook(bookId)}
+    }
+
+    override suspend fun getPublishedBooksByNameOrAuthor(nameOrAuthor:String): List<PublishedBookUiState>{
+        return  withContext(ioDispatcher) {publishedBooksDao.getPublishedBooksByNameOrAuthor(nameOrAuthor)}
     }
 
     override suspend fun getTotalNoOfPublishedBooks(): Int {

@@ -10,7 +10,7 @@ interface IPublishedBooksRepo {
     fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>>
 
     suspend fun getARemotePublishedBook(bookId: String): PublishedBook?
-
+    suspend fun getPublishedBooksByNameOrAuthor(nameOrAuthor:String):List<PublishedBookUiState>
     suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook>
 
     suspend fun getRemotePublishedBooks(): List<PublishedBook>

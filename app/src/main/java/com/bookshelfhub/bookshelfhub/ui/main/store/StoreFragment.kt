@@ -227,10 +227,12 @@ class StoreFragment : Fragment() {
 
             setOnQueryTextListener(object : SearchLayout.OnQueryTextListener {
                 override fun onQueryTextChange(newText: CharSequence): Boolean {
-                    val result = storeViewModel.getBooksForSearchFiler().filter {
-                        it.name.contains(newText, true)||it.author.contains(newText, true)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        val sqlLIKEQueryValue = "%$newText%"
+                        val result =  storeViewModel.getPublishedBooksByNameOrAuthor(sqlLIKEQueryValue)
+                        searchListAdapter.submitList(result.plus(BookRequest(bookReqMsg)))
                     }
-                   searchListAdapter.submitList(result.plus(BookRequest(bookReqMsg)))
+
                     return true
                 }
 

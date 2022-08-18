@@ -16,6 +16,7 @@ import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -79,6 +80,9 @@ class StoreViewModel @Inject constructor(
        return  remoteConfig.getBoolean(com.bookshelfhub.bookshelfhub.data.Config.ENABLE_TRENDING)
     }
 
+     suspend fun getPublishedBooksByNameOrAuthor(nameOrAuthor:String): List<PublishedBookUiState>{
+        return  publishedBooksRepo.getPublishedBooksByNameOrAuthor(nameOrAuthor)
+    }
 
     fun getBooksForSearchFiler(): List<PublishedBookUiState> {
         return booksForSearchFilter

@@ -33,6 +33,7 @@ import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.payment.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
@@ -55,7 +56,7 @@ class BookItemActivity : AppCompatActivity() {
     private val bookItemActivityViewModel:BookItemActivityViewModel by viewModels()
     private var userReview: UserReview?=null
     private var canUserPostReview:Boolean = false
-    private var priceInUSD:Double = 0.0
+    private var priceInUSD:Double = 0.0 // I left this variable just in case there will be a need for it in the future for global transaction in USD
     private lateinit var userId: String
     private lateinit var bookId:String
     private lateinit var localCurrencyOrUSD:String
@@ -75,6 +76,7 @@ class BookItemActivity : AppCompatActivity() {
         val userPhotoUri = userAuth.getPhotoUrl()
 
         bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
+            showToast("AtLiveDataCheckIfBookAlreadyPurchasedByUser")
            checkIfBookAlreadyPurchasedByUser(orderedBook)
         })
 
@@ -93,33 +95,33 @@ class BookItemActivity : AppCompatActivity() {
 
                 localCurrencyOrUSD = Currency.getLocalCurrencyOrUSD(countryCode)
 
-                lifecycleScope.launch {
+              //  lifecycleScope.launch {
 
                     if (bookIsPaid) {
 
-                        val localCurrencyIsNotUSD = localCurrencyOrUSD != Currency.USD
+                      //  val localCurrencyIsNotUSD = localCurrencyOrUSD != Currency.USD
 
-                        if (localCurrencyIsNotUSD){
-                            lifecycleScope.launch {
-                                try {
-                                    val response =  bookItemActivityViewModel.convertCurrency(
+                      //  if (localCurrencyIsNotUSD){
+                           // lifecycleScope.launch {
+                              //  try {
+                                  /*  val response =  bookItemActivityViewModel.convertCurrency(
                                         fromCurrency =  localCurrencyOrUSD,
                                         toCurrency = Currency.USD,
                                         amount = book.price
-                                    )
+                                    )*/
 
-                                    if(response.isSuccessful && response.body()!=null){
-                                        priceInUSD = book.price/response.body()!!.info.rate
+                                   // if(response.isSuccessful && response.body()!=null){
+                                     //   priceInUSD = book.price/response.body()!!.info.rate
                                         showBookPrice(book, localCurrencyOrUSD)
                                         showBooksItemLayout()
-                                    }else{
+                                  /* }else{
                                         Timber.e(response.message())
-                                        // return@launch
-                                    }
-                                }catch (e:Exception){
+                                         return@launch
+                                   } */
+                              /*  }catch (e:Exception){
                                     Timber.e(e)
-                                    // return@launch
-                                }finally {
+                                     return@launch
+                                }finally {*/
 
                                     bookItemActivityViewModel.getLiveOptionalCartItem().observe(this@BookItemActivity, Observer { cartItems ->
                                         val bookIsInCart = cartItems.isPresent
@@ -129,20 +131,16 @@ class BookItemActivity : AppCompatActivity() {
                                             showAddToCartButtonAndHideOthers()
                                         }
                                     })
-                                }
-                                priceInUSD = book.price/415
-                                showBookPrice(book, localCurrencyOrUSD)
-                                    showBooksItemLayout()
-                            }
-                        }
+                             //   }
+                          //  }
+                      //  }
 
-                        val localCurrencyIsUSD = !localCurrencyIsNotUSD
+                      /*  val localCurrencyIsUSD = !localCurrencyIsNotUSD
                         if(localCurrencyIsUSD){
                             priceInUSD = book.price
                             showBookPrice(book, localCurrencyOrUSD)
                             showBooksItemLayout()
-
-                        }
+                        }*/
                     }
 
                     if(bookIsFree){
@@ -151,9 +149,7 @@ class BookItemActivity : AppCompatActivity() {
                         addAFreeBook(book, countryCode)
                         showBooksItemLayout()
                     }
-                }
-
-
+             //   }
 
             }
         })
@@ -225,6 +221,7 @@ class BookItemActivity : AppCompatActivity() {
                         layout.downloadProgressLayout.visibility = GONE
 
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
+                        showToast("AtGetLiveBookDldStateCheckIfBookAlreadyPurchasedByUser")
                         checkIfBookAlreadyPurchasedByUser(orderedBook)
                         layout.downloadBtn.visibility = VISIBLE
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
@@ -387,6 +384,8 @@ class BookItemActivity : AppCompatActivity() {
 
         canUserPostReview = bookAlreadyPurchasedByUser
 
+        showToast("checkIfBookAlreadyPurchasedByUser")
+
         if (bookAlreadyPurchasedByUser){
             val book = orderedBook.get()
             val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
@@ -397,8 +396,12 @@ class BookItemActivity : AppCompatActivity() {
                 fileNameWithExt, applicationContext).exists()
 
             if(bookAlreadyDownloadedByUser){
+                showToast("bookNotDownloadedByUser")
+
                 showOpenBookButtonAndHideOthers()
             }else{
+                showToast("bookNotDownloadedByUser")
+
                 showDownloadBookButtonAndHideOthers()
             }
 
@@ -407,8 +410,9 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private fun showBookPrice(book: PublishedBook, buyerVisibleCurrency:String){
-        layout.price.text = if(book.price == priceInUSD) String.format(getString(R.string.usd_price), book.price)
-        else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)
+        /*layout.price.text =  if(book.price == priceInUSD) String.format(getString(R.string.usd_price), book.price)
+        else String.format(getString(R.string.local_price_and_usd), buyerVisibleCurrency,book.price, priceInUSD)*/
+        layout.price.text = String.format(getString(R.string.local_price), buyerVisibleCurrency, book.price)
     }
 
     private fun showBookDetails(book: PublishedBook){

@@ -15,6 +15,9 @@ abstract class PublishedBooksDao:BaseDao<PublishedBook>  {
     @Query("SELECT * FROM PublishedBooks WHERE bookId = :bookId")
     abstract fun getLivePublishedBook(bookId: String): LiveData<Optional<PublishedBook>>
 
+    @Query("SELECT * FROM PublishedBooks WHERE name LIKE :nameOrAuthor OR author LIKE :nameOrAuthor")
+    abstract suspend fun getPublishedBooksByNameOrAuthor(nameOrAuthor:String): List<PublishedBookUiState>
+
     @Query("SELECT COUNT(*) FROM PublishedBooks")
     abstract suspend fun getTotalNoOfPublishedBooks(): Int
 

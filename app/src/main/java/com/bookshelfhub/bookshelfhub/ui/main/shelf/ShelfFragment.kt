@@ -22,6 +22,7 @@ import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
+import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,8 +83,9 @@ class ShelfFragment : Fragment() {
                         layout.appbarLayout.visibility = VISIBLE
                         orderedBooksAdapter.submitList(orderedBooksUiStates)
                         orderedBookList = orderedBooksUiStates
+                        showToast("There is a ordered boiok")
                     } else {
-
+                        showToast("No Ordered Books")
                         layout.emptyShelf.visibility = VISIBLE
                         layout.appbarLayout.visibility = INVISIBLE
                         layout.orderedBooksRecView.visibility = GONE
@@ -190,10 +192,10 @@ class ShelfFragment : Fragment() {
     }
 
     override fun onResume() {
-        super.onResume()
         //Check if more remote ordered books in the case of user just purchasing a book or books
-            shelfViewModel.getRemoteOrderedBooksRepeatedly()
+        shelfViewModel.getRemoteOrderedBooksRepeatedly()
         shelfViewModel.checkIfUserHaveUnDownloadedPurchasedBook()
+        super.onResume()
     }
 
     override fun onDestroyView() {
