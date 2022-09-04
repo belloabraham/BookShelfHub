@@ -1,6 +1,7 @@
 package com.bookshelfhub.bookshelfhub.extensions
 
 import android.view.View
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import com.bookshelfhub.bookshelfhub.views.Toast
 import com.bookshelfhub.bookshelfhub.views.ToolTip
@@ -13,7 +14,7 @@ fun Fragment.isDarkMode(): Boolean {
     return requireActivity().isDarkMode()
 }
 
-fun Fragment.showToast(msg:Int, toastLength:Int = Toast.LENGTH_LONG){
+fun Fragment.showToast(@StringRes msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     requireActivity().showToast(msg, toastLength)
 }
 

@@ -143,12 +143,12 @@ class BookItemActivity : AppCompatActivity() {
                         }*/
                     }
 
-                    if(bookIsFree){
+                 /* if(bookIsFree){
                         priceInUSD = book.price
                         layout.price.text = getString(R.string.price_free)
                         addAFreeBook(book, countryCode)
                         showBooksItemLayout()
-                    }
+                    }*/
              //   }
 
             }

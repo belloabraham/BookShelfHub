@@ -83,9 +83,7 @@ class ShelfFragment : Fragment() {
                         layout.appbarLayout.visibility = VISIBLE
                         orderedBooksAdapter.submitList(orderedBooksUiStates)
                         orderedBookList = orderedBooksUiStates
-                        showToast("There is a ordered boiok")
                     } else {
-                        showToast("No Ordered Books")
                         layout.emptyShelf.visibility = VISIBLE
                         layout.appbarLayout.visibility = INVISIBLE
                         layout.orderedBooksRecView.visibility = GONE

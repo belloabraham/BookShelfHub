@@ -97,7 +97,6 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-
      fun getRemoteOrderedBooksRepeatedly(){
          viewModelScope.launch {
              try {
@@ -108,11 +107,11 @@ class ShelfViewModel @Inject constructor(
                  )
                  orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
              }catch (e:Exception){
+                 Timber.e(e, "This is the error")
                  val isFirebasePermissionDeniedError = (e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
                  //User have no ordered books in record, likely a new user
                  val isNotFirebasePermissionDeniedError  = !isFirebasePermissionDeniedError
-                 val isNetworkError = (e is IOException)
-                 if(isNotFirebasePermissionDeniedError && isNetworkError){
+                 if(isNotFirebasePermissionDeniedError){
                      Timber.e(e)
                      return@launch
                  }

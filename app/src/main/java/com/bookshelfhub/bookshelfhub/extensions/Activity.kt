@@ -2,6 +2,7 @@ package com.bookshelfhub.bookshelfhub.extensions
 
 import android.app.Activity
 import android.content.res.Configuration
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatDelegate
 import com.bookshelfhub.bookshelfhub.views.Toast
 
@@ -19,7 +20,7 @@ fun Activity.isDarkMode(): Boolean {
 }
 
 
-fun Activity.showToast(msg:Int, toastLength:Int = Toast.LENGTH_LONG){
+fun Activity.showToast(@StringRes msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     Toast(this).showToast(msg, toastLength)
 }
 
