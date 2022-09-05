@@ -66,6 +66,7 @@
     <string name="isbn">BOOK ID / ISBN: %s</string>
 
     <!-- TODO: Book Item Activity-->
+    <string name="first_to_rate_book">Be the first to rate this book</string>
     <string name="open">Open</string>
     <string name="options">Options</string>
     <string name="report_book">Report book</string>

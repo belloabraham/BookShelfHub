@@ -21,7 +21,6 @@ import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.ShareUtil
 import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
-import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.databinding.FragmentMoreBinding
 import com.bookshelfhub.bookshelfhub.data.WebView
 import com.bookshelfhub.bookshelfhub.extensions.isDarkMode
@@ -59,8 +58,6 @@ class MoreFragment : Fragment() {
     @Inject
     lateinit var remoteConfig: IRemoteConfig
     @Inject
-    lateinit var settingsUtil: SettingsUtil
-    @Inject
     lateinit var connectionUtil: ConnectionUtil
     @Inject
     lateinit var clipboardHelper: ClipboardHelper
@@ -96,7 +93,7 @@ class MoreFragment : Fragment() {
         userId = userAuth.getUserId()
 
         viewLifecycleOwner.lifecycleScope.launch{
-            val isChecked = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
+            val isChecked = moreViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP)
                 progressPopupToggle.setChecked(isChecked, false)
         }
 
@@ -111,7 +108,7 @@ class MoreFragment : Fragment() {
 
         progressPopupToggle.setOnCheckedChangeListener { isChecked->
             lifecycleScope.launch{
-                settingsUtil.setBoolean(Settings.SHOW_CONTINUE_POPUP, isChecked)
+                moreViewModel.setBoolean(Settings.SHOW_CONTINUE_POPUP, isChecked)
             }
         }
 
@@ -206,7 +203,7 @@ class MoreFragment : Fragment() {
 
         layout.referraLinkCard.setOnClickListener {
             lifecycleScope.launch {
-               val link =  settingsUtil.getString(Referrer.REF_LINK)
+               val link =  moreViewModel.getString(Referrer.REF_LINK)
                if(link==null){
                   showToast(R.string.internet_connection_required)
                }else{

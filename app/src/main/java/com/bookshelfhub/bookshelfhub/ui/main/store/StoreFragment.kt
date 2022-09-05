@@ -20,16 +20,13 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.bookshelfhub.*
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
 import com.bookshelfhub.bookshelfhub.helpers.utils.IconUtil
 import com.bookshelfhub.bookshelfhub.adapters.recycler.StoreSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.adapters.paging.*
 import com.bookshelfhub.bookshelfhub.databinding.FragmentStoreBinding
 import com.bookshelfhub.bookshelfhub.data.Category
 import com.bookshelfhub.bookshelfhub.data.models.BookRequest
-import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +34,6 @@ import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-import javax.inject.Inject
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -46,7 +42,6 @@ class StoreFragment : Fragment() {
     private var binding: FragmentStoreBinding?=null
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val storeViewModel: StoreViewModel by viewModels()
-    private var storeSearchHistory = emptyList<StoreSearchHistory>()
     private var mSearchListAdapter: ListAdapter<Any, RecyclerViewHolder<Any>>?=null
 
 
@@ -180,11 +175,6 @@ class StoreFragment : Fragment() {
 
         val bookReqMsg = getString(R.string.cant_find_book)
 
-        storeViewModel.getStoreSearchHistory().observe(viewLifecycleOwner, Observer { searchHistory ->
-            searchListAdapter.submitList(searchHistory)
-            storeSearchHistory = searchHistory
-        })
-
 
         layout.materialSearchView.apply {
             val params =  layout.materialSearchView.layoutParams as AppBarLayout.LayoutParams
@@ -218,7 +208,10 @@ class StoreFragment : Fragment() {
                     } else {
                         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
                                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
-                        searchListAdapter.submitList(storeSearchHistory)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val storeSearchHistory = storeViewModel.getTop4StoreSearchHistory()
+                            searchListAdapter.submitList(storeSearchHistory)
+                        }
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
                     layout.materialSearchView.layoutParams = params

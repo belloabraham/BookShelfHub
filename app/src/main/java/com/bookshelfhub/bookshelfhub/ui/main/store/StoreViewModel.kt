@@ -31,7 +31,6 @@ class StoreViewModel @Inject constructor(
     private var isBookLoadSucessfully : MutableLiveData<Boolean> = MutableLiveData()
     private val userId = userAuth.getUserId()
     private var totalCartItems : LiveData<Int> = MutableLiveData()
-    private lateinit var booksForSearchFilter:List<PublishedBookUiState>
 
 
     private val config  = PagingConfig(
@@ -68,7 +67,6 @@ class StoreViewModel @Inject constructor(
 
                 isBookLoadSucessfully.value = true
 
-                booksForSearchFilter = publishedBooksRepo.getListOfPublishedBooksUiState()
             }catch (e:Exception){
                 Timber.e(e)
                 isBookLoadSucessfully.value = false
@@ -84,12 +82,8 @@ class StoreViewModel @Inject constructor(
         return  publishedBooksRepo.getPublishedBooksByNameOrAuthor(nameOrAuthor)
     }
 
-    fun getBooksForSearchFiler(): List<PublishedBookUiState> {
-        return booksForSearchFilter
-    }
-
-    fun getStoreSearchHistory():LiveData<List<StoreSearchHistory>>{
-        return searchHistoryRepo.getLiveStoreSearchHistory(userId)
+    suspend fun getTop4StoreSearchHistory(): List<StoreSearchHistory> {
+        return searchHistoryRepo.getTop4StoreSearchHistory(userId)
     }
 
     fun getLiveTotalCartItemsNo():LiveData<Int> {

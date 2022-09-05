@@ -12,9 +12,9 @@ import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.IPaymentCardRepo
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
 import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +23,7 @@ class MoreViewModel @Inject constructor(
     private val orderedBooksRepo: IOrderedBooksRepo,
     private val bookmarksRepo: IBookmarksRepo,
     private val userRepo: IUserRepo,
+    private val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth,
     private val earningsRepo: EarningsRepo,
     private val paymentCardRepo: IPaymentCardRepo
@@ -32,6 +33,18 @@ class MoreViewModel @Inject constructor(
 
      suspend fun getLiveTotalEarnings(): Earnings? {
        return earningsRepo.getRemoteEarnings(userId)
+    }
+
+    suspend fun getString(key: String): String? {
+        return settingsUtil.getString(key)
+    }
+
+    suspend fun setBoolean(key:String, value:Boolean){
+        settingsUtil.setBoolean(key, value)
+    }
+
+    suspend fun getBoolean(key:String): Boolean {
+       return settingsUtil.getBoolean(key, true)
     }
 
     fun getLiveUserRecord(): LiveData<User> {

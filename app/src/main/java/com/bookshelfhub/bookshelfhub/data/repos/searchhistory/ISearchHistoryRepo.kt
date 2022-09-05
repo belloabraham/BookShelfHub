@@ -5,9 +5,8 @@ import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.entities.StoreSearchHistory
 
 interface ISearchHistoryRepo {
-    fun getLiveStoreSearchHistory(userId: String): LiveData<List<StoreSearchHistory>>
-
+    suspend fun getTop4StoreSearchHistory(userId:String): List<StoreSearchHistory>
+    suspend fun getTop4ShelfSearchHistory(userId: String): List<ShelfSearchHistory>
     suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory)
     suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory)
-    fun getLiveShelfSearchHistory(userId: String): LiveData<List<ShelfSearchHistory>>
 }

@@ -19,10 +19,8 @@ import com.bookshelfhub.bookshelfhub.R
 import com.bookshelfhub.bookshelfhub.adapters.recycler.OrderedBooksAdapter
 import com.bookshelfhub.bookshelfhub.adapters.recycler.ShelfSearchResultAdapter
 import com.bookshelfhub.bookshelfhub.databinding.FragmentShelfBinding
-import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.ISearchResult
 import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.views.materialsearch.internal.SearchLayout
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +34,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 @WithFragmentBindings
 class ShelfFragment : Fragment() {
-    private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
+   // private var shelfSearchHistoryList:List<ShelfSearchHistory> = emptyList()
     private var orderedBookList:List<OrderedBookUiState> = emptyList()
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
     private val shelfViewModel: ShelfViewModel by viewModels()
@@ -63,11 +61,6 @@ class ShelfFragment : Fragment() {
 
         layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
-
-        shelfViewModel.getShelfSearchHistory().observe(viewLifecycleOwner, Observer { shelfSearchHistory ->
-            searchListAdapter.submitList(shelfSearchHistory)
-            shelfSearchHistoryList=shelfSearchHistory
-        })
 
         viewLifecycleOwner.lifecycleScope.launch {
             shelfViewModel.getLiveListOfOrderedBooksUiState().asFlow()
@@ -144,7 +137,11 @@ class ShelfFragment : Fragment() {
                         // Fill the searchList Adapter with the default value after being changed
                         // by @setOnQueryTextListener when user exits search view
 
-                        searchListAdapter.submitList(shelfSearchHistoryList)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            val searchHistory = shelfViewModel.getTop4ShelfSearchHistory()
+                            searchListAdapter.submitList(searchHistory)
+                        }
+
                         SearchLayout.NavigationIconSupport.SEARCH
                     }
                     layout.materialSearchView.layoutParams = params
@@ -166,7 +163,7 @@ class ShelfFragment : Fragment() {
             })
         }
 
-        //Only shelf fragment can listen to onBackpressed
+        //Only shelf fragment can listen to onBackPressed
         mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner, Observer { isBackPressed ->
             if (layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()

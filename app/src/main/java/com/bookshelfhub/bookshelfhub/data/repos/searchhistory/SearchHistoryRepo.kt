@@ -17,8 +17,13 @@ class SearchHistoryRepo @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher = IO
     private val searchHistoryDao = appDatabase.getSearchHistoryDao()
 
-    override fun getLiveStoreSearchHistory(userId:String): LiveData<List<StoreSearchHistory>> {
-        return searchHistoryDao.getLiveStoreSearchHistory(userId)
+
+    override suspend fun getTop4ShelfSearchHistory(userId:String): List<ShelfSearchHistory> {
+        return withContext(ioDispatcher){searchHistoryDao.getTop4ShelfSearchHistory(userId)}
+    }
+
+    override suspend fun getTop4StoreSearchHistory(userId:String): List<StoreSearchHistory> {
+        return withContext(ioDispatcher){searchHistoryDao.getTop4StoreSearchHistory(userId)}
     }
 
      override suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory){
@@ -28,9 +33,4 @@ class SearchHistoryRepo @Inject constructor(
      override suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
         withContext(ioDispatcher){searchHistoryDao.addShelfSearchHistory(shelfSearchHistory)}
     }
-
-     override fun getLiveShelfSearchHistory(userId:String):LiveData<List<ShelfSearchHistory>> {
-        return  searchHistoryDao.getLiveShelfSearchHistory(userId)
-    }
-
 }

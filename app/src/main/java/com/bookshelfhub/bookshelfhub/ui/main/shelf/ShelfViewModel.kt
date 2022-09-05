@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.work.Data
 import com.bookshelfhub.bookshelfhub.data.Book
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.data.models.entities.ShelfSearchHistory
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.models.uistate.OrderedBookUiState
@@ -24,13 +23,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class ShelfViewModel @Inject constructor(
     private val orderedBooksRepo: IOrderedBooksRepo,
-    searchHistoryRepo: ISearchHistoryRepo,
+    private val searchHistoryRepo: ISearchHistoryRepo,
     private val connectionUtil: ConnectionUtil,
     private val settingsUtil: SettingsUtil,
     private val worker: Worker,
@@ -40,13 +38,11 @@ class ShelfViewModel @Inject constructor(
     val userAuth:IUserAuth): ViewModel(){
     
     private var liveOrderedBooksUiState: LiveData<List<OrderedBookUiState>> = MutableLiveData()
-    private var shelfShelfSearchHistory: LiveData<List<ShelfSearchHistory>> = MutableLiveData()
     private val _isNewlyPurchasedBookFlow = MutableStateFlow(false)
     private var doesUserHaveUnDownloadedPurchasedBooks = _isNewlyPurchasedBookFlow.asStateFlow()
     private val userId:String = userAuth.getUserId()
 
     init {
-        shelfShelfSearchHistory = searchHistoryRepo.getLiveShelfSearchHistory(userId)
         liveOrderedBooksUiState = orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
     }
 
@@ -130,8 +126,8 @@ class ShelfViewModel @Inject constructor(
        return orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
     }
 
-    fun getShelfSearchHistory():LiveData<List<ShelfSearchHistory>>{
-        return shelfShelfSearchHistory
+    suspend fun getTop4ShelfSearchHistory():List<ShelfSearchHistory>{
+        return searchHistoryRepo.getTop4ShelfSearchHistory(userId)
     }
 
 }
