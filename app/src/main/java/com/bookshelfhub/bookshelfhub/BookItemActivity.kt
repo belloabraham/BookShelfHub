@@ -33,11 +33,11 @@ import com.bookshelfhub.bookshelfhub.helpers.AppExternalStorage
 import com.bookshelfhub.bookshelfhub.helpers.payment.Currency
 import com.bookshelfhub.bookshelfhub.data.models.entities.OrderedBook
 import com.bookshelfhub.bookshelfhub.extensions.load
-import com.bookshelfhub.bookshelfhub.extensions.showToast
 import com.bookshelfhub.bookshelfhub.helpers.utils.*
 import com.bookshelfhub.bookshelfhub.helpers.utils.datetime.DateTimeUtil
 import com.google.common.base.Optional
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_book_item.*
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -389,7 +389,12 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), book.totalReviews)
 
-       val rating =  if(book.totalRatings == 0f) 0 else book.totalRatings/book.totalReviews
+       val rating =  if(book.totalRatings == 0f){
+           rateLabel.text = getString(R.string.first_to_rate_book)
+           0
+       } else
+           book.totalRatings/book.totalReviews
+
 
         layout.noRatingTxt.text = "$rating"
 
