@@ -11,7 +11,6 @@ import com.bookshelfhub.bookshelfhub.helpers.settings.Settings
 import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
 import com.bookshelfhub.bookshelfhub.data.models.entities.*
 import com.bookshelfhub.bookshelfhub.data.Book
-import com.bookshelfhub.bookshelfhub.data.Config
 import com.bookshelfhub.bookshelfhub.data.models.apis.convertion.Fixer
 import com.bookshelfhub.bookshelfhub.data.models.uistate.BookDownloadState
 import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
@@ -69,8 +68,6 @@ class BookItemActivityViewModel @Inject constructor(
   private var publishedBookOnline: MutableLiveData<PublishedBook> = MutableLiveData()
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
   private lateinit var user:User
-  private var userAlreadyPurchasedBook = false
-
 
   private val userId = userAuth.getUserId()
   private val title = savedState.get<String>(Book.NAME)!!
@@ -92,7 +89,6 @@ class BookItemActivityViewModel @Inject constructor(
     orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
     viewModelScope.launch{
-      userAlreadyPurchasedBook = orderedBooksRepo.getAnOrderedBook(bookId).isPresent
       user = userRepo.getUser(userId).get()
     }
 
@@ -105,8 +101,7 @@ class BookItemActivityViewModel @Inject constructor(
       addStoreSearchHistory(searchHistory)
     }
 
-    getBookRemotelyIfUserNotPurchasedBook()
-
+     getBookRemotelyIfUserNotPurchasedBook()
 
      getTwoBookReviewsRemotely()
      getRemoteUserReview()
@@ -117,7 +112,7 @@ class BookItemActivityViewModel @Inject constructor(
       val noUserReview = !userReviewRepo.getUserReview(bookId).isPresent
       if(noUserReview){
         try {
-          userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
+            userReviewRepo.getRemoteUserReview(bookId, userId)?.let {
             userReviewRepo.addUserReview(it)
           }
         }catch (e:Exception){
@@ -152,12 +147,12 @@ class BookItemActivityViewModel @Inject constructor(
     }
   }
 
-  fun getBookAlreadyPurchasedByUser(): Boolean {
-    return userAlreadyPurchasedBook
-  }
-
   suspend fun getLocalPublishedBook(): Optional<PublishedBook> {
     return publishedBooksRepo.getPublishedBook(bookId)
+  }
+
+  suspend fun updatePublishedBook(publishedBook: PublishedBook){
+    publishedBooksRepo.updatePublishedBook(publishedBook)
   }
 
   suspend fun getOptionalOrderedBook(bookId:String): Optional<OrderedBook> {
@@ -310,7 +305,7 @@ class BookItemActivityViewModel @Inject constructor(
     return publishedBookOnline
   }
 
-  fun getLiveOptionalCartItem(): LiveData<Optional<CartItem>> {
+  fun getBookFromCart(): LiveData<Optional<CartItem>> {
     return cartItemsRepo.getLiveCartItem(bookId)
   }
 

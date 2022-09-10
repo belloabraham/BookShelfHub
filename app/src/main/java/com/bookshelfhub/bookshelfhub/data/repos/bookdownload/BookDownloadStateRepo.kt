@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class BookDownloadStateRepo @Inject constructor(
-    private val appDatabase: AppDatabase
+    appDatabase: AppDatabase
 ) : IBookDownloadStateRepo {
 
     private val ioDispatcher: CoroutineDispatcher = IO

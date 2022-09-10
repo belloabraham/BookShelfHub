@@ -7,6 +7,8 @@ import com.bookshelfhub.bookshelfhub.data.models.uistate.PublishedBookUiState
 import com.google.common.base.Optional
 
 interface IPublishedBooksRepo {
+    suspend fun updatePublishedBook(publishedBook: PublishedBook)
+
     fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>>
 
     suspend fun getARemotePublishedBook(bookId: String): PublishedBook?

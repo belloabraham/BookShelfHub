@@ -22,6 +22,10 @@ class PublishedBooksRepo @Inject constructor(
     private val publishedBooksDao = appDatabase.getPublishedBooksDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 
+     override suspend fun updatePublishedBook(publishedBook: PublishedBook){
+        withContext(ioDispatcher) { publishedBooksDao.insertOrReplace(publishedBook)}
+    }
+
      override fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>> {
         return publishedBooksDao.getLivePublishedBook(bookId)
     }

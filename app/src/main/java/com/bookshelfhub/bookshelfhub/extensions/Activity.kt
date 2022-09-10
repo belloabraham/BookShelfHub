@@ -12,13 +12,11 @@ fun Activity.showToast(msg:String, toastLength:Int = Toast.LENGTH_LONG){
 
 fun Activity.isDarkMode(): Boolean {
     return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-        Configuration.UI_MODE_NIGHT_NO -> {
+        Configuration.UI_MODE_NIGHT_NO ->
             false
-        }
         else -> true
     }
 }
-
 
 fun Activity.showToast(@StringRes msg:Int, toastLength:Int = Toast.LENGTH_LONG){
     Toast(this).showToast(msg, toastLength)

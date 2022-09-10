@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
+import com.bookshelfhub.bookshelfhub.extensions.isDarkMode
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
 import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
 import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink

@@ -76,7 +76,7 @@ uses-permission
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".SplashActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="orientation|keyboardHidden|screenSize|uiMode"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme"

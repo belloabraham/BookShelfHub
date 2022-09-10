@@ -1,5 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -7,6 +8,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import co.paystack.android.PaystackSdk
 import com.bookshelfhub.bookshelfhub.data.Config
+import com.bookshelfhub.bookshelfhub.extensions.isDarkMode
 import com.bookshelfhub.bookshelfhub.helpers.notification.NotificationChannelBuilder
 import com.bookshelfhub.bookshelfhub.workers.*
 import com.bookshelfhub.downloadmanager.DownloadManager
