@@ -66,7 +66,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
   private val hideHandler = Handler()
 
 
-
   @SuppressLint("ClickableViewAccessibility")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

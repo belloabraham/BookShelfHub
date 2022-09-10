@@ -70,7 +70,6 @@ object ViewModelModule {
         return PaymentCardRepo(appDatabase)
     }
 
-
     @ViewModelScoped
     @Provides
     fun provideBookVideosRepo(remoteDataSource: IRemoteDataSource, appDatabase:AppDatabase): IBookVideosRepo {

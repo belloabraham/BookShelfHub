@@ -101,7 +101,7 @@ class BookItemActivityViewModel @Inject constructor(
       addStoreSearchHistory(searchHistory)
     }
 
-     getBookRemotelyIfUserNotPurchasedBook()
+     getARemotePublishedBook()
 
      getTwoBookReviewsRemotely()
      getRemoteUserReview()
@@ -283,17 +283,14 @@ class BookItemActivityViewModel @Inject constructor(
     return userReviews
   }
 
-  private fun getBookRemotelyIfUserNotPurchasedBook(){
+  private fun getARemotePublishedBook(){
     viewModelScope.launch {
-      val userIsYetToBuyBook = !orderedBooksRepo.getAnOrderedBook(bookId).isPresent
-      if(userIsYetToBuyBook){
         try {
-          publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)
+          publishedBookOnline.value = publishedBooksRepo.getARemotePublishedBook(bookId)!!
         }catch (e:Exception){
           Timber.e(e)
           return@launch
         }
-      }
     }
   }
 

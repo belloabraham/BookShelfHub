@@ -60,8 +60,6 @@ class BookItemActivity : AppCompatActivity() {
     private lateinit var bookId:String
     private lateinit var localCurrencyOrUSD:String
     private lateinit var onlinePublishedBook: PublishedBook
-    private val countryCode = Location.getCountryCode(this)
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +86,8 @@ class BookItemActivity : AppCompatActivity() {
 
             showBookDetails(onlinePublishedBook)
 
+            val countryCode = Location.getCountryCode(applicationContext)
+
             if(countryCode != null){
 
                 val bookIsFree = onlinePublishedBook.price <= 0.0
@@ -111,17 +111,23 @@ class BookItemActivity : AppCompatActivity() {
                     })
                 }
 
-               if(bookIsFree){
-                   layout.price.text = getString(R.string.price_free)
-                   showAddToShelfButtonAndHideOthers()
-               }
+                lifecycleScope.launch {
+                    if(bookIsFree){
+                        layout.price.text = getString(R.string.price_free)
 
-               showBooksItemLayout()
+                        val bookIsNotInShelf = !bookItemActivityViewModel.getAnOrderedBook().isPresent
+                        if(bookIsNotInShelf){
+                            showAddToShelfButtonAndHideOthers()
+                        }
+                    }
+                }
 
+               showBookItemLayout()
             }
         })
 
         layout.addToShelf.setOnClickListener {
+            val countryCode = Location.getCountryCode(applicationContext)
             lifecycleScope.launch {
                 val bookIsFree = onlinePublishedBook.price <= 0.0
                 if(bookIsFree){
@@ -366,7 +372,7 @@ class BookItemActivity : AppCompatActivity() {
                     showDownloadBookButtonAndHideOthers()
                 }
 
-                showBooksItemLayout()
+               // showBooksItemLayout()
             }
     }
 
@@ -392,9 +398,9 @@ class BookItemActivity : AppCompatActivity() {
        val rating =  if(book.totalRatings == 0f){
            rateLabel.text = getString(R.string.first_to_rate_book)
            0
-       } else
+       } else{
            book.totalRatings/book.totalReviews
-
+       }
 
         layout.noRatingTxt.text = "$rating"
 
@@ -405,9 +411,10 @@ class BookItemActivity : AppCompatActivity() {
         loadSimilarBooks(book.category, excludedBookId = book.bookId, similarBooksAdapter)
     }
 
-    private fun showBooksItemLayout(){
+    private fun showBookItemLayout(){
             layout.progressBar.visibility = GONE
             layout.bookItemLayout.visibility = VISIBLE
+            layout.bottomLayout.visibility = VISIBLE
     }
 
 
@@ -513,7 +520,6 @@ class BookItemActivity : AppCompatActivity() {
 
         return super.onOptionsItemSelected(item)
     }
-
 
     private fun startBookActivity(){
         lifecycleScope.launch {
