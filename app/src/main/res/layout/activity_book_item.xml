@@ -543,6 +543,14 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:backgroundTint="?colorAccent"
+            android:id="@+id/addToShelf"
+            android:text="@string/add_to_shelf"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:backgroundTint="?colorAccent"
             android:id="@+id/viewCartButton"
             android:text="@string/view_cart"/>
 

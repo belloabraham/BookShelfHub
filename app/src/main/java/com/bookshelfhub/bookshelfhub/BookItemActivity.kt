@@ -77,9 +77,7 @@ class BookItemActivity : AppCompatActivity() {
         val userPhotoUri = userAuth.getPhotoUrl()
 
         bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
-            val bookIsPaid = orderedBook.get().priceInBookCurrency > 0
-            if(bookIsPaid)
-                checkIfBookAlreadyPurchasedByUser(orderedBook)
+                checkIfBookAlreadyAddedByUser(orderedBook)
         })
 
         bookItemActivityViewModel.getOnlinePublishedBook().observe(this, Observer { onlinePublishedBook ->
@@ -115,13 +113,22 @@ class BookItemActivity : AppCompatActivity() {
 
                if(bookIsFree){
                    layout.price.text = getString(R.string.price_free)
-                   showDownloadBookButtonAndHideOthers()
+                   showAddToShelfButtonAndHideOthers()
                }
 
                showBooksItemLayout()
 
             }
         })
+
+        layout.addToShelf.setOnClickListener {
+            lifecycleScope.launch {
+                val bookIsFree = onlinePublishedBook.price <= 0.0
+                if(bookIsFree){
+                    addFreeBook(onlinePublishedBook, countryCode!!)
+                }
+            }
+        }
 
         layout.addToCartBtn.setOnClickListener {
             lifecycleScope.launch {
@@ -150,15 +157,8 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.downloadBtn.setOnClickListener {
 
-            lifecycleScope.launch {
-                val bookIsFree = onlinePublishedBook.price == 0.0
-
-                if(bookIsFree){
-                    addFreeBook(onlinePublishedBook, countryCode!!)
-                }
-
                 val workData = workDataOf(
-                    Book.ID to bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this@BookItemActivity.bookId),
+                    Book.ID to bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this.bookId),
                     Book.SERIAL_NO to onlinePublishedBook.serialNo.toInt(),
                     Book.PUB_ID to onlinePublishedBook.pubId,
                     Book.NAME to onlinePublishedBook.name
@@ -167,7 +167,6 @@ class BookItemActivity : AppCompatActivity() {
                 bookItemActivityViewModel.startBookDownload(workData)
                 layout.downloadProgressBar.visibility = VISIBLE
                 layout.downloadBtn.visibility = GONE
-            }
         }
 
 
@@ -194,8 +193,7 @@ class BookItemActivity : AppCompatActivity() {
                         layout.downloadProgressLayout.visibility = GONE
 
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
-                        showToast("AtGetLiveBookDldStateCheckIfBookAlreadyPurchasedByUser")
-                        checkIfBookAlreadyPurchasedByUser(orderedBook)
+                        checkIfBookAlreadyAddedByUser(orderedBook)
                         layout.downloadBtn.visibility = VISIBLE
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
                     }
@@ -346,8 +344,7 @@ class BookItemActivity : AppCompatActivity() {
             bookItemActivityViewModel.addAnOrderedBook(orderedBook)
     }
 
-
-    private fun checkIfBookAlreadyPurchasedByUser(orderedBook: Optional<OrderedBook>){
+    private fun checkIfBookAlreadyAddedByUser(orderedBook: Optional<OrderedBook>){
 
             val bookAlreadyPurchasedByUser = orderedBook.isPresent
 
@@ -416,8 +413,18 @@ class BookItemActivity : AppCompatActivity() {
         layout.addToCartBtn.visibility= VISIBLE
     }
 
+    private fun showAddToShelfButtonAndHideOthers(){
+        layout.addToShelf.visibility = VISIBLE
+        layout.openBookBtn.visibility = GONE
+        layout.downloadBtn.visibility = GONE
+        layout.viewCartButton.visibility = GONE
+        layout.addToCartBtn.visibility= GONE
+    }
+
+
     private fun showDownloadBookButtonAndHideOthers(){
         layout.openBookBtn.visibility = GONE
+        layout.addToShelf.visibility = GONE
         layout.downloadBtn.visibility = VISIBLE
         layout.viewCartButton.visibility = GONE
         layout.addToCartBtn.visibility= GONE
@@ -426,13 +433,14 @@ class BookItemActivity : AppCompatActivity() {
     private fun showOpenBookButtonAndHideOthers(){
         layout.openBookBtn.visibility = VISIBLE
         layout.downloadBtn.visibility = GONE
+        layout.addToShelf.visibility = GONE
         layout.viewCartButton.visibility = GONE
         layout.addToCartBtn.visibility= GONE
     }
 
    private  fun showViewCartButtonAndHideOthers(){
        layout.viewCartButton.visibility = VISIBLE
-       layout.viewCartButton.visibility = VISIBLE
+       layout.addToShelf.visibility = GONE
        layout.openBookBtn.visibility = GONE
        layout.downloadBtn.visibility = GONE
        layout.addToCartBtn.visibility= GONE

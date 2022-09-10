@@ -147,10 +147,6 @@ class BookItemActivityViewModel @Inject constructor(
     }
   }
 
-  suspend fun getLocalPublishedBook(): Optional<PublishedBook> {
-    return publishedBooksRepo.getPublishedBook(bookId)
-  }
-
   suspend fun updatePublishedBook(publishedBook: PublishedBook){
     publishedBooksRepo.updatePublishedBook(publishedBook)
   }
