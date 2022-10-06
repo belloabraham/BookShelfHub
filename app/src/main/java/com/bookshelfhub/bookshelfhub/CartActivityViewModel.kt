@@ -81,7 +81,7 @@ class CartActivityViewModel @Inject constructor(
     totalAmountInUSD   = value
   }
 
-  fun getTotalEarningsInUSD(): Double {
+  fun getTotalEarningsInLocalCurrency(): Double {
     return totalEarnings
   }
 
@@ -91,7 +91,7 @@ class CartActivityViewModel @Inject constructor(
     }
   }
 
-  fun getLiveListOfCartItemsAfterEarnings(): LiveData<List<CartItem>> {
+  fun getListOfCartItemsAfterEarnings(): LiveData<List<CartItem>> {
     return Transformations.switchMap(getLiveTotalEarnings()) { earnings ->
       totalEarnings = earnings?.total ?: 0.0
       cartItemsRepo.getLiveListOfCartItems(userId)

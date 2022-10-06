@@ -101,7 +101,7 @@ class SavedCardsFragment : Fragment(){
         }
 
     private fun chargeCard(paymentPaymentSDKType: PaymentSDKType, paymentCard: PaymentCard){
-        val totalAmountToChargeInUSD = cartActivityViewModel.getTotalAmountInUSD() - cartActivityViewModel.getTotalEarningsInUSD()
+        val totalAmountToChargeInUSD = cartActivityViewModel.getTotalAmountInUSD() - cartActivityViewModel.getTotalEarningsInLocalCurrency()
 
         val userMetaData = hashMapOf(
             Payment.USER_ID.KEY to cartActivityViewModel.getUserId(),

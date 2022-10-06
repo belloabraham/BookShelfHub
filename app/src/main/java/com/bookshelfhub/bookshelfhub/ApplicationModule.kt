@@ -66,7 +66,6 @@ object ApplicationModule {
         return FirebaseCloudStorage(context)
     }
 
-
     @Singleton
     @Provides
     fun provideOrderedBooksRepo(appDatabase:AppDatabase, remoteDataSource: IRemoteDataSource): IOrderedBooksRepo {

@@ -60,35 +60,35 @@ class UploadPaymentTransactions @AssistedInject constructor(
         }
 
       return  try {
-            var orderedBooks = emptyList<OrderedBook>()
-            var transactionBooksIds = emptyList<String>()
+            val orderedBooks = mutableListOf<OrderedBook>()
+            val transactionBooksIds = mutableListOf<String>()
             var bookNames = ""
             var totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
             val isFirstPurchase = totalNoOfOrderedBooksAsSerialNo <=0
-            for (trans in paymentTransactions) {
+            for (transaction in paymentTransactions) {
                 var collabCommissionInPercentage:Double? = null
                 var collabId:String? = null
-                val optionalCollab = referralRepo.getAnOptionalCollaborator(trans.bookId)
+                val optionalCollab = referralRepo.getAnOptionalCollaborator(transaction.bookId)
                 if(optionalCollab.isPresent){
                   val  collab = optionalCollab.get()
                     collabId = collab.collabId
                     collabCommissionInPercentage = collab.commissionInPercentage
                 }
 
-                transactionBooksIds = transactionBooksIds.plus(trans.bookId)
+                transactionBooksIds.add(transaction.bookId)
                 val orderedBook = OrderedBook(
-                    trans.bookId, trans.priceInUSD,
-                    trans.userId, trans.name,
-                    trans.coverUrl, trans.pubId,
-                    trans.orderedCountryCode,
+                    transaction.bookId, transaction.priceInUSD,
+                    transaction.userId, transaction.name,
+                    transaction.coverUrl, transaction.pubId,
+                    transaction.orderedCountryCode,
                     transactionRef, null,  0, 0,
-                    totalNoOfOrderedBooksAsSerialNo, trans.additionInfo,
+                    totalNoOfOrderedBooksAsSerialNo, transaction.additionInfo,
                     collabCommissionInPercentage,
                     collabId,
-                    trans.priceInBookCurrency
+                    transaction.priceInBookCurrency
                 )
-               bookNames =  bookNames.plus("${trans.name}, ")
-                orderedBooks = orderedBooks.plus(orderedBook)
+                bookNames =  bookNames.plus("${transaction.name}, ")
+                orderedBooks.add(orderedBook)
                 totalNoOfOrderedBooksAsSerialNo = totalNoOfOrderedBooksAsSerialNo.plus(1)
             }
 
@@ -101,7 +101,6 @@ class UploadPaymentTransactions @AssistedInject constructor(
           if(isFirstPurchase){
               val userId = userAuth.getUserId()
               userReferralId = userRepo.getUser(userId).get().referrerId
-           //   userReferrerCommission = paymentTransactions[0].priceInUSD * 0.1
               userReferrerCommission = paymentTransactions[0].priceInBookCurrency * 0.1
           }
 

@@ -24,13 +24,11 @@ import com.bookshelfhub.bookshelfhub.adapters.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.bookshelfhub.databinding.FragmentCartBinding
 import com.bookshelfhub.bookshelfhub.data.models.entities.CartItem
 import com.bookshelfhub.bookshelfhub.data.models.entities.PaymentTransaction
-import com.bookshelfhub.bookshelfhub.helpers.Json
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
-import javax.inject.Inject
 
 @AndroidEntryPoint
 @WithFragmentBindings
@@ -39,8 +37,6 @@ class CartFragment : Fragment() {
     private var binding: FragmentCartBinding?=null
     private lateinit var layout: FragmentCartBinding
     private val cartActivityViewModel: CartActivityViewModel by activityViewModels()
-    @Inject
-    lateinit var json: Json
 
     private var totalAmountInLocalCurrency:Double=0.0
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
@@ -77,7 +73,7 @@ class CartFragment : Fragment() {
 
         var listOfCartItems: ArrayList<CartItem> =  ArrayList()
 
-        cartActivityViewModel.getLiveListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
+        cartActivityViewModel.getListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
 
                 val countryCode = Location.getCountryCode(requireActivity().applicationContext)
 
@@ -118,7 +114,6 @@ class CartFragment : Fragment() {
                             cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cartItem.bookId}, "))
                         }
                         showTotalAmountOfBooks(
-                            cartActivityViewModel.getTotalAmountInUSD(),
                             localCurrency =  cartItems[0].currency,
                             totalAmountInLocalCurrency
                         )
@@ -139,14 +134,22 @@ class CartFragment : Fragment() {
                 cartListAdapter.notifyItemRemoved(position)
 
                 cartActivityViewModel.deleteFromCart(cart)
+                totalAmountInLocalCurrency = totalAmountInLocalCurrency.minus(cart.price)
+                cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().replace("${cart.bookId}, ", ""))
+                showTotalAmountOfBooks(cart.currency, totalAmountInLocalCurrency)
+
                  Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
                      .setAction(R.string.undo) {
                     listOfCartItems.add(position, cart)
                     cartListAdapter.notifyItemInserted(position)
                     cartActivityViewModel.addToCart(cart)
-                }.show()
+                         cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cart.bookId}, "))
+                    totalAmountInLocalCurrency = totalAmountInLocalCurrency.plus(cart.price)
+                         showTotalAmountOfBooks(cart.currency, totalAmountInLocalCurrency)
+                   }.show()
             }
         }
+
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
 
@@ -155,30 +158,19 @@ class CartFragment : Fragment() {
 
 
     private fun showTotalAmountOfBooks(
-        totalAmountInUSD:Double, localCurrency:String,
+        localCurrency:String,
         totalAmountInLocalCurrency:Double){
 
-        val totalEarningsInUSD = cartActivityViewModel.getTotalEarningsInUSD()
-        val totalAmountAfterEarningsInUSD = totalAmountInUSD - totalEarningsInUSD
+        val totalEarningsInLocalCurrency = cartActivityViewModel.getTotalEarningsInLocalCurrency()
+        val totalAmountMinusEarningsInLocalCurrency = totalAmountInLocalCurrency - totalEarningsInLocalCurrency
 
-        val totalUSD = String.format(
-            getString(R.string.total_usd),
-            totalAmountInUSD,
-            totalEarningsInUSD,
-            totalAmountAfterEarningsInUSD
-        )
-
-        val totalLocalCurrency = String.format(
-            getString(R.string.total_local_and_usd),
+        layout.totalCostTxt.text = String.format(
+            getString(R.string.total_local_currency),
             localCurrency,
+            totalAmountMinusEarningsInLocalCurrency,
             totalAmountInLocalCurrency,
-            totalAmountInUSD,
-            totalEarningsInUSD,
-            totalAmountAfterEarningsInUSD
+            totalEarningsInLocalCurrency
         )
-
-        val bookWasPurchasedInUSD = totalAmountInUSD == totalAmountInLocalCurrency
-       layout.totalCostTxt.text =  if (bookWasPurchasedInUSD) totalUSD else totalLocalCurrency
 
     }
 

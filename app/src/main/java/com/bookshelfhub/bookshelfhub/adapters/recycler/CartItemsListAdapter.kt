@@ -44,11 +44,7 @@ class CartItemsListAdapter(private val context: Context) {
         fun bindToView(model: CartItem, context: Context, onLongClickListener:()->Boolean) {
             title.text =  model.name
 
-            if (model.priceInUsd==null){
-                price.text = String.format(context.getString(R.string.usd_price), model.price)
-            }else{
-                price.text = String.format(context.getString(R.string.local_price_and_usd), model.currency,model.price,model.priceInUsd)
-            }
+            price.text = String.format(context.getString(R.string.local_price), model.currency, model.price)
 
             author.text = String.format(context.getString(R.string.by), model.author)
             cover.setImageBitmap(IconUtil.getBitmap(model.coverUrl))
