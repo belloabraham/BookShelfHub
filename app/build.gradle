@@ -87,7 +87,7 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     def work_version = "2.7.1"
-    def room_version = "2.4.2"
+    def room_version = "2.4.3"
     def paging_version = "3.1.1"
 
     //Local Test (Unit Test)
@@ -128,7 +128,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
 
-    def lifecycle_version = "2.5.0"
+    def lifecycle_version = "2.5.1"
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     //--Service
@@ -234,8 +234,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions-ktx'
 
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.1.0'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.1.0'
 
     //--Dynamic Link
     implementation 'com.google.firebase:firebase-dynamic-links-ktx'
@@ -251,7 +251,7 @@ dependencies {
 
     //Google Play Services
     //--Google Sign in auth
-    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
     //---In App Update
     implementation("com.google.android.play:core:1.10.3")
     implementation("com.google.android.play:core-ktx:1.8.1")
