@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/container"
+    android:paddingTop="@dimen/dp_16"
+    android:background="?backgroundColor"
+    tools:context=".ui.more.MoreFragment">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_16"
+            android:orientation="vertical">
+
+            <com.bookshelfhub.core.ui.views.ExpandableCardView
+                android:id="@+id/accountDropDownView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:title="@string/account"
+                android:background="?backgroundColor"
+                app:icon="@drawable/ic_profile"
+                app:inner_view="@layout/account"
+                app:expandOnClick="true"
+                app:animationDuration="@integer/nav_anim_duration"
+                app:startExpanded="false"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/interestCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_bookshelf"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/book_interest"
+                        style="@style/ProfileItemTitle"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/notif_circle_size"
+                        android:layout_height="@dimen/notif_circle_size"
+                        android:id="@+id/interestNotifCard"
+                        android:visibility="gone"
+                        app:cardCornerRadius="@dimen/notif_circle_size"
+                        style="@style/ProfileNotifCircle">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ProfileNotiText"
+                            android:text="@string/exclamation"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/verifyEmailCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_email_at"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/verify_email"
+                        style="@style/ProfileItemTitle"/>
+
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/notif_circle_size"
+                        android:layout_height="@dimen/notif_circle_size"
+                        app:cardCornerRadius="@dimen/notif_circle_size"
+                        android:id="@+id/verifyMailNotifCard"
+                        style="@style/ProfileNotifCircle"
+                        >
+                        <TextView
+                            android:id="@+id/verifyMailNotifText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ProfileNotiText"
+                            android:text="@string/exclamation"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/publishBookCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_typewriter"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/publish_book"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.bookshelfhub.core.ui.views.ExpandableCardView
+                android:id="@+id/settingsDropDownView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:title="@string/settings"
+                app:icon="@drawable/ic_settings"
+                app:inner_view="@layout/settings"
+                app:expandOnClick="true"
+                app:animationDuration="@integer/nav_anim_duration"
+                app:startExpanded="false"/>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/updateCard"
+                android:visibility="gone"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_update"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/new_update"
+                        style="@style/ProfileItemTitle"/>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="@dimen/notif_circle_size"
+                        android:layout_height="@dimen/notif_circle_size"
+                        app:cardCornerRadius="@dimen/notif_circle_size"
+                        android:id="@+id/updateNotifCard"
+                        style="@style/ProfileNotifCircle">
+                        <TextView
+                            android:id="@+id/updateNotifText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ProfileNotiText"
+                            android:text="@string/exclamation"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/reviewCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_rating_yellow"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="@dimen/dp_16"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/write_review"
+                        style="@style/ProfileItemTitle"
+                        android:layout_marginStart="120dp"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/referraLinkCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_link_24"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/referral_link"
+                        style="@style/ProfileItemTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/earningsCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_monetization_24"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/earnings"
+                        style="@style/ProfileItemTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/privacyPolicyCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_privacy_black_24"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/privacy"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/refundPolicyCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_file_document"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/refund_policy"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/termsOfUseCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_file_document"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/terms"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/needHelpCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_chat"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/need_help"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ProfileItemCardView"
+                android:id="@+id/aboutCard">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/ic_info_black_24dp"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/about"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+</ScrollView>

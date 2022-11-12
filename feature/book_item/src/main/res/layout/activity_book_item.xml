@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/dp_8"
+    tools:context=".BookItemActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            app:navigationIcon="@drawable/search_ic_outline_arrow_back_24"
+            app:titleTextColor="?colorOnBackground"
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:background="?backgroundColor" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dp_24"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/bookItemLayout"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp_16"
+                android:paddingHorizontal="@dimen/dp_24"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:strokeColor="@color/icon_color"
+                    app:cardElevation="3dp"
+                    app:cardMaxElevation="3dp"
+                    app:cardUseCompatPadding="true">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="125dp"
+                    android:id="@+id/cover"
+                    android:contentDescription="@null" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_24"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        style="@style/TextAppearance.MaterialComponents.Headline6"
+                        android:id="@+id/title"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/dp_8"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:id="@+id/author"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                        android:id="@+id/price"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_24"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|bottom"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/noRatingTxt"
+                        android:gravity="center_vertical"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:layout_gravity="center_horizontal"
+                        app:drawableEndCompat="@drawable/ic_star_16dp" />
+
+                   <TextView
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:id="@+id/noOfReviewTxt"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|bottom"
+                    android:orientation="horizontal">
+
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:layout_gravity="center_vertical"
+                    android:background="?android:attr/listDivider" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_16"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:textSize="14sp"
+                        android:textColor="?colorOnBackground"
+                        android:id="@+id/noOfDownloadsText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/downloads"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:background="?android:attr/listDivider" />
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:id="@+id/shareBookBtn"
+                        android:paddingHorizontal="@dimen/dp_16"
+                        android:text="@string/share"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:scaleType="fitCenter"
+                        app:drawableTopCompat="@drawable/ic_share_arrow" />
+
+            </FrameLayout>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                android:layout_marginTop="@dimen/dp_16"
+                style="@style/BookItemNavCard"
+                android:id="@+id/aboutBookCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:elevation="@dimen/dp_3"
+                    android:layout_marginHorizontal="@dimen/dp_16"
+                    android:layout_marginVertical="@dimen/dp_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/about_this_book"
+                        style="@style/BookNavItemsTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_24"
+                android:layout_marginBottom="@dimen/dp_16"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:id="@+id/descText"/>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/yourReviewLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:layout_marginVertical="@dimen/dp_24"
+                    android:text="@string/your_review"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingStart="0dp" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_16"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:orientation="horizontal">
+
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="@dimen/small_user_dp"
+                        android:layout_height="@dimen/small_user_dp"
+                        app:shapeAppearanceOverlay="@style/RoundImageShape"
+                        android:contentDescription="@null"
+                        android:id="@+id/userImage" />
+
+                    <com.github.ivbaranov.mli.MaterialLetterIcon
+                        android:layout_width="@dimen/small_user_dp"
+                        android:layout_height="@dimen/small_user_dp"
+                        app:mli_shape_color="?colorAccent"
+                        android:id="@+id/letterIcon"
+                        app:mli_shape_type="circle"
+                        app:mli_letter_color="@android:color/white"
+                        app:mli_letter_size="16"
+                        app:mli_letters_number="1"
+                        android:layout_gravity="center_vertical"
+                        app:mli_initials="false"
+                        app:mli_initials_number="1" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_16"
+                        android:id="@+id/userNameText"
+                        style="@style/TextAppearance.MaterialComponents.Subtitle2"
+                        android:textColor="?colorOnBackground"
+                        android:layout_gravity="center_vertical"
+                        android:ellipsize="end"
+                        android:textSize="14sp"
+                        android:maxLines="1"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/dp_16"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:orientation="horizontal">
+
+                    <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialRatingBar.RatingBar.Indicator.Small"
+                        android:id="@+id/userRatingBar" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/dp_8"
+                        android:id="@+id/date"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_24"
+                    android:visibility="gone"
+                    android:layout_marginBottom="@dimen/dp_16"
+                    android:id="@+id/userReviewTxt"/>
+
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editYourReviewBtn"
+                    android:layout_marginStart="22dp"
+                    android:text="@string/edit_your_review"
+                    android:textColor="@color/light_blue_A200"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:paddingStart="3dp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/dp_24"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginHorizontal="@dimen/dp_24"
+                android:id="@+id/rateBookLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/rate_this_book"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingStart="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/rateLabel"
+                    android:text="@string/tell_others_what"/>
+
+                <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:id="@+id/ratingBar"
+                    android:minHeight="@dimen/dp_32"
+                    android:minWidth="@dimen/dp_32" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ratingInfoLayout"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/dp_16"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                        app:placeholderText="@string/tell_others_what">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:padding="@dimen/dp_8"
+                            android:layout_height="wrap_content"
+                            android:minHeight="?actionBarSize"
+                            android:id="@+id/userReviewEditText"
+                            android:maxLength="500"
+                            android:inputType="text"
+                            android:autofillHints=""
+                            tools:ignore="LabelFor" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/reviewLengthTxt"
+                        android:gravity="end"
+                        android:layout_marginVertical="@dimen/dp_8"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="?colorPrimaryVariant"
+                        android:id="@+id/postBtn"
+                        android:text="@string/post"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingsAndReviewLayout"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/ratings_reviews"
+                    android:layout_marginVertical="@dimen/dp_24"
+                    style="@style/BookNavItemsTitle"
+                    android:paddingHorizontal="@dimen/dp_24" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:id="@+id/reviewRecView"
+                    android:layout_marginHorizontal="@dimen/dp_8" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/allReviewsBtn"
+                    android:layout_marginStart="22dp"
+                    android:text="@string/see_all_reviews"
+                    android:paddingStart="@dimen/dp_3"
+                    android:textColor="@color/light_blue_A200"
+                    style="@style/Widget.AppCompat.Button.Borderless"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_50"
+                style="@style/BookItemNavCard"
+                android:id="@+id/similarBooksCard">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dp_16"
+                    android:layout_marginVertical="@dimen/dp_4">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/similar_books"
+                        style="@style/BookNavItemsTitle"/>
+
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end|center_vertical"
+                        android:src="@drawable/ic_arrow_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_8"
+                android:layout_marginStart="@dimen/dp_8"
+                android:id="@+id/similarBooksRecView" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:id="@+id/bottomLayout"
+        android:visibility="gone"
+        android:paddingHorizontal="@dimen/dp_24"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:id="@+id/downloadProgressLayout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/TextAppearance.Material3.BodySmall"
+                android:id="@+id/downloadProgressTxt"/>
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="100"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/dp_8"
+                android:id="@+id/downloadProgressBar" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/addToCartBtn"
+            android:text="@string/add_to_Cart"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/openBookBtn"
+            android:text="@string/open"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/downloadBtn"
+            android:text="@string/download"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:backgroundTint="?colorAccent"
+            android:id="@+id/addToShelf"
+            android:text="@string/add_to_shelf"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:backgroundTint="?colorAccent"
+            android:id="@+id/viewCartButton"
+            android:text="@string/view_cart"/>
+
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,16 +7,16 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
+import com.bookshelfhub.core.authentication.IUserAuth
 import androidx.lifecycle.lifecycleScope
-import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
-import com.bookshelfhub.bookshelfhub.extensions.isDarkMode
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.Referrer
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
+import com.bookshelfhub.core.data.repos.user.IUserRepo
+import com.bookshelfhub.core.dynamic_link.IDynamicLink
+import com.bookshelfhub.core.dynamic_link.Referrer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.bookshelfhub.feature.onboarding.WelcomeActivity
+import com.bookshelfhub.feature.home.MainActivity
 
 
 @SuppressLint("CustomSplashScreen")
@@ -35,7 +35,7 @@ class SplashActivity : AppCompatActivity() {
 
         enableFullScreenDisplayForSplashActivity(window)
 
-        if (userAuth.getIsUserAuthenticated()){
+        if  (userAuth.getIsUserAuthenticated()){
 
             val userId = userAuth.getUserId()
 
@@ -68,22 +68,24 @@ class SplashActivity : AppCompatActivity() {
     private fun getCollaboratorOrUserReferralLink(intent:Intent){
         var aCollaboratorOrUserReferralId:String?=null
 
-        dynamicLink.getDeepLinkFromDynamicLinkAsync(this){
-            val userLaunchedAppByClickingALink = it!=null
+        dynamicLink.getDeepLinkFromDynamicLinkAsync(this){ uri ->
+            val userLaunchedAppByClickingALink = uri != null
+
             if(userLaunchedAppByClickingALink){
-                val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain),"").trim()
+                val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain), "").trim()
 
-                aCollaboratorOrUserReferralId = it.toString().replace(deeplinkDomainPrefix,"").trim()
+                aCollaboratorOrUserReferralId = uri.toString().replace(deeplinkDomainPrefix,"").trim()
 
-                startNextActivity(intent, aCollaboratorOrUserReferralId)
+                startNextActivityWith(intent, aCollaboratorOrUserReferralId)
+
             }else{
-                startNextActivity(intent, aCollaboratorOrUserReferralId)
+                startNextActivityWith(intent, aCollaboratorOrUserReferralId)
             }
         }
 
     }
 
-    private fun startNextActivity(intent:Intent, aCollaboratorOrUserReferralId:String?){
+    private fun startNextActivityWith(intent:Intent, aCollaboratorOrUserReferralId:String?){
         intent.putExtra(Referrer.ID, aCollaboratorOrUserReferralId)
         finish()
         startActivity(intent)

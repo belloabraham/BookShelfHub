@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <androidx.appcompat.widget.LinearLayoutCompat
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_16"
+            android:paddingVertical="@dimen/dp_8"
+            android:layout_marginHorizontal="@dimen/dp_16"
+            android:orientation="vertical">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="100dp"
+        android:layout_height="125dp"
+        style="@style/BookItemImageView"
+        android:contentDescription="@null"
+        android:id="@+id/itemImageView" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="15dp"
+                android:id="@+id/title"
+                android:layout_marginTop="@dimen/dp_4"
+                android:layout_marginHorizontal="3dp"
+                android:layout_gravity="start"
+                android:background="@drawable/ic_store_item_place_holder"
+                android:text=""
+                android:textSize="12sp"
+                style="@style/SearchItemAuthor"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>

@@ -4,12 +4,12 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.data.sources.remote.RemoteDataFields
+import com.bookshelfhub.core.authentication.IUserAuth
+import com.bookshelfhub.core.common.helpers.ErrorUtil
+import com.bookshelfhub.core.data.repos.user.IUserRepo
+import com.bookshelfhub.core.remote.database.RemoteDataFields
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import timber.log.Timber
 
 @HiltWorker
 class UploadNotificationToken @AssistedInject constructor(
@@ -32,13 +32,12 @@ class UploadNotificationToken @AssistedInject constructor(
             Result.success()
         }
 
-        val userId = userAuth.getUserId()
-
+           val userId = userAuth.getUserId()
            return try {
                  userRepo.uploadNotificationToken(notificationToken!!, userId)
                  Result.success()
             }catch (e:Exception){
-               Timber.e(e)
+               ErrorUtil.e(e)
                 Result.retry()
             }
 

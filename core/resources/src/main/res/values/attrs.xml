@@ -1,0 +1,19 @@
+<resources>
+    <declare-styleable name="FullscreenAttrs">
+        <attr name="fullscreenBackgroundColor" format="color" />
+        <attr name="fullscreenTextColor" format="color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="DatePicker">
+        <attr name="dp_text_color" format="color" />
+        <attr name="dp_hint_color" format="color" />
+        <attr name="dp_date_format">
+            <flag name="mm-dd-yyyy" value="1" />
+            <flag name="dd-mm-yyyy" value="2" />
+        </attr>
+        <attr name="dp_show_full_date" format="boolean" />
+    </declare-styleable>
+
+
+</resources>

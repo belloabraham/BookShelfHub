@@ -1,0 +1,180 @@
+package com.bookshelfhub.book.page
+
+import androidx.lifecycle.*
+import com.bookshelfhub.core.authentication.IUserAuth
+import com.bookshelfhub.core.common.helpers.ErrorUtil
+import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
+import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
+import com.bookshelfhub.core.data.Book
+import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
+import com.bookshelfhub.core.data.repos.bookvideos.IBookVideosRepo
+import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
+import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
+import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
+import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
+import com.bookshelfhub.core.datastore.settings.Settings
+import com.bookshelfhub.core.datastore.settings.SettingsUtil
+import com.bookshelfhub.core.dynamic_link.IDynamicLink
+import com.bookshelfhub.core.model.entities.*
+import com.google.firebase.FirebaseException
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
+
+@HiltViewModel
+class BookActivityViewModel @Inject constructor(
+    val userAuth: IUserAuth,
+    private val settingsUtil: SettingsUtil,
+    savedState: SavedStateHandle,
+    private val connectionUtil: ConnectionUtil,
+    private val orderedBooksRepo: IOrderedBooksRepo,
+    private val dynamicLink: IDynamicLink,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    private val readHistoryRepo: IReadHistoryRepo,
+    private val searchHistoryRepo: ISearchHistoryRepo,
+    private val bookmarksRepo: IBookmarksRepo,
+    private val bookVideosRepo: IBookVideosRepo,
+) : ViewModel() {
+
+    val userId = userAuth.getUserId()
+    private var bookId = savedState.get<String>(Book.ID)!!
+    private var bookName = savedState.get<String>(Book.NAME)!!
+    private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
+    private var readHistory: LiveData<Optional<ReadHistory>> = MutableLiveData()
+    private var bookShareLink:String?=null
+
+
+    private var livePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
+
+    init {
+
+        viewModelScope.launch {
+            bookShareLink = settingsUtil.getString(bookId)
+
+            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
+            if (showPopup) {
+                val firstRecordInTheDatabase = 0
+                readHistory = readHistoryRepo.getLiveReadHistory(firstRecordInTheDatabase)
+            }
+        }
+
+        livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
+
+        if (isSearchItem) {
+            addShelfSearchHistory(
+                ShelfSearchHistory(
+                    bookId,
+                    bookName,
+                    userId,
+                    DateTimeUtil.getDateTimeAsString()
+                )
+            )
+        }
+    }
+
+     fun getBookVideos(){
+        viewModelScope.launch {
+                try {
+                    val bookVideos =  bookVideosRepo.getRemoteBookVideos(bookId)
+                    if(bookVideos.isNotEmpty()){
+                        bookVideosRepo.addBookVideos(bookVideos)
+                    }
+                }catch (e:Exception){
+                    ErrorUtil.e(e)
+                    val theresIsInternetConnection = e is FirebaseException
+                    if(theresIsInternetConnection){
+                        return@launch
+                    }
+                }
+        }
+    }
+
+    suspend fun getInt(key:String, defaultVal:Int): Int {
+       return settingsUtil.getInt(key, defaultVal)
+    }
+
+
+    fun addIntToSettings(key:String, value:Int){
+        viewModelScope.launch {
+            settingsUtil.setInt(key, value)
+        }
+    }
+
+    fun generateBookShareLink(){
+        val shouldGenerateBookShareUrl = connectionUtil.isConnected() && bookShareLink == null
+        viewModelScope.launch {
+            val book = publishedBooksRepo.getPublishedBook(bookId).get()
+            if(shouldGenerateBookShareUrl){
+                try {
+                    bookShareLink = dynamicLink.generateShortDynamicLinkAsync(book.name , book.description, book.coverDataUrl, userId).toString()
+                    settingsUtil.setString(bookId, bookShareLink!!.toString())
+                }catch (e:Exception){
+                    ErrorUtil.e(e)
+                    return@launch
+                }
+            }
+        }
+    }
+
+    fun getBookShareLink(): String? {
+        return bookShareLink
+    }
+
+    fun getIsbnNo(): String {
+        return bookId
+    }
+
+    fun getBookName(): String {
+        return bookName
+    }
+
+    fun deleteFromBookmark(pageNumb: Int) {
+        viewModelScope.launch {
+            bookmarksRepo.deleteFromBookmark(pageNumb, bookId)
+        }
+    }
+
+    suspend fun getBookmark(currentPage: Int): Optional<Bookmark> {
+        return bookmarksRepo.getBookmark(currentPage, bookId)
+    }
+
+    fun addBookmark(pageNumber: Int) {
+        val bookmark = Bookmark(userId, bookId, pageNumber, bookName)
+        viewModelScope.launch {
+            bookmarksRepo.addBookmark(bookmark)
+        }
+    }
+
+    suspend fun getAnOrderedBook(): OrderedBook {
+        return orderedBooksRepo.getAnOrderedBook(bookId).get()
+    }
+
+
+    fun getLiveListOfBookVideos(): LiveData<List<BookVideo>> {
+        return bookVideosRepo.getLiveListOfBookVideos(bookId)
+    }
+
+    private fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory) {
+        viewModelScope.launch {
+            searchHistoryRepo.addShelfSearchHistory(shelfSearchHistory)
+        }
+    }
+
+    fun getLiveReadHistory(): LiveData<Optional<ReadHistory>> {
+        return readHistory
+    }
+
+    fun addReadHistory(currentPage: Int, totalPages: Int) {
+        viewModelScope.launch {
+            readHistoryRepo.deleteAllHistory()
+            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
+            if (showPopup) {
+                val percentage = (currentPage / totalPages) * 100
+                val readHistory = ReadHistory(bookId, currentPage, percentage, bookName)
+                readHistoryRepo.addReadHistory(readHistory)
+            }
+        }
+    }
+
+}

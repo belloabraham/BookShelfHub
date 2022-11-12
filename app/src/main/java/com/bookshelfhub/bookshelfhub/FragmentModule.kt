@@ -1,10 +1,10 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.helpers.KeyboardUtil
-import com.bookshelfhub.bookshelfhub.helpers.clipboard.ClipboardHelper
-import com.bookshelfhub.bookshelfhub.helpers.textlinkbuilder.TextLinkBuilder
-import com.bookshelfhub.bookshelfhub.helpers.utils.IntentUtil
+import com.bookshelfhub.core.common.helpers.KeyboardUtil
+import com.bookshelfhub.core.common.helpers.clipboard.ClipboardHelper
+import com.bookshelfhub.core.common.helpers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.core.common.helpers.utils.IntentUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

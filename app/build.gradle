@@ -1,17 +1,15 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id "bookshelfhub.android.application"
+    id "bookshelfhub.android.workmanager"
 }
 
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android'
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android-extensions'
 //apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+
+    namespace 'com.bookshelfhub.bookshelfhub'
+
     signingConfigs {
         release {
             storePassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
@@ -20,251 +18,59 @@ android {
             storeFile file('C:\\Users\\Idevellopapps\\Desktop\\bsh.jks')
         }
     }
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
-    def javaVersion = JavaVersion.VERSION_1_8
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-
-    buildFeatures {
-        viewBinding true
-        dataBinding true
-    }
 
     defaultConfig {
         applicationId "com.bookshelfhub.bookshelfhub"
-        minSdkVersion 21
-        targetSdkVersion 32
         versionCode 4
         versionName "1.3"
         resConfigs "en"
-        multiDexEnabled = true
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
-            debuggable false
-            jniDebuggable false
-            renderscriptDebuggable false
-            multiDexEnabled true
-        }
-
-        debug{
-            minifyEnabled false
-        }
-
-        packagingOptions {
-            exclude 'META-INF/library_release.kotlin_module'
-            exclude 'META-INF/LICENSE.txt'
-            exclude 'META-INF/NOTICE.txt'
         }
     }
 
-
-    compileOptions {
-        sourceCompatibility javaVersion
-        targetCompatibility javaVersion
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-    def work_version = "2.7.1"
-    def room_version = "2.4.3"
-    def paging_version = "3.1.1"
+    debugImplementation(libs.squareup.leakcanary)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    //Local Test (Unit Test)
-    //--JUnit
-    testImplementation 'junit:junit:4.13.2'
-    //--Google
-    testImplementation "com.google.truth:truth:1.1.3"
-    testImplementation("org.jetbrains.kotlin:kotlin-reflect:1.7.0")
+    implementation(libs.androidx.room.ktx)
 
-    //Instrumented Test (Integrated Test)
-    //--WorkManager
-    androidTestImplementation("androidx.work:work-testing:$work_version")
-    //--Room
-    testImplementation("androidx.room:room-testing:$room_version")
-    //--Paging
-    testImplementation("androidx.paging:paging-common-ktx:$paging_version")
-
-    //Instrumented Test (UI Test(a.k.a E2E))
-    //--AndroidX
-    def androidXTestVersion = "1.4.0"
-    //--Espresso
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.3'
-    androidTestImplementation("androidx.test:core:$androidXTestVersion")
-    androidTestImplementation("androidx.test:core-ktx:$androidXTestVersion")
-    androidTestImplementation("androidx.test:runner:$androidXTestVersion")
-
-
-    //Coroutines
-    //implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.3")
-    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3"
-
-    //Android Jetpack
-    //--Navigation Component
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-
-    def lifecycle_version = "2.5.1"
-    //Lifecycle
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
-    //--Service
-    implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
-    //--Live Data
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    //--View Model
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    //--Data Store
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-    //--Android - Room
-    implementation("androidx.room:room-runtime:$room_version")
-    //---Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
-    //---Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
-    //---Paging 3 Integration
-    implementation("androidx.room:room-paging:$room_version")
-
-    //--Work Manager
-    implementation("androidx.work:work-runtime-ktx:$work_version")
-    //--Dagger Hilt
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
-    def hilt_work_version = "1.0.0"
-    implementation("androidx.hilt:hilt-work:$hilt_work_version")
-    kapt("androidx.hilt:hilt-compiler:$hilt_work_version")
-
-
-    implementation("androidx.paging:paging-runtime-ktx:$paging_version") // For Kotlin use paging-runtime-ktx
-
-    //Google Gson
-    implementation 'com.google.code.gson:gson:2.9.0'
-
-
-    //PDF Viewer
-    implementation project(path: ':pdfviewer')
-    //Download Manager
-    implementation project(path: ':downloadmanager')
-
-
-    //Image Loading
-    implementation 'com.squareup.picasso:picasso:2.71828'
-    //--RecyclerView Adapter
-    implementation 'io.github.ibrahimyilmaz:kiel:1.2.1'
-    //String Util
-    implementation 'org.apache.commons:commons-text:1.9'
-    //Time and Date Util
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.3.1'
-    //Web API
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    //Payment
-    implementation 'co.paystack.android:paystack:3.1.3'
-    implementation 'com.github.Flutterwave.rave-android:rave_presentation:2.1.38'
-
-    //Debugging
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
-
-
-    //UI Libraries
-    //--Bottom Sheet Dialog
-    implementation 'com.afollestad.material-dialogs:bottomsheets:3.3.0'
-    implementation 'com.afollestad.material-dialogs:lifecycle:3.3.0'
-    //Like Button
-    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
-    //Material Rating Bar
-    implementation 'me.zhanghai.android.materialratingbar:library:1.4.0'
-    //--Switch Icon
-    implementation 'com.bitvale:switcher:1.1.1'
-    //--Bottom Navigation
-    implementation 'nl.joery.animatedbottombar:library:1.1.0'
-    //--Country dialing code picker
-    implementation 'com.hbb20:ccp:2.5.4'
-    //--ToolTip
-    implementation "com.github.skydoves:balloon:1.3.4"
-    //--OnBoarding Image Auto Slider
-    implementation 'com.github.smarteist:autoimageslider:1.4.0-appcompat'
-    //--OTP Code Input UI
-    implementation 'com.github.aabhasr1:OtpView:v1.1.2-ktx'
-    //--Animation
-    implementation 'com.airbnb.android:lottie:4.1.0'
-    //--Text Link builder
-    implementation 'com.klinkerapps:link_builder:2.0.5'
-    //--Toast Message
-    implementation 'com.github.GrenderG:Toasty:1.5.0'
-    //Letter Icon
-    implementation 'com.github.ivbaranov:materiallettericon:0.2.3'
-
+    implementation(libs.com.google.code.gson)
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:30.3.0')
-    //--Analytics
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    //--Authentication
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    //--Cloud messaging
-    implementation 'com.google.firebase:firebase-messaging-ktx'
-    //--Remote config
-    implementation 'com.google.firebase:firebase-config-ktx'
-    //--Cloud function
-    implementation 'com.google.firebase:firebase-functions-ktx'
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics.ktx)
+    releaseImplementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.messaging.ktx)
+    implementation ("com.google.firebase:firebase-iid:21.1.0")
 
     //---App Check
-    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.1.0'
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.1.0'
+    implementation(libs.firebase.appcheck.safetynet)
+    implementation(libs.firebase.appcheck.debug)
 
-    //--Dynamic Link
-    implementation 'com.google.firebase:firebase-dynamic-links-ktx'
-    //--Firestore
-    implementation 'com.google.firebase:firebase-firestore-ktx'
-    //--Realtime Db
-    implementation 'com.google.firebase:firebase-database-ktx'
-    //--Crashlytics
-    releaseImplementation 'com.google.firebase:firebase-crashlytics-ktx'
-    //--Cloud Storage
-    implementation 'com.google.firebase:firebase-storage-ktx'
-
-
-    //Google Play Services
-    //--Google Sign in auth
-    implementation 'com.google.android.gms:play-services-auth:20.3.0'
-    //---In App Update
-    implementation("com.google.android.play:core:1.10.3")
-    implementation("com.google.android.play:core-ktx:1.8.1")
-
-    //---Task
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.3'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation(project(":core:authentication"))
+    implementation(project(":feature:book_reviews"))
+    implementation(project(":core:cloud_messaging"))
+    implementation(project(":core:common"))
+    implementation(project(":core:data"))
+    implementation(project(":core:datastore"))
+    implementation(project(":core:database"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:dynamic_link"))
+    implementation(project(":core:model"))
+    implementation(project(":core:remote"))
+    implementation(project(":core:payment"))
+    implementation(project(":feature:onboarding"))
+    implementation(project(":feature:home"))
 
 }
-
 kapt {
     correctErrorTypes = true
-}
-repositories {
-    mavenCentral()
 }

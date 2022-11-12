@@ -86,9 +86,5 @@
         <item name="android:windowBackground">@null</item>
     </style>
 
-    <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">?backgroundColor</item>
-        <item name="fullscreenTextColor">?colorOnBackground</item>
-    </style>
 
 </resources>

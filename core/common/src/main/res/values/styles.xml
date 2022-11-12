@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="LinkBuilder">
+        <item name="defaultLinkColor">@color/orange</item>
+        <item name="defaultTextColorOfHighlightedLink">@color/light_blue_A400</item>
+    </style>
+
+</resources>

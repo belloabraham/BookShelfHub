@@ -1,26 +1,26 @@
 package com.bookshelfhub.bookshelfhub
 
-import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.BookDownloadStateRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookdownload.IBookDownloadStateRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.BookVideosRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookvideos.IBookVideosRepo
-import com.bookshelfhub.bookshelfhub.data.repos.earnings.EarningsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.earnings.IEarningsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.IPaymentCardRepo
-import com.bookshelfhub.bookshelfhub.data.repos.paymentcard.PaymentCardRepo
-import com.bookshelfhub.bookshelfhub.data.repos.readhistory.IReadHistoryRepo
-import com.bookshelfhub.bookshelfhub.data.repos.readhistory.ReadHistoryRepo
-import com.bookshelfhub.bookshelfhub.data.repos.referral.IReferralRepo
-import com.bookshelfhub.bookshelfhub.data.repos.referral.ReferralRepo
-import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.ISearchHistoryRepo
-import com.bookshelfhub.bookshelfhub.data.repos.searchhistory.SearchHistoryRepo
-import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
-import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.domain.usecases.DownloadBookUseCase
-import com.bookshelfhub.bookshelfhub.domain.usecases.GetBookIdFromCompoundId
-import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.CurrencyConversionAPI
-import com.bookshelfhub.bookshelfhub.helpers.webapi.currencyconverter.ICurrencyConversionAPI
-import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
+import com.bookshelfhub.core.data.repos.bookdownload.BookDownloadStateRepo
+import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
+import com.bookshelfhub.core.data.repos.bookvideos.BookVideosRepo
+import com.bookshelfhub.core.data.repos.bookvideos.IBookVideosRepo
+import com.bookshelfhub.core.data.repos.earnings.EarningsRepo
+import com.bookshelfhub.core.data.repos.earnings.IEarningsRepo
+import com.bookshelfhub.core.data.repos.payment_card.IPaymentCardRepo
+import com.bookshelfhub.core.data.repos.payment_card.PaymentCardRepo
+import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
+import com.bookshelfhub.core.data.repos.read_history.ReadHistoryRepo
+import com.bookshelfhub.core.data.repos.referral.IReferralRepo
+import com.bookshelfhub.core.data.repos.referral.ReferralRepo
+import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
+import com.bookshelfhub.core.data.repos.search_history.SearchHistoryRepo
+import com.bookshelfhub.core.database.AppDatabase
+import com.bookshelfhub.core.domain.usecases.DownloadBookUseCase
+import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
+import com.bookshelfhub.core.remote.database.IRemoteDataSource
+import com.bookshelfhub.core.remote.webapi.currencyconverter.CurrencyConversionAPI
+import com.bookshelfhub.core.remote.webapi.currencyconverter.ICurrencyConversionAPI
+import com.bookshelfhub.core.remote.webapi.retrofit.RetrofitInstance
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,7 +78,7 @@ object ViewModelModule {
 
     @ViewModelScoped
     @Provides
-    fun provideReferralRepo(appDatabase:AppDatabase): IReferralRepo {
+    fun provideReferralRepo(appDatabase: AppDatabase): IReferralRepo {
         return ReferralRepo(appDatabase)
     }
 

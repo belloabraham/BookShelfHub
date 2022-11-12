@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ProfileItemCardView">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="cornerRadius">0dp</item>
+        <item name="cardBackgroundColor">?backgroundColor</item>
+        <item name="backgroundColor">?backgroundColor</item>
+    </style>
+
+    <style name="ProfileItemTitle" parent="@style/TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textSize">@dimen/sp_18</item>
+        <item name="android:layout_marginStart">56dp</item>
+        <item name="android:layout_gravity">start|center_vertical</item>
+    </style>
+
+    <style name="PageNumberCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/PageNumberCardViewShapeAppearance</item>
+        <item name="cardBackgroundColor">@color/light_grey</item>
+    </style>
+
+    <style name="PageNumberCardViewShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">0dp</item>
+        <item name="cornerSizeTopLeft">0dp</item>
+        <item name="cornerSizeBottomRight">15dp</item>
+        <item name="cornerSizeBottomLeft">15dp</item>
+    </style>
+
+    <style name="BookItemImageView" parent="">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="shapeAppearanceOverlay">@style/CurvedEdgesImageShape</item>
+    </style>
+
+    <style name="RoundImageShape" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CurvedEdgesImageShape" parent="">
+        <item name="cornerSize">5%</item>
+    </style>
+
+    <style name="BookMenuOptions">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="CartItemTextStyle">
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">?colorOnBackground</item>
+    </style>
+
+
+    <style name="SearchItemTitle" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_marginStart">@dimen/dp_16</item>
+        <item name="android:layout_marginEnd">@dimen/dp_16</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">@dimen/dp_16sp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="SearchItemAuthor" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+
+    <style name="ProfileNotifCircle">
+        <item name="cardBackgroundColor">?colorError</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:layout_marginEnd">56dp</item>
+    </style>
+
+    <style name="ProfileNotiText">
+        <item name="android:textColor">?colorOnError</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="StoreItemsTitleCard" parent="ProfileItemCardView">
+        <item name="android:textSize">@dimen/profile_item_title_size</item>
+        <item name="android:layout_gravity">start|center_vertical</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardMaxElevation">0dp</item>
+    </style>
+
+    <style name="BookItemNavCard" parent="StoreItemsTitleCard"/>
+
+    <style name="StoreItemsTitle" parent="@style/TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">@dimen/profile_item_title_size</item>
+        <item name="android:layout_gravity">start|center_vertical</item>
+        <item name="android:paddingStart">16dp</item>
+    </style>
+
+    <style name="BookNavItemsTitle" parent="StoreItemsTitle">
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+
+    <style name="Widget.Theme.BookShelfHub.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/black_overlay</item>
+    </style>
+
+
+</resources>

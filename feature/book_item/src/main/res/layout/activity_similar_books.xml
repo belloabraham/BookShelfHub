@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.bookshelfhub.feature.book.item.SimilarBooksActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/appbarLayout"
+        app:elevation="0dp"
+        android:background="?backgroundColor"
+        android:layout_gravity="top">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbarLayout"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <com.bookshelfhub.core.ui.views.materialsearch.widget.MaterialSearchView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/material_search_view"
+                app:search_navigationIconSupport="search"
+                android:visibility="gone"
+                app:search_textHint="@string/store_search_hint"
+                app:search_transitionDuration="0" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                app:navigationIcon="@drawable/search_ic_outline_arrow_back_24"
+                app:titleTextColor="?colorOnBackground"
+                android:layout_height="?attr/actionBarSize"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/categoryBookRecView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cartBtnContainer"
+        android:visibility="gone"
+        android:layout_margin="@dimen/dp_16"
+        android:layout_gravity="bottom|end">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkOutBtn"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:clickable="true"
+            app:cardBackgroundColor="?colorAccent"
+            app:cardCornerRadius="30dp"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/cart_arrow_right"
+                app:tint="@android:color/white" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cartNotifCard"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="end|top"
+            app:cardBackgroundColor="?colorError"
+            app:cardCornerRadius="@dimen/notif_circle_size">
+
+            <TextView
+                android:id="@+id/cartNotifText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="?colorOnError"
+                android:textSize="10sp"
+                tools:ignore="HardcodedText,SmallSp" />
+        </com.google.android.material.card.MaterialCardView>
+
+    </FrameLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="titles">
+        <item>Create a virtual</item>
+        <item>Upload your</item>
+        <item>Create book</item>
+    </string-array>
+
+    <string-array name="subTitles">
+        <item>bookshelf</item>
+        <item>books</item>
+        <item>clubs</item>
+    </string-array>
+
+    <string-array name="description">
+        <item>and get unlimited access to the books you love.</item>
+        <item>and academic materials and start earning as people read.</item>
+        <item>to jointly review books with friends and students.</item>
+    </string-array>
+
+
+    <string-array name="genders">
+        <item name="male">Male</item>
+        <item name="female">Female</item>
+    </string-array>
+
+</resources>

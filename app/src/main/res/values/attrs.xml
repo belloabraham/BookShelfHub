@@ -1,49 +1,6 @@
 <resources>
-    <declare-styleable name="MaterialSearchView" >
-        <attr name="search_navigationIconSupport" format="enum">
-            <enum name="none" value="0" />
-            <enum name="menu" value="1" />
-            <enum name="arrow" value="2" />
-            <enum name="search" value="3" />
-        </attr>
-        <attr name="search_navigationIcon" format="reference" />
-        <attr name="search_clearIcon" format="reference" />
-        <attr name="search_micIcon" format="reference" />
-        <attr name="search_textHint" format="string" />
-        <attr name="search_strokeColor" format="reference" />
-        <attr name="search_strokeWidth" format="reference" />
-        <attr name="search_dividerColor" format="reference" />
-        <attr name="search_shadowColor" format="reference" />
-        <attr name="search_transitionDuration" format="integer" />
-        <attr name="search_radius" format="integer" />
-        <attr name="search_elevation" format="integer"/>
-        <attr name="android:imeOptions" />
-        <attr name="android:inputType" />
-    </declare-styleable>
-
     <declare-styleable name="FullscreenAttrs">
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />
     </declare-styleable>
-
-    <declare-styleable name="ExpandableCardView">
-        <attr name="title" format="string" />
-        <attr name="icon" format="reference" />
-        <attr name="inner_view" format="reference" />
-        <attr name="expandOnClick" format="boolean" />
-        <attr name="animationDuration" format="integer" />
-        <attr name="startExpanded" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="DatePicker">
-        <attr name="dp_text_color" format="color" />
-        <attr name="dp_hint_color" format="color" />
-        <attr name="dp_date_format">
-            <flag name="mm-dd-yyyy" value="1" />
-            <flag name="dd-mm-yyyy" value="2" />
-        </attr>
-        <attr name="dp_show_full_date" format="boolean" />
-    </declare-styleable>
-
-
 </resources>

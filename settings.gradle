@@ -1,4 +1,47 @@
-include ':app'
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+    includeBuild("plugins")
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        //noinspection JcenterRepositoryObsolete
+        jcenter()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 rootProject.name = "BookShelfHub"
-include ':pdfviewer'
-include ':downloadmanager'
+
+include ':app'
+include ':feature:home'
+include ':feature:book_page'
+include ':feature:book_purchase'
+include ':feature:webview'
+include ':feature:onboarding'
+include ':feature:book_reviews'
+include ':feature:books_by_category'
+include ':feature:about_book'
+include ':core:data'
+include ':core:database'
+include ':core:model'
+include ':core:datastore'
+include ':core:remote'
+include ':core:domain'
+include ':core:common'
+include ':core:payment'
+include ':core:ui'
+include ':core:authentication'
+include ':core:resources'
+include ':core:cloud_messaging'
+include ':core:dynamic_link'
+include ':feature:book_item'

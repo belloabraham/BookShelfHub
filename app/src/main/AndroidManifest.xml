@@ -31,8 +31,6 @@ uses-permission
         android:supportsRtl="false"
         android:theme="@style/Theme.BookShelfHub"
         tools:replace="android:supportsRtl,android:allowBackup">
-
-        <activity android:name=".BookInfoActivity" />
         <!--
  Completely stop all dependencies from using App startup bcos I will
         initialize them on required (Only for dependencies that use App Startup)
@@ -43,37 +41,6 @@ uses-permission
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
 
-        <activity
-            android:name=".CartActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name=".BookCategoryActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity android:name=".BookActivity" />
-        <activity
-            android:name=".BookItemActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name=".WebViewActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name=".MoreActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
-            android:name=".WelcomeActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|uiMode"
@@ -97,12 +64,7 @@ uses-permission
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            tools:ignore="LockedOrientationActivity" /> <!-- Firebase Cloud Messaging Configuration -->
+        <!-- Firebase Cloud Messaging Configuration -->
         <!--
 Set custom default icon. This is used when no icon is set for incoming notification messages.
          See README(https://goo.gl/l4GJaQ) for more.
@@ -121,7 +83,7 @@ Set color used with incoming notification messages. This is used when no color i
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/notif_channel_id" /> <!-- Firebase Cloud Messaging Custom Service Class -->
         <service
-            android:name=".helpers.notification.firebase.CloudMessagingService"
+            android:name=".CloudMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

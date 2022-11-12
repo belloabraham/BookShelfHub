@@ -16,19 +16,9 @@
     </style>
 
 
-    <style name="Widget.Theme.BookShelfHub.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="SplashTheme" parent="SplashActivityTheme">
         <item name="backgroundColor">@color/night</item>
         <item name="android:navigationBarColor" tools:targetApi="l">?backgroundColor</item>
-    </style>
-
-    <style name="ThemeOverlay.BookShelfHub.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">?backgroundColor</item>
-        <item name="fullscreenTextColor">?colorOnBackground</item>
     </style>
 
 

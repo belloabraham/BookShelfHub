@@ -20,18 +20,10 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#Realtime database
- -keepattributes Signature
-
-#Data models
--keep class com.bookshelfhub.bookshelfhub.data.models.**{
-    *;
-}
-
 #PDFViewer
 -keep class com.shockwave.**
 
-#Starting Activity Parceable Error
+#Starting Activity Parceable Error, haappen when data passed to activity intent data
 -keepclassmembers class * implements android.os.Parcelable {
     static ** CREATOR;
 }

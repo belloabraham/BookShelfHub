@@ -1,47 +1,47 @@
 package com.bookshelfhub.bookshelfhub
 
 import android.content.Context
-import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.IBookInterestRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookinterest.BookInterestRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.BookmarksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.cartitems.CartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.cartitems.ICartItemsRepo
-import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.IOrderedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.orderedbooks.OrderedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.IPaymentTransactionRepo
-import com.bookshelfhub.bookshelfhub.data.repos.paymenttransaction.PaymentTransactionRepo
-import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.IPrivateKeysRepo
-import com.bookshelfhub.bookshelfhub.data.repos.privatekeys.PrivateKeysRepo
-import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.IPublishedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.publishedbooks.PublishedBooksRepo
-import com.bookshelfhub.bookshelfhub.data.repos.user.IUserRepo
-import com.bookshelfhub.bookshelfhub.data.repos.user.UserRepo
-import com.bookshelfhub.bookshelfhub.data.repos.userreview.IUserReviewRepo
-import com.bookshelfhub.bookshelfhub.data.repos.userreview.UserReviewRepo
-import com.bookshelfhub.bookshelfhub.helpers.settings.SettingsUtil
-import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.Firebase
-import com.bookshelfhub.bookshelfhub.helpers.remoteconfig.IRemoteConfig
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
-import com.bookshelfhub.bookshelfhub.helpers.authentication.firebase.UserAuth
-import com.bookshelfhub.bookshelfhub.data.sources.remote.Firestore
-import com.bookshelfhub.bookshelfhub.data.sources.remote.IRemoteDataSource
-import com.bookshelfhub.bookshelfhub.helpers.notification.firebase.CloudMessaging
-import com.bookshelfhub.bookshelfhub.helpers.notification.ICloudMessaging
-import com.bookshelfhub.bookshelfhub.helpers.Json
-import com.bookshelfhub.bookshelfhub.data.sources.local.AppDatabase
-import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.ICloudFunctions
-import com.bookshelfhub.bookshelfhub.helpers.cloudfunctions.firebase.FirebaseCloudFunctions
-import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.FirebaseCloudStorage
-import com.bookshelfhub.bookshelfhub.helpers.cloudstorage.ICloudStorage
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.FirebaseDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.dynamiclink.IDynamicLink
-import com.bookshelfhub.bookshelfhub.helpers.utils.AppUtil
-import com.bookshelfhub.bookshelfhub.helpers.utils.ConnectionUtil
-import com.bookshelfhub.bookshelfhub.helpers.webapi.retrofit.RetrofitInstance
-import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
-import com.bookshelfhub.bookshelfhub.helpers.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
-import com.bookshelfhub.bookshelfhub.workers.Worker
+import com.bookshelfhub.core.authentication.IUserAuth
+import com.bookshelfhub.core.authentication.firebase.UserAuth
+import com.bookshelfhub.core.cloud.messaging.ICloudMessaging
+import com.bookshelfhub.core.cloud.messaging.firebase.CloudMessaging
+import com.bookshelfhub.core.common.helpers.Json
+import com.bookshelfhub.core.common.helpers.utils.AppUtil
+import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
+import com.bookshelfhub.core.common.worker.Worker
+import com.bookshelfhub.core.data.repos.bookinterest.BookInterestRepo
+import com.bookshelfhub.core.data.repos.bookinterest.IBookInterestRepo
+import com.bookshelfhub.core.data.repos.bookmarks.BookmarksRepo
+import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
+import com.bookshelfhub.core.data.repos.cartitems.CartItemsRepo
+import com.bookshelfhub.core.data.repos.cartitems.ICartItemsRepo
+import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
+import com.bookshelfhub.core.data.repos.ordered_books.OrderedBooksRepo
+import com.bookshelfhub.core.data.repos.payment_transaction.IPaymentTransactionRepo
+import com.bookshelfhub.core.data.repos.payment_transaction.PaymentTransactionRepo
+import com.bookshelfhub.core.data.repos.private_keys.IPrivateKeysRepo
+import com.bookshelfhub.core.data.repos.private_keys.PrivateKeysRepo
+import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
+import com.bookshelfhub.core.data.repos.published_books.PublishedBooksRepo
+import com.bookshelfhub.core.data.repos.user.IUserRepo
+import com.bookshelfhub.core.data.repos.user.UserRepo
+import com.bookshelfhub.core.data.repos.user_review.IUserReviewRepo
+import com.bookshelfhub.core.data.repos.user_review.UserReviewRepo
+import com.bookshelfhub.core.database.AppDatabase
+import com.bookshelfhub.core.datastore.settings.SettingsUtil
+import com.bookshelfhub.core.dynamic_link.IDynamicLink
+import com.bookshelfhub.core.dynamic_link.firebase.FirebaseDynamicLink
+import com.bookshelfhub.core.remote.cloud_functions.ICloudFunctions
+import com.bookshelfhub.core.remote.cloud_functions.firebase.FirebaseCloudFunctions
+import com.bookshelfhub.core.remote.database.IRemoteDataSource
+import com.bookshelfhub.core.remote.database.firebase.Firestore
+import com.bookshelfhub.core.remote.remote_config.Firebase
+import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
+import com.bookshelfhub.core.remote.storage.FirebaseCloudStorage
+import com.bookshelfhub.core.remote.storage.ICloudStorage
+import com.bookshelfhub.core.remote.webapi.retrofit.RetrofitInstance
+import com.bookshelfhub.core.remote.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
+import com.bookshelfhub.core.remote.webapi.wordtoxicityanalyzer.WordAnalyzerAPI
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -145,10 +145,9 @@ object ApplicationModule {
         return BookmarksRepo(appDatabase, worker, remoteDataSource)
     }
 
-
     @Singleton
     @Provides
-    fun provideBookInterestRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource, worker:Worker): IBookInterestRepo {
+    fun provideBookInterestRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource, worker: Worker): IBookInterestRepo {
         return BookInterestRepo(appDatabase, remoteDataSource, worker)
     }
 

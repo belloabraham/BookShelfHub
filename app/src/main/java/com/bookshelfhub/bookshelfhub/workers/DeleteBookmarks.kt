@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.bookshelfhub.bookshelfhub.data.repos.bookmarks.IBookmarksRepo
-import com.bookshelfhub.bookshelfhub.helpers.authentication.IUserAuth
+import com.bookshelfhub.core.authentication.IUserAuth
+import com.bookshelfhub.core.common.helpers.ErrorUtil
+import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import timber.log.Timber
 
 @HiltWorker
 class DeleteBookmarks @AssistedInject constructor(
@@ -28,11 +28,10 @@ workerParams
 
         val userId = userAuth.getUserId()
 
-        removeAllLocallyDeletedBookmarks()
+        removeAllLocallyDeletedBookmarksThatWasNotUploadedBefore()
 
         //Get bookmarks that was uploaded to the cloud but are now deleted locally
-        val listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks  = bookmarksRepo.getDeletedBookmarks(deleted = true, uploaded = true)
-
+        val listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks = bookmarksRepo.getDeletedBookmarks(isDeleted = true, isUploaded = true)
 
      return  try {
             if (listOfPreviouslyUploadedButLaterLocallyDeletedBookmarks.isNotEmpty()){
@@ -47,14 +46,14 @@ workerParams
             Result.success()
 
         }catch (e:Exception){
-         Timber.e(e)
+         ErrorUtil.e(e)
          Result.retry()
         }
 
     }
 
-    private suspend fun removeAllLocallyDeletedBookmarks(){
-        val listOfLocallyDeletedBookmarks  = bookmarksRepo.getDeletedBookmarks(deleted = true, uploaded = false)
+    private suspend fun removeAllLocallyDeletedBookmarksThatWasNotUploadedBefore(){
+        val listOfLocallyDeletedBookmarks  = bookmarksRepo.getDeletedBookmarks(isDeleted = true, isUploaded = false)
         if (listOfLocallyDeletedBookmarks.isNotEmpty()){
             bookmarksRepo.deleteBookmarks(listOfLocallyDeletedBookmarks)
         }

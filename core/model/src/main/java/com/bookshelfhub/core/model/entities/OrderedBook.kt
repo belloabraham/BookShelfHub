@@ -1,0 +1,29 @@
+package com.bookshelfhub.core.model.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import com.bookshelfhub.core.model.ISearchResult
+import com.bookshelfhub.core.model.uistate.IOrderedBookUiState
+import com.google.firebase.Timestamp
+
+@Entity(tableName= "OrderedBooks")
+data class OrderedBook(
+    @PrimaryKey
+    override val bookId:String,
+    // I left this variable just in case there will be a need for it in the future for global transaction in USD
+    override val priceInUSD: Double,
+    override val userId:String,
+    override val name:String,
+    override val coverDataUrl:String,
+    override val pubId: String,
+    override val orderedCountryCode:String?,
+    override var transactionReference:String?,
+    val dateTime:Timestamp?=null,
+    val month: Int,
+    val year: Int,
+    override val serialNo:Long,
+    override val additionInfo: String?,
+    val collabCommission: Double?,
+    val collabId:String?,
+    override val priceInBookCurrency: Double
+): ISearchResult, IOrderedBooks, IOrderedBookUiState

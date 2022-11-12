@@ -1,0 +1,164 @@
+[versions]
+navigation = "2.5.3"
+hilt = "2.44"
+appCompat = "1.7.0-alpha01"
+googleMaterial = "1.7.0"
+androidXCore = "1.9.0"
+androidXCardView = "1.0.0"
+androidRecyclerView = "1.2.1"
+workManager = "2.7.1"
+hiltWordManager = "1.0.0"
+playServicesBasement = "18.1.0"
+playServicesBase = "18.1.0"
+paging= "3.1.1"
+lifecycle = "2.5.1"
+datastore = "1.0.0"
+retrofit = "2.9.0"
+room = "2.4.3"
+gson = "2.9.0"
+picasso = "2.8"
+leakCanary = "2.8.1"
+kiel = "1.2.1"
+timber = "5.0.1"
+payStack = "3.1.3"
+likeButton = "0.2.3"
+materialDialogs = "3.3.0"
+apacheCommonsText = "1.9"
+materialRatingBar = "1.4.0"
+androidPlayCore = "1.10.3"
+androidPlayCoreKtx = "1.8.1"
+threeTenABP = "1.3.1"
+kotlinStdLib = "1.7.20"
+coroutinesPlayServicesExtension = "1.6.4"
+kotlinXCoroutines = "1.6.3"
+constraintLayout = "2.1.4"
+switcher = "1.1.1"
+animatedBottomBar  = "1.1.0"
+hbb20Ccp = "2.5.4"
+skyDovesBalloon = "1.3.4"
+autoImageSlider = "1.4.0-appcompat"
+toasty = "1.5.0"
+otpView = "v1.1.2-ktx"
+lottie = "4.1.0"
+linkBuilder = "2.0.5"
+playServicesAuth = "20.3.0"
+swipeRefreshLayout = "1.1.0"
+materialLetterIcon = "0.2.3"
+firebaseBom = "31.0.2"
+appCheck= "16.1.0"
+espressoJUnitExt = "1.1.3"
+espressoJUnitExtKtx  = "1.1.3"
+flutterWave = '2.1.38'
+espressoCore = "3.4.0"
+androidXTest = "1.4.0"
+androidGradlePlugin = "7.3.1"
+kotlinGradlePlugin = "1.7.20"
+hiltGradlePlugin = "2.44"
+firebaseCrashlyticsGradlePlugin = "2.8.1"
+navigationArgsGradlePlugin = "2.5.3"
+googleServiceGradlePlugin = "4.3.14"
+androidDesugarJdkLibs = "1.1.5"
+fragmentKTX = "1.5.4"
+
+jUnit = "4.13.2"
+testExt = "1.1.3"
+testEspresso = "3.4.0"
+googleTruth = "1.1.3"
+kotlinReflect = "1.7.0"
+
+
+[libraries]
+
+androidx-test-ext = { group = "androidx.test.ext", name = "junit", version.ref = "testExt" }
+androidx-test-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "testEspresso" }
+junit = { group = "junit", name = "junit", version.ref = "jUnit" }
+com-google-truth = { group = "com.google.truth", name = "truth", version.ref = "googleTruth" }
+org-jetbrains-kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect", version.ref = "kotlinReflect" }
+
+
+rave-flutterwave = { group = "com.github.Flutterwave.rave-android", name = "rave_presentation", version.ref = "flutterWave" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
+play-services-basement = { group = "com.google.android.gms", name = "play-services-basement", version.ref = "playServicesBasement" }
+androidx-fragment = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKTX" }
+androidx-recycler = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidRecyclerView" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
+androidx-core = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "googleMaterial" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
+androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "androidXCardView" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swipeRefreshLayout" }
+androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinXCoroutines" }
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
+androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
+dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWordManager" }
+androidx-hilt-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltWordManager" }
+com-google-code-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+com-squareup-picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
+github-ibrahimyilmaz = { group = "io.github.ibrahimyilmaz", name = "kiel", version.ref = "kiel" }
+apache-commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "apacheCommonsText" }
+jakewharton-threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version.ref = "threeTenABP" }
+squareup-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+paystack = { group = "co.paystack.android", name = "paystack", version.ref = "payStack" }
+jakewharton-timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+squareup-leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
+afollestad-material-dialogs-bottomsheets = { group = "com.afollestad.material-dialogs", name = "bottomsheets", version.ref = "materialDialogs" }
+afollestad-material-dialogs-lifecycle = { group = "com.afollestad.material-dialogs", name = "lifecycle", version.ref = "materialDialogs" }
+jd-alexander-likeButton = { group = "com.github.jd-alexander", name = "LikeButton", version.ref = "likeButton" }
+zhangai-android-materialratingbar = { group = "me.zhanghai.android.materialratingbar", name = "library", version.ref = "materialRatingBar" }
+
+
+bitvale-switcher = { group = "com.bitvale", name = "switcher", version.ref = "switcher" }
+joery-animatedbottombar = { group = "nl.joery.animatedbottombar", name = "library", version.ref = "animatedBottomBar" }
+hbb20-cpp = { group = "com.hbb20", name = "ccp", version.ref = "hbb20Ccp" }
+skydoves-balloon = { group = "com.github.skydoves", name = "balloon", version.ref = "skyDovesBalloon" }
+smarteist-autoimageslider = { group = "com.github.smarteist", name = "autoimageslider", version.ref = "autoImageSlider" }
+aabhasr1-otpView = { group = "com.github.aabhasr1", name = "OtpView", version.ref = "otpView" }
+airbnb-lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+
+klinkerapps-link_builder = { group = "com.klinkerapps", name = "link_builder", version.ref = "linkBuilder" }
+grenderg-toasty = { group = "com.github.GrenderG", name = "Toasty", version.ref = "toasty" }
+ivbaranov-materiallettericon = { group = "com.github.ivbaranov", name = "materiallettericon", version.ref = "materialLetterIcon" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+
+firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx"}
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx"}
+firebase-config-ktx = { group = "com.google.firebase", name = "firebase-config-ktx"}
+firebase-functions-ktx = { group = "com.google.firebase", name = "firebase-functions-ktx"}
+firebase-appcheck-safetynet = { group = "com.google.firebase", name = "firebase-appcheck-safetynet", version.ref = "appCheck"}
+firebase-appcheck-debug = { group = "com.google.firebase", name = "firebase-appcheck-debug", version.ref = "appCheck"}
+
+firebase-dynamic-links-ktx = { group = "com.google.firebase", name = "firebase-dynamic-links-ktx"}
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx"}
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx"}
+firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx"}
+firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx"}
+android-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth"}
+android-play-core = { group = "com.google.android.play", name = "core", version.ref = "androidPlayCore"}
+android-play-core-ktx = { group = "com.google.android.play", name = "core-ktx", version.ref = "androidPlayCoreKtx"}
+jetbrains-kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServicesExtension"}
+jetbrains-kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlinStdLib"}
+
+android-gradle = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
+kotlin-gradle = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
+android-desugarJdkLibs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
+hilt-gradle = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hiltGradlePlugin" }
+navargs-gradle = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigationArgsGradlePlugin" }
+
+[plugins]
