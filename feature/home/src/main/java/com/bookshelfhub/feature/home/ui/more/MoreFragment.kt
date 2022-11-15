@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bitvale.switcher.SwitcherX
 import com.bookshelfhub.core.authentication.AuthType
@@ -66,8 +65,6 @@ class MoreFragment : Fragment() {
     lateinit var clipboardHelper: ClipboardHelper
     @Inject
     lateinit var userAuth: IUserAuth
-    @Inject
-    lateinit var dynamicLink: IDynamicLink
 
     private lateinit var authType:String
     private val mainActivityViewModel: MainActivityViewModel by activityViewModels()
@@ -89,8 +86,6 @@ class MoreFragment : Fragment() {
 
         val progressPopupToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.progressPopupToggle)
         val darkModeToggle = layout.settingsDropDownView.findViewById<SwitcherX>(R.id.darkModeToggle)
-
-        val googleAuth: IGoogleAuth =  GoogleAuth(requireActivity(), R.string.gcp_web_client)
 
 
         authType= userAuth.getAuthType()
@@ -147,6 +142,7 @@ class MoreFragment : Fragment() {
                            moreViewModel.deleteUserData()
                            requireActivity().finish()
                      }else{
+                         val googleAuth: IGoogleAuth =  GoogleAuth(requireActivity(), R.string.gcp_web_client)
                          viewLifecycleOwner.lifecycleScope.launch{
                              try {
                                  googleAuth.signOut().await()
@@ -194,7 +190,6 @@ class MoreFragment : Fragment() {
         }
 
         layout.needHelpCard.setOnClickListener {
-
           val link =   remoteConfig.getString(WA_CUSTOMER_SUPPORT)
           startActivity(intentUtil.intent(link))
 
@@ -231,30 +226,31 @@ class MoreFragment : Fragment() {
         }
 
 
-        mainActivityViewModel.getIsNewAppUpdateNotificationNumber().observe(viewLifecycleOwner, Observer { notificationNumber ->
-            val thereIsNewUpdate = notificationNumber>0
-            if (thereIsNewUpdate){
-               layout.updateCard.visibility = View.VISIBLE
+        mainActivityViewModel.getIsNewAppUpdateNotificationNumber().observe(viewLifecycleOwner) { notificationNumber ->
+            val thereIsNewUpdate = notificationNumber > 0
+            if (thereIsNewUpdate) {
+                layout.updateCard.visibility = View.VISIBLE
             }
-        })
+        }
 
-        mainActivityViewModel.getLiveOptionalBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
-            if(bookInterest.isPresent && bookInterest.get().added){
+        mainActivityViewModel.getLiveOptionalBookInterest().observe(viewLifecycleOwner
+        ) { bookInterest ->
+            if (bookInterest.isPresent && bookInterest.get().added) {
                 layout.interestNotifCard.visibility = GONE
-            }else{
+            } else {
                 layout.interestNotifCard.visibility = View.VISIBLE
             }
-        })
+        }
 
-        moreViewModel.getLiveUserRecord().observe(viewLifecycleOwner, Observer { _ ->
-         /*if (!userRecord.mailOrPhoneVerified){
-              if (authType==AuthType.GOOGLE){
-                  layout.verifyPhoneCard.visibility = View.VISIBLE
-              }else{
-                  layout.verifyEmailCard.visibility = View.VISIBLE
-              }
-          }*/
-        })
+        moreViewModel.getLiveUserRecord().observe(viewLifecycleOwner) { _ ->
+            /*if (!userRecord.mailOrPhoneVerified){
+                 if (authType==AuthType.GOOGLE){
+                     layout.verifyPhoneCard.visibility = View.VISIBLE
+                 }else{
+                     layout.verifyEmailCard.visibility = View.VISIBLE
+                 }
+             }*/
+        }
 
         return layout.root
     }

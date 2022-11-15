@@ -23,7 +23,9 @@ class PublishedBooksRepo @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher = IO
 
      override suspend fun updatePublishedBook(publishedBook: PublishedBook){
-        withContext(ioDispatcher) { publishedBooksDao.insertOrReplace(publishedBook)}
+        withContext(ioDispatcher) {
+            publishedBooksDao.insertOrReplace(publishedBook)
+        }
     }
 
      override fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>> {
@@ -38,7 +40,9 @@ class PublishedBooksRepo @Inject constructor(
     }
 
     override suspend fun getListOfPublishedBooksUiState(): List<PublishedBookUiState> {
-      return withContext(ioDispatcher) { publishedBooksDao.getListOfPublishedBooksUiState()}
+      return withContext(ioDispatcher) {
+          publishedBooksDao.getListOfPublishedBooksUiState()
+      }
     }
 
     override suspend fun getListOfRemoteUnpublishedBooks(): List<PublishedBook> {
@@ -74,19 +78,28 @@ class PublishedBooksRepo @Inject constructor(
     }
 
      override suspend fun getPublishedBook(bookId: String): Optional<PublishedBook> {
-        return withContext(ioDispatcher){publishedBooksDao.getPublishedBook(bookId)}
+        return withContext(ioDispatcher){
+            publishedBooksDao.getPublishedBook(bookId)
+        }
     }
 
     override suspend fun getPublishedBooksByNameOrAuthor(nameOrAuthor:String): List<PublishedBookUiState>{
-        return  withContext(ioDispatcher) {publishedBooksDao.getPublishedBooksByNameOrAuthor(nameOrAuthor)}
+        return  withContext(ioDispatcher) {
+            publishedBooksDao.getPublishedBooksByNameOrAuthor(nameOrAuthor)
+        }
     }
 
     override suspend fun getTotalNoOfPublishedBooks(): Int {
-     return  withContext(ioDispatcher) {publishedBooksDao.getTotalNoOfPublishedBooks()}
+     return  withContext(ioDispatcher) {
+         publishedBooksDao.getTotalNoOfPublishedBooks()
+     }
     }
 
      override suspend fun updateRecommendedBooksByCategory(category: String, isRecommended:Boolean){
-         withContext(ioDispatcher){publishedBooksDao.updateRecommendedBooksByCategory(category, isRecommended)}
+         withContext(ioDispatcher){
+             publishedBooksDao.updateRecommendedBooksByCategory(category, isRecommended)
+         }
+
     }
 
      override suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean){

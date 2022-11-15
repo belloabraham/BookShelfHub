@@ -6,10 +6,10 @@ import co.paystack.android.PaystackSdk
 object PaymentSDK {
 
     fun getType(countryCode:String?): PaymentSDKType? {
+
         return if(
-            countryCode == PaystackSupportedCountriesCode.NIGERIA ||
-            countryCode == PaystackSupportedCountriesCode.SOUTH_AFRICA ||
-            countryCode == PaystackSupportedCountriesCode.GHANA
+            countryCode == SupportedCountries.NIGERIA || countryCode == SupportedCountries.GHANA
+           // countryCode == PaystackSupportedCountriesCode.SOUTH_AFRICA || Restricted by GooglePay Support For Paystack
         ){
             PaymentSDKType.PAYSTACK
         }else{

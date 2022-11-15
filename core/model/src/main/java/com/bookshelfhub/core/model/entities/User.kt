@@ -8,6 +8,8 @@ data class User(
     @PrimaryKey
     val userId: String,
     val authType:String,
+    var countryCode:String,
+    var earningsCurrency:String,
     var uploaded: Boolean = false,
     var firstName:String = "",
     var lastName:String ="",
@@ -20,5 +22,5 @@ data class User(
     var gender: String?=null,
     var dateOfBirth: String?=null,
     var mailOrPhoneVerified: Boolean = false,
-    var additionInfo:String?=null
+    var additionInfo:String?=null,
 )

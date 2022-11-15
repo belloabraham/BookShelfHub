@@ -2,8 +2,7 @@ package com.bookshelfhub.core.common.helpers.utils
 
 import android.content.Context
 import android.telephony.TelephonyManager
-import timber.log.Timber
-
+import com.bookshelfhub.core.common.helpers.ErrorUtil
 
 object Location {
 
@@ -22,7 +21,7 @@ object Location {
                     null
                 }
         } catch(e:Exception){
-            Timber.e(e)
+            ErrorUtil.e(e)
             null
         }
     }

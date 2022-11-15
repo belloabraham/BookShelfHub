@@ -10,10 +10,6 @@ abstract class PaymentTransactionDao : BaseDao<PaymentTransaction> {
     @Query("SELECT * FROM PaymentTransactions")
     abstract suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
 
-    @Query("DELETE FROM PaymentTransactions")
-    abstract suspend fun deleteAllPaymentTransactions()
-
-
     @Query("SELECT * FROM PaymentTransactions WHERE transactionReference = :transactionRef")
     abstract suspend fun getPaymentTransactions(transactionRef:String): List<PaymentTransaction>
 }

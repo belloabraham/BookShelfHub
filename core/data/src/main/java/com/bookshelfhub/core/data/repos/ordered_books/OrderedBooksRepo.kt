@@ -51,11 +51,15 @@ class OrderedBooksRepo @Inject constructor(
 
 
    override suspend fun addAnOrderedBook(orderedBook: OrderedBook){
-        orderedBooksDao.insertOrReplace(orderedBook)
+       return withContext(ioDispatcher){
+           orderedBooksDao.insertOrReplace(orderedBook)
+       }
     }
 
    override suspend fun getOrderedBooks(userId: String): List<OrderedBook> {
-        return  withContext(ioDispatcher){ orderedBooksDao.getOrderedBooks(userId)}
+        return  withContext(ioDispatcher){
+            orderedBooksDao.getOrderedBooks(userId)
+        }
    }
 
     override fun getALiveOptionalOrderedBook(isbn: String): LiveData<Optional<OrderedBook>> {
@@ -63,11 +67,15 @@ class OrderedBooksRepo @Inject constructor(
     }
 
      override suspend fun deleteAllOrderedBooks() {
-         withContext(ioDispatcher){ orderedBooksDao.deleteAllOrderedBooks()}
+        return withContext(ioDispatcher){
+             orderedBooksDao.deleteAllOrderedBooks()
+         }
     }
 
      override suspend fun addOrderedBooks(OrderedBooks: List<OrderedBook>){
-         withContext(ioDispatcher){ orderedBooksDao.insertAllOrIgnore(OrderedBooks)}
+        return withContext(ioDispatcher){
+             orderedBooksDao.insertAllOrIgnore(OrderedBooks)
+         }
     }
      override fun getLiveOrderedBooks(userId: String): LiveData<List<OrderedBook>> {
         return  orderedBooksDao.getLiveBooksOrdered(userId)

@@ -8,6 +8,6 @@ interface IPayment {
         paymentCard: PaymentCard,
         amount:Double,
         userEmail:String,
-        currency: String = Currency.USD,
+        currencyToChargeForBookSale:String,
     )
 }

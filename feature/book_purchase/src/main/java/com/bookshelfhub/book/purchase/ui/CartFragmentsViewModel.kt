@@ -13,6 +13,8 @@ import com.bookshelfhub.core.model.Earnings
 import com.bookshelfhub.core.model.entities.CartItem
 import com.bookshelfhub.core.model.entities.PaymentTransaction
 import com.bookshelfhub.core.model.entities.User
+import com.bookshelfhub.payment.PaymentSDKType
+import com.bookshelfhub.payment.SupportedCurrencies
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,13 +32,17 @@ class CartFragmentsViewModel @Inject constructor(
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
   private val userId = userAuth.getUserId()
   private var payStackPublicKey:String?=null
-  private var earnings: MutableLiveData<Earnings?> = MutableLiveData()
+  private var userEarningsFromReferrals: MutableLiveData<Earnings?> = MutableLiveData()
   private var totalEarnings = 0.0
-  private var totalAmountInUSD = 0.0
-  private var combinedBookIds = ""
-  private var paymentTransactions = emptyList<PaymentTransaction>()
+  internal var combinedBookIds = ""
+  internal var totalCostOfBook:Double=0.0
+  internal var paymentSDKType: PaymentSDKType? = null
+  internal var currencyToChargeForBooksSale = SupportedCurrencies.NGN
+  private var paymentTransactions = mutableListOf<PaymentTransaction>()
+
 
   init {
+
     liveCartItems = cartItemsRepo.getLiveListOfCartItems(userId)
 
     viewModelScope.launch{
@@ -45,61 +51,46 @@ class CartFragmentsViewModel @Inject constructor(
 
     viewModelScope.launch {
       try {
-        earnings.value = earningsRepo.getRemoteEarnings(userId)
+        userEarningsFromReferrals.value = earningsRepo.getRemoteEarnings(userId)
       }catch (e:Exception){
         ErrorUtil.e(e)
-        earnings.value = Earnings(0.0)
+        userEarningsFromReferrals.value = Earnings(0.0)
       }
     }
   }
 
-  fun getPaymentTransactions(): List<PaymentTransaction> {
+  fun getPaymentTransactions(): MutableList<PaymentTransaction> {
     return paymentTransactions
-  }
-
-  fun setPaymentTransactions(value: List<PaymentTransaction>){
-    paymentTransactions = value
-  }
-
-  fun getCombinedBookIds(): String {
-    return combinedBookIds
-  }
-
-  fun setCombinedBookIds(value:String){
-    combinedBookIds = value
   }
 
   fun getUserId(): String {
     return userId
   }
 
-  fun getTotalAmountInUSD(): Double {
-    return totalAmountInUSD
-  }
-
-  fun setTotalAmountInUSD(value:Double){
-    totalAmountInUSD   = value
-  }
-
-  fun getTotalEarningsInLocalCurrency(): Double {
+  fun getTotalUserEarnings(): Double {
     return totalEarnings
   }
 
-  fun addPaymentTransactions(paymentTransactions:List<PaymentTransaction>){
+  fun initializePaymentVerificationProcess(paymentTransactions:List<PaymentTransaction>){
     viewModelScope.launch {
-      paymentTransactionRepo.addPaymentTransactions(paymentTransactions)
+
+      paymentTransactionRepo.initializePaymentVerificationProcess(
+        paymentTransactions,
+        currencyToChargeForBooksSale,
+        paymentSDKType!!
+      )
     }
   }
 
-  fun getListOfCartItemsAfterEarnings(): LiveData<List<CartItem>> {
+  fun getListOfCartItemsAfterUserEarningsFromReferrals(): LiveData<List<CartItem>> {
     return Transformations.switchMap(getLiveTotalEarnings()) { earnings ->
       totalEarnings = earnings?.total ?: 0.0
-      cartItemsRepo.getLiveListOfCartItems(userId)
+      getLiveListOfCartItems()
     }
   }
 
   private fun getLiveTotalEarnings(): LiveData<Earnings?> {
-    return earnings
+    return userEarningsFromReferrals
   }
 
   fun getUserEmail(): String? {
@@ -127,7 +118,7 @@ class CartFragmentsViewModel @Inject constructor(
     }
   }
 
-  fun getListOfCartItems(): LiveData<List<CartItem>> {
+  private fun getLiveListOfCartItems(): LiveData<List<CartItem>> {
     return liveCartItems
   }
 

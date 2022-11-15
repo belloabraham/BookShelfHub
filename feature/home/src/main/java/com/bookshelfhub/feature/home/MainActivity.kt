@@ -1,7 +1,6 @@
 package com.bookshelfhub.feature.home
 
 import android.content.Intent
-import androidx.lifecycle.Observer
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -45,13 +44,14 @@ class MainActivity : AppCompatActivity() {
             openBookInBookStore(bookId)
         }
 
-        mainActivityViewModel.getSelectedIndex().observe(this, Observer {
+        mainActivityViewModel.getSelectedIndex().observe(this) {
             layout.bottomBar.selectTabAt(it, true)
-        })
+        }
 
-        mainActivityViewModel.getIsNewNotificationAtMoreTab().observe(this, Observer {
+        mainActivityViewModel.getIsNewNotificationAtMoreTab().observe(this) {
             val moreTabIndex = 3
-            val thereIsNewNotificationAtMoreTab = mainActivityViewModel.getTotalMoreTabNotification() > 0
+            val thereIsNewNotificationAtMoreTab =
+                mainActivityViewModel.getTotalMoreTabNotification() > 0
             if (thereIsNewNotificationAtMoreTab) {
                 val totalNumbOfNotification = mainActivityViewModel.getTotalMoreTabNotification()
                 layout.bottomBar.setBadgeAtTabIndex(
@@ -61,11 +61,11 @@ class MainActivity : AppCompatActivity() {
             } else {
                 layout.bottomBar.clearBadgeAtTabIndex(moreTabIndex)
             }
-        })
+        }
 
-        mainActivityViewModel.getLiveOptionalBookInterest().observe(this, Observer { bookInterest ->
-            mainActivityViewModel.updatedRecommendedBooks(bookInterest)
-        })
+        mainActivityViewModel.getLiveOptionalBookInterest().observe(this) { bookInterest ->
+            mainActivityViewModel.updatedRecommendedBooksNotification(bookInterest)
+        }
 
         setUpViewPager()
 
@@ -83,15 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setViewPagerPosition(tabIndex:Int){
-        when (tabIndex) {
-            0 -> layout.viewPager.setCurrentItem(0, false)
-
-            1 ->  layout.viewPager.setCurrentItem(1, false)
-
-            2 -> layout.viewPager.setCurrentItem(2, false)
-
-            3 -> layout.viewPager.setCurrentItem(3, false)
-        }
+        layout.viewPager.setCurrentItem(tabIndex, false)
     }
 
     private fun newInAppUpdateDownloadedCompleteMessage() {

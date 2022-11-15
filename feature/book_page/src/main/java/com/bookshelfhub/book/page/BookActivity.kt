@@ -15,7 +15,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.book.page.databinding.ActivityBookBinding
 import com.bookshelfhub.core.common.extensions.isAppUsingDarkTheme
@@ -76,13 +75,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         lifecycleScope.launch {
              orderedBook = bookActivityViewModel.getAnOrderedBook()
             loadBook(isDarkMode, orderedBook)
-        }
 
-        bookActivityViewModel.getLiveReadHistory().observe(this, Observer { readHistory ->
-            if (readHistory.isPresent) {
-                showReadProgressDialog(readHistory.get())
+            if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
+               val readHistory = bookActivityViewModel.getReadHistory()
+                if (readHistory.isPresent) {
+                    showReadProgressDialog(readHistory.get())
+                }
             }
-        })
+        }
 
         layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
             override fun liked(likeButton: LikeButton?) {
@@ -142,9 +142,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
 
 
-        bookActivityViewModel.getLiveListOfBookVideos().observe(this, Observer { bookVideos ->
+        bookActivityViewModel.getLiveListOfBookVideos().observe(this) { bookVideos ->
             this.bookVideos = bookVideos
-        })
+        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -292,7 +292,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private val showPart2Runnable = Runnable {
         // Delayed display of UI elements
         supportActionBar?.show()
-        bottomNavigationLayout.visibility = View.VISIBLE
+        bottomNavigationLayout.visibility = VISIBLE
         setTopMargin(24f, layout.pageNumLabel)
     }
     private var isFullscreen: Boolean = false

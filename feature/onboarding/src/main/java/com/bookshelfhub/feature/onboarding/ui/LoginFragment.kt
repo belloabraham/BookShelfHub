@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -123,22 +122,23 @@ class LoginFragment:Fragment() {
         }
 
 
-        googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner, Observer { isAuthSuccessful ->
+        googleAuthViewModel.getIsAuthenticatedSuccessful().observe(viewLifecycleOwner) { isAuthSuccessful ->
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser()!!
                 if (isNewUser){
-                    val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
+                    val actionUserInfo =
+                        LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }
             }
-        })
+        }
 
-        userInfoViewModel.getIsUserDataAlreadyInRemoteDatabase().observe(viewLifecycleOwner, Observer { isExistingUser ->
+        userInfoViewModel.getIsUserDataAlreadyInRemoteDatabase().observe(viewLifecycleOwner) { isExistingUser ->
             if (!isExistingUser){
                 val actionUserInfo = LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(false)
                 findNavController().navigate(actionUserInfo)
             }
-        })
+        }
 
         return layout.root
     }

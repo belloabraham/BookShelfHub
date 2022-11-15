@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
@@ -47,21 +46,21 @@ class BookmarkFragment : Fragment() {
 
         var bookmarkArrayList: ArrayList<Bookmark> =  arrayListOf()
 
-        bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer { bookmarkList ->
+        bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner) { bookmarkList ->
 
-            if (bookmarkArrayList.isEmpty()){
+            if (bookmarkArrayList.isEmpty()) {
                 bookmarkArrayList = bookmarkList as ArrayList<Bookmark>
                 adapter.submitList(bookmarkArrayList)
             }
 
-            if (bookmarkList.isEmpty()){
+            if (bookmarkList.isEmpty()) {
                 layout.emptyBookmarksLayout.visibility = View.VISIBLE
                 layout.bookmarkListRecView.visibility = View.GONE
-            }else{
+            } else {
                 layout.emptyBookmarksLayout.visibility = View.GONE
                 layout.bookmarkListRecView.visibility = View.VISIBLE
             }
-        })
+        }
 
         layout.bookmarkListRecView.addItemDecoration(
             DividerItemDecoration(

@@ -13,7 +13,6 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -78,13 +77,13 @@ class StoreFragment : Fragment() {
         binding= FragmentStoreBinding.inflate(inflater, container, false)
         val layout = binding!!
         
-        storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner, Observer { cartItemsCount ->
+        storeViewModel.getLiveTotalCartItemsNo().observe(viewLifecycleOwner) { cartItemsCount ->
             layout.materialSearchView.setMenuNotifCount(cartItemsCount)
-        })
+        }
 
-        storeViewModel.getDoesBookLoadSuccessfully().observe(viewLifecycleOwner, Observer { isSuccess ->
+        storeViewModel.getDoesBookLoadSuccessfully().observe(viewLifecycleOwner) { isSuccess ->
             showRemoteBooksLoadStatus(isSuccess, layout)
-        })
+        }
 
         mSearchListAdapter = StoreSearchResultAdapter(requireContext()).getSearchResultAdapter()
         val searchListAdapter = mSearchListAdapter!!

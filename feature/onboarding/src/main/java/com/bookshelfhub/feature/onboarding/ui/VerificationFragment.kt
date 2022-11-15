@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -54,90 +53,96 @@ class VerificationFragment:Fragment(){
 
                 layout.phoneNumberTxt.text = args.phoneNumber
 
-               layout.otpView.otpListener = object : OTPListener {
-                    override fun onInteractionListener() {
-                        otpCode=layout.otpView.otp
-                        layout.otpErrorTxtView.visibility= GONE
-                    }
-                    override fun onOTPComplete(otp: String) {
-                       otpCode=otp
-                    }
+       layout.otpView.otpListener = object : OTPListener {
+            override fun onInteractionListener() {
+                otpCode=layout.otpView.otp
+                layout.otpErrorTxtView.visibility= GONE
+            }
+            override fun onOTPComplete(otp: String) {
+               otpCode=otp
+            }
+        }
+
+        layout.verifyBtn.setOnClickListener {
+           if (otpCode?.length == resources.getInteger(R.integer.otp_code_length)  ){
+             (requireActivity() as WelcomeActivity).verifyPhoneNumberWithCode(otpCode!!)
+           }else{
+               layout.otpView.showError()
+               layout.otpErrorTxtView.text = getString(R.string.otp_error_msg)
+               layout.otpErrorTxtView.visibility=  VISIBLE
+           }
+        }
+
+        val links = listOf(textLinkBuilder.getTextLink(getString(R.string.resend_code_link)){
+            (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, com.bookshelfhub.feature.onboarding.R.raw.loading)
+        })
+
+        layout.resendCodeTxtView.applyLinks(links)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            /*By using sharedFlow with collect{} there will be no cached value for this to get triggered by default
+            But only when a value get again sent by clicking the retry link*/
+            phoneAuthViewModel.getIsCodeSent().collect{
+                verificationViewModel.startCountDownTimer()
+                layout.timerTxtView.visibility = VISIBLE
+                layout.resendCodeTxtView.visibility = GONE
+                verificationViewModel.timerRemainingFromCountDown.collect{ timeRemainingInSec->
+                    countDownTime(timeRemainingInSec, layout)
                 }
+            }
+        }
 
-                layout.verifyBtn.setOnClickListener {
-                   if (otpCode?.length == resources.getInteger(R.integer.otp_code_length)  ){
-                     (requireActivity() as WelcomeActivity).verifyPhoneNumberWithCode(otpCode!!)
-                   }else{
-                       layout.otpView.showError()
-                       layout.otpErrorTxtView.text = getString(R.string.otp_error_msg)
-                       layout.otpErrorTxtView.visibility=  VISIBLE
-                   }
+        /*
+        Start reading the default timer time remaining value that get started by the verification fragment
+        This way if the activity resumes from total memory loss isNavigatedFromLogin will be false thereby showing only the retry link and not the count down progress
+        */
+        if(welcomeActivityViewModel.isNavigatedFromLogin()){
+            layout.timerTxtView.visibility = VISIBLE
+            layout.resendCodeTxtView.visibility = GONE
+            viewLifecycleOwner.lifecycleScope.launch {
+                verificationViewModel.timerRemainingFromCountDown.collect{ timeRemainingInSec->
+                   countDownTime(timeRemainingInSec, layout)
                 }
+            }
+        }
 
-                val links = listOf(textLinkBuilder.getTextLink(getString(R.string.resend_code_link)){
-                    (requireActivity() as WelcomeActivity).resendVerificationCode(args.phoneNumber, com.bookshelfhub.feature.onboarding.R.raw.loading)
-                })
+        phoneAuthViewModel.getOTPCode().observe(viewLifecycleOwner) { otpCode ->
+            layout.otpView.setOTP(otpCode)
+        }
 
-                layout.resendCodeTxtView.applyLinks(links)
+        phoneAuthViewModel.getIsSignedInFailedError().observe(viewLifecycleOwner) { signInErrorMsg ->
+            layout.otpErrorTxtView.text = signInErrorMsg
+            layout.otpErrorTxtView.visibility = VISIBLE
+            if (signInErrorMsg == getString(R.string.otp_error_msg)) {
+                layout.otpView.setOTP("")
+                layout.otpView.showError()
+            }
+        }
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    /*By using sharedFlow with collect{} there will be no cached value for this to get triggered by default
-                    But only when a value get again sent by clicking the retry link*/
-                    phoneAuthViewModel.getIsCodeSent().collect{
-                        verificationViewModel.startCountDownTimer()
-                        layout.timerTxtView.visibility = VISIBLE
-                        layout.resendCodeTxtView.visibility = GONE
-                        verificationViewModel.timerRemainingFromCountDown.collect{ timeRemainingInSec->
-                            countDownTime(timeRemainingInSec, layout)
-                        }
-                    }
+        phoneAuthViewModel.getIsSignedInSuccessfully().observe(viewLifecycleOwner) { isSignedInSuccessfully ->
+            if (isSignedInSuccessfully) {
+                val isNewUser = phoneAuthViewModel.getIsNewUser()!!
+                if (isNewUser) {
+                    val actionUserInfo =
+                        VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(
+                            true
+                        )
+                    findNavController().navigate(actionUserInfo)
                 }
+            }
+        }
 
-                /*
-                Start reading the default timer time remaining value that get started by the verification fragment
-                This way if the activity resumes from total memory loss isNavigatedFromLogin will be false thereby showing only the retry link and not the count down progress
-                */
-                if(welcomeActivityViewModel.isNavigatedFromLogin()){
-                    layout.timerTxtView.visibility = VISIBLE
-                    layout.resendCodeTxtView.visibility = GONE
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        verificationViewModel.timerRemainingFromCountDown.collect{ timeRemainingInSec->
-                           countDownTime(timeRemainingInSec, layout)
-                        }
-                    }
-                }
+        userInfoViewModel.getIsUserDataAlreadyInRemoteDatabase().observe(viewLifecycleOwner) { isExistingUser ->
+            if (!isExistingUser) {
+                val actionUserInfo =
+                    VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(
+                        false
+                    )
+                findNavController().navigate(actionUserInfo)
+            }
+        }
 
-                phoneAuthViewModel.getOTPCode().observe(viewLifecycleOwner, Observer { otpCode ->
-                    layout.otpView.setOTP(otpCode)
-                })
-
-                phoneAuthViewModel.getIsSignedInFailedError().observe(viewLifecycleOwner, Observer { signInErrorMsg ->
-                    layout.otpErrorTxtView.text = signInErrorMsg
-                    layout.otpErrorTxtView.visibility = View.VISIBLE
-                    if (signInErrorMsg==getString(R.string.otp_error_msg)){
-                        layout.otpView.setOTP("")
-                        layout.otpView.showError()
-                    }
-                })
-
-                phoneAuthViewModel.getIsSignedInSuccessfully().observe(viewLifecycleOwner, Observer { isSignedInSuccessfully ->
-                    if (isSignedInSuccessfully){
-                        val isNewUser = phoneAuthViewModel.getIsNewUser()!!
-                        if (isNewUser){
-                            val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(true)
-                            findNavController().navigate(actionUserInfo)
-                        }
-                    }
-                })
-
-                userInfoViewModel.getIsUserDataAlreadyInRemoteDatabase().observe(viewLifecycleOwner, Observer { isExistingUser ->
-                    if (!isExistingUser){
-                        val actionUserInfo = VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(false)
-                        findNavController().navigate(actionUserInfo)
-                    }
-                })
-
-                return layout.root
+        return layout.root
     }
 
     private fun countDownTime(timeRemainingInSec:Long, layout:FragmentVerificationBinding){

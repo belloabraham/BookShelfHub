@@ -63,9 +63,9 @@ class UserReviewRepo @Inject constructor(
 
 
     override suspend fun getRemoteUserReview(bookId:String, userId:String): UserReview? {
-       return remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
+       return withContext(ioDispatcher){ remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
             bookId, RemoteDataFields.REVIEWS_COLL,
-            userId, UserReview::class.java)
+            userId, UserReview::class.java) }
     }
 
     override suspend  fun getRemoteListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {
@@ -90,7 +90,7 @@ class UserReviewRepo @Inject constructor(
     }
 
      override suspend fun addUserReview(userReview: UserReview) {
-         withContext(ioDispatcher){ userReviewDao.insertOrReplace(userReview)}
+        return withContext(ioDispatcher){ userReviewDao.insertOrReplace(userReview)}
     }
 
     override suspend fun getUserReviews(isVerified: Boolean): List<UserReview> {

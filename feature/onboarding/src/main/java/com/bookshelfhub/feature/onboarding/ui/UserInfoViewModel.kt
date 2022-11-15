@@ -17,7 +17,10 @@ class UserInfoViewModel @Inject constructor(
 
     private var isAddingUser: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     private var isExistingUser: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-
+    internal var firstName:String = ""
+    internal var lastName:String = ""
+    internal var email :String = ""
+    internal var phoneNumber:String = ""
 
     fun setIsUserDataAlreadyInRemoteDatabase(value:Boolean){
         isExistingUser.value=value

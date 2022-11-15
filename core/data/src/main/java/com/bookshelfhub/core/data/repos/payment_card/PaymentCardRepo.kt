@@ -16,14 +16,20 @@ class PaymentCardRepo @Inject constructor(
     private val paymentCardDao = appDatabase.getPaymentCardDao()
 
      override suspend fun addPaymentCard(paymentCard: PaymentCard) {
-        withContext(ioDispatcher){ paymentCardDao.insertOrReplace(paymentCard)}
+        withContext(ioDispatcher){
+            paymentCardDao.insertOrReplace(paymentCard)
+        }
     }
      override suspend fun deletePaymentCard(card: PaymentCard) {
-         withContext(ioDispatcher){ paymentCardDao.delete(card)}
+        return withContext(ioDispatcher){
+             paymentCardDao.delete(card)
+         }
     }
 
      override suspend fun getPaymentCards(): List<PaymentCard> {
-        return  withContext(ioDispatcher){paymentCardDao.getPaymentCards()}
+        return  withContext(ioDispatcher){
+            paymentCardDao.getPaymentCards()
+        }
     }
 
      override fun getLivePaymentCards(): LiveData<List<PaymentCard>> {
@@ -31,6 +37,8 @@ class PaymentCardRepo @Inject constructor(
     }
 
      override suspend fun deleteAllPaymentCards() {
-         withContext(ioDispatcher){paymentCardDao.deleteAllPaymentCards()}
+         withContext(ioDispatcher){
+             paymentCardDao.deleteAllPaymentCards()
+         }
     }
 }

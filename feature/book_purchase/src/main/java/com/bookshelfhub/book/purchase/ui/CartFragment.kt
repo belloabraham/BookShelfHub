@@ -9,7 +9,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,10 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.book.purchase.R
 import com.bookshelfhub.book.purchase.adapters.CartItemsListAdapter
 import com.bookshelfhub.book.purchase.databinding.FragmentCartBinding
-import com.bookshelfhub.core.common.helpers.utils.Location
 import com.bookshelfhub.core.common.recycler.SwipeToDeleteCallBack
 import com.bookshelfhub.core.model.entities.CartItem
 import com.bookshelfhub.core.model.entities.PaymentTransaction
+import com.bookshelfhub.core.model.entities.User
+import com.bookshelfhub.payment.SupportedCurrencies
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -35,9 +35,7 @@ class CartFragment : Fragment() {
 
     private var binding: FragmentCartBinding?=null
     private lateinit var layout: FragmentCartBinding
-    private val cartActivityViewModel by hiltNavGraphViewModels<CartFragmentsViewModel>(R.id.cartActivityNavigation)
-
-    private var totalAmountInLocalCurrency:Double=0.0
+    private val cartFragmentViewModel by hiltNavGraphViewModels<CartFragmentsViewModel>(R.id.cartActivityNavigation)
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
 
 
@@ -70,82 +68,76 @@ class CartFragment : Fragment() {
         }
 
 
-        var listOfCartItems: ArrayList<CartItem> =  ArrayList()
+        val arrayListOfCartItems  =  arrayListOf<CartItem>()
 
-        cartActivityViewModel.getListOfCartItemsAfterEarnings().observe(viewLifecycleOwner, Observer{ cartItems->
+        cartFragmentViewModel.getListOfCartItemsAfterUserEarningsFromReferrals().observe(viewLifecycleOwner) { cartItems ->
 
-                val countryCode = Location.getCountryCode(requireActivity().applicationContext)
+            showCartItemsState(cartItems)
 
-                showCartItemsState(cartItems)
+            cartFragmentViewModel.totalCostOfBook = 0.0
+            cartFragmentViewModel.getPaymentTransactions().clear()
 
-                totalAmountInLocalCurrency = 0.0
-                cartActivityViewModel.setTotalAmountInUSD(0.0)
-                cartActivityViewModel.setCombinedBookIds("")
+            if (cartItems.isNotEmpty()) {
 
-                if (cartItems.isNotEmpty()){
-                    listOfCartItems = cartItems as ArrayList<CartItem>
-                    cartListAdapter.submitList(listOfCartItems)
+                arrayListOfCartItems.addAll(cartItems)
+                cartListAdapter.submitList(arrayListOfCartItems)
 
+                lifecycleScope.launch {
 
-                    lifecycleScope.launch {
-                        val userAdditionalInfo = cartActivityViewModel.getUser().additionInfo
-                        for(cartItem in cartItems){
+                    val user = cartFragmentViewModel.getUser()
 
-                            val priceInUSD = cartItem.priceInUsd ?: cartItem.price
-
-                            cartActivityViewModel.setPaymentTransactions(
-                                cartActivityViewModel.getPaymentTransactions().plus(
-                                    PaymentTransaction(
-                                        cartItem.bookId,
-                                        priceInUSD,
-                                        cartActivityViewModel.getUserId(),
-                                        cartItem.name,
-                                        cartItem.coverUrl,
-                                        cartItem.pubId,
-                                        cartItem.collaboratorsId,
-                                        countryCode,
-                                        userAdditionalInfo,
-                                        cartItem.price )
-                                ))
-
-                            cartActivityViewModel.setTotalAmountInUSD(cartActivityViewModel.getTotalAmountInUSD().plus(priceInUSD))
-                            totalAmountInLocalCurrency =  totalAmountInLocalCurrency.plus(cartItem.price)
-                            cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cartItem.bookId}, "))
-                        }
-                        showTotalAmountOfBooks(
-                            localCurrency =  cartItems[0].currency,
-                            totalAmountInLocalCurrency
-                        )
+                    val bookSoldInNGN = cartItems.filter {
+                        it.sellerCurrency == SupportedCurrencies.NGN
                     }
 
-                }
-            })
+                    val bookSoldInUSD = cartItems.filter {
+                        it.sellerCurrency == SupportedCurrencies.USD
+                    }
 
+                    val totalCostOfBooksInUSD =  addBooksToPaymentTransaction(bookSoldInUSD, user)
+                    val totalCostOfBooksInNGN =  addBooksToPaymentTransaction(bookSoldInNGN, user)
+                    val atLeastABookIsSoldInUSD = bookSoldInUSD.isNotEmpty()
+
+                    var currencyToChargeForBookSale = SupportedCurrencies.NGN
+
+                    if(atLeastABookIsSoldInUSD){
+                        currencyToChargeForBookSale = SupportedCurrencies.USD
+                        cartFragmentViewModel.totalCostOfBook += totalCostOfBooksInUSD
+                        //TODO Covert the total amount of books sold in NGN to USD and then add it to cartFragmentViewModel.totalCostOfBook if books are sold in USD in the future
+                    }
+
+                    val noBooksWasSoldInUSD = !atLeastABookIsSoldInUSD
+                    if(noBooksWasSoldInUSD){
+                        cartFragmentViewModel.totalCostOfBook += totalCostOfBooksInNGN
+                    }
+
+                    showTotalAmountOfBooks(
+                        currencyToChargeForBookSale,
+                        cartFragmentViewModel.totalCostOfBook,
+                        user
+                    )
+                }
+
+            }
+        }
 
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
 
             @SuppressLint("ShowToast")
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
                 val position: Int = viewHolder.bindingAdapterPosition
-                val cart: CartItem = cartListAdapter.currentList[position]
+                val cart = cartListAdapter.currentList[position]
 
-                listOfCartItems.removeAt(position)
+                arrayListOfCartItems.removeAt(position)
                 cartListAdapter.notifyItemRemoved(position)
 
-                cartActivityViewModel.deleteFromCart(cart)
-                totalAmountInLocalCurrency = totalAmountInLocalCurrency.minus(cart.price)
-                cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().replace("${cart.bookId}, ", ""))
-                showTotalAmountOfBooks(cart.currency, totalAmountInLocalCurrency)
+                cartFragmentViewModel.deleteFromCart(cart) //This triggers the live cart block above
 
                  Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
                      .setAction(R.string.undo) {
-                    listOfCartItems.add(position, cart)
+                    arrayListOfCartItems.add(position, cart)
                     cartListAdapter.notifyItemInserted(position)
-                    cartActivityViewModel.addToCart(cart)
-                         cartActivityViewModel.setCombinedBookIds(cartActivityViewModel.getCombinedBookIds().plus("${cart.bookId}, "))
-                    totalAmountInLocalCurrency = totalAmountInLocalCurrency.plus(cart.price)
-                    showTotalAmountOfBooks(cart.currency, totalAmountInLocalCurrency)
-
+                    cartFragmentViewModel.addToCart(cart) //This triggers the live cart block above
                    }.show()
             }
         }
@@ -156,21 +148,71 @@ class CartFragment : Fragment() {
         return layout.root
     }
 
+    private fun addBooksToPaymentTransaction(cartItems:List<CartItem>, user:User): Double {
+       var totalBookPrice = 0.0
+        val combinedBookIds = StringBuilder()
+        for (cartItem in cartItems) {
+
+            cartFragmentViewModel.getPaymentTransactions().add(
+                PaymentTransaction(
+                    cartItem.bookId,
+                    cartFragmentViewModel.getUserId(),
+                    cartItem.name,
+                    cartItem.coverDataUrl,
+                    cartItem.pubId,
+                    cartItem.collaboratorsId,
+                    user.countryCode,
+                    user.additionInfo,
+                    cartItem.price,
+                    user.earningsCurrency,
+                    cartItem.sellerCurrency
+                )
+            )
+
+            totalBookPrice += cartItem.price
+            combinedBookIds.append("${cartItem.bookId}, ")
+        }
+
+        cartFragmentViewModel.combinedBookIds = combinedBookIds.toString()
+        return totalBookPrice
+    }
 
     private fun showTotalAmountOfBooks(
-        localCurrency:String,
-        totalAmountInLocalCurrency:Double){
+        currencyToChargeForBookSale:String,
+        totalAmountOfBooks:Double, user: User){
 
-        val totalEarningsInLocalCurrency = cartActivityViewModel.getTotalEarningsInLocalCurrency()
-        val totalAmountMinusEarningsInLocalCurrency = totalAmountInLocalCurrency - totalEarningsInLocalCurrency
+        cartFragmentViewModel.currencyToChargeForBooksSale = currencyToChargeForBookSale
+        val totalUserEarnings = cartFragmentViewModel.getTotalUserEarnings()
+
+
+        val noNegativeAmountAfterEarnings = totalAmountOfBooks > totalUserEarnings
+        val qualifiedToUseEarnings = user.earningsCurrency == currencyToChargeForBookSale && noNegativeAmountAfterEarnings
+
+        var totalAmountAfterUserEarnings = totalAmountOfBooks
+
+        if(qualifiedToUseEarnings){
+
+            val payStackMinimumAmountToCharge = 50
+            val bookPriceAfterEarnings = totalAmountOfBooks - totalUserEarnings
+
+            if(currencyToChargeForBookSale == SupportedCurrencies.NGN && bookPriceAfterEarnings > payStackMinimumAmountToCharge){
+                totalAmountAfterUserEarnings = bookPriceAfterEarnings
+            }
+
+            if(currencyToChargeForBookSale == SupportedCurrencies.USD){
+                totalAmountAfterUserEarnings = bookPriceAfterEarnings
+            }
+        }
 
         layout.totalCostTxt.text = String.format(
             getString(R.string.total_local_currency),
-            localCurrency,
-            totalAmountMinusEarningsInLocalCurrency,
-            totalAmountInLocalCurrency,
-            totalEarningsInLocalCurrency
+            currencyToChargeForBookSale,
+            totalAmountAfterUserEarnings,
+            totalAmountOfBooks,
+            totalUserEarnings
         )
+
+        cartFragmentViewModel.totalCostOfBook = totalAmountAfterUserEarnings
 
     }
 

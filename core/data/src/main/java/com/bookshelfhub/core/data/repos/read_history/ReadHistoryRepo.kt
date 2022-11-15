@@ -1,6 +1,5 @@
 package com.bookshelfhub.core.data.repos.read_history
 
-import androidx.lifecycle.LiveData
 import com.bookshelfhub.core.database.AppDatabase
 import com.bookshelfhub.core.model.entities.ReadHistory
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,8 +19,9 @@ class ReadHistoryRepo @Inject constructor(
          withContext(ioDispatcher){ readHistoryDao.insertOrReplace(history)}
     }
 
-     override fun getLiveReadHistory(id:Int): LiveData<Optional<ReadHistory>> {
-        return readHistoryDao.getLiveReadHistory(id)
+
+    override suspend fun getReadHistory(id:Int): Optional<ReadHistory> {
+        return readHistoryDao.getReadHistory(id)
     }
 
      override suspend fun deleteAllHistory() {

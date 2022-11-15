@@ -26,8 +26,8 @@ class BookCategoryActivityViewModel @Inject constructor(
   private val userId = userAuth.getUserId()
   private val trendingCategory = context.getString(R.string.trending)
   private val recommendedCategory =  context.getString(R.string.recommended_for)
-
   private val category = savedState.get<String>(Category.TITLE)!!
+
 
   private val config  = PagingConfig(
     pageSize = 10,

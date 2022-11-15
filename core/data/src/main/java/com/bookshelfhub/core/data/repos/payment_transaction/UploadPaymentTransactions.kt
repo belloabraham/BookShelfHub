@@ -21,8 +21,8 @@ import com.bookshelfhub.core.remote.cloud_functions.CloudFunctions
 import com.bookshelfhub.core.remote.cloud_functions.ICloudFunctions
 import com.bookshelfhub.core.remote.database.RemoteDataFields
 import com.bookshelfhub.payment.Payment
-import com.google.firebase.functions.FirebaseFunctionsException
 import com.bookshelfhub.core.resources.R
+import com.bookshelfhub.payment.PaymentSDKType
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 
@@ -52,6 +52,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
         }
 
         val transactionRef = inputData.getString(Payment.TRANSACTION_REF.KEY)!!
+        val paymentSDKType = inputData.getString(Payment.PAYMENT_SDK_TYPE.KEY)!!
+        val currencyToChargeForBookSale = inputData.getString(Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY)!!
         val paymentTransactions = paymentTransactionRepo.getPaymentTransactions(transactionRef)
 
         if (paymentTransactions.isEmpty()) {
@@ -59,79 +61,102 @@ class UploadPaymentTransactions @AssistedInject constructor(
         }
 
       return  try {
-            val orderedBooks = mutableListOf<OrderedBook>()
-            val transactionBooksIds = mutableListOf<String>()
-            var bookNames = ""
-            var totalNoOfOrderedBooksAsSerialNo = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
-            val isFirstPurchase = totalNoOfOrderedBooksAsSerialNo <=0
+            val listOfOrderedBooksInCart = mutableListOf<OrderedBook>()
+            val listOfBookIdsToBeDeletedFromCart = mutableListOf<String>()
+
+            val combinedBookNames = StringBuilder()
+            var totalNoOfPreviouslyOrderedBooks = orderedBooksRepo.getTotalNoOfOrderedBooks().toLong()
+            val isFirstPurchase = totalNoOfPreviouslyOrderedBooks <= 0
+
             for (transaction in paymentTransactions) {
-                var collabCommissionInPercentage:Double? = null
-                var collabId:String? = null
-                val optionalCollab = referralRepo.getAnOptionalCollaborator(transaction.bookId)
-                if(optionalCollab.isPresent){
-                  val  collab = optionalCollab.get()
-                    collabId = collab.collabId
-                    collabCommissionInPercentage = collab.commissionInPercentage
+
+                var commissionInPercentageAssignedToCollaborator:Double? = null
+                var idForEachCollaborator:String? = null
+                val collaboratorForEachBook = referralRepo.getAnOptionalCollaborator(transaction.bookId)
+
+                if(collaboratorForEachBook.isPresent){
+                  val collab = collaboratorForEachBook.get()
+                    idForEachCollaborator = collab.collabId
+                    commissionInPercentageAssignedToCollaborator = collab.commissionInPercentage
                 }
 
-                transactionBooksIds.add(transaction.bookId)
+                listOfBookIdsToBeDeletedFromCart.add(transaction.bookId)
+
                 val orderedBook = OrderedBook(
-                    transaction.bookId, transaction.priceInUSD,
-                    transaction.userId, transaction.name,
-                    transaction.coverDataUrl, transaction.pubId,
-                    transaction.orderedCountryCode,
-                    transactionRef, null,  0, 0,
-                    totalNoOfOrderedBooksAsSerialNo, transaction.additionInfo,
-                    collabCommissionInPercentage,
-                    collabId,
-                    transaction.priceInBookCurrency
+                    transaction.bookId,
+                    transaction.userId,
+                    transaction.name,
+                    transaction.coverDataUrl,
+                    transaction.pubId,
+                    transaction.sellerCurrency,
+                    transaction.userCountryCode,
+                    transactionRef,
+                    null,
+                    0,
+                    0,
+                    ++totalNoOfPreviouslyOrderedBooks,
+                    transaction.additionInfo,
+                    commissionInPercentageAssignedToCollaborator,
+                    idForEachCollaborator,
+                    transaction.price
                 )
-                bookNames =  bookNames.plus("${transaction.name}, ")
-                orderedBooks.add(orderedBook)
-                totalNoOfOrderedBooksAsSerialNo = totalNoOfOrderedBooksAsSerialNo.plus(1)
+
+                combinedBookNames.append("${transaction.name}, ")
+                listOfOrderedBooksInCart.add(orderedBook)
             }
 
           val userNotificationToken = cloudMessaging.getNotificationTokenAsync()
-          val jsonStringOfOrderedBooks = json.getJsonString(orderedBooks)
+          val listOfOrderedBooksAsJsonString = json.getJsonString(listOfOrderedBooksInCart)
 
+
+          val userId = userAuth.getUserId()
+          val user = userRepo.getUser(userId).get()
+          val referrerIsQualifiedForEarnings = isFirstPurchase && user.earningsCurrency == currencyToChargeForBookSale
 
           var userReferralId:String? = null
           var userReferrerCommission = 0.0
-          if(isFirstPurchase){
-              val userId = userAuth.getUserId()
-              userReferralId = userRepo.getUser(userId).get().referrerId
-              userReferrerCommission = paymentTransactions[0].priceInBookCurrency * 0.1
+
+          if(referrerIsQualifiedForEarnings){
+              userReferralId = user.referrerId
+              userReferrerCommission = paymentTransactions[0].price * 0.1 //10 percent
           }
 
           val data = hashMapOf<String, Any?>(
               Payment.TRANSACTION_REF.KEY to transactionRef,
               RemoteDataFields.NOTIFICATION_TOKEN to userNotificationToken,
-              Payment.ORDERED_BOOKS.KEY to jsonStringOfOrderedBooks,
-              Payment.BOOK_NAMES.KEY to bookNames,
+              Payment.ORDERED_BOOKS.KEY to listOfOrderedBooksAsJsonString,
+              Payment.BOOK_NAMES.KEY to combinedBookNames.toString(),
               Payment.USER_REFERRER_ID.KEY to userReferralId,
               Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission,
+              Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY to currencyToChargeForBookSale
           )
 
-          cloudFunctions.call(functionName = CloudFunctions.completePayStackPaymentTransaction, data)
+          val paymentCloudFunction = getPaymentCLoudFunctionToBeCalled(paymentSDKType)!!
+          cloudFunctions.call(functionName = paymentCloudFunction, data)
 
-          cartItemsRepo.deleteFromCart(transactionBooksIds)
+          cartItemsRepo.deleteFromCart(listOfBookIdsToBeDeletedFromCart)
 
+          //Required by bookshelf tab to know if user just purchase new books
           settingsUtil.setBoolean(Book.IS_NEWLY_PURCHASED, true)
 
           Result.success()
 
         } catch (e: Exception) {
-            val errorIsNotCloudFunctionException = e !is FirebaseFunctionsException
-            if(errorIsNotCloudFunctionException){
-                val message = String.format(applicationContext.getString(R.string.unable_to_process_payment), e.message)
-                showNotification(message, R.string.payment_trans_failed)
-            }
+            val message = String.format(applicationContext.getString(R.string.unable_to_process_payment), e.message)
+            showNotification(message, R.string.payment_trans_failed)
             ErrorUtil.e(e)
             return Result.success()
         } finally {
             paymentTransactionRepo.deletePaymentTransactions(paymentTransactions)
             Result.success()
         }
+    }
+
+    private  fun getPaymentCLoudFunctionToBeCalled(paymentSDK:String): String? {
+        if(paymentSDK == PaymentSDKType.PAYSTACK.KEY){
+           return CloudFunctions.COMPLETE_PAYSTACK_PAYMENT_TRANSACTION_FUNCTION
+        }
+        return null
     }
 
     private fun showNotification(message:String, @StringRes title:Int){

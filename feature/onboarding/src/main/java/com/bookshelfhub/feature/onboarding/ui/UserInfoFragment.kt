@@ -20,10 +20,13 @@ import com.bookshelfhub.core.common.extensions.purifyJSONString
 import com.bookshelfhub.core.common.helpers.KeyboardUtil
 import com.bookshelfhub.core.common.helpers.utils.AppUtil
 import com.bookshelfhub.core.common.helpers.utils.DeviceUtil
+import com.bookshelfhub.core.common.helpers.utils.Location
+import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.model.entities.User
 import com.bookshelfhub.core.model.entities.remote.RemoteUser
 import com.bookshelfhub.feature.onboarding.WelcomeActivityViewModel
 import com.bookshelfhub.feature.onboarding.databinding.FragmentUserInfoBinding
+import com.bookshelfhub.payment.EarningsCurrency
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.launch
@@ -43,6 +46,7 @@ class UserInfoFragment : Fragment() {
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()
     private val welcomeActivityViewModel: WelcomeActivityViewModel by activityViewModels()
     private val args:UserInfoFragmentArgs by navArgs()
+    private lateinit var layout:FragmentUserInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +61,11 @@ class UserInfoFragment : Fragment() {
         val isNewUser = args.isNewUser
         val userId = userAuth.getUserId()
         val userAuthType = userAuth.getAuthType()
+
+        layout.phoneEditTxt.setText(userInfoViewModel.phoneNumber)
+        layout.firstNameEditTxt.setText(userInfoViewModel.phoneNumber)
+        layout.lastNameEditTxt.setText(userInfoViewModel.lastName)
+        layout.emailEditTxt.setText(userInfoViewModel.email)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
@@ -96,7 +105,10 @@ class UserInfoFragment : Fragment() {
                     userAuth.updateDisplayName(firstName)
                 }
 
-                    val user = User(userId, userAuthType)
+                    val timeZone = DateTimeUtil.getTimeZone()
+                    val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
+                    val countryCode = Location.getCountryCode(requireContext().applicationContext)
+                    val user = User(userId, userAuthType, countryCode!!, earningsCurrency)
                     user.appVersion=appUtil.getAppVersionName()
                     user.firstName = firstName.purifyJSONString()
                     user.lastName = lastName.purifyJSONString()
@@ -104,6 +116,7 @@ class UserInfoFragment : Fragment() {
                     user.email = email.purifyJSONString()
                     user.phone = phone.purifyJSONString()
                     user.referrerId = userReferralId
+
                     user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
                     Build.VERSION.SDK_INT)
 
@@ -113,6 +126,14 @@ class UserInfoFragment : Fragment() {
         }
 
         return layout.root
+    }
+
+    override fun onStop() {
+        userInfoViewModel.email = layout.emailEditTxt.text.toString().trim()
+        userInfoViewModel.phoneNumber = layout.phoneEditTxt.text.toString().trim()
+        userInfoViewModel.firstName = layout.firstNameEditTxt.text.toString().trim()
+        userInfoViewModel.lastName = layout.lastNameEditTxt.text.toString().trim()
+        super.onStop()
     }
 
 

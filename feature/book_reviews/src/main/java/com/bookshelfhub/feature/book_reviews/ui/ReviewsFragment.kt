@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.core.model.entities.UserReview
@@ -23,7 +22,7 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 @WithFragmentBindings
 class ReviewsFragment : Fragment() {
 
-    private val bookInfoActivityViewModel: BookReviewsActivityViewModel by viewModels()
+    private val bookReviewsViewModel: BookReviewsActivityViewModel by viewModels()
 
     private var binding: ReviewsFragmentBinding?=null
     private var reviewsAdapter: ListAdapter<UserReview, RecyclerViewHolder<UserReview>>?=null
@@ -35,7 +34,7 @@ class ReviewsFragment : Fragment() {
         binding = ReviewsFragmentBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-        bookInfoActivityViewModel.getTop300UserReviews().observe(viewLifecycleOwner, Observer { reviews ->
+        bookReviewsViewModel.getTop300UserReviews().observe(viewLifecycleOwner) { reviews ->
 
             if (reviews.isNotEmpty()){
                 layout.progressBar.visibility = GONE
@@ -54,7 +53,7 @@ class ReviewsFragment : Fragment() {
 
             }
 
-        })
+        }
 
         return layout.root
     }

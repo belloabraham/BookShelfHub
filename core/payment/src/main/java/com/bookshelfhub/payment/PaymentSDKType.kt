@@ -1,5 +1,5 @@
 package com.bookshelfhub.payment
 
-enum class PaymentSDKType {
-    PAYSTACK
+enum class PaymentSDKType(val KEY:String) {
+    PAYSTACK("paystack")
 }

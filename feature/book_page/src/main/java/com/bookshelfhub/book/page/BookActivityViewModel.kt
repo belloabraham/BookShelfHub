@@ -41,7 +41,6 @@ class BookActivityViewModel @Inject constructor(
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
-    private var readHistory: LiveData<Optional<ReadHistory>> = MutableLiveData()
     private var bookShareLink:String?=null
 
 
@@ -51,12 +50,6 @@ class BookActivityViewModel @Inject constructor(
 
         viewModelScope.launch {
             bookShareLink = settingsUtil.getString(bookId)
-
-            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
-            if (showPopup) {
-                val firstRecordInTheDatabase = 0
-                readHistory = readHistoryRepo.getLiveReadHistory(firstRecordInTheDatabase)
-            }
         }
 
         livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
@@ -161,8 +154,13 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
-    fun getLiveReadHistory(): LiveData<Optional<ReadHistory>> {
-        return readHistory
+    suspend fun getBoolean(key: String, defaultVal: Boolean): Boolean {
+        return settingsUtil.getBoolean(key, defaultVal)
+    }
+
+    suspend fun getReadHistory(): Optional<ReadHistory> {
+        val firstRecordInTheDatabase = 0
+        return readHistoryRepo.getReadHistory(firstRecordInTheDatabase)
     }
 
     fun addReadHistory(currentPage: Int, totalPages: Int) {

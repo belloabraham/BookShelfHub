@@ -135,8 +135,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun providePaymentTransactionRepo(appDatabase: AppDatabase, worker: Worker, remoteDataSource: IRemoteDataSource): IPaymentTransactionRepo {
-        return PaymentTransactionRepo(appDatabase, worker, remoteDataSource)
+    fun providePaymentTransactionRepo(appDatabase: AppDatabase, worker: Worker): IPaymentTransactionRepo {
+        return PaymentTransactionRepo(appDatabase, worker)
     }
 
     @Singleton

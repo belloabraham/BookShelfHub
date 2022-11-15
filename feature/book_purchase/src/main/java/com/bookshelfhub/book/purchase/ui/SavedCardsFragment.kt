@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ListAdapter
@@ -20,11 +20,12 @@ import com.bookshelfhub.book.purchase.adapters.PaymentCardsAdapter
 import com.bookshelfhub.book.purchase.databinding.FragmentSavedCardsBinding
 import com.bookshelfhub.core.common.helpers.Json
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
-import com.bookshelfhub.core.common.helpers.utils.Location
 import com.bookshelfhub.core.model.entities.PaymentCard
 import com.bookshelfhub.payment.*
+import com.bookshelfhub.payment.pay_stack.PayStack
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import javax.inject.Inject
 
@@ -36,7 +37,7 @@ class SavedCardsFragment : Fragment(){
     private lateinit var layout: FragmentSavedCardsBinding
     private var paymentCardsAdapter: ListAdapter<PaymentCard, RecyclerViewHolder<PaymentCard>>?=null
     private val savedCardsViewModel: SavedCardsViewModel by viewModels()
-    private val cartActivityViewModel by hiltNavGraphViewModels<CartFragmentsViewModel>(R.id.cartActivityNavigation)
+    private val cartFragmentViewModel by hiltNavGraphViewModels<CartFragmentsViewModel>(R.id.cartActivityNavigation)
 
     @Inject
     lateinit var json: Json
@@ -49,16 +50,19 @@ class SavedCardsFragment : Fragment(){
                 binding = FragmentSavedCardsBinding.inflate(inflater, container, false)
                 layout = binding!!
 
-                val paymentSDKType = getPaymentSDKByCountryCode()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    
+                    paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter { paymentCard ->
+                        val paymentSDKType = savedCardsViewModel.getPaymentSDK(paymentCard.countryCode)
 
-                paymentCardsAdapter = PaymentCardsAdapter(requireContext()).getPaymentListAdapter { paymentCard ->
-                    //Callback for when user click on any of the payment cards on the list
-                    val paymentNotSupportedForUserCountry = paymentSDKType == null
-                    if (paymentNotSupportedForUserCountry) {
-                        showPaymentNotSupportedForYourCountryDialog()
-                    } else {
-                        chargeCard(paymentSDKType!!, paymentCard)
+                        if(paymentSDKType == null){
+                            showPaymentNotSupportedForCardCurrencyDialog()
+                        }else{
+                            cartFragmentViewModel.paymentSDKType = paymentSDKType
+                            chargeCard(paymentSDKType, paymentCard)
+                        }
                     }
+                    
                 }
 
                 layout.paymentCardsRecView.addItemDecoration(
@@ -67,8 +71,8 @@ class SavedCardsFragment : Fragment(){
                         DividerItemDecoration.VERTICAL
                     )
                 )
-                layout.paymentCardsRecView.adapter = paymentCardsAdapter!!
 
+                layout.paymentCardsRecView.adapter = paymentCardsAdapter!!
 
                 layout.addNewCardBtn.setOnClickListener {
                     val actionCardInfo =
@@ -76,49 +80,41 @@ class SavedCardsFragment : Fragment(){
                     findNavController().navigate(actionCardInfo)
                 }
 
-                savedCardsViewModel.getLivePaymentCards()
-                    .observe(requireActivity(), Observer { savedPaymentCards ->
-                        if (savedPaymentCards.isEmpty()) {
-                            layout.noSavedCardsLayout.visibility = VISIBLE
-                            layout.paymentCardsRecView.visibility = GONE
-                        } else {
-                            layout.noSavedCardsLayout.visibility = GONE
-                            layout.paymentCardsRecView.visibility = VISIBLE
-                            paymentCardsAdapter!!.submitList(savedPaymentCards)
-                        }
-                    })
+                savedCardsViewModel.getLivePaymentCards().observe(requireActivity()) { savedPaymentCards ->
+                    if (savedPaymentCards.isEmpty()) {
+                        layout.noSavedCardsLayout.visibility = VISIBLE
+                        layout.paymentCardsRecView.visibility = GONE
+                    } else {
+                        layout.noSavedCardsLayout.visibility = GONE
+                        layout.paymentCardsRecView.visibility = VISIBLE
+                        paymentCardsAdapter!!.submitList(savedPaymentCards)
+                    }
+                }
 
-                return layout.root
-            }
-
-
-
-
-    private fun getPaymentSDKByCountryCode(): PaymentSDKType? {
-            val countryCode = Location.getCountryCode(requireContext())
-            return if(countryCode==null) null else PaymentSDK.getType(countryCode)
-        }
+        return layout.root
+    }
+    
 
     private fun chargeCard(paymentPaymentSDKType: PaymentSDKType, paymentCard: PaymentCard){
-        val totalAmountToChargeInUSD = cartActivityViewModel.getTotalAmountInUSD() - cartActivityViewModel.getTotalEarningsInLocalCurrency()
+        val totalAmountToCharge = cartFragmentViewModel.totalCostOfBook
 
-        val userMetaData = hashMapOf(
-            Payment.USER_ID.KEY to cartActivityViewModel.getUserId(),
-            Payment.IDS_OF_BOOKS_BOUGHT.KEY to cartActivityViewModel.getCombinedBookIds()
+        val paystackUserMetaData = hashMapOf(
+            Payment.USER_ID.KEY to cartFragmentViewModel.getUserId(),
+            Payment.IDS_OF_BOOKS_BOUGHT.KEY to cartFragmentViewModel.combinedBookIds
         )
 
         if(paymentPaymentSDKType == PaymentSDKType.PAYSTACK){
-            chargeCardWithPayStack(paymentCard, totalAmountToChargeInUSD, userMetaData)
+            chargeCardWithPayStack(paymentCard, totalAmountToCharge, paystackUserMetaData)
         }
     }
 
     private fun chargeCardWithPayStack(
         paymentCard: PaymentCard,
-        amountToChargeInUSD:Double,
+        totalAmountToCharge:Double,
         metaData: HashMap<String, String>
     ){
 
-        val payStackLivePublicKey = cartActivityViewModel.getPayStackLivePublicKey()
+        val payStackLivePublicKey = cartFragmentViewModel.getPayStackLivePublicKey()
 
         val payment: IPayment = PayStack(
             Payment.USER_DATA.KEY,
@@ -132,8 +128,9 @@ class SavedCardsFragment : Fragment(){
         payment.chargeCard(
             payStackPublicKey!!,
             paymentCard,
-            amountToChargeInUSD,
-            cartActivityViewModel.getUserEmail()!!
+            totalAmountToCharge,
+            cartFragmentViewModel.getUserEmail()!!,
+           cartFragmentViewModel.currencyToChargeForBooksSale
         )
     }
 
@@ -143,16 +140,17 @@ class SavedCardsFragment : Fragment(){
 
             override fun onSuccess(transaction: Transaction?) {
 
-                val paymentTransaction = cartActivityViewModel.getPaymentTransactions()
+                val paymentTransaction = cartFragmentViewModel.getPaymentTransactions()
                 transaction?.let {
-                    val length = paymentTransaction.size -1
+
+                    val length = paymentTransaction.size
 
                     //Pass transaction reference to all the transaction record that is created
-                    for (i in 0..length){
+                    for (i in 0 until length){
                         paymentTransaction[i].transactionReference = it.reference
                     }
 
-                    cartActivityViewModel.addPaymentTransactions(paymentTransaction)
+                    cartFragmentViewModel.initializePaymentVerificationProcess(paymentTransaction)
 
                     //Show user a message that their transaction is processing and close Cart activity when the click ok
                     showPaymentProcessingMsg()
@@ -183,12 +181,12 @@ class SavedCardsFragment : Fragment(){
         }
     }
 
-    private fun showPaymentNotSupportedForYourCountryDialog(){
-        AlertDialogBuilder.with(R.string.location_not_supported, requireActivity())
+    private fun showPaymentNotSupportedForCardCurrencyDialog(){
+        AlertDialogBuilder.with(R.string.supported_currency_hint, requireActivity())
             .setCancelable(false)
             .setPositiveAction(R.string.ok){}
             .build()
-            .showDialog(R.string.unsupported_region)
+            .showDialog(R.string.unsupported_currency)
     }
 
     private fun showPaymentProcessingMsg(){

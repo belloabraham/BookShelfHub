@@ -105,7 +105,7 @@ class BookCategoryActivity : AppCompatActivity() {
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
+        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this) { cartItemsCount ->
             val cartIsNotEmpty = cartItemsCount > 0
             if(cartIsNotEmpty){
                 layout.cartNotifText.text = "$cartItemsCount"
@@ -114,7 +114,7 @@ class BookCategoryActivity : AppCompatActivity() {
                 layout.cartBtnContainer.visibility = GONE
             }
 
-        })
+        }
 
         lifecycleScope.launch {
             listOfBooks.addAll(bookCategoryActivityViewModel.getBooksByCategory())

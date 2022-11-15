@@ -1,18 +1,16 @@
 package com.bookshelfhub.core.data.repos.payment_transaction
 
 import com.bookshelfhub.core.model.entities.PaymentTransaction
+import com.bookshelfhub.payment.PaymentSDKType
 
 
 interface IPaymentTransactionRepo {
-    suspend fun addPaymentTransactions(paymentTransactions: List<PaymentTransaction>)
-
-    suspend fun uploadPaymentTransaction(
+    suspend fun initializePaymentVerificationProcess(
         paymentTransactions: List<PaymentTransaction>,
-        userId: String
-    ): Void?
-
+        currencyToChargeForBookSale:String,
+        paymentSDKType: PaymentSDKType
+    )
     suspend fun deletePaymentTransactions(paymentTransactions:List<PaymentTransaction>)
     suspend fun getAllPaymentTransactions(): List<PaymentTransaction>
     suspend fun getPaymentTransactions(transactionRef:String): List<PaymentTransaction>
-    suspend fun deleteAllPaymentTransactions()
 }

@@ -18,14 +18,25 @@ class ProfileViewModel @Inject constructor(
 ): ViewModel(){
 
     private val userId:String = userAuth.getUserId()
-    private var user: LiveData<User> = MutableLiveData()
+    private var liveUser: MutableLiveData<User> = MutableLiveData()
+    private var user:User? = null
 
-    init {
-        user = userRepo.getLiveUser(userId)
+    fun loadUserData(){
+        viewModelScope.launch {
+            if(user==null){
+                user = userRepo.getUser(userId).get()
+            }
+            liveUser.value = user!!
+        }
     }
 
-    fun getUser(): LiveData<User> {
+    fun getUser(): User? {
         return user
+    }
+
+
+    fun getLiveUser(): LiveData<User> {
+        return liveUser
     }
 
      fun addUser(user: User){

@@ -42,22 +42,23 @@ class CartItemsRepo @Inject constructor(
          withContext(ioDispatcher){cartItemsDao.insertOrReplace(cart)}
          // Clear every Items in this cart in the next 15 hours
          val clearCart =
-             OneTimeWorkRequestBuilder<ClearCart>()
-                 .setInitialDelay( 24, TimeUnit.HOURS)
+             OneTimeWorkRequestBuilder<
+                     ClearCart>()
+                 .setInitialDelay( 2, TimeUnit.DAYS)
                  .build()
          worker.enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE , clearCart)
     }
 
      override suspend fun deleteAllCartItems() {
-         withContext(ioDispatcher){cartItemsDao.deleteAllCartItems()}
+         return withContext(ioDispatcher){cartItemsDao.deleteAllCartItems()}
     }
 
      override suspend fun deleteFromCart(isbnList: List<String>) {
-         withContext(ioDispatcher){ cartItemsDao.deleteFromCart(isbnList)}
+         return withContext(ioDispatcher){ cartItemsDao.deleteFromCart(isbnList)}
     }
 
      override suspend fun deleteFromCart(cart: CartItem) {
-         withContext(ioDispatcher){cartItemsDao.delete(cart)}
+        return withContext(ioDispatcher){cartItemsDao.delete(cart)}
     }
     
 }

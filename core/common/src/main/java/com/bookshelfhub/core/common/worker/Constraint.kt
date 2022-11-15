@@ -13,5 +13,4 @@ object Constraint {
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
     }
-
 }

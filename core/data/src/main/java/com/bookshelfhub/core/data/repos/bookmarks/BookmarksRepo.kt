@@ -48,18 +48,18 @@ class BookmarksRepo @Inject constructor(
     }
 
      override suspend fun deleteFromBookmark(pageNumb: Int, isbn:String) {
-         withContext(ioDispatcher){bookmarksDao.deleteFromBookmark(pageNumb, isbn)}
+         return withContext(ioDispatcher){bookmarksDao.deleteFromBookmark(pageNumb, isbn)}
     }
 
      override suspend fun addBookmark(bookmark: Bookmark) {
-         withContext(ioDispatcher){
+         withContext(ioDispatcher) {
              bookmarksDao.insertOrReplace(bookmark)
+         }
              val oneTimeBookmarkUpload =
                  OneTimeWorkRequestBuilder<UploadBookmarks>()
                      .setConstraints(Constraint.getConnected())
                      .build()
              worker.enqueueUniqueWork(Tag.oneTimeBookmarkUpload, ExistingWorkPolicy.REPLACE, oneTimeBookmarkUpload)
-         }
     }
 
      override suspend fun getDeletedBookmarks(isDeleted: Boolean, isUploaded: Boolean): List<Bookmark> {
@@ -71,11 +71,11 @@ class BookmarksRepo @Inject constructor(
     }
 
      override suspend fun addBookmarkList(bookmarks: List<Bookmark>) {
-         withContext(ioDispatcher){bookmarksDao.insertAllOrReplace(bookmarks)}
+        return withContext(ioDispatcher){bookmarksDao.insertAllOrReplace(bookmarks)}
     }
 
      override suspend fun deleteBookmarks(bookmarks: List<Bookmark>) {
-         withContext(ioDispatcher){bookmarksDao.deleteAll(bookmarks)}
+        return withContext(ioDispatcher){bookmarksDao.deleteAll(bookmarks)}
     }
 
      override suspend fun getLocalBookmarks(
@@ -112,7 +112,7 @@ class BookmarksRepo @Inject constructor(
             userId,
             RemoteDataFields.BOOKMARKS_COLL,
             Bookmark::class.java
-        )
+          )
         }
     }
 

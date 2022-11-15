@@ -2,6 +2,12 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+    <string name="supported_currency_hint">
+        You can only make payment with Nigerian Naira, Ghanaian Cedi or USD for now.
+    </string>
+
+    <string name="nigeria_ngn">Nigeria (NGN)</string>
+    <string name="card_issued_country_required">Card issued country is required</string>
 
 
     <!-- TODO: Store Categories -->
@@ -84,6 +90,7 @@
 
     <string name="location_not_supported">Your location or region is not yet supported for book purchase at the moment.</string>
     <string name="unsupported_region">Unsupported region</string>
+    <string name="unsupported_currency">Unsupported currency</string>
 
 
     <string name="payment_successful">Yay, your payment transaction was successful and books you are in your book shelf ready to be downloaded.</string>

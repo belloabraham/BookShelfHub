@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bookshelfhub.book.purchase">
 
+    <uses-sdk tools:overrideLibrary="com.hbb20.countrypicker"/>
     <application>
         <activity
             android:name=".CartActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait"
-            tools:ignore="LockedOrientationActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

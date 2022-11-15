@@ -60,10 +60,8 @@ class BookItemActivity : AppCompatActivity() {
 
     private var userReview: UserReview?=null
     private var canUserPostReview:Boolean = false
-    private var priceInUSD:Double = 0.0 // I left this variable just in case there will be a need for it in the future for global transaction in USD
     private lateinit var userId: String
     private lateinit var bookId:String
-    private lateinit var localCurrencyOrUSD:String
     private lateinit var onlinePublishedBook: PublishedBook
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,57 +81,52 @@ class BookItemActivity : AppCompatActivity() {
             user = bookItemActivityViewModel.getUser()
         }
 
-        bookItemActivityViewModel.getALiveOrderedBook().observe(this, Observer { orderedBook ->
+        bookItemActivityViewModel.getALiveOrderedBook().observe(this) { orderedBook ->
             checkIfBookAlreadyAddedByUser(orderedBook)
-        })
+        }
 
-        bookItemActivityViewModel.getOnlinePublishedBook().observe(this, Observer { onlinePublishedBook ->
+        bookItemActivityViewModel.getOnlinePublishedBook().observe(this) { onlinePublishedBook ->
             this.onlinePublishedBook = onlinePublishedBook
+
             lifecycleScope.launch {
                 bookItemActivityViewModel.updatePublishedBook(onlinePublishedBook)
             }
 
             showBookDetails(onlinePublishedBook)
 
-            val countryCode = Location.getCountryCode(applicationContext)
+            val bookIsFree = onlinePublishedBook.price <= 0.0
+            val bookIsPaid = !bookIsFree
 
-                /*  if(countryCode != null){
-
-                val bookIsFree = onlinePublishedBook.price <= 0.0
-                val bookIsPaid  = !bookIsFree
-
-                localCurrencyOrUSD = Currency.getLocalCurrencyOrUSD(countryCode)
-
-                if (bookIsPaid) {
-                    showBookPrice(onlinePublishedBook, localCurrencyOrUSD)
-                    bookItemActivityViewModel.getBookFromCart().observe(this@BookItemActivity, Observer { bookInCart ->
+            if (bookIsPaid) {
+                showBookPrice(onlinePublishedBook)
+                bookItemActivityViewModel.getBookFromCart()
+                    .observe(this@BookItemActivity) { bookInCart ->
                         lifecycleScope.launch {
-                            val bookHaveNotBeenOrdered = !bookItemActivityViewModel.getAnOrderedBook().isPresent
-                            if(bookHaveNotBeenOrdered){
-                                if(bookInCart.isPresent){
+                            val bookHaveNotBeenOrdered =
+                                !bookItemActivityViewModel.getAnOrderedBook().isPresent
+                            if (bookHaveNotBeenOrdered) {
+                                if (bookInCart.isPresent) {
                                     showViewCartButtonAndHideOthers()
-                                }else{
+                                } else {
                                     showAddToCartButtonAndHideOthers()
                                 }
                             }
                         }
-                    })
-                }
+                    }
+            }
 
+            if (bookIsFree) {
+                layout.price.text = getString(R.string.price_free)
                 lifecycleScope.launch {
-                    if(bookIsFree){
-                        layout.price.text = getString(R.string.price_free)
-
-                        val bookIsNotInShelf = !bookItemActivityViewModel.getAnOrderedBook().isPresent
-                        if(bookIsNotInShelf){
-                            showAddToShelfButtonAndHideOthers()
-                        }
+                    val bookIsNotInShelf = !bookItemActivityViewModel.getAnOrderedBook().isPresent
+                    if (bookIsNotInShelf) {
+                        showAddToShelfButtonAndHideOthers()
                     }
                 }
+            }
 
-                showBookItemLayout()
-            }*/
-        })
+            showBookItemLayout()
+        }
 
         layout.addToShelf.setOnClickListener {
             val countryCode = Location.getCountryCode(applicationContext)
@@ -158,8 +151,7 @@ class BookItemActivity : AppCompatActivity() {
                     book.coverDataUrl,
                     collaboratorId,
                     book.price,
-                    localCurrencyOrUSD,
-                    priceInUSD
+                    book.sellerCurrency,
                 )
                 bookItemActivityViewModel.addToCart(cart)
                 showViewCartButtonAndHideOthers()
@@ -241,14 +233,16 @@ class BookItemActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
         layout.ratingBar.setOnRatingChangeListener { _, rating ->
+            bookItemActivityViewModel.rating = rating
             val userRated = rating > 0
             layout.ratingInfoLayout.isVisible = userRated
         }
 
         layout.postBtn.setOnClickListener {
 
-            val review = layout.userReviewEditText.text.toString().escapeJSONSpecialChars()
+            bookItemActivityViewModel.review = layout.userReviewEditText.text.toString().escapeJSONSpecialChars()
             val newRating = layout.ratingBar.rating.toDouble()
             val userName = user.firstName
 
@@ -259,7 +253,13 @@ class BookItemActivity : AppCompatActivity() {
                 postedBefore = it.postedBefore
             }
 
-            val newReview = UserReview(bookId, review, newRating, userName, canUserPostReview, userPhotoUri, postedBefore)
+            val newReview = UserReview(
+                bookId,
+                bookItemActivityViewModel.review,
+                newRating, userName,
+                canUserPostReview,
+                userPhotoUri,
+                postedBefore)
             bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
 
         }
@@ -285,21 +285,22 @@ class BookItemActivity : AppCompatActivity() {
 
         }
 
-        bookItemActivityViewModel.getTwoUserReviewsForBook().observe(this, Observer { reviews ->
+        bookItemActivityViewModel.getTwoUserReviewsForBook().observe(this) { reviews ->
 
-            if (reviews.isNotEmpty()){
+            if (reviews.isNotEmpty()) {
                 layout.ratingsAndReviewLayout.visibility = View.VISIBLE
-                val reviewsAdapter = com.bookshelfhub.feature.book_reviews.adapters.UserReviewListAdapter()
-                    .getAdapter()
+                val reviewsAdapter =
+                    com.bookshelfhub.feature.book_reviews.adapters.UserReviewListAdapter()
+                        .getAdapter()
                 layout.reviewRecView.adapter = reviewsAdapter
                 reviewsAdapter.submitList(reviews)
             }
 
-        })
+        }
 
-        bookItemActivityViewModel.getLiveUserReview().observe(this, Observer { review ->
+        bookItemActivityViewModel.getLiveUserReview().observe(this) { review ->
 
-            if (review.isPresent){
+            if (review.isPresent) {
                 layout.ratingInfoLayout.visibility = View.VISIBLE
                 layout.yourReviewLayout.visibility = View.VISIBLE
                 layout.rateBookLayout.visibility = View.GONE
@@ -308,7 +309,10 @@ class BookItemActivity : AppCompatActivity() {
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
                     userReview.dateTime?.let {
-                        val  localDate = DateUtil.getHumanReadable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                        val localDate = DateUtil.getHumanReadable(
+                            it.toDate(),
+                            DateFormat.DD_MM_YYYY.completeFormatValue
+                        )
                         layout.date.text = localDate
                     }
 
@@ -320,15 +324,27 @@ class BookItemActivity : AppCompatActivity() {
                     layout.userReviewTxt.isVisible = userReview.review.isNotBlank()
                     setUserReviewProfilePhoto(userPhotoUri, userReview.userName)
                 }
-            }else{
+
+            } else {
                 layout.rateBookLayout.visibility = View.VISIBLE
             }
 
+            showUnsavedUserReviewBeforeActivityRestart()
+
             val reviewLength = layout.userReviewEditText.text.toString().length
 
-            layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), reviewLength)
+            layout.reviewLengthTxt.text =
+                String.format(getString(R.string.reviewtextLength), reviewLength)
 
-        })
+        }
+    }
+
+    private fun showUnsavedUserReviewBeforeActivityRestart(){
+        val userWroteAnUnsavedReviewBeforeActivityRestarted = bookItemActivityViewModel.rating > 0
+        if(userWroteAnUnsavedReviewBeforeActivityRestarted){
+            layout.ratingBar.rating = bookItemActivityViewModel.rating
+            layout.userReviewEditText.setText(bookItemActivityViewModel.review)
+        }
     }
 
 
@@ -347,17 +363,23 @@ class BookItemActivity : AppCompatActivity() {
     private suspend fun addFreeBook(book:PublishedBook, countryCode:String){
         val serialNo = bookItemActivityViewModel.getTotalNoOfOrderedBooks()
         val additionalInfo = user.additionInfo
-        val orderedBook = OrderedBook(book.bookId,
-            0.0, userId,
-            book.name, book.coverDataUrl,
-            book.pubId, countryCode,
-            getString(R.string.app_name),
+        val orderedBook = OrderedBook(
+            book.bookId,
+            userId,
+            book.name,
+            book.coverDataUrl,
+            book.pubId,
+            book.sellerCurrency,
+            countryCode,
+            null,
             null,
             DateTimeUtil.getMonth(),
             DateTimeUtil.getYear(),
             serialNo.toLong(),
             additionalInfo,
-            null, null, 0.0
+            null,
+            null,
+            0.0
         )
         bookItemActivityViewModel.addAnOrderedBook(orderedBook)
     }
@@ -383,13 +405,11 @@ class BookItemActivity : AppCompatActivity() {
             }else{
                 showDownloadBookButtonAndHideOthers()
             }
-
-            // showBooksItemLayout()
         }
     }
 
-    private fun showBookPrice(book: PublishedBook, buyerVisibleCurrency:String){
-        layout.price.text = String.format(getString(R.string.local_price), buyerVisibleCurrency, book.price)
+    private fun showBookPrice(book: PublishedBook){
+        layout.price.text = String.format(getString(R.string.local_price), book.sellerCurrency, book.price)
     }
 
     private fun showBookDetails(book: PublishedBook){
@@ -527,6 +547,11 @@ class BookItemActivity : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onStop() {
+        bookItemActivityViewModel.review = layout.userReviewEditText.text.toString()
+        super.onStop()
     }
 
     private fun startBookActivity(){

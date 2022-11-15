@@ -11,5 +11,6 @@ data class PaymentCard(
     val expiryYear:Int,
     val cvv:String,
     var cardType:String="",
-    var lastFourDigit:String=""
+    var lastFourDigit:String="",
+    var countryCode: String=""
 )

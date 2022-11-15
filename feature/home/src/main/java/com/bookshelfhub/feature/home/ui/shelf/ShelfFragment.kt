@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -164,13 +163,13 @@ class ShelfFragment : Fragment() {
         }
 
         //Only shelf fragment can listen to onBackPressed
-        mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner, Observer { isBackPressed ->
-            if (layout.materialSearchView.hasFocus()){
+        mainActivityViewModel.getOnBackPressed().observe(viewLifecycleOwner) { isBackPressed ->
+            if(layout.materialSearchView.hasFocus()){
                 layout.materialSearchView.clearFocus()
             }else if (isBackPressed){
                 activity?.finish()
             }
-        })
+        }
 
         layout.gotoStoreBtn.setOnClickListener {
             mainActivityViewModel.setSelectedIndex(1)

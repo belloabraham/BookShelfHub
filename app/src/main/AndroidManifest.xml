@@ -43,11 +43,8 @@ uses-permission
 
         <activity
             android:name=".SplashActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize|uiMode"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme"
-            tools:ignore="LockedOrientationActivity">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

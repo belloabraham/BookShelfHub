@@ -20,7 +20,6 @@ import com.bookshelfhub.core.model.entities.BookInterest
 import com.bookshelfhub.core.model.entities.Collaborator
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
 import com.bookshelfhub.feature.home.workers.GetRemotePrivateKeys
-import com.bookshelfhub.feature.home.workers.RecommendedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -112,17 +111,9 @@ class MainActivityViewModel @Inject constructor(
     }
 
 
-    fun updatedRecommendedBooks(bookInterest: Optional<BookInterest>){
-        if (bookInterest.isPresent && bookInterest.get().added) {
+    fun updatedRecommendedBooksNotification(bookInterest: Optional<BookInterest>){
+         if (bookInterest.isPresent && bookInterest.get().added) {
             setBookInterestNotifNo(0)
-            val recommendedBooksWorker =
-                OneTimeWorkRequestBuilder<RecommendedBooks>()
-                    .build()
-            worker.enqueueUniqueWork(
-                Tag.recommendedBooksWorker,
-                ExistingWorkPolicy.REPLACE,
-                recommendedBooksWorker
-            )
         }else {
             setBookInterestNotifNo(1)
         }

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.core.resources.R
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
 import com.bookshelfhub.core.authentication.IUserAuth
@@ -17,6 +17,7 @@ import com.bookshelfhub.feature.home.databinding.FragmentInterestBinding
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -41,16 +42,16 @@ class BookInterestFragment : Fragment() {
         binding= FragmentInterestBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-        bookInterestViewModel.getBookInterest().observe(viewLifecycleOwner, Observer { bookInterest ->
-            bookInterestObservable = if(bookInterest.isPresent && bookInterest.get().added){
+        bookInterestViewModel.getBookInterest().observe(viewLifecycleOwner) { bookInterest ->
+            bookInterestObservable = if (bookInterest.isPresent && bookInterest.get().added) {
                 BookInterestObservable(bookInterest.get())
-            }else{
+            } else {
                 BookInterestObservable(BookInterest(userAuth.getUserId()))
             }
             oldBookInterest = bookInterestObservable.getBookInterestRecord().copy()
             layout.bookInterest = bookInterestObservable
             layout.lifecycleOwner = viewLifecycleOwner
-        })
+        }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             if(oldBookInterest!=bookInterestObservable.getBookInterestRecord()){
@@ -75,6 +76,7 @@ class BookInterestFragment : Fragment() {
         return layout.root
     }
 
+
     private fun saveBookInterest(view:View, layout:FragmentInterestBinding){
         val userSelectedLessThanFourBookInterest = layout.chipGroup.checkedChipIds.size<4
        if (userSelectedLessThanFourBookInterest){
@@ -84,11 +86,15 @@ class BookInterestFragment : Fragment() {
                 val bookInterest = bookInterestObservable.getBookInterestRecord()
                  bookInterest.uploaded = false
                  bookInterest.added=true
-                 bookInterestViewModel.addBookInterest(bookInterest)
-                    activity?.let {
-                        showToast(R.string.interest_Saved)
-                        it.finish()
-                    }
+           viewLifecycleOwner.lifecycleScope.launch {
+               bookInterestViewModel.addBookInterest(bookInterest)
+               activity?.let {
+                bookInterestViewModel.updatedRecommendedBooks()
+                   showToast(R.string.interest_Saved)
+                   it.finish()
+               }
+           }
+
         }
     }
 

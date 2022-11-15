@@ -32,6 +32,7 @@ dependencies {
     implementation(project(":core:dynamic_link"))
     implementation(project(":core:authentication"))
     implementation(project(":core:common"))
+    implementation(project(":core:payment"))
     implementation(project(":core:resources"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))

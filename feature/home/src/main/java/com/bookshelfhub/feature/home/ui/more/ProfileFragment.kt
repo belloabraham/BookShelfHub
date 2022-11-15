@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.feature.home.R
 import com.bookshelfhub.core.authentication.AuthType
@@ -20,7 +19,6 @@ import com.bookshelfhub.core.common.extensions.showToast
 import com.bookshelfhub.core.common.helpers.KeyboardUtil
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateFormat
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateUtil
-import com.bookshelfhub.core.model.entities.User
 import com.bookshelfhub.feature.home.databinding.FragmentProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
@@ -49,34 +47,40 @@ class ProfileFragment : Fragment() {
         binding= FragmentProfileBinding.inflate(inflater, container, false)
         layout = binding!!
 
-        var user: User? = null
+
         val userAuthType = userAuth.getAuthType()
 
-        profileViewModel.getUser().observe(viewLifecycleOwner, Observer { liveUser ->
-            user = liveUser
+        /**
+         * Load user data of user in the case of device configuration changed or previously saved user data
+         * In the database
+        */
+        profileViewModel.loadUserData()
+
+        profileViewModel.getLiveUser().observe(viewLifecycleOwner) { liveUser ->
             layout.firstNameEditTxt.setText(liveUser!!.firstName)
             layout.lastNameEditTxt.setText(liveUser.lastName)
             if (userAuthType == AuthType.PHONE){
-                layout.emailEditTxtLayout.visibility=VISIBLE
+                layout.emailEditTxtLayout.visibility = VISIBLE
             }else{
-                layout.phoneEditTxtLayout.visibility=VISIBLE
+                layout.phoneEditTxtLayout.visibility = VISIBLE
             }
             layout.phoneEditTxt.setText(liveUser.phone)
             layout.emailEditTxt.setText(liveUser.email)
 
             liveUser.dateOfBirth?.let {
-                dateOfBirth=it
-                layout.dobDatePicker.date = DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue )
+                dateOfBirth = it
+                layout.dobDatePicker.date =
+                    DateUtil.stringToDate(it, DateFormat.MM_DD_YYYY.completeFormatValue)
             }
             liveUser.gender?.let {
-                gender =it
+                gender = it
                 layout.genderLayout.hint = it
             }
-
-        })
+        }
 
         layout.dobDatePicker.setOnDatePickListener {
             dateOfBirth = DateUtil.getHumanReadable(it, DateFormat.MM_DD_YYYY.completeFormatValue)
+            profileViewModel.getUser()?.dateOfBirth = dateOfBirth
         }
 
         layout.genderDropDown.setOnFocusChangeListener { _, hasFocus ->
@@ -87,6 +91,7 @@ class ProfileFragment : Fragment() {
 
         layout.genderDropDown.setOnItemClickListener{ parent, _, position, _ ->
            gender = parent.getItemAtPosition(position).toString().trim()
+           profileViewModel.getUser()?.gender = gender
         }
 
         layout.btnSave.setOnClickListener {
@@ -109,7 +114,7 @@ class ProfileFragment : Fragment() {
             }else if (TextUtils.isEmpty(email)){
                 layout.emailEditTxtLayout.error = getString(R.string.mail_req_error)
             }else {
-                user?.let { updatedUserRecord ->
+                profileViewModel.getUser()?.let { updatedUserRecord ->
                     updatedUserRecord.dateOfBirth = dateOfBirth
                     updatedUserRecord.gender = gender
                     updatedUserRecord.firstName = firstName.purifyJSONString()
@@ -135,7 +140,28 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        val genderArr = resources.getStringArray(R.array.genders)
+        val spinnerAdapter: ArrayAdapter<*> = ArrayAdapter<Any?>(requireContext(), com.bookshelfhub.core.resources.R.layout.spinner_item, genderArr)
+        layout.genderDropDown.setAdapter(spinnerAdapter)
+
         return layout.root
+    }
+
+    override fun onStop() {
+        val email = layout.emailEditTxt.text.toString().trim()
+        val phone = layout.phoneEditTxt.text.toString().trim()
+        val firstName = layout.firstNameEditTxt.text.toString().trim()
+        val lastName = layout.firstNameEditTxt.text.toString().trim()
+        val additionalInfo = layout.additionalInfoText.text.toString().trim()
+        val user = profileViewModel.getUser()
+        user?.firstName = firstName
+        user?.lastName = lastName
+        user?.additionInfo = additionalInfo
+        user?.gender = gender
+        user?.dateOfBirth = dateOfBirth
+        user?.phone = phone
+        user?.email = email
+        super.onStop()
     }
 
     override fun onDestroyView() {
@@ -145,9 +171,6 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val genderArr = resources.getStringArray(R.array.genders)
-        val spinnerAdapter: ArrayAdapter<*> = ArrayAdapter<Any?>(requireContext(), com.bookshelfhub.core.resources.R.layout.spinner_item, genderArr)
-        layout.genderDropDown.setAdapter(spinnerAdapter)
         gender?.let {
             layout.genderLayout.hint = it
         }

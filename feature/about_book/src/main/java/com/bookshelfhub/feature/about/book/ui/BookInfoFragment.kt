@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import com.bookshelfhub.core.common.extensions.applyLinks
 import com.bookshelfhub.core.common.helpers.textlinkbuilder.TextLinkBuilder
 import com.bookshelfhub.core.common.helpers.utils.IntentUtil
@@ -17,6 +16,7 @@ import com.bookshelfhub.feature.about.book.R
 import com.bookshelfhub.feature.about.book.databinding.BookInfoFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
+import com.bookshelfhub.core.common.helpers.utils.Regex
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -41,26 +41,33 @@ class BookInfoFragment : Fragment() {
 
             val layout = binding!!
 
-            bookInfoActivityViewModel.getLivePublishedBook().observe(viewLifecycleOwner, Observer {  pubBook->
+            bookInfoActivityViewModel.getLivePublishedBook().observe(viewLifecycleOwner) { pubBook ->
 
                 val book = pubBook.get()
-                val links =  listOf(textLinkBuilder.getTextLink(Pattern.compile(com.bookshelfhub.core.common.helpers.utils.Regex.WEB_LINK)) { link ->
-                    openLink(link)
-                })
+                val links =
+                    listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.WEB_LINK)) { link ->
+                        openLink(link)
+                    })
 
                 book.publishedDate?.let {
-                    val  localDate = DateUtil.getHumanReadable(it.toDate(), DateFormat.DD_MM_YYYY.completeFormatValue)
+                    val localDate = DateUtil.getHumanReadable(
+                        it.toDate(),
+                        DateFormat.DD_MM_YYYY.completeFormatValue
+                    )
                     layout.publishedDateTxt.text = localDate
                 }
 
                 layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-                layout.isbnTxt.text = String.format(getString(R.string.isbn), bookInfoActivityViewModel.getBookIdFromCompoundId())
-                layout.categoryTxt.text = String.format(getString(R.string.category),book.category)
+                layout.isbnTxt.text = String.format(
+                    getString(R.string.isbn),
+                    bookInfoActivityViewModel.getBookIdFromCompoundId()
+                )
+                layout.categoryTxt.text = String.format(getString(R.string.category), book.category)
 
-                layout.descriptionTxt.text =  book.description
+                layout.descriptionTxt.text = book.description
                 layout.descriptionTxt.applyLinks(links)
 
-            })
+            }
 
         return layout.root
     }

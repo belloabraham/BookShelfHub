@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/dp_16"
     tools:context="com.bookshelfhub.book.purchase.ui.CardInfoFragment">
 
@@ -63,6 +64,29 @@
                     android:id="@+id/cvvTxt"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16"
+                android:id="@+id/countryLayout"
+                app:placeholderText="@string/nigeria_ngn"
+                android:hint="@string/nigeria_ngn"
+                android:textColorHint="@color/icon_color"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                <AutoCompleteTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@id/countryLayout"
+                    android:layout_marginVertical="0dp"
+                    android:inputType="none"
+                    android:paddingVertical="0dp"
+                    android:textSize="@dimen/dp_18sp"
+                    android:id="@+id/countryDropDown"
+                    android:layout_weight="1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
 
         <TextView
@@ -73,7 +97,6 @@
             android:id="@+id/errorTxt"/>
 
     </LinearLayout>
-
 
     <com.google.android.material.button.MaterialButton
         android:layout_width="match_parent"

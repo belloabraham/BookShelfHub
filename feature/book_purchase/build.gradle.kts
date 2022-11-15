@@ -20,6 +20,7 @@ dependencies {
 
 
     implementation(libs.github.ibrahimyilmaz)
+    implementation(libs.hbb20.country.picker)
     implementation(libs.paystack)
 
     implementation(project(":core:common"))

@@ -9,7 +9,6 @@ android {
 dependencies {
 
     implementation(libs.paystack)
-    implementation(libs.rave.flutterwave)
     implementation(project(":core:resources"))
     implementation(project(":core:common"))
     implementation(project(":core:model"))

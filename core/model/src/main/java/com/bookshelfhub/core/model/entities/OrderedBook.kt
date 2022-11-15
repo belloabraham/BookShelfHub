@@ -10,14 +10,13 @@ import com.google.firebase.Timestamp
 data class OrderedBook(
     @PrimaryKey
     override val bookId:String,
-    // I left this variable just in case there will be a need for it in the future for global transaction in USD
-    override val priceInUSD: Double,
     override val userId:String,
     override val name:String,
     override val coverDataUrl:String,
     override val pubId: String,
-    override val orderedCountryCode:String?,
-    override var transactionReference:String?,
+    val sellerCurrency:String,
+    override val userCountryCode:String?,
+    override var transactionReference:String?, //Book receipt
     val dateTime:Timestamp?=null,
     val month: Int,
     val year: Int,
@@ -25,5 +24,5 @@ data class OrderedBook(
     override val additionInfo: String?,
     val collabCommission: Double?,
     val collabId:String?,
-    override val priceInBookCurrency: Double
+    override val price: Double
 ): ISearchResult, IOrderedBooks, IOrderedBookUiState

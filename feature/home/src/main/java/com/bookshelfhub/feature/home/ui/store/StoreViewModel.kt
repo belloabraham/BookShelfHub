@@ -5,15 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
+import com.bookshelfhub.core.common.worker.Tag
+import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
+import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.entities.StoreSearchHistory
 import com.bookshelfhub.core.model.uistate.PublishedBookUiState
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
 import com.bookshelfhub.core.remote.remote_config.RemoteConfig
+import com.bookshelfhub.feature.home.workers.RecommendedBooks
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -24,6 +30,7 @@ class StoreViewModel @Inject constructor(
     private val publishedBooksRepo: IPublishedBooksRepo,
     cartItemsRepo: ICartItemsRepo,
     private val remoteConfig: IRemoteConfig,
+    private val worker: Worker,
     private val  searchHistoryRepo: ISearchHistoryRepo,
     val userAuth: IUserAuth
 ): ViewModel() {
@@ -51,16 +58,21 @@ class StoreViewModel @Inject constructor(
             val thereAreLocalPublishedBooks = !noLocalPublishedBooks
 
             try {
+                var publishedBooks = emptyList<PublishedBook>()
                 if (noLocalPublishedBooks){
-                   val  publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
+                     publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
                 }
 
                 if(thereAreLocalPublishedBooks){
-                    val  publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
+                      publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
                       fromSerialNo =   totalNoOfLocalPublishedBooks
                     )
                     publishedBooksRepo.addAllPubBooks(publishedBooks)
+                }
+
+                if(publishedBooks.isNotEmpty()){
+                    updatedRecommendedBooks()
                 }
 
                 isBookLoadSuccessfully.value = true
@@ -70,6 +82,17 @@ class StoreViewModel @Inject constructor(
                 isBookLoadSuccessfully.value = false
            }
         }
+    }
+
+    private fun updatedRecommendedBooks(){
+        val recommendedBooksWorker =
+            OneTimeWorkRequestBuilder<RecommendedBooks>()
+                .build()
+        worker.enqueueUniqueWork(
+            Tag.recommendedBooksWorker,
+            ExistingWorkPolicy.REPLACE,
+            recommendedBooksWorker
+        )
     }
 
     fun shouldEnableTrending(): Boolean{

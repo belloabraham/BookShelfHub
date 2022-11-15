@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -100,7 +99,7 @@ class SimilarBooksActivity : AppCompatActivity() {
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this, Observer { cartItemsCount ->
+        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this) { cartItemsCount ->
             val cartIsNotEmpty = cartItemsCount > 0
             if(cartIsNotEmpty){
                 layout.cartNotifText.text = "$cartItemsCount"
@@ -109,7 +108,7 @@ class SimilarBooksActivity : AppCompatActivity() {
                 layout.cartBtnContainer.visibility = View.GONE
             }
 
-        })
+        }
 
         lifecycleScope.launch {
              listOfBooks.addAll(bookCategoryActivityViewModel.getBooksByTag())

@@ -68,6 +68,8 @@ class BookItemActivityViewModel @Inject constructor(
   private val bookId = savedState.get<String>(Book.ID)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM)?:false
   private var bookShareUrl: String? = null
+  internal var review:String = ""
+  internal var rating:Float = 0F
 
   private val config  = PagingConfig(
     pageSize = 5,
@@ -254,6 +256,10 @@ class BookItemActivityViewModel @Inject constructor(
           return@launch
         }
     }
+  }
+
+  fun getBookFromCart(): LiveData<Optional<CartItem>>{
+   return  cartItemsRepo.getLiveCartItem(bookId)
   }
 
   fun getOnlinePublishedBook(): LiveData<PublishedBook> {

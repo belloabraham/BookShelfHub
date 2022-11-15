@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":core:remote"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))
+    implementation(project(":core:payment"))
     implementation(project(":core:common"))
     implementation(project(":core:ui"))
     implementation(project(":feature:webview"))
