@@ -373,8 +373,6 @@ class BookItemActivity : AppCompatActivity() {
             countryCode,
             null,
             null,
-            DateTimeUtil.getMonth(),
-            DateTimeUtil.getYear(),
             serialNo.toLong(),
             additionalInfo,
             null,

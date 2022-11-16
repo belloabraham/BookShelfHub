@@ -16,13 +16,11 @@ data class OrderedBook(
     override val pubId: String,
     val sellerCurrency:String,
     override val userCountryCode:String?,
-    override var transactionReference:String?, //Book receipt
+    override var transactionReference:String?, //Book payment receipt
     val dateTime:Timestamp?=null,
-    val month: Int,
-    val year: Int,
     override val serialNo:Long,
     override val additionInfo: String?,
-    val collabCommission: Double?,
+    val collabCommissionInPercent: Double?,
     val collabId:String?,
     override val price: Double
 ): ISearchResult, IOrderedBooks, IOrderedBookUiState

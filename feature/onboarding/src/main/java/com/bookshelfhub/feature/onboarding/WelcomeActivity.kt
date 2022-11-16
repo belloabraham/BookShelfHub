@@ -70,8 +70,6 @@ class WelcomeActivity : AppCompatActivity() {
         layout = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(layout.root)
 
-        welcomeActivityViewModel.setUserReferrerId(welcomeActivityViewModel.getUserReferralId())
-
         //Check if user Device have Google Play services installed as it is required for proper functioning of application
         GooglePlayServices(this).checkForGooglePlayServices()
 

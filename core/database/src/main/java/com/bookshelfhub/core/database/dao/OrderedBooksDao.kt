@@ -20,9 +20,6 @@ abstract class OrderedBooksDao : BaseDao<OrderedBook> {
     abstract suspend fun getOrderedBooks(userId:String): List<OrderedBook>
 
     @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
-    abstract suspend fun getListOfOrderedBooksUiState(userId:String): List<OrderedBookUiState>
-
-    @Query("SELECT * FROM OrderedBooks WHERE userId = :userId")
     abstract fun getLiveListOfOrderedBooksUiState(userId:String): LiveData<List<OrderedBookUiState>>
 
     @Query("SELECT * FROM OrderedBooks WHERE bookId =:bookId")

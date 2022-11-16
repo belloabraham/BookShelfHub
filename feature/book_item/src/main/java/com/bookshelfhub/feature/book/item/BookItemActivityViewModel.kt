@@ -70,6 +70,7 @@ class BookItemActivityViewModel @Inject constructor(
   private var bookShareUrl: String? = null
   internal var review:String = ""
   internal var rating:Float = 0F
+  private lateinit var user:User
 
   private val config  = PagingConfig(
     pageSize = 5,
@@ -78,6 +79,10 @@ class BookItemActivityViewModel @Inject constructor(
   )
 
   init {
+
+    viewModelScope.launch {
+      user = userRepo.getUser(userId).get()
+    }
 
     generateBookShareLink()
 
@@ -157,8 +162,13 @@ class BookItemActivityViewModel @Inject constructor(
       if (bookShareUrl == null){
         val book = publishedBooksRepo.getPublishedBook(bookId).get()
         try {
+          val userIdAndEarningsCurrency = "$userId@${user.earningsCurrency}"
           bookShareUrl = dynamicLink.generateShortDynamicLinkAsync(
-            book.name , book.description, appCoverUrl, userId).toString()
+            book.name,
+            book.description,
+            appCoverUrl,
+            userIdAndEarningsCurrency
+          ).toString()
           settingsUtil.setString(bookId, bookShareUrl!!.toString())
         }catch (e:Exception){
           ErrorUtil.e(e)

@@ -2,10 +2,12 @@ package com.bookshelfhub.feature.onboarding
 
 import android.os.Build
 import androidx.lifecycle.*
+import com.bookshelfhub.core.authentication.Auth
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.utils.AppUtil
 import com.bookshelfhub.core.common.helpers.utils.DeviceUtil
+import com.bookshelfhub.core.data.Payment
 import com.bookshelfhub.core.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.dynamic_link.Referrer
@@ -27,9 +29,7 @@ class WelcomeActivityViewModel @Inject constructor(
 
     private val aCollaboratorOrUserReferralId = savedState.get<String>(Referrer.ID)
     private var remoteUser: MutableLiveData<RemoteUser?> = MutableLiveData()
-    private var referrerId: String? =null
     private var isNavigatedFromLogin:Boolean = false
-
 
     fun isNavigatedFromLogin(): Boolean {
         return isNavigatedFromLogin
@@ -39,23 +39,17 @@ class WelcomeActivityViewModel @Inject constructor(
         isNavigatedFromLogin = value
     }
 
-    fun getUserReferrerId():String?{
-        return referrerId
-    }
-    fun setUserReferrerId(value:String?){
-        referrerId=value
-    }
-
-
     fun getACollaboratorOrUserReferralId(): String? {
         return aCollaboratorOrUserReferralId
     }
 
     fun getUserReferralId(): String? {
-        aCollaboratorOrUserReferralId?.let {
-            val isUserReferralId = !it.contains(Referrer.SEPARATOR)
+        if(aCollaboratorOrUserReferralId != null){
+            val sampleAttachedEarningsCurrency = Payment.SAMPLE_ATTACHED_EARNINGS_CURRENCY
+            val referrerIdAndEarningsCurrencyLength = Auth.USER_ID_LENGTH + sampleAttachedEarningsCurrency.length
+            val isUserReferralId =  aCollaboratorOrUserReferralId.length > referrerIdAndEarningsCurrencyLength
             if(isUserReferralId){
-                return it
+                return aCollaboratorOrUserReferralId
             }
         }
         return null

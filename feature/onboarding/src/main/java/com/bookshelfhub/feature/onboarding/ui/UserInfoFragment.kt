@@ -22,6 +22,7 @@ import com.bookshelfhub.core.common.helpers.utils.AppUtil
 import com.bookshelfhub.core.common.helpers.utils.DeviceUtil
 import com.bookshelfhub.core.common.helpers.utils.Location
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
+import com.bookshelfhub.core.dynamic_link.Referrer
 import com.bookshelfhub.core.model.entities.User
 import com.bookshelfhub.core.model.entities.remote.RemoteUser
 import com.bookshelfhub.feature.onboarding.WelcomeActivityViewModel
@@ -99,29 +100,41 @@ class UserInfoFragment : Fragment() {
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
                 keyboardUtil.hideKeyboard(layout.phoneEditTxt)
 
-                val userReferralId = if(isNewUser) welcomeActivityViewModel.getUserReferrerId() else null
+                val optionalUserReferralId = if(isNewUser) welcomeActivityViewModel.getUserReferralId() else null
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     userAuth.updateDisplayName(firstName)
                 }
 
-                    val timeZone = DateTimeUtil.getTimeZone()
-                    val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
-                    val countryCode = Location.getCountryCode(requireContext().applicationContext)
-                    val user = User(userId, userAuthType, countryCode!!, earningsCurrency)
-                    user.appVersion=appUtil.getAppVersionName()
-                    user.firstName = firstName.purifyJSONString()
-                    user.lastName = lastName.purifyJSONString()
-                    user.device = DeviceUtil.getDeviceBrandAndModel()
-                    user.email = email.purifyJSONString()
-                    user.phone = phone.purifyJSONString()
-                    user.referrerId = userReferralId
 
-                    user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
-                    Build.VERSION.SDK_INT)
+                val timeZone = DateTimeUtil.getTimeZone()
+                val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
+                val countryCode = Location.getCountryCode(requireContext().applicationContext)
+                val user = User(userId, userAuthType, countryCode!!, earningsCurrency)
 
-                    userInfoViewModel.setIsAddingUser(true)
-                    userInfoViewModel.addRemoteAndLocalUser(RemoteUser(user, null, null))
+                var userReferralId:String? = null
+
+                if(optionalUserReferralId != null){
+                    val userReferralIdAndCurrency = optionalUserReferralId.split(Referrer.SEPARATOR)
+                    val referralCurrency = userReferralIdAndCurrency[1]
+                    if(referralCurrency == user.earningsCurrency){
+                        userReferralId = userReferralIdAndCurrency[0]
+                    }
+                }
+
+                user.appVersion=appUtil.getAppVersionName()
+                user.firstName = firstName.purifyJSONString()
+                user.lastName = lastName.purifyJSONString()
+                user.device = DeviceUtil.getDeviceBrandAndModel()
+                user.email = email.purifyJSONString()
+                user.phone = phone.purifyJSONString()
+                user.referrerId = userReferralId
+
+                user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
+                Build.VERSION.SDK_INT)
+
+                userInfoViewModel.setIsAddingUser(true)
+                userInfoViewModel.addRemoteAndLocalUser(RemoteUser(user, null, null))
             }
         }
 

@@ -3,14 +3,17 @@ package com.bookshelfhub.feature.home
 import androidx.lifecycle.*
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import com.bookshelfhub.core.authentication.Auth
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.worker.Constraint
 import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.common.worker.Worker
+import com.bookshelfhub.core.data.Payment
 import com.bookshelfhub.core.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.core.data.repos.referral.IReferralRepo
+import com.bookshelfhub.core.data.repos.user.UserRepo
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
@@ -36,6 +39,7 @@ class MainActivityViewModel @Inject constructor(
     private val bookInterestRepo: IBookInterestRepo,
     private val connectionUtil: ConnectionUtil,
     private val referralRepo: IReferralRepo,
+    private val userRepo: UserRepo,
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
@@ -57,7 +61,9 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getBookIdFromACollaboratorReferrerId(): String? {
-        val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > userId.length
+        val sampleAttachedEarningsCurrency = Payment.SAMPLE_ATTACHED_EARNINGS_CURRENCY
+        val referrerIdAndEarningsCurrencyLength = Auth.USER_ID_LENGTH + sampleAttachedEarningsCurrency.length
+        val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > referrerIdAndEarningsCurrencyLength
 
         if(referrerIsACollaborator){
             val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.split(Referrer.SEPARATOR)
@@ -88,7 +94,14 @@ class MainActivityViewModel @Inject constructor(
                 val description = remoteConfig.getString(Social.DESC)
                 val imageUrl = remoteConfig.getString(Social.IMAGE_URL)
                 try {
-                    dynamicLink.generateShortDynamicLinkAsync(title, description, imageUrl, userId)?.let {
+                    val userEarningsCurrency = userRepo.getUser(userId).get().earningsCurrency
+                    val userIdAndEarningsCurrency = "$userId@$userEarningsCurrency"
+                    dynamicLink.generateShortDynamicLinkAsync(
+                        title,
+                        description,
+                        imageUrl,
+                        userIdAndEarningsCurrency
+                    )?.let {
                         settingsUtil.setString(Referrer.REF_LINK, it.toString())
                     }
                 }catch (e:Exception){

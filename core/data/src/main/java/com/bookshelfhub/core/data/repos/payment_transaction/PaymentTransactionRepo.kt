@@ -38,8 +38,8 @@ class PaymentTransactionRepo @Inject constructor(
 
         val workData = workDataOf(
             Payment.TRANSACTION_REF.KEY to transactionRef,
-            Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY to currencyToChargeForBookSale,
-            Payment.PAYMENT_SDK_TYPE.KEY to paymentSDKType.KEY
+            Payment.PAYMENT_SDK_TYPE.KEY to paymentSDKType.KEY,
+            Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY to currencyToChargeForBookSale
         )
 
         val oneTimeVerifyPaymentTrans =

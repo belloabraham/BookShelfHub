@@ -54,6 +54,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
         val transactionRef = inputData.getString(Payment.TRANSACTION_REF.KEY)!!
         val paymentSDKType = inputData.getString(Payment.PAYMENT_SDK_TYPE.KEY)!!
         val currencyToChargeForBookSale = inputData.getString(Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY)!!
+
         val paymentTransactions = paymentTransactionRepo.getPaymentTransactions(transactionRef)
 
         if (paymentTransactions.isEmpty()) {
@@ -71,12 +72,12 @@ class UploadPaymentTransactions @AssistedInject constructor(
             for (transaction in paymentTransactions) {
 
                 var commissionInPercentageAssignedToCollaborator:Double? = null
-                var idForEachCollaborator:String? = null
+                var idForCollaborator:String? = null
                 val collaboratorForEachBook = referralRepo.getAnOptionalCollaborator(transaction.bookId)
 
                 if(collaboratorForEachBook.isPresent){
                   val collab = collaboratorForEachBook.get()
-                    idForEachCollaborator = collab.collabId
+                    idForCollaborator = collab.collabId
                     commissionInPercentageAssignedToCollaborator = collab.commissionInPercentage
                 }
 
@@ -92,12 +93,10 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     transaction.userCountryCode,
                     transactionRef,
                     null,
-                    0,
-                    0,
                     ++totalNoOfPreviouslyOrderedBooks,
                     transaction.additionInfo,
                     commissionInPercentageAssignedToCollaborator,
-                    idForEachCollaborator,
+                    idForCollaborator,
                     transaction.price
                 )
 
@@ -113,11 +112,9 @@ class UploadPaymentTransactions @AssistedInject constructor(
           val user = userRepo.getUser(userId).get()
           val referrerIsQualifiedForEarnings = isFirstPurchase && user.earningsCurrency == currencyToChargeForBookSale
 
-          var userReferralId:String? = null
           var userReferrerCommission = 0.0
 
-          if(referrerIsQualifiedForEarnings){
-              userReferralId = user.referrerId
+          if(referrerIsQualifiedForEarnings && user.referrerId != null){
               userReferrerCommission = paymentTransactions[0].price * 0.1 //10 percent
           }
 
@@ -126,9 +123,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
               RemoteDataFields.NOTIFICATION_TOKEN to userNotificationToken,
               Payment.ORDERED_BOOKS.KEY to listOfOrderedBooksAsJsonString,
               Payment.BOOK_NAMES.KEY to combinedBookNames.toString(),
-              Payment.USER_REFERRER_ID.KEY to userReferralId,
-              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission,
-              Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY to currencyToChargeForBookSale
+              Payment.USER_REFERRER_ID.KEY to user.referrerId,
+              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission
           )
 
           val paymentCloudFunction = getPaymentCLoudFunctionToBeCalled(paymentSDKType)!!
