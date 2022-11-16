@@ -29,7 +29,6 @@ import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.helpers.utils.IntentUtil
 import com.bookshelfhub.core.common.helpers.utils.ShareUtil
 import com.bookshelfhub.core.datastore.settings.Settings
-import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.dynamic_link.Referrer
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
 import com.bookshelfhub.feature.home.MainActivityViewModel
@@ -265,7 +264,12 @@ class MoreFragment : Fragment() {
             try {
                 val earnings =   moreViewModel.getRemoteEarnings()
                 val total = earnings?.total ?: 0
-                earningsText.text = String.format(getString(R.string.total_earnings), total)
+                val user = moreViewModel.getUserRecord().get()
+                earningsText.text = String.format(
+                    getString(R.string.total_earnings),
+                    user.earningsCurrency,
+                    total
+                )
                 progressBar.visibility = GONE
             }catch (e:Exception){
                 ErrorUtil.e(e)

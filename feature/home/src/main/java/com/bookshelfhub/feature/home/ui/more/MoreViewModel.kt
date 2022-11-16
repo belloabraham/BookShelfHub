@@ -15,6 +15,7 @@ import com.bookshelfhub.core.model.Earnings
 import com.bookshelfhub.core.model.entities.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,6 +50,10 @@ class MoreViewModel @Inject constructor(
 
     fun getLiveUserRecord(): LiveData<User> {
         return userRepo.getLiveUser(userId)
+    }
+
+    suspend fun getUserRecord(): Optional<User> {
+        return userRepo.getUser(userId)
     }
 
     fun deleteUserData(){

@@ -80,7 +80,7 @@
     <string name="unable_to_share_book">You can not share this book at the moment as it has been unpublished from the book store, try later</string>
 
     <!-- TODO: Earnings-->
-    <string name="total_earnings">Total Earnings: $%,.2f </string>
+    <string name="total_earnings">Total Earnings: %s%,.2f </string>
     <string name="earnings_connection_error">Error no internet connection.</string>
 
 
@@ -113,9 +113,7 @@
     <string name="check_out">Checkout</string>
     <string name="no_item_in_cart_msg">You currently have no items in your cart. Open the store tab below and add an item to the cart.</string>
     <string name="add_new_card">Add new card</string>
-    <string name="total_local_and_usd">Total: %s%,.2f ($%,.2f - $%,.2f) = $%,.2f </string>
     <string name="total_local_currency">Total = %s%,.2f (%,.2f - %,.2f earnings)</string>
-    <string name="total_usd">Total: $%,.2f - $%,.2f earnings = $%,.2f </string>
     <string name="payment_error">There was an error processing your payment</string>
     <string name="by">By: %s</string>
     <string name="undo">undo</string>
@@ -145,9 +143,7 @@
     <string name="view_cart">View in cart</string>
     <string name="buy_now">Buy Now</string>
     <string name="download">Download</string>
-    <string name="local_price_and_usd">Price: %s%,.2f ($%,.2f)</string>
     <string name="local_price">Price: %s%,.2f </string>
-    <string name="usd_price">Price: $%,.2f</string>
     <string name="downloads">Downloads</string>
     <string name="review_no">%d reviews</string>
     <string name="about_this_book">About this book</string>
