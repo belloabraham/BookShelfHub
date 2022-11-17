@@ -1,7 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
-import com.bookshelfhub.core.data.repos.bookdownload.BookDownloadStateRepo
-import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
+import com.bookshelfhub.book.page.DownloadBookUseCase
 import com.bookshelfhub.core.data.repos.bookvideos.BookVideosRepo
 import com.bookshelfhub.core.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.core.data.repos.earnings.EarningsRepo
@@ -15,7 +14,6 @@ import com.bookshelfhub.core.data.repos.referral.ReferralRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.search_history.SearchHistoryRepo
 import com.bookshelfhub.core.database.AppDatabase
-import com.bookshelfhub.core.domain.usecases.DownloadBookUseCase
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.remote.database.IRemoteDataSource
 import com.bookshelfhub.core.remote.webapi.currencyconverter.CurrencyConversionAPI
@@ -31,13 +29,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @Module
 @InstallIn(ViewModelComponent::class)
 object ViewModelModule {
-
-
-    @ViewModelScoped
-    @Provides
-    fun provideBookDownloadStateRepo(appDatabase:AppDatabase): IBookDownloadStateRepo {
-        return BookDownloadStateRepo(appDatabase)
-    }
 
     @ViewModelScoped
     @Provides

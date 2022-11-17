@@ -10,7 +10,7 @@ import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
-import com.bookshelfhub.core.domain.usecases.DownloadBookUseCase
+import com.bookshelfhub.book.page.DownloadBookUseCase
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.model.entities.ShelfSearchHistory
 import com.bookshelfhub.core.model.uistate.BookDownloadState

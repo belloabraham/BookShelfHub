@@ -29,7 +29,7 @@ class CloudMessagingService : FirebaseMessagingService() {
                 val message = remoteMessage.notification!!.body!!
                 val title = remoteMessage.notification!!.title!!
                 NotificationBuilder(applicationContext)
-                    .setMessage(message)
+                    .setContentText(message)
                     .setTitle(title)
                     .Builder(applicationContext)
                     .showNotification(notificationId)

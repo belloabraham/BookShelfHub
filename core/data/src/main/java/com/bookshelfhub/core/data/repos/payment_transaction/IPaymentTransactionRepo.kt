@@ -8,7 +8,8 @@ interface IPaymentTransactionRepo {
     suspend fun initializePaymentVerificationProcess(
         paymentTransactions: List<PaymentTransaction>,
         currencyToChargeForBookSale:String,
-        paymentSDKType: PaymentSDKType
+        paymentSDKType: PaymentSDKType,
+        subtractedUserEarnings:Double
     )
     suspend fun deletePaymentTransactions(paymentTransactions:List<PaymentTransaction>)
     suspend fun getAllPaymentTransactions(): List<PaymentTransaction>

@@ -56,7 +56,6 @@ dependencies {
     implementation(libs.firebase.appcheck.debug)
 
     implementation(project(":core:authentication"))
-    implementation(project(":feature:book_reviews"))
     implementation(project(":core:cloud_messaging"))
     implementation(project(":core:common"))
     implementation(project(":core:data"))
@@ -67,6 +66,8 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:remote"))
     implementation(project(":core:payment"))
+    implementation(project(":feature:book_reviews"))
+    implementation(project(":feature:book_page"))
     implementation(project(":feature:onboarding"))
     implementation(project(":feature:home"))
 

@@ -1,7 +1,10 @@
-package com.bookshelfhub.core.domain.usecases
+package com.bookshelfhub.book.page
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -11,11 +14,12 @@ import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
 import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.core.common.notification.NotificationBuilder
 import com.bookshelfhub.core.data.Book
-import com.bookshelfhub.core.data.repos.bookdownload.BookDownloadStateRepo
+import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.remote.storage.ICloudStorage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
+import com.bookshelfhub.core.resources.R
 import java.io.File
 import java.io.IOException
 
@@ -25,19 +29,26 @@ class DownloadBook @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val cloudStorage: ICloudStorage,
-    private val bookDownloadStateRepo: BookDownloadStateRepo
+    private val bookDownloadStateRepo: IBookDownloadStateRepo
 ): CoroutineWorker(context, workerParams){
 
-    private var message =""
-    private var bookName =""
-    private var notificationId = 0
+    private lateinit var message:String
+    private lateinit var bookName:String
+    private val progressMax = 100
+    private var progress = 0
+    private var notificationId = 1
+    private lateinit var notification:NotificationCompat.Builder
 
     override suspend fun doWork(): Result {
 
-         val pubId = inputData.getString(Book.PUB_ID)!!
-         val bookId = inputData.getString(Book.ID)!!
-         bookName = inputData.getString(Book.NAME)!!
-         notificationId = inputData.getInt(Book.SERIAL_NO, 0)
+        val pubId = inputData.getString(Book.PUB_ID)!!
+        val bookId = inputData.getString(Book.ID)!!
+        bookName = inputData.getString(Book.NAME)!!
+        notificationId = inputData.getInt(Book.SERIAL_NO, 1)
+        message = applicationContext.getString(R.string.downloading_in_prog)
+        notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
+        notification.setProgress(progressMax, 0 , true)
+        NotificationManagerCompat.from(context).notify(notificationId, notification.build())
 
         try {
 
@@ -56,9 +67,9 @@ class DownloadBook @AssistedInject constructor(
                 subfolder =  bookId,
                 fileName =  bookId,
                 remoteFileExt = FileExtension.DOT_PDF,
-                onProgress = { it->
-                    val progress = it-10
-                    message = getMessage(progress)
+                onProgress = {
+                    progress = it
+                    message = getDownloadProgressMessage(progress)
                     runBlocking {
                         setForeground(getForegroundInfo())
                         bookDownloadStateRepo.updatedDownloadState(bookId, progress)
@@ -66,15 +77,31 @@ class DownloadBook @AssistedInject constructor(
                 },
                 onComplete = {
                     runBlocking {
+                        progress = 100
                         val tempFile = AppExternalStorage.getDocumentFilePath(
                             folderName =  pubId,
                             subFolderName = bookId,
-                            fileNameWithExt = bookId+ FileExtension.DOT_TEMP,
-                            applicationContext)
+                            fileNameWithExt = bookId+FileExtension.DOT_TEMP,
+                            applicationContext
+                        )
 
+                        notification.setOngoing(false)
+                        notification.setAutoCancel(true)
+
+                        val intent = Intent(applicationContext, BookActivity::class.java)
+                        with(intent) {
+                            putExtra(Book.NAME, bookName)
+                            putExtra(Book.ID, bookId)
+                        }
+                        val  bookActivityPendingIntent = PendingIntent.getActivity(
+                            applicationContext,
+                            0, intent,
+                            NotificationBuilder.getIntentFlag()
+                        )
+                        notification.setContentIntent(bookActivityPendingIntent)
                         createLocalFileFromTempFile(tempFile, localFile, bookId)
-                        bookDownloadStateRepo.updatedDownloadState(bookId, 100)
-                        message = getMessage(100)
+                        bookDownloadStateRepo.updatedDownloadState(bookId, progress)
+                        message = getDownloadProgressMessage(progress)
                         setForeground(getForegroundInfo())
                     }
                 },
@@ -83,6 +110,7 @@ class DownloadBook @AssistedInject constructor(
                         bookDownloadStateRepo.updatedDownloadState(bookId, true)
                     }
                 })
+
         }catch (e:Exception){
             ErrorUtil.e(e)
             return Result.failure()
@@ -91,13 +119,22 @@ class DownloadBook @AssistedInject constructor(
         return Result.success()
     }
 
+
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        val notification = getNotificationBuilder(bookName, message).getNotificationBuilder().build()
-        return ForegroundInfo(notificationId, notification)
+        notification.setProgress(progressMax, progress, false)
+        notification.setContentText(message)
+        return ForegroundInfo(notificationId, notification.build())
     }
 
-    private fun getMessage(progress:Int): String {
-      return  if( progress == 100 )  "Download complete" else "Downloading $progress%"
+    private fun getDownloadProgressMessage(progress:Int): String {
+        return if(progress == 100 ){
+           applicationContext.getString(R.string.download_complete)
+        }else{
+            String.format(
+                applicationContext.getString(R.string.download_progress),
+                progress
+            )
+        }
     }
 
     private fun getNotificationBuilder(
@@ -107,8 +144,9 @@ class DownloadBook @AssistedInject constructor(
         return NotificationBuilder(applicationContext)
             .setAutoCancel(false)
             .setOngoing(true)
-            .setMessage(message)
+            .setContentText(message)
             .setTitle(title)
+            .setAlertOnlyOnce(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .Builder(applicationContext)
     }

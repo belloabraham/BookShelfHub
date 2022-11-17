@@ -53,6 +53,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
         val transactionRef = inputData.getString(Payment.TRANSACTION_REF.KEY)!!
         val paymentSDKType = inputData.getString(Payment.PAYMENT_SDK_TYPE.KEY)!!
+        val subtractedUserEarnings = inputData.getDouble(Payment.SUBTRACTED_USER_EARNINGS.KEY, 0.0)
         val currencyToChargeForBookSale = inputData.getString(Payment.CURRENCY_TO_CHARGE_FOR_BOOK_SALE.KEY)!!
 
         val paymentTransactions = paymentTransactionRepo.getPaymentTransactions(transactionRef)
@@ -124,7 +125,8 @@ class UploadPaymentTransactions @AssistedInject constructor(
               Payment.ORDERED_BOOKS.KEY to listOfOrderedBooksAsJsonString,
               Payment.BOOK_NAMES.KEY to combinedBookNames.toString(),
               Payment.USER_REFERRER_ID.KEY to user.referrerId,
-              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission
+              Payment.USER_REFERRER_COMMISSION.KEY to userReferrerCommission,
+              Payment.SUBTRACTED_USER_EARNINGS.KEY to subtractedUserEarnings
           )
 
           val paymentCloudFunction = getPaymentCLoudFunctionToBeCalled(paymentSDKType)!!
@@ -158,7 +160,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
     private fun showNotification(message:String, @StringRes title:Int){
         val notificationId = (2..20).random()
         NotificationBuilder(applicationContext)
-            .setMessage(message)
+            .setContentText(message)
             .setTitle(title)
             .Builder(applicationContext)
             .showNotification(notificationId)

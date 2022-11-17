@@ -20,7 +20,7 @@ import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.data.repos.user_review.IUserReviewRepo
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
-import com.bookshelfhub.core.domain.usecases.DownloadBookUseCase
+import com.bookshelfhub.book.page.DownloadBookUseCase
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.dynamic_link.Social
 import com.bookshelfhub.core.model.entities.*
@@ -40,22 +40,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookItemActivityViewModel @Inject constructor(
-  private val settingsUtil: SettingsUtil,
-  savedState: SavedStateHandle,
-  private val publishedBooksRepo: IPublishedBooksRepo,
-  private  val userReviewRepo: IUserReviewRepo,
-  private val orderedBooksRepo: IOrderedBooksRepo,
-  private val cartItemsRepo: ICartItemsRepo,
-  private val dynamicLink: IDynamicLink,
-  private val userRepo: IUserRepo,
-  private val worker: Worker,
-  private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
-  private val downloadBookUseCase: DownloadBookUseCase,
-  private val referralRepo: IReferralRepo,
-  private val bookDownloadStateRepo: IBookDownloadStateRepo,
-  private val searchHistoryRepo: ISearchHistoryRepo,
-  private val remoteConfig: IRemoteConfig,
-  val userAuth: IUserAuth
+    private val settingsUtil: SettingsUtil,
+    savedState: SavedStateHandle,
+    private val publishedBooksRepo: IPublishedBooksRepo,
+    private  val userReviewRepo: IUserReviewRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
+    private val cartItemsRepo: ICartItemsRepo,
+    private val dynamicLink: IDynamicLink,
+    private val userRepo: IUserRepo,
+    private val worker: Worker,
+    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
+    private val downloadBookUseCase: DownloadBookUseCase,
+    private val referralRepo: IReferralRepo,
+    private val bookDownloadStateRepo: IBookDownloadStateRepo,
+    private val searchHistoryRepo: ISearchHistoryRepo,
+    private val remoteConfig: IRemoteConfig,
+    val userAuth: IUserAuth
 ): ViewModel(){
 
   private var userReviews: MutableLiveData<List<UserReview>> = MutableLiveData()

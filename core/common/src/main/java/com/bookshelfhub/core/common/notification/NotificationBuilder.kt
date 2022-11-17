@@ -1,6 +1,5 @@
 package com.bookshelfhub.core.common.notification
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.PendingIntent.*
 import android.content.Context
@@ -16,28 +15,41 @@ import androidx.core.content.ContextCompat
 import com.bookshelfhub.core.common.helpers.utils.IconUtil
 
 
-class
-NotificationBuilder(private val context:Context, private val notifChannelId:String = context.getString(
-    R.string.notif_channel_id), private val notificationColor:Int=R.color.notf_color, private val smallIcon:Int = R.drawable.ic_stat_bookshelfhub) {
+class NotificationBuilder(
+    private val context:Context,
+    private val notificationChannelId:String = context.getString(
+    R.string.notif_channel_id),
+    private val notificationColor:Int=R.color.notf_color,
+    private val smallIcon:Int = R.drawable.ic_stat_bookshelfhub
+) {
 
-    private  var url:String? = null
+    private  var uri:String? = null
     private  var actionText:String? = null
     private var largeIcon: Bitmap = IconUtil.getBitmap(context, R.drawable.logo)
     private lateinit var title: String
     private lateinit var message:String
     private var autoCancel = true
     private var onGoing = false
-    private var pendingIntent:PendingIntent?=null
+    private var actionIntent:PendingIntent?=null
     private var priority = NotificationCompat.PRIORITY_DEFAULT
     private var contentIntent:PendingIntent?=null
+    private var alertOnlyOnce = true
+    private var actionIntentIcon = 0
 
-
-    private fun getPendingIntent(intent:Intent, context: Context): PendingIntent? {
-        return  getActivity(context, 0, intent, getIntentFlag())
+    private fun getViewPendingIntent(intent:Intent, context: Context): PendingIntent? {
+       return  getActivity(context, 0, intent, getIntentFlag())
     }
 
-    private fun getPendingIntent(): PendingIntent? {
-        return  pendingIntent
+    /**
+     * Defaults to true
+     */
+    fun setAlertOnlyOnce(value:Boolean):NotificationBuilder{
+        alertOnlyOnce = value
+        return this
+    }
+
+    private fun getActionIntent(): PendingIntent? {
+        return  actionIntent
     }
 
     fun setPriority(value:Int): NotificationBuilder {
@@ -45,8 +57,17 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
         return this
     }
 
-    fun setPendingIntent(pendingIntent: PendingIntent, action:String): NotificationBuilder {
-        this.pendingIntent  = pendingIntent
+    fun setNotificationProgress(){
+
+    }
+
+    fun setActionIntent(
+        pendingIntent: PendingIntent,
+        action:String,
+        actionIntentIcon:Int = 0
+    ): NotificationBuilder {
+        this.actionIntent  = pendingIntent
+        this.actionIntentIcon = actionIntentIcon
         actionText = action
         return this
     }
@@ -55,11 +76,14 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
         return contentIntent
     }
 
-    fun setContentIntent(intent: Intent): NotificationBuilder {
-        contentIntent  = getPendingIntent(intent, context)
+    fun setContentIntent(pendingIntent: PendingIntent): NotificationBuilder {
+        contentIntent  = pendingIntent
         return this
     }
 
+    /**
+     * Defaults to false
+     */
     fun setOngoing(value: Boolean):NotificationBuilder{
         onGoing = value
         return this
@@ -69,12 +93,12 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
         return this
     }
 
-    fun setMessage(@StringRes value:Int): NotificationBuilder {
-        setMessage(getString(value))
+    fun setContentText(@StringRes value:Int): NotificationBuilder {
+        setContentText(getString(value))
         return this
     }
 
-    fun setMessage(value:String): NotificationBuilder {
+    fun setContentText(value:String): NotificationBuilder {
         message = value
         return this
     }
@@ -110,13 +134,13 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
         return this
     }
 
-    fun setUrl(@StringRes value:Int): NotificationBuilder {
-        setUrl(getString(value))
+    fun setUri(@StringRes value:Int): NotificationBuilder {
+        setUri(getString(value))
         return this
     }
 
-    fun setUrl(value:String): NotificationBuilder {
-        this.url = value
+    fun setUri(value:String): NotificationBuilder {
+        this.uri = value
         return this
     }
 
@@ -130,9 +154,9 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
        private val notificationStyle:NotificationCompat.Style = NotificationCompat.BigTextStyle().bigText(message).setBigContentTitle(title)
        ){
 
+
         fun getNotificationBuilder(): NotificationCompat.Builder {
-            val notificationBuilder =  NotificationCompat.Builder(context, notifChannelId)
-                    .setSmallIcon(smallIcon)
+            val notificationBuilder = NotificationCompat.Builder(context, notificationChannelId).setSmallIcon(smallIcon)
                     .setLargeIcon(
                         largeIcon
                     )
@@ -140,18 +164,18 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
                     .setShowWhen(true)
                     .setContentText(message)
                     .setOngoing(onGoing)
-                    .setStyle(notificationStyle)
+                    .setOnlyAlertOnce(alertOnlyOnce)
+                    .setStyle( notificationStyle )
                     .setColor(ContextCompat.getColor(context, notificationColor))
                     .setPriority(priority)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                     .setAutoCancel(autoCancel)
 
             getContentIntent()?.let {
                 notificationBuilder.setContentIntent(it)
             }
 
-            getPendingIntent()?.let {
-                notificationBuilder.addAction(0, actionText, it)
+            getActionIntent()?.let {
+                notificationBuilder.addAction(actionIntentIcon, actionText, it)
             }
 
             return notificationBuilder
@@ -162,18 +186,17 @@ NotificationBuilder(private val context:Context, private val notifChannelId:Stri
             notificationManager.notify(notificationId, getNotificationBuilder().build())
         }
 
-         @SuppressLint("UnspecifiedImmutableFlag")
-         fun showNotification(notificationId:Int, getUrlIntent:String.()->Intent) {
-            var pendingIntent: PendingIntent? = null
-            url?.let {
-                val intent = getUrlIntent(it)
-                pendingIntent = getPendingIntent(intent, context)
+         fun showNotification(notificationId:Int, getViewIntent:String.()->Intent) {
+            var viewPendingIntent: PendingIntent? = null
+            uri?.let {
+                val intent = getViewIntent(it)
+                viewPendingIntent = getViewPendingIntent(intent, context)
             }
 
              val builder = getNotificationBuilder()
 
-             pendingIntent?.let {
-                builder.addAction(0, actionText, it)
+             viewPendingIntent?.let {
+                builder.addAction(actionIntentIcon, actionText, it)
              }
 
             val notificationManager = NotificationManagerCompat.from(context)

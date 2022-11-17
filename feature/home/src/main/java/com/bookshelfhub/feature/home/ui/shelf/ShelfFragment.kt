@@ -17,7 +17,7 @@ import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.model.ISearchResult
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
 import com.bookshelfhub.feature.home.MainActivityViewModel
-import com.bookshelfhub.feature.home.adapters.recycler.OrderedBooksAdapter
+import com.bookshelfhub.feature.home.adapters.recycler.BookShelfAdapter
 import com.bookshelfhub.feature.home.adapters.recycler.ShelfSearchResultAdapter
 import com.bookshelfhub.feature.home.databinding.FragmentShelfBinding
 import com.google.android.material.appbar.AppBarLayout
@@ -48,7 +48,7 @@ class ShelfFragment : Fragment() {
         val layout = binding!!
 
         mSearchListAdapter = ShelfSearchResultAdapter(requireActivity()).getSearchResultAdapter()
-        mOrderedBooksAdapter = OrderedBooksAdapter(
+        mOrderedBooksAdapter = BookShelfAdapter(
             requireActivity(),
             shelfViewModel,
             viewLifecycleOwner)

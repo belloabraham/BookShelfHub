@@ -303,6 +303,8 @@
     <!-- TODO: Book Download Service -->
     <string name="name_download_complete">"%s" download completed</string>
     <string name="download_error_msg">Download error %s</string>
+    <string name="downloading_in_prog">Download in progress</string>
+    <string name="download_progress">Downloading %d%%</string>
 
     <string name="swipe_down">Swipe down load newly purchased books</string>
 

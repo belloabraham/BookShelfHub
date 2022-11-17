@@ -34,6 +34,7 @@ class CartFragmentsViewModel @Inject constructor(
   private var payStackPublicKey:String?=null
   private var userEarningsFromReferrals: MutableLiveData<Earnings?> = MutableLiveData()
   private var totalEarnings = 0.0
+  internal var subtractedUserEarnings = 0.0
   internal var combinedBookIds = ""
   internal var totalCostOfBook:Double=0.0
   internal var paymentSDKType: PaymentSDKType? = null
@@ -77,7 +78,8 @@ class CartFragmentsViewModel @Inject constructor(
       paymentTransactionRepo.initializePaymentVerificationProcess(
         paymentTransactions,
         currencyToChargeForBooksSale,
-        paymentSDKType!!
+        paymentSDKType!!,
+        subtractedUserEarnings
       )
     }
   }

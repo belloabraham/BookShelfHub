@@ -1,4 +1,4 @@
-package com.bookshelfhub.core.domain.usecases
+package com.bookshelfhub.book.page
 
 import androidx.lifecycle.asFlow
 import androidx.work.*

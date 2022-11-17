@@ -1,6 +1,6 @@
 plugins {
     id ("bookshelfhub.android.feature")
-
+    id ("bookshelfhub.android.workmanager")
 }
 
 android {
@@ -8,12 +8,17 @@ android {
 }
 
 dependencies {
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.storage.ktx)
+
     implementation(libs.play.services.basement)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    implementation ("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation(libs.com.github.barteksc)
     implementation(libs.jd.alexander.likeButton)
     implementation(libs.afollestad.material.dialogs.bottomsheets)
 
@@ -23,6 +28,7 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:data"))
     implementation(project(":core:dynamic_link"))
+    implementation(project(":core:remote"))
     implementation(project(":core:authentication"))
     implementation(project(":feature:about_book"))
     implementation(project(":feature:webview"))

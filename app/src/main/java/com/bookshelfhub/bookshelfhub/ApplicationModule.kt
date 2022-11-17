@@ -9,6 +9,8 @@ import com.bookshelfhub.core.common.helpers.Json
 import com.bookshelfhub.core.common.helpers.utils.AppUtil
 import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.worker.Worker
+import com.bookshelfhub.core.data.repos.bookdownload.BookDownloadStateRepo
+import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.data.repos.bookinterest.BookInterestRepo
 import com.bookshelfhub.core.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.core.data.repos.bookmarks.BookmarksRepo
@@ -53,6 +55,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
+
+    @Singleton
+    @Provides
+    fun provideBookDownloadStateRepo(appDatabase:AppDatabase): IBookDownloadStateRepo {
+        return BookDownloadStateRepo(appDatabase)
+    }
 
     @Singleton
     @Provides

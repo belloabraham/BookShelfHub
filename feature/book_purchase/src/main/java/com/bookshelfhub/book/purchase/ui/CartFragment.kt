@@ -195,12 +195,12 @@ class CartFragment : Fragment() {
             val payStackMinimumAmountToCharge = 50
             val bookPriceAfterEarnings = totalAmountOfBooks - totalUserEarnings
 
-            if(currencyToChargeForBookSale == SupportedCurrencies.NGN && bookPriceAfterEarnings > payStackMinimumAmountToCharge){
-                totalAmountAfterUserEarnings = bookPriceAfterEarnings
-            }
+            val userQualifiedToUseNairaEarnings = currencyToChargeForBookSale == SupportedCurrencies.NGN && bookPriceAfterEarnings > payStackMinimumAmountToCharge
+            val userQualifiedToUseUSDEarnings = currencyToChargeForBookSale == SupportedCurrencies.USD
 
-            if(currencyToChargeForBookSale == SupportedCurrencies.USD){
+            if(userQualifiedToUseNairaEarnings || userQualifiedToUseUSDEarnings){
                 totalAmountAfterUserEarnings = bookPriceAfterEarnings
+                cartFragmentViewModel.subtractedUserEarnings = totalUserEarnings
             }
         }
 

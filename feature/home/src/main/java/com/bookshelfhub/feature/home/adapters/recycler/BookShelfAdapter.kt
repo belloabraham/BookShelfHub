@@ -21,6 +21,7 @@ import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
 import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.core.common.helpers.utils.IconUtil
 import com.bookshelfhub.core.common.helpers.utils.Toast
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
 import com.bookshelfhub.feature.home.ui.shelf.ShelfViewModel
 import kotlinx.coroutines.launch
@@ -28,7 +29,7 @@ import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
 
-class OrderedBooksAdapter(
+class BookShelfAdapter(
     private val activity: Activity,
     private val shelfViewModel: ShelfViewModel,
     private val lifecycleOwner: LifecycleOwner,
@@ -95,16 +96,15 @@ class OrderedBooksAdapter(
                 }
 
                 if(fileDoesNotExist){
-
                     if(shelfViewModel.isConnected()){
                         val downloadDrawable =  IconUtil.getDrawable(activity, R.drawable.download_outline)
                         downloadActionIcon.setImageDrawable(downloadDrawable)
 
                         val workData = workDataOf(
-                            com.bookshelfhub.core.data.Book.ID to bookId,
-                            com.bookshelfhub.core.data.Book.SERIAL_NO to model.serialNo.toInt(),
-                            com.bookshelfhub.core.data.Book.PUB_ID to model.pubId,
-                            com.bookshelfhub.core.data.Book.NAME to bookName
+                            Book.ID to bookId,
+                            Book.SERIAL_NO to model.serialNo.toInt(),
+                            Book.PUB_ID to model.pubId,
+                            Book.NAME to bookName
                         )
 
                         shelfViewModel.startBookDownload(workData)
@@ -136,7 +136,6 @@ class OrderedBooksAdapter(
                             shelfViewModel.deleteDownloadState(downloadBookState)
                         }
                     }
-
                 }
             }
         }
@@ -149,8 +148,8 @@ class OrderedBooksAdapter(
         private fun openBook(activity: Activity, bookName: String, bookId:String) {
             val intent = Intent(activity, BookActivity::class.java)
             with(intent) {
-                putExtra(com.bookshelfhub.core.data.Book.NAME, bookName)
-                putExtra(com.bookshelfhub.core.data.Book.ID, bookId)
+                putExtra(Book.NAME, bookName)
+                putExtra(Book.ID, bookId)
             }
             val options = ActivityOptions.makeSceneTransitionAnimation(
                 activity,
