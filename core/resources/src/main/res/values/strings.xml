@@ -169,8 +169,11 @@
 
 
     <!-- Todo Notification -->
-    <string name="notif_channel_desc">&appname; notification channel</string>
-    <string name="notif_channel_id" translatable="false">&appname;</string>
+    <string name="notification_channel_desc">&appname; notification channel</string>
+    <string name="notification_channel_id" translatable="false">&appname;</string>
+
+    <string name="download_channel_desc">Book download notification channel</string>
+    <string name="download_channel_id" translatable="false">Book downloads</string>
 
 
     <!-- Todo App Update -->

@@ -18,7 +18,7 @@ import com.bookshelfhub.core.common.helpers.utils.IconUtil
 class NotificationBuilder(
     private val context:Context,
     private val notificationChannelId:String = context.getString(
-    R.string.notif_channel_id),
+    R.string.notification_channel_id),
     private val notificationColor:Int=R.color.notf_color,
     private val smallIcon:Int = R.drawable.ic_stat_bookshelfhub
 ) {
@@ -31,7 +31,7 @@ class NotificationBuilder(
     private var autoCancel = true
     private var onGoing = false
     private var actionIntent:PendingIntent?=null
-    private var priority = NotificationCompat.PRIORITY_DEFAULT
+    private var priority = NotificationCompat.PRIORITY_HIGH
     private var contentIntent:PendingIntent?=null
     private var alertOnlyOnce = true
     private var actionIntentIcon = 0

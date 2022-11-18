@@ -54,8 +54,15 @@ class Application: android.app.Application(), Configuration.Provider {
 
         PaymentSDK.initialize(applicationContext)
 
-        NotificationChannelBuilder(this, getString(R.string.notif_channel_id))
-            .createNotificationChannels(getString(R.string.notif_channel_desc),R.color.notf_color)
+        NotificationChannelBuilder(
+            this,
+            getString(R.string.notification_channel_id),
+            getString(R.string.download_channel_id)
+        ).createNotificationChannels(
+            getString(R.string.notification_channel_desc),
+            getString(R.string.download_channel_desc),
+            R.color.notf_color
+        )
 
         enqueueWorkers()
     }

@@ -78,7 +78,7 @@ Set color used with incoming notification messages. This is used when no color i
             android:resource="@color/notf_color" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="@string/notif_channel_id" /> <!-- Firebase Cloud Messaging Custom Service Class -->
+            android:value="@string/notification_channel_id" /> <!-- Firebase Cloud Messaging Custom Service Class -->
         <service
             android:name=".CloudMessagingService"
             android:exported="false">

@@ -141,7 +141,10 @@ class DownloadBook @AssistedInject constructor(
         title: String,
         message: String,
     ): NotificationBuilder.Builder {
-        return NotificationBuilder(applicationContext)
+        return NotificationBuilder(
+            applicationContext,
+            applicationContext.getString(R.string.download_channel_id)
+        )
             .setAutoCancel(false)
             .setOngoing(true)
             .setContentText(message)

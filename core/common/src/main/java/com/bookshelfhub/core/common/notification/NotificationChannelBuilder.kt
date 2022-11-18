@@ -5,28 +5,42 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 
-class NotificationChannelBuilder(val context:Context,val primaryNotfChnlId:String) {
+class NotificationChannelBuilder(
+    private val context:Context,
+    private val primaryNotificationChannelId:String,
+    private val downloadNotificationChannelId:String
+    ) {
 
-    fun createNotificationChannels(primaryNotfChnlDesc:String, colorRes:Int){
+    fun createNotificationChannels(
+        primaryNotificationChannelDesc:String,
+        downloadNotificationChannelDesc:String,
+        colorRes:Int
+    ){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            val primaryNotifChannel = NotificationChannel(
-                primaryNotfChnlId, primaryNotfChnlDesc, NotificationManager.IMPORTANCE_HIGH
+            val primaryNotificationChannel = NotificationChannel(
+                primaryNotificationChannelId, primaryNotificationChannelDesc, NotificationManager.IMPORTANCE_HIGH
             )
-            channelSettings(primaryNotifChannel, primaryNotfChnlDesc, colorRes)
+            channelSettings(primaryNotificationChannel, primaryNotificationChannelDesc, colorRes)
+
+            val downloadNotificationChannel = NotificationChannel(
+                downloadNotificationChannelId, downloadNotificationChannelDesc, NotificationManager.IMPORTANCE_LOW
+            )
+            channelSettings(downloadNotificationChannel, downloadNotificationChannelDesc, colorRes)
+
 
             val nManager = context.getSystemService(
                 NotificationManager::class.java
             )!!
-            nManager.createNotificationChannel(primaryNotifChannel)
+            nManager.createNotificationChannel(primaryNotificationChannel)
+            nManager.createNotificationChannel(downloadNotificationChannel)
         }
     }
 
     private fun channelSettings(nChannel: NotificationChannel, desc: String, colorRes:Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             nChannel.enableLights(true)
-            nChannel.lockscreenVisibility = 0
             nChannel.lightColor = context.getColor(colorRes)
             nChannel.enableVibration(true)
             nChannel.setShowBadge(true)
