@@ -78,7 +78,7 @@ class DownloadBook @AssistedInject constructor(
                 onComplete = {
                     runBlocking {
                         progress = 100
-                        val tempFile = AppExternalStorage.getDocumentFilePath(
+                        val tempLocalFilePath = AppExternalStorage.getDocumentFilePath(
                             folderName =  pubId,
                             subFolderName = bookId,
                             fileNameWithExt = bookId+FileExtension.DOT_TEMP,
@@ -99,7 +99,7 @@ class DownloadBook @AssistedInject constructor(
                             NotificationBuilder.getIntentFlag()
                         )
                         notification.setContentIntent(bookActivityPendingIntent)
-                        createLocalFileFromTempFile(tempFile, localFile, bookId)
+                        createLocalFileFromTempFile(tempLocalFilePath, localFile, bookId)
                         bookDownloadStateRepo.updatedDownloadState(bookId, progress)
                         message = getDownloadProgressMessage(progress)
                         setForeground(getForegroundInfo())

@@ -11,6 +11,8 @@ object RemoteConfig {
     const val EMAIL="email"
     const val PHONE="phone"
     const val ENABLE_TRENDING = "enable_trending"
+    const val VIDEOS_DOMAIN = "videos_domain"
+
 
     fun initialize(){
         val remoteConfig = Firebase.remoteConfig

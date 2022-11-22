@@ -2,6 +2,13 @@
 <resources>
     <string name="app_name" translatable="false">&appname;</string>
 
+    <string name="include_addition_info_title">Include additional info?</string>
+    <string name="include_addition_info_msg">Send your additional information to vendor?</string>
+
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+
+
     <string name="supported_currency_hint">
         You can only make payment with Nigerian Naira, Ghanaian Cedi or USD for now.
     </string>
@@ -10,29 +17,36 @@
     <string name="card_issued_country_required">Card issued country is required</string>
 
 
-    <!-- TODO: Store Categories -->
+    <!-- TODO: Book Categories -->
+    <string name="religion">Religion</string>
+    <string name="engineering_mathematics">Engineering and Mathematics</string>
+    <string name="christianity">Christianity</string>
+    <string name="islam">Islam</string>
+    <string name="biography">Biography</string>
+    <string name="literature">Literature</string>
+    <string name="health_fitness">Health and Fitness</string>
+    <string name="fashion">Fashion</string>
     <string name="cook_books">Cook Books</string>
-    <string name="fiction">Fiction</string>
     <string name="travel">Travel and Tourism</string>
     <string name="manuals">How-to and Manuals</string>
     <string name="art_craft">Art and Craft</string>
-    <string name="education">Education</string>
     <string name="law">Law</string>
+    <string name="fiction">Fiction</string>
+    <string name="nutrition">Nutrition</string>
     <string name="comic">Comic</string>
     <string name="business_finance">Business and Finance</string>
     <string name="news">News</string>
     <string name="languages_reference">Language and Reference</string>
     <string name="science_technology">Science and Technology</string>
     <string name="history">History</string>
-    <string name="poetry">Love and Poetry</string>
-    <string name="sport">Sport</string>
-    <string name="religion">Religion</string>
     <string name="politics">Politics</string>
     <string name="entertainment">Entertainment</string>
 
+
+
+
     <string name="profile_updated">Profile updated</string>
     <string name="profile_updated_msg">Your profile have been updated successfully.</string>
-
     <string name="unable_to_process_payment">Unable to process payment transaction: %s</string>
     <string name="payment_trans_failed">Payment transaction failed</string>
 
@@ -75,7 +89,6 @@
     <string name="internet_connection_required">Connect to the internet and retry</string>
     <string name="coming_soon">Coming soon</string>
     <string name="audio_coming_msg">Audio books is coming soon</string>
-    <string name="no_video_msg">There is currently no video for this page, make sure you are connected to the internet to get notified of new videos.</string>
     <string name="close">Close</string>
     <string name="unable_to_share_book">You can not share this book at the moment as it has been unpublished from the book store, try later</string>
 
@@ -237,27 +250,6 @@
     <string name="link_copied">Link copied</string>
     <string name="your_referral_link"><![CDATA[ Your referral link is <a href="%1$s">%2$s</a> ]]></string>
     <string name="earnings">Earnings</string>
-
-
-    <!-- TODO: Book Interest -->
-    <string name="data_analysis">Data Analysis</string>
-    <string name="engineering_mathematics">Engineering and Mathematics</string>
-    <string name="christianity">Christianity</string>
-    <string name="islam">Islam</string>
-    <string name="biography">Biography</string>
-    <string name="literature">Literature</string>
-    <string name="health_fitness">Health and Fitness</string>
-    <string name="preparation">Exam or Test Preparation</string>
-    <string name="humour">Humour</string>
-    <string name="relationships">Relationships</string>
-    <string name="psychology">Psychology</string>
-    <string name="novel">Novel</string>
-    <string name="transportation">Transportation</string>
-    <string name="fashion">Fashion</string>
-    <string name="music">Music</string>
-    <string name="computer_programming">Computer Programming</string>
-    <string name="archeology">Archeology</string>
-    <string name="civil_eng">Civil Engineering</string>
 
 
     <string name="interest_Saved">Book interest saved</string>

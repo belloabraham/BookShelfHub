@@ -102,10 +102,6 @@ class PublishedBooksRepo @Inject constructor(
 
     }
 
-     override suspend fun updateRecommendedBooksByTag(tag: String, isRecommended:Boolean){
-         withContext(ioDispatcher){publishedBooksDao.updateRecommendedBooksByTag(tag,isRecommended)}
-    }
-
      override suspend fun addAllPubBooks(pubBooks:List<PublishedBook>){
          withContext(ioDispatcher){publishedBooksDao.insertAllOrReplace(pubBooks)}
     }
@@ -142,13 +138,4 @@ class PublishedBooksRepo @Inject constructor(
      override fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBookUiState> {
         return publishedBooksDao.getRecommendedBooksPageSource()
     }
-
-    override suspend fun getBooksByTag(tag: String): List<PublishedBookUiState> {
-        return withContext(ioDispatcher) {publishedBooksDao.getBooksByTag(tag)}
-    }
-
-    override fun getBooksByTagPageSource(tag: String): PagingSource<Int, PublishedBookUiState> {
-        return publishedBooksDao.getBooksByTagPageSource(tag)
-    }
-
 }

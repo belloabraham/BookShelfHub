@@ -22,7 +22,7 @@ class SimilarBooksActivityViewModel @Inject constructor(
 
   private val userId = userAuth.getUserId()
 
-   private val tag = savedState.get<String>(SimilarBooks.TAG)!!
+   private val category = savedState.get<String>(SimilarBooks.CATEGORY)!!
 
 
   private val config  = PagingConfig(
@@ -32,9 +32,9 @@ class SimilarBooksActivityViewModel @Inject constructor(
     initialLoadSize = 20
   )
 
-   fun getFlowOfBookByTag(): Flow<PagingData<PublishedBookUiState>> {
+   fun getFlowOfBookBy(): Flow<PagingData<PublishedBookUiState>> {
      return  Pager(config){
-       publishedBooksRepo.getBooksByTagPageSource(tag)
+       publishedBooksRepo.getBooksByCategoryPageSource(category)
      }.flow
   }
 
@@ -42,8 +42,8 @@ class SimilarBooksActivityViewModel @Inject constructor(
     return cartItemsRepo.getLiveTotalCartItemsNo(userId)
   }
 
-  suspend fun getBooksByTag(): List<PublishedBookUiState> {
-    return publishedBooksRepo.getBooksByTag(tag)
+  suspend fun getBooksByCategory(): List<PublishedBookUiState> {
+    return publishedBooksRepo.getBooksByCategory(category)
   }
 
 }

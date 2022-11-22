@@ -18,7 +18,6 @@ import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
 import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.feature.webview.WebView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.asFlow
 import com.bookshelfhub.book.page.BookActivity
 import com.bookshelfhub.book.purchase.CartActivity
@@ -27,7 +26,6 @@ import com.bookshelfhub.core.common.helpers.utils.IconUtil
 import com.bookshelfhub.core.common.helpers.utils.Location
 import com.bookshelfhub.core.common.helpers.utils.ShareUtil
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateFormat
-import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateUtil
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.model.entities.*
@@ -45,6 +43,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import androidx.activity.viewModels
+import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
 
 @AndroidEntryPoint
 class BookItemActivity : AppCompatActivity() {
@@ -140,11 +139,11 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.addToCartBtn.setOnClickListener {
             lifecycleScope.launch {
-                val collaboratorId: String? =
-                    bookItemActivityViewModel.getCollaboratorIdForThisBook()
+                val collaboratorId = bookItemActivityViewModel.getCollaboratorIdForThisBook()
                 val book = onlinePublishedBook
                 val cart = CartItem(
-                    userId, book.bookId,
+                    userId,
+                    book.bookId,
                     book.name,
                     book.author,
                     book.pubId,
@@ -153,8 +152,22 @@ class BookItemActivity : AppCompatActivity() {
                     book.price,
                     book.sellerCurrency,
                 )
-                bookItemActivityViewModel.addToCart(cart)
-                showViewCartButtonAndHideOthers()
+
+                if(user.additionInfo.isNullOrBlank()){
+                    AlertDialogBuilder.with(R.string.include_addition_info_msg, this@BookItemActivity)
+                        .setNegativeAction(R.string.no){
+                            bookItemActivityViewModel.addToCart(cart)
+                            showViewCartButtonAndHideOthers()
+                        }
+                        .setPositiveAction(R.string.yes){
+                            cart.userAdditionalInfo = user.additionInfo
+                            bookItemActivityViewModel.addToCart(cart)
+                            showViewCartButtonAndHideOthers()
+                        }.build().showDialog(R.string.include_addition_info_title)
+                }else{
+                    bookItemActivityViewModel.addToCart(cart)
+                    showViewCartButtonAndHideOthers()
+                }
             }
         }
 
@@ -218,7 +231,7 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.similarBooksCard.setOnClickListener {
             val intent = Intent(this, SimilarBooksActivity::class.java)
-            intent.putExtra(SimilarBooks.TITLE, onlinePublishedBook.category)
+            intent.putExtra(SimilarBooks.CATEGORY, onlinePublishedBook.category)
             startActivity(intent)
         }
 
@@ -379,7 +392,7 @@ class BookItemActivity : AppCompatActivity() {
             null,
             0.0
         )
-        bookItemActivityViewModel.addAnOrderedBook(orderedBook)
+        bookItemActivityViewModel.addAFreeOrderedBook(orderedBook)
     }
 
     private fun checkIfBookAlreadyAddedByUser(orderedBook: Optional<OrderedBook>){

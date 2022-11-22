@@ -3,6 +3,7 @@ package com.bookshelfhub.core.common.extensions
 import android.util.Patterns
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.WordUtils
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -42,6 +43,11 @@ fun String.containsUrl(regex:String):Boolean{
 @JvmSynthetic
 fun String.capitalize(): String? {
     return WordUtils.capitalize(this)
+}
+
+@JvmSynthetic
+fun String.makeUrlPath():String{
+    return this.replace(" ", "-").lowercase(Locale.getDefault())
 }
 
 @JvmSynthetic

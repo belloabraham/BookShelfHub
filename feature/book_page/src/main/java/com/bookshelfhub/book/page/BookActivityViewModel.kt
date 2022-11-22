@@ -7,7 +7,6 @@ import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
-import com.bookshelfhub.core.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
@@ -17,7 +16,7 @@ import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.model.entities.*
-import com.google.firebase.FirebaseException
+import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -36,7 +35,7 @@ class BookActivityViewModel @Inject constructor(
     private val searchHistoryRepo: ISearchHistoryRepo,
     private val userRepo: UserRepo,
     private val bookmarksRepo: IBookmarksRepo,
-    private val bookVideosRepo: IBookVideosRepo,
+    private val remoteConfig:IRemoteConfig
 ) : ViewModel() {
 
     val userId = userAuth.getUserId()
@@ -45,16 +44,11 @@ class BookActivityViewModel @Inject constructor(
     private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
     private var bookShareLink:String?=null
 
-
-    private var livePublishedBook: LiveData<Optional<PublishedBook>> = MutableLiveData()
-
     init {
 
         viewModelScope.launch {
             bookShareLink = settingsUtil.getString(bookId)
         }
-
-        livePublishedBook = publishedBooksRepo.getALiveOptionalPublishedBook(bookId)
 
         if (isSearchItem) {
             addShelfSearchHistory(
@@ -68,27 +62,17 @@ class BookActivityViewModel @Inject constructor(
         }
     }
 
-     fun getBookVideos(){
-        viewModelScope.launch {
-                try {
-                    val bookVideos =  bookVideosRepo.getRemoteBookVideos(bookId)
-                    if(bookVideos.isNotEmpty()){
-                        bookVideosRepo.addBookVideos(bookVideos)
-                    }
-                }catch (e:Exception){
-                    ErrorUtil.e(e)
-                    val theresIsInternetConnection = e is FirebaseException
-                    if(theresIsInternetConnection){
-                        return@launch
-                    }
-                }
-        }
+    fun getRemoteString(key:String): String {
+       return remoteConfig.getString(key)
     }
 
     suspend fun getInt(key:String, defaultVal:Int): Int {
        return settingsUtil.getInt(key, defaultVal)
     }
 
+    suspend fun getPublishedBook(): Optional<PublishedBook> {
+        return publishedBooksRepo.getPublishedBook(bookId)
+    }
 
     fun addIntToSettings(key:String, value:Int){
         viewModelScope.launch {
@@ -150,11 +134,6 @@ class BookActivityViewModel @Inject constructor(
 
     suspend fun getAnOrderedBook(): OrderedBook {
         return orderedBooksRepo.getAnOrderedBook(bookId).get()
-    }
-
-
-    fun getLiveListOfBookVideos(): LiveData<List<BookVideo>> {
-        return bookVideosRepo.getLiveListOfBookVideos(bookId)
     }
 
     private fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory) {

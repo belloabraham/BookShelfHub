@@ -9,432 +9,291 @@ import com.bookshelfhub.core.model.entities.BookInterest
 /**
  * Used for two way data binding in BookInterestFragment
  */
-class BookInterestObservable (private val bkInts: BookInterest): BaseObservable() {
+class BookInterestObservable (private val bookInterest: BookInterest): BaseObservable() {
 
 
     @Bindable
     fun getIsHistory():Boolean{
-        return bkInts.historyChecked
+        return bookInterest.historyChecked
     }
 
     fun setIsHistory(value:Boolean){
-        if(bkInts.historyChecked!=value){
-            bkInts.historyChecked=value
+        if(bookInterest.historyChecked!=value){
+            bookInterest.historyChecked=value
             notifyPropertyChanged(BR.isHistory)
         }
     }
 
     @Bindable
     fun getIsChristianity():Boolean{
-        return bkInts.christianityChecked
+        return bookInterest.christianityChecked
     }
 
     fun setIsChristianity(value:Boolean){
-        if(bkInts.christianityChecked!=value){
-            bkInts.christianityChecked=value
+        if(bookInterest.christianityChecked!=value){
+            bookInterest.christianityChecked=value
             notifyPropertyChanged(BR.isChristianity)
         }
     }
 
     @Bindable
     fun getIsBusinessAndFinance():Boolean{
-        return bkInts.businessAndFinanceChecked
+        return bookInterest.businessAndFinanceChecked
     }
 
     fun setIsBusinessAndFinance(value:Boolean){
-        if(bkInts.businessAndFinanceChecked!=value){
-            bkInts.businessAndFinanceChecked=value
+        if(bookInterest.businessAndFinanceChecked!=value){
+            bookInterest.businessAndFinanceChecked=value
             notifyPropertyChanged(BR.isBusinessAndFinance)
         }
     }
 
     @Bindable
     fun getIsTravel():Boolean{
-        return bkInts.travelChecked
+        return bookInterest.travelChecked
     }
 
     fun setIsTravel(value:Boolean){
-        if(bkInts.travelChecked!=value){
-            bkInts.travelChecked=value
+        if(bookInterest.travelChecked!=value){
+            bookInterest.travelChecked=value
             notifyPropertyChanged(BR.isTravel)
         }
     }
 
     @Bindable
     fun getIsReligion():Boolean{
-        return bkInts.religionChecked
+        return bookInterest.religionChecked
     }
 
     fun setIsReligion(value:Boolean){
-        if(bkInts.religionChecked!=value){
-            bkInts.religionChecked=value
+        if(bookInterest.religionChecked!=value){
+            bookInterest.religionChecked=value
             notifyPropertyChanged(BR.isReligion)
         }
     }
 
     @Bindable
     fun getIsComic():Boolean{
-        return bkInts.comicChecked
+        return bookInterest.comicChecked
     }
 
     fun setIsComic(value:Boolean){
-        if(bkInts.comicChecked!=value){
-            bkInts.comicChecked=value
+        if(bookInterest.comicChecked!=value){
+            bookInterest.comicChecked=value
             notifyPropertyChanged(BR.isComic)
         }
     }
 
     @Bindable
     fun getIsScienceAndTechnology():Boolean{
-        return bkInts.scienceAndTechnologyChecked
+        return bookInterest.scienceAndTechnologyChecked
     }
 
     fun setIsScienceAndTechnology(value:Boolean){
-        if(bkInts.scienceAndTechnologyChecked!=value){
-            bkInts.scienceAndTechnologyChecked=value
+        if(bookInterest.scienceAndTechnologyChecked!=value){
+            bookInterest.scienceAndTechnologyChecked=value
             notifyPropertyChanged(BR.isScienceAndTechnology)
         }
     }
 
     @Bindable
-    fun getIsSport():Boolean{
-        return bkInts.sportChecked
-    }
-
-    fun setIsSport(value:Boolean){
-        if(bkInts.sportChecked!=value){
-            bkInts.sportChecked=value
-            notifyPropertyChanged(BR.isSport)
-        }
-    }
-
-    @Bindable
     fun getIsFiction():Boolean{
-        return bkInts.fictionChecked
+        return bookInterest.fictionChecked
     }
 
     fun setIsFiction(value:Boolean){
-        if(bkInts.fictionChecked!=value){
-            bkInts.fictionChecked=value
+        if(bookInterest.fictionChecked!=value){
+            bookInterest.fictionChecked=value
             notifyPropertyChanged(BR.isFiction)
         }
     }
 
-    @Bindable
-    fun getIsMusic():Boolean{
-        return bkInts.musicChecked
-    }
-
-    fun setIsMusic(value:Boolean){
-        if(bkInts.musicChecked!=value){
-            bkInts.musicChecked=value
-            notifyPropertyChanged(BR.isMusic)
-        }
-    }
 
     @Bindable
     fun getIsLaw():Boolean{
-        return bkInts.lawChecked
+        return bookInterest.lawChecked
     }
 
     fun setIsLaw(value:Boolean){
-        if(bkInts.lawChecked!=value){
-            bkInts.lawChecked=value
+        if(bookInterest.lawChecked!=value){
+            bookInterest.lawChecked=value
             notifyPropertyChanged(BR.isLaw)
         }
     }
 
     @Bindable
     fun getIsArtAndCraft():Boolean{
-        return bkInts.artAndCraftChecked
+        return bookInterest.artAndCraftChecked
     }
 
     fun setIsArtAndCraft(value:Boolean){
-        if(bkInts.artAndCraftChecked!=value){
-            bkInts.artAndCraftChecked=value
+        if(bookInterest.artAndCraftChecked!=value){
+            bookInterest.artAndCraftChecked=value
             notifyPropertyChanged(BR.isArtAndCraft)
         }
     }
 
     @Bindable
-    fun getIsPoetry():Boolean{
-        return bkInts.poetryChecked
-    }
-
-    fun setIsPoetry(value:Boolean){
-        if(bkInts.poetryChecked!=value){
-            bkInts.poetryChecked=value
-            notifyPropertyChanged(BR.isPoetry)
-        }
-    }
-
-    @Bindable
     fun getIsHealthAndFitness():Boolean{
-        return bkInts.healthAndFitnessChecked
+        return bookInterest.healthAndFitnessChecked
     }
 
     fun setIsHealthAndFitness(value:Boolean){
-        if(bkInts.healthAndFitnessChecked!=value){
-            bkInts.healthAndFitnessChecked=value
+        if(bookInterest.healthAndFitnessChecked!=value){
+            bookInterest.healthAndFitnessChecked=value
             notifyPropertyChanged(BR.isHealthAndFitness)
         }
     }
 
     @Bindable
     fun getIsHowToAndManuals():Boolean{
-        return bkInts.howToAndManualsChecked
+        return bookInterest.howToAndManualsChecked
     }
 
     fun setIsHowToAndManuals(value:Boolean){
-        if(bkInts.howToAndManualsChecked!=value){
-            bkInts.howToAndManualsChecked=value
+        if(bookInterest.howToAndManualsChecked!=value){
+            bookInterest.howToAndManualsChecked=value
             notifyPropertyChanged(BR.isHowToAndManuals)
         }
     }
 
     @Bindable
     fun getIsIslam():Boolean{
-        return bkInts.islamChecked
+        return bookInterest.islamChecked
     }
 
     fun setIsIslam(value:Boolean){
-        if(bkInts.islamChecked!=value){
-            bkInts.islamChecked=value
+        if(bookInterest.islamChecked!=value){
+            bookInterest.islamChecked=value
             notifyPropertyChanged(BR.isIslam)
         }
     }
 
     @Bindable
-    fun getIsNovel():Boolean{
-        return bkInts.novelChecked
-    }
-
-    fun setIsNovel(value:Boolean){
-        if(bkInts.novelChecked!=value){
-            bkInts.novelChecked=value
-            notifyPropertyChanged(BR.isNovel)
-        }
-    }
-
-    @Bindable
     fun getIsLiterature():Boolean{
-        return bkInts.literatureChecked
+        return bookInterest.literatureChecked
     }
 
     fun setIsLiterature(value:Boolean){
-        if(bkInts.literatureChecked!=value){
-            bkInts.literatureChecked=value
+        if(bookInterest.literatureChecked!=value){
+            bookInterest.literatureChecked=value
             notifyPropertyChanged(BR.isLiterature)
         }
     }
 
     @Bindable
-    fun getIsTransportation():Boolean{
-        return bkInts.transportationChecked
-    }
-
-    fun setIsTransportation(value:Boolean){
-        if(bkInts.transportationChecked!=value){
-            bkInts.transportationChecked=value
-             notifyPropertyChanged(BR.isTransportation)
-        }
-    }
-
-    @Bindable
-    fun getIsComputerProgramming():Boolean{
-        return bkInts.computerProgrammingChecked
-    }
-
-    fun setIsComputerProgramming(value:Boolean){
-        if(bkInts.computerProgrammingChecked!=value){
-            bkInts.computerProgrammingChecked=value
-            notifyPropertyChanged(BR.isComputerProgramming)
-        }
-    }
-
-    @Bindable
-    fun getIsDataAnalysis():Boolean{
-        return bkInts.dataAnalysisChecked
-    }
-
-    fun setIsDataAnalysis(value:Boolean){
-        if(bkInts.dataAnalysisChecked!=value){
-            bkInts.dataAnalysisChecked=value
-            notifyPropertyChanged(BR.isDataAnalysis)
-        }
-    }
-
-    @Bindable
     fun getIsLanguagesAndReference():Boolean{
-        return bkInts.languagesAndReferenceChecked
+        return bookInterest.languagesAndReferenceChecked
     }
 
     fun setIsLanguagesAndReference(value:Boolean){
-        if(bkInts.languagesAndReferenceChecked!=value){
-            bkInts.languagesAndReferenceChecked=value
+        if(bookInterest.languagesAndReferenceChecked!=value){
+            bookInterest.languagesAndReferenceChecked=value
             notifyPropertyChanged(BR.isLanguagesAndReference)
         }
     }
 
     @Bindable
     fun getIsMathsAndEngineering():Boolean{
-        return bkInts.mathsAndEngineeringChecked
+        return bookInterest.mathsAndEngineeringChecked
     }
 
     fun setIsMathsAndEngineering(value:Boolean){
-        if(bkInts.mathsAndEngineeringChecked!=value){
-            bkInts.mathsAndEngineeringChecked=value
+        if(bookInterest.mathsAndEngineeringChecked!=value){
+            bookInterest.mathsAndEngineeringChecked=value
              notifyPropertyChanged(BR.isMathsAndEngineering)
         }
     }
 
-    @Bindable
-    fun getIsHumour():Boolean{
-        return bkInts.humourChecked
-    }
 
-    fun setIsHumour(value:Boolean){
-        if(bkInts.humourChecked!=value){
-            bkInts.humourChecked=value
-            notifyPropertyChanged(BR.isHumour)
-        }
-    }
 
     @Bindable
     fun getIsFashion():Boolean{
-        return bkInts.fashionChecked
+        return bookInterest.fashionChecked
     }
 
     fun setIsFashion(value:Boolean){
-        if(bkInts.fashionChecked!=value){
-            bkInts.fashionChecked=value
+        if(bookInterest.fashionChecked!=value){
+            bookInterest.fashionChecked=value
             notifyPropertyChanged(BR.isFashion)
         }
     }
 
     @Bindable
     fun getIsNews():Boolean{
-        return bkInts.newsChecked
+        return bookInterest.newsChecked
     }
 
     fun setIsNews(value:Boolean){
-        if(bkInts.newsChecked!=value){
-            bkInts.newsChecked=value
+        if(bookInterest.newsChecked!=value){
+            bookInterest.newsChecked=value
              notifyPropertyChanged(BR.isNews)
         }
     }
 
     @Bindable
     fun getIsEntertainment():Boolean{
-        return bkInts.entertainmentChecked
+        return bookInterest.entertainmentChecked
     }
 
     fun setIsEntertainment(value:Boolean){
-        if(bkInts.entertainmentChecked!=value){
-            bkInts.entertainmentChecked=value
+        if(bookInterest.entertainmentChecked!=value){
+            bookInterest.entertainmentChecked=value
             notifyPropertyChanged(BR.isEntertainment)
         }
     }
 
     @Bindable
-    fun getIsPsychology():Boolean{
-        return bkInts.psychologyChecked
-    }
-
-    fun setIsPsychology(value:Boolean){
-        if(bkInts.psychologyChecked!=value){
-            bkInts.psychologyChecked=value
-            notifyPropertyChanged(BR.isPsychology)
-        }
-    }
-
-    @Bindable
     fun getIsPolitics():Boolean{
-        return bkInts.politicsChecked
+        return bookInterest.politicsChecked
     }
 
     fun setIsPolitics(value:Boolean){
-        if(bkInts.politicsChecked!=value){
-            bkInts.politicsChecked=value
+        if(bookInterest.politicsChecked!=value){
+            bookInterest.politicsChecked=value
             notifyPropertyChanged(BR.isPolitics)
         }
     }
 
     @Bindable
     fun getIsCookBooks():Boolean{
-        return bkInts.cookBooksChecked
+        return bookInterest.cookBooksChecked
     }
 
     fun setIsCookBooks(value:Boolean){
-        if(bkInts.cookBooksChecked!=value){
-            bkInts.cookBooksChecked=value
+        if(bookInterest.cookBooksChecked!=value){
+            bookInterest.cookBooksChecked=value
              notifyPropertyChanged(BR.isCookBooks)
         }
     }
 
     @Bindable
-    fun getIsExamAndTestPrep():Boolean{
-        return bkInts.examAndTestPrepChecked
-    }
-
-    fun setIsExamAndTestPrep(value:Boolean){
-        if(bkInts.examAndTestPrepChecked!=value){
-            bkInts.examAndTestPrepChecked=value
-             notifyPropertyChanged(BR.isExamAndTestPrep)
-        }
-    }
-
-    @Bindable
     fun getIsBiography():Boolean{
-        return bkInts.biographyChecked
+        return bookInterest.biographyChecked
     }
 
     fun setIsBiography(value:Boolean){
-        if(bkInts.biographyChecked!=value){
-            bkInts.biographyChecked=value
+        if(bookInterest.biographyChecked!=value){
+            bookInterest.biographyChecked=value
             notifyPropertyChanged(BR.isBiography)
         }
     }
 
 
-    @Bindable
-    fun getIsCivilEng():Boolean{
-        return bkInts.civilEngChecked
+   @Bindable
+    fun getIsNutrition():Boolean{
+        return bookInterest.nutritionChecked
     }
 
-    fun setIsCivilEng(value:Boolean){
-        if(bkInts.civilEngChecked!=value){
-            bkInts.civilEngChecked=value
-             notifyPropertyChanged(BR.isCivilEng)
-        }
-    }
-
-    @Bindable
-    fun getIsArcheology():Boolean{
-        return bkInts.archeologyChecked
-    }
-
-    fun setIsArcheology(value:Boolean){
-        if(bkInts.archeologyChecked!=value){
-            bkInts.archeologyChecked=value
-            notifyPropertyChanged(BR.isArcheology)
-        }
-    }
-
-    @Bindable
-    fun getIsEducation():Boolean{
-        return bkInts.educationChecked
-    }
-
-    fun setIsEducation(value:Boolean){
-        if(bkInts.educationChecked!=value){
-            bkInts.educationChecked=value
-            notifyPropertyChanged(BR.isEducation)
+    fun setIsNutrition(value:Boolean){
+        if(bookInterest.nutritionChecked!=value){
+            bookInterest.nutritionChecked=value
+            notifyPropertyChanged(BR.isNutrition)
         }
     }
 
     fun getBookInterestRecord(): BookInterest {
-        return bkInts
+        return bookInterest
     }
 
 }

@@ -22,5 +22,8 @@ data class OrderedBook(
     override val additionInfo: String?,
     val collabCommissionInPercent: Double?,
     val collabId:String?,
-    override val price: Double
+    override val price: Double,
+    //used at the admin dashboard to query book by year and month
+    val month:Int = 0,
+    val year:Int = 0
 ): ISearchResult, IOrderedBooks, IOrderedBookUiState

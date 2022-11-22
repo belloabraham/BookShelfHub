@@ -162,7 +162,7 @@ class CartFragment : Fragment() {
                     cartItem.pubId,
                     cartItem.collaboratorsId,
                     user.countryCode,
-                    user.additionInfo,
+                    cartItem.userAdditionalInfo,
                     cartItem.price,
                     user.earningsCurrency,
                     cartItem.sellerCurrency

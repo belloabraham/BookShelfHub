@@ -3,6 +3,8 @@ package com.bookshelfhub.core.data.repos.user
 import androidx.lifecycle.LiveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import com.bookshelfhub.core.common.worker.Constraint
+import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.database.AppDatabase
 import com.bookshelfhub.core.model.entities.User
@@ -80,9 +82,9 @@ class UserRepo @Inject constructor(
         if(userIsNotUploaded){
             val oneTimeUserDataUpload =
                 OneTimeWorkRequestBuilder<UploadUserData>()
-                    .setConstraints(com.bookshelfhub.core.common.worker.Constraint.getConnected())
+                    .setConstraints(Constraint.getConnected())
                     .build()
-            worker.enqueueUniqueWork(com.bookshelfhub.core.common.worker.Tag.addUserUniqueWorkDatUpload, ExistingWorkPolicy.REPLACE, oneTimeUserDataUpload)
+            worker.enqueueUniqueWork(Tag.addUserUniqueWorkDatUpload, ExistingWorkPolicy.REPLACE, oneTimeUserDataUpload)
         }
     }
 

@@ -43,6 +43,11 @@
         <value>https://bookshelfhub.com/terms</value>
     </entry>
 
+    <entry>
+        <key>videos_domain</key>
+        <value>https://videos.bookshelfhub.com</value>
+    </entry>
+
     <!-- TODO: User Referral Description-->
     <entry>
         <key>user_ref_description</key>

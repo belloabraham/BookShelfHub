@@ -22,7 +22,6 @@ interface IPublishedBooksRepo {
     suspend  fun getRemotePublishedBooksFrom(fromSerialNo:Int): List<PublishedBook>
 
     suspend fun updateRecommendedBooksByCategory(category: String, isRecommended: Boolean = true)
-    suspend fun updateRecommendedBooksByTag(tag: String, isRecommended: Boolean = true)
     suspend fun addAllPubBooks(pubBooks: List<PublishedBook>)
     suspend fun deleteUnPublishedBookRecords(unPublishedBooks: List<PublishedBook>)
 
@@ -34,7 +33,5 @@ interface IPublishedBooksRepo {
     fun getBooksByCategoryPageSource(category: String): PagingSource<Int, PublishedBookUiState>
     fun getTrendingBooksPageSource(): PagingSource<Int, PublishedBookUiState>
     fun getRecommendedBooksPageSource(): PagingSource<Int, PublishedBookUiState>
-    suspend fun getBooksByTag(tag: String): List<PublishedBookUiState>
-    fun getBooksByTagPageSource(tag: String): PagingSource<Int, PublishedBookUiState>
 
 }

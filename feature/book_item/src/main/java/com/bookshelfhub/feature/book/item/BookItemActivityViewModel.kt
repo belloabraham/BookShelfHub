@@ -5,7 +5,9 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.workDataOf
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.extensions.containsUrl
 import com.bookshelfhub.core.common.helpers.ErrorUtil
@@ -33,8 +35,10 @@ import kotlinx.coroutines.launch
 import java.util.*
 import com.bookshelfhub.core.common.helpers.utils.Regex
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
+import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
+import com.bookshelfhub.feature.book.item.workers.AddAFreeBook
 import com.bookshelfhub.feature.book.item.workers.PostUserReview
 import javax.inject.Inject
 
@@ -182,9 +186,17 @@ class BookItemActivityViewModel @Inject constructor(
     return bookShareUrl
   }
 
-  fun addAnOrderedBook(orderedBook: OrderedBook){
+  fun addAFreeOrderedBook(orderedBook: OrderedBook){
     viewModelScope.launch {
       orderedBooksRepo.addAnOrderedBook(orderedBook)
+      val workData = workDataOf(
+        Book.ID to orderedBook.bookId
+      )
+      val oneTimeAddAFreeBook = OneTimeWorkRequestBuilder<AddAFreeBook>()
+          .setConstraints(Constraint.getConnected())
+          .setInputData(workData)
+          .build()
+      worker.enqueueUniqueWork(Tag.oneTimeAddAFreeBook, ExistingWorkPolicy.REPLACE, oneTimeAddAFreeBook)
     }
   }
 

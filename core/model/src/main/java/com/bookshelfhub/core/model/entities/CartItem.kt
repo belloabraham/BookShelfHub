@@ -14,5 +14,6 @@ data class CartItem(
     val coverDataUrl: String,
     val collaboratorsId:String?,
     val price: Double=0.0,
-    val sellerCurrency:String
+    val sellerCurrency:String,
+    var userAdditionalInfo:String? = null,
 )

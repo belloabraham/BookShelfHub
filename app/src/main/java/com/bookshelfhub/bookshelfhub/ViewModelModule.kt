@@ -1,8 +1,6 @@
 package com.bookshelfhub.bookshelfhub
 
 import com.bookshelfhub.book.page.DownloadBookUseCase
-import com.bookshelfhub.core.data.repos.bookvideos.BookVideosRepo
-import com.bookshelfhub.core.data.repos.bookvideos.IBookVideosRepo
 import com.bookshelfhub.core.data.repos.earnings.EarningsRepo
 import com.bookshelfhub.core.data.repos.earnings.IEarningsRepo
 import com.bookshelfhub.core.data.repos.payment_card.IPaymentCardRepo
@@ -59,12 +57,6 @@ object ViewModelModule {
     @Provides
     fun providePaymentCardRepo(appDatabase:AppDatabase): IPaymentCardRepo {
         return PaymentCardRepo(appDatabase)
-    }
-
-    @ViewModelScoped
-    @Provides
-    fun provideBookVideosRepo(remoteDataSource: IRemoteDataSource, appDatabase:AppDatabase): IBookVideosRepo {
-        return BookVideosRepo( appDatabase, remoteDataSource)
     }
 
     @ViewModelScoped

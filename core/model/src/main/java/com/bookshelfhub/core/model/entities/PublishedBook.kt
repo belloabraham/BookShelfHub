@@ -16,7 +16,6 @@ data class PublishedBook(
     val description: String="",
     val publishedDate: Timestamp? = null,
     val category: String="",
-    val tag: String?="",
     val sellerCurrency:String ="",
     val totalReviews:Long=0,
     val totalRatings:Float=0f,

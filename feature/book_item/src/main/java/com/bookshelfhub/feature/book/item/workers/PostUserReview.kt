@@ -6,6 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.data.repos.user_review.IUserReviewRepo
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
@@ -29,11 +30,11 @@ class PostUserReview @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
 
-        val bookId = inputData.getString(com.bookshelfhub.core.data.Book.ID)!!
+        val bookId = inputData.getString(Book.ID)!!
         val apiKey:String = settingsUtil.getString(Settings.PERSPECTIVE_API)!!
         val userReview  = userReviewRepo.getUserReview(bookId).get()
 
-        val userRatingDiff = inputData.getDouble(com.bookshelfhub.core.data.Book.RATING_DIFF, 0.0)
+        val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
         val userId = userAuth.getUserId()
         val updatedBookValues: HashMap<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
 

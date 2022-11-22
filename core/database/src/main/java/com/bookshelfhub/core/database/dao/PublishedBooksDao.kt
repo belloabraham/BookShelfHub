@@ -24,17 +24,11 @@ abstract class PublishedBooksDao: BaseDao<PublishedBook> {
     @Query("UPDATE PublishedBooks SET recommended = :recommend WHERE category =:category")
     abstract suspend  fun updateRecommendedBooksByCategory(category: String, recommend:Boolean)
 
-    @Query("UPDATE PublishedBooks SET recommended = :recommend  WHERE tag = :tag")
-    abstract suspend  fun updateRecommendedBooksByTag(tag: String, recommend:Boolean)
-
     @Query("SELECT * FROM PublishedBooks ORDER BY publishedDate DESC")
     abstract suspend fun getListOfPublishedBooksUiState(): List<PublishedBookUiState>
 
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY publishedDate DESC")
     abstract suspend fun getBooksByCategory(category:String): List<PublishedBookUiState>
-
-    @Query("SELECT * FROM PublishedBooks WHERE tag = :tag ORDER BY publishedDate DESC")
-    abstract suspend fun getBooksByTag(tag:String): List<PublishedBookUiState>
 
     @Query("SELECT * FROM PublishedBooks WHERE recommended = :recommend ORDER BY publishedDate DESC")
     abstract suspend fun getRecommendedBooks(recommend:Boolean=true): List<PublishedBookUiState>
@@ -44,9 +38,6 @@ abstract class PublishedBooksDao: BaseDao<PublishedBook> {
 
     @Query("SELECT * FROM PublishedBooks WHERE category = :category ORDER BY publishedDate DESC")
     abstract fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBookUiState>
-
-    @Query("SELECT * FROM PublishedBooks WHERE tag = :tag ORDER BY publishedDate DESC")
-    abstract fun getBooksByTagPageSource(tag:String): PagingSource<Int, PublishedBookUiState>
 
     @Query("SELECT * FROM PublishedBooks WHERE category = :category AND bookId != :bookId ORDER BY publishedDate DESC")
     abstract fun getSimilarBooksByCategoryPageSource(category:String, bookId: String): PagingSource<Int, PublishedBookUiState>

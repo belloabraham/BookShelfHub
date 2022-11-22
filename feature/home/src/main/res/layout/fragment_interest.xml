@@ -69,9 +69,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isSport}"
+                    android:checked="@={bookInterest.isNutrition}"
                     android:layout_margin="@dimen/dp_8"
-                    android:text="@string/sport" />
+                    android:text="@string/nutrition" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -141,9 +141,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isPoetry}"
+                    android:checked="@={bookInterest.isLiterature}"
                     android:layout_margin="@dimen/dp_8"
-                    android:text="@string/poetry" />
+                    android:text="@string/literature" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -160,22 +160,6 @@
                     android:checked="@={bookInterest.isArtAndCraft}"
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/art_craft" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isMusic}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/music" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isFiction}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/fiction" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -201,63 +185,6 @@
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/engineering_mathematics" />
 
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isDataAnalysis}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/data_analysis" />
-
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isEducation}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/education" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isArcheology}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/archeology" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isCivilEng}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/civil_eng" />
-
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isComputerProgramming}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/computer_programming" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isTransportation}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/transportation" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isLiterature}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/literature" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -267,13 +194,6 @@
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/entertainment" />
 
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isNovel}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/novel" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -291,13 +211,6 @@
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/politics" />
 
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isPsychology}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/psychology" />
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -311,17 +224,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checkable="true"
-                    android:checked="@={bookInterest.isHumour}"
+                    android:checked="@={bookInterest.isFiction}"
                     android:layout_margin="@dimen/dp_8"
-                    android:text="@string/humour" />
-
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:checked="@={bookInterest.isExamAndTestPrep}"
-                    android:layout_margin="@dimen/dp_8"
-                    android:text="@string/preparation" />
+                    android:text="@string/fiction" />
 
             </com.google.android.material.chip.ChipGroup>
 

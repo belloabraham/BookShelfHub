@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.book.purchase.CartActivity
@@ -26,8 +26,7 @@ import kotlinx.coroutines.launch
 class SimilarBooksActivity : AppCompatActivity() {
     private lateinit var layout: ActivitySimilarBooksBinding
     private var listOfBooks = mutableListOf<PublishedBookUiState>()
-    private val bookCategoryActivityViewModel = ViewModelProvider(this)[SimilarBooksActivityViewModel::class.java]
-
+    private val bookCategoryActivityViewModel by viewModels<SimilarBooksActivityViewModel>()
     private lateinit var bookRequestMsg:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +48,7 @@ class SimilarBooksActivity : AppCompatActivity() {
 
 
         lifecycleScope.launch {
-            bookCategoryActivityViewModel.getFlowOfBookByTag().collectLatest { books->
+            bookCategoryActivityViewModel.getFlowOfBookBy().collectLatest { books->
                 bookListAdapter.submitData(books)
             }
         }
@@ -111,7 +110,7 @@ class SimilarBooksActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-             listOfBooks.addAll(bookCategoryActivityViewModel.getBooksByTag())
+             listOfBooks.addAll(bookCategoryActivityViewModel.getBooksByCategory())
         }
 
     }

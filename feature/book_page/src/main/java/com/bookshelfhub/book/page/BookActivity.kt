@@ -18,6 +18,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.bookshelfhub.book.page.databinding.ActivityBookBinding
 import com.bookshelfhub.core.common.extensions.isAppUsingDarkTheme
+import com.bookshelfhub.core.common.extensions.makeUrlPath
 import com.bookshelfhub.core.common.extensions.showToast
 import com.bookshelfhub.core.common.helpers.EnableWakeLock
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
@@ -28,13 +29,13 @@ import com.bookshelfhub.core.common.helpers.utils.DisplayUtil
 import com.bookshelfhub.core.common.helpers.utils.ShareUtil
 import com.bookshelfhub.core.common.helpers.utils.Toast
 import com.bookshelfhub.core.data.Fragment
-import com.bookshelfhub.feature.webview.WebView
 import com.bookshelfhub.core.datastore.settings.Settings
-import com.bookshelfhub.core.model.entities.BookVideo
 import com.bookshelfhub.core.model.entities.OrderedBook
 import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.entities.ReadHistory
+import com.bookshelfhub.core.remote.remote_config.RemoteConfig
 import com.bookshelfhub.feature.about.book.BookInfoActivity
+import com.bookshelfhub.feature.webview.WebView
 import com.bookshelfhub.feature.webview.WebViewActivity
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -54,8 +55,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private var currentPage:Double = 0.0
     private var totalPages:Double = 0.0
     private var publishedBook: PublishedBook? = null
-    private var videoLink: String? = null
-    private var bookVideos = listOf<BookVideo>()
     private val hideHandler = Handler()
     private lateinit var orderedBook:OrderedBook
 
@@ -85,11 +84,11 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
+
             override fun liked(likeButton: LikeButton?) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
                 bookActivityViewModel.addBookmark(currentPage.toInt())
                 showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
-
             }
 
             override fun unLiked(likeButton: LikeButton?) {
@@ -100,21 +99,21 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
         })
 
-        layout.videoListBtn.setOnClickListener {
-            if (videoLink!=null){
-                val intent = Intent(this, WebViewActivity::class.java)
+        layout.bookCategoryVideoLinkBtn.setOnClickListener {
+            lifecycleScope.launch {
+                val publishedBook = bookActivityViewModel.getPublishedBook().get()
+                val videosLink = bookActivityViewModel.getRemoteString(RemoteConfig.VIDEOS_DOMAIN) +"/"+  publishedBook.category.makeUrlPath()
+                val intent = Intent(this@BookActivity, WebViewActivity::class.java)
                 with(intent){
-                    putExtra(WebView.TITLE,orderedBook.name)
-                    putExtra(WebView.URL, videoLink)
+                    putExtra(WebView.TITLE, publishedBook.category)
+                    putExtra(WebView.URL, videosLink)
                 }
                 startActivity(intent)
-            }else{
-                showToast(R.string.no_video_msg)
             }
         }
 
-        layout.menuBtn.setOnClickListener {
 
+        layout.menuBtn.setOnClickListener {
             val view = View.inflate(this, R.layout.book_menu, null)
             val shareBtn = view.findViewById<MaterialCardView>(R.id.shareBtn)
             val aboutBook = view.findViewById<MaterialCardView>(R.id.aboutBook)
@@ -141,10 +140,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                     .showDialog(com.bookshelfhub.core.resources.R.string.coming_soon)
         }
 
-
-        bookActivityViewModel.getLiveListOfBookVideos().observe(this) { bookVideos ->
-            this.bookVideos = bookVideos
-        }
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -180,7 +175,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 layout.progressIndicator.progress = progress.toInt()
 
                 checkIfPageIsBookmarked()
-                getPageVideoLink(page)
             }
             .enableAnnotationRendering(true)
             .enableSwipe(true)
@@ -190,7 +184,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     override fun onResume() {
         super.onResume()
         bookActivityViewModel.generateBookShareLink()
-        bookActivityViewModel.getBookVideos()
     }
 
 
@@ -228,20 +221,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             putExtra(com.bookshelfhub.core.data.Book.ID, bookActivityViewModel.getIsbnNo())
         }
         startActivity(intent)
-    }
-
-    private fun getPageVideoLink(pageNumber:Int){
-        if(bookVideos.isNotEmpty()){
-            val bookVideo = bookVideos.filter{
-                it.pageNumber == pageNumber
-            }
-            if(bookVideo.isNotEmpty()){
-                this.videoLink =  bookVideo[0].link
-                layout.newVideoDot.visibility = VISIBLE
-            }else{
-                layout.newVideoDot.visibility = GONE
-            }
-        }
     }
 
     private fun checkIfPageIsBookmarked(){

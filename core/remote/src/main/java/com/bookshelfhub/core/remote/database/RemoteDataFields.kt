@@ -2,8 +2,6 @@ package com.bookshelfhub.core.remote.database
 
 object RemoteDataFields{
 
-    const val VIDEO_LIST = "video_list"
-
     //Collections
     //users/userId/{userdata}
     const val USERS_COLL = "users"

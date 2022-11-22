@@ -35,13 +35,6 @@ class RecommendedBooks @AssistedInject constructor (
        if (userAddedBookInterest){
            val bookInterest = optionalBookInterest.get()
 
-           val archeology = context.getString(R.string.archeology)
-           if (bookInterest.archeologyChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(archeology)
-           }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(archeology, false)
-           }
-
            val business = context.getString(R.string.business_finance)
            if (bookInterest.businessAndFinanceChecked){
                publishedBooksRepo.updateRecommendedBooksByCategory(business)
@@ -58,29 +51,16 @@ class RecommendedBooks @AssistedInject constructor (
 
            val biography = context.getString(R.string.biography)
            if (bookInterest.biographyChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(biography)
+               publishedBooksRepo.updateRecommendedBooksByCategory(biography)
            }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(biography, false)
-           }
-           val civilEng = context.getString(R.string.civil_eng)
-           if (bookInterest.civilEngChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(civilEng)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(civilEng, false)
-           }
-
-           val examPrep = context.getString(R.string.preparation)
-           if (bookInterest.examAndTestPrepChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(examPrep)
-           }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(examPrep, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(biography, false)
            }
 
            val fashion = context.getString(R.string.fashion)
            if (bookInterest.fashionChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(fashion)
+               publishedBooksRepo.updateRecommendedBooksByCategory(fashion)
            }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(fashion, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(fashion, false)
            }
 
            val history = context.getString(R.string.history)
@@ -120,16 +100,16 @@ class RecommendedBooks @AssistedInject constructor (
 
            val healthFitness = context.getString(R.string.health_fitness)
            if (bookInterest.healthAndFitnessChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(healthFitness)
+               publishedBooksRepo.updateRecommendedBooksByCategory(healthFitness)
            }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(healthFitness, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(healthFitness, false)
            }
 
-           val poetry = context.getString(R.string.poetry)
-           if (bookInterest.poetryChecked){
-               publishedBooksRepo.updateRecommendedBooksByCategory(poetry)
+           val nutrition = context.getString(R.string.nutrition)
+           if (bookInterest.nutritionChecked){
+               publishedBooksRepo.updateRecommendedBooksByCategory(nutrition)
            }else{
-               publishedBooksRepo.updateRecommendedBooksByCategory(poetry, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(nutrition, false)
            }
 
            val law = context.getString(R.string.law)
@@ -137,13 +117,6 @@ class RecommendedBooks @AssistedInject constructor (
                publishedBooksRepo.updateRecommendedBooksByCategory(law)
            }else{
                publishedBooksRepo.updateRecommendedBooksByCategory(law, false)
-           }
-
-           val music = context.getString(R.string.music)
-           if (bookInterest.musicChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(music)
-           }else{
-               publishedBooksRepo.updateRecommendedBooksByTag(music, false)
            }
 
            val fiction = context.getString(R.string.fiction)
@@ -169,51 +142,16 @@ class RecommendedBooks @AssistedInject constructor (
 
            val mathsAndEng = context.getString(R.string.engineering_mathematics)
            if (bookInterest.mathsAndEngineeringChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(mathsAndEng)
+               publishedBooksRepo.updateRecommendedBooksByCategory(mathsAndEng)
            }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(mathsAndEng, false)
-           }
-
-           val dataAnalysis = context.getString(R.string.data_analysis)
-            if (bookInterest.dataAnalysisChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(dataAnalysis)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(dataAnalysis, false)
-            }
-
-           val education = context.getString(R.string.education)
-            if (bookInterest.educationChecked){
-               publishedBooksRepo.updateRecommendedBooksByCategory(education)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByCategory(education, false)
-            }
-
-           val compProg = context.getString(R.string.computer_programming)
-           if (bookInterest.computerProgrammingChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(compProg)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(compProg, false)
-           }
-
-           val transportation = context.getString(R.string.transportation)
-           if (bookInterest.transportationChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(transportation)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(transportation, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(mathsAndEng, false)
            }
 
            val literature = context.getString(R.string.literature)
            if (bookInterest.literatureChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(literature)
+               publishedBooksRepo.updateRecommendedBooksByCategory(literature)
            }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(literature, false)
-           }
-
-           val novel = context.getString(R.string.novel)
-            if (bookInterest.novelChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(novel)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(novel, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(literature, false)
            }
 
            val cookBooks = context.getString(R.string.cook_books)
@@ -230,41 +168,20 @@ class RecommendedBooks @AssistedInject constructor (
                publishedBooksRepo.updateRecommendedBooksByCategory(politics, false)
            }
 
-           val psychology = context.getString(R.string.psychology)
-           if (bookInterest.psychologyChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(psychology)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(psychology, false)
-           }
-
-           val humour = context.getString(R.string.humour)
-           if (bookInterest.humourChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(humour)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(humour, false)
-           }
-
            val islam = context.getString(R.string.islam)
            if (bookInterest.islamChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(islam)
+               publishedBooksRepo.updateRecommendedBooksByCategory(islam)
            }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(islam, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(islam, false)
            }
 
            val christianity = context.getString(R.string.christianity)
             if(bookInterest.christianityChecked){
-               publishedBooksRepo.updateRecommendedBooksByTag(christianity)
+               publishedBooksRepo.updateRecommendedBooksByCategory(christianity)
            }else {
-               publishedBooksRepo.updateRecommendedBooksByTag(christianity, false)
+               publishedBooksRepo.updateRecommendedBooksByCategory(christianity, false)
            }
-
-           val sport = context.getString(R.string.sport)
-           if(bookInterest.sportChecked){
-               publishedBooksRepo.updateRecommendedBooksByCategory(sport)
-           }else {
-               publishedBooksRepo.updateRecommendedBooksByCategory(sport, false)
-           }
-
+           
            val entertainment = context.getString(R.string.entertainment)
            if(bookInterest.entertainmentChecked){
                publishedBooksRepo.updateRecommendedBooksByCategory(entertainment)
