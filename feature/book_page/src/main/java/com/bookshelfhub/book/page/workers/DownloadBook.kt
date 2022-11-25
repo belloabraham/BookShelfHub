@@ -1,4 +1,4 @@
-package com.bookshelfhub.book.page
+package com.bookshelfhub.book.page.workers
 
 import android.app.PendingIntent
 import android.content.Context
@@ -9,6 +9,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
+import com.bookshelfhub.book.page.BookActivity
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
 import com.bookshelfhub.core.common.helpers.storage.FileExtension

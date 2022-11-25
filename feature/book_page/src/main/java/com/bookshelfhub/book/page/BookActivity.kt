@@ -73,7 +73,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         val isDarkMode = isAppUsingDarkTheme()
         lifecycleScope.launch {
              orderedBook = bookActivityViewModel.getAnOrderedBook()
-            loadBook(isDarkMode, orderedBook)
+            loadBook(isDarkMode, orderedBook.pubId)
 
             if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
                val readHistory = bookActivityViewModel.getReadHistory()
@@ -96,13 +96,12 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 bookActivityViewModel.deleteFromBookmark(currentPage.toInt())
                 showToast(R.string.removed_bookmark_msg, Toast.LENGTH_SHORT)
             }
-
         })
 
         layout.bookCategoryVideoLinkBtn.setOnClickListener {
             lifecycleScope.launch {
                 val publishedBook = bookActivityViewModel.getPublishedBook().get()
-                val videosLink = bookActivityViewModel.getRemoteString(RemoteConfig.VIDEOS_DOMAIN) +"/"+  publishedBook.category.makeUrlPath()
+                val videosLink = bookActivityViewModel.getRemoteString(RemoteConfig.VIDEOS_DOMAIN) +"/"+ publishedBook.category.makeUrlPath()
                 val intent = Intent(this@BookActivity, WebViewActivity::class.java)
                 with(intent){
                     putExtra(WebView.TITLE, publishedBook.category)
@@ -150,18 +149,17 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         bottomNavigationLayout = layout.fullscreenContentControls
     }
 
-    private  fun loadBook(isDarkMode:Boolean, orderedBook: OrderedBook){
-        val bookId=orderedBook.bookId
+    private  fun loadBook(isDarkMode:Boolean, pubId:String){
+        val bookId = bookActivityViewModel.getBookId()
         val fileNameWithExt = "$bookId+${FileExtension.DOT_PDF}"
         val filePath = AppExternalStorage.getDocumentFilePath(
-            orderedBook.pubId,
+            pubId,
             bookId,
             fileNameWithExt,
             applicationContext
-        ).absolutePath
+        )
 
-        val dirPath = AppExternalStorage.getDocumentFilePath(this, orderedBook.pubId, filePath)
-        layout.pdfView.fromAsset(dirPath)
+        layout.pdfView.fromFile(filePath)
             .nightMode(isDarkMode)
             .fitEachPage(true)
             .defaultPage(0)
@@ -218,7 +216,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         with(intent){
             putExtra(com.bookshelfhub.core.data.Book.NAME,bookActivityViewModel.getBookName())
             putExtra(Fragment.ID, fragmentID)
-            putExtra(com.bookshelfhub.core.data.Book.ID, bookActivityViewModel.getIsbnNo())
+            putExtra(com.bookshelfhub.core.data.Book.ID, bookActivityViewModel.getBookId())
         }
         startActivity(intent)
     }

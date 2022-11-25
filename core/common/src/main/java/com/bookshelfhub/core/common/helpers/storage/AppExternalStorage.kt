@@ -25,7 +25,7 @@ object AppExternalStorage {
         return  storagePath.exists()
     }
 
-    fun getDocumentFilePath( applicationContext: Context, folderName: String, pathToFile:String): String {
+    fun getDocumentFilePath(applicationContext: Context, folderName: String, pathToFile:String): String {
         return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName+File.separator+pathToFile).absolutePath
     }
 

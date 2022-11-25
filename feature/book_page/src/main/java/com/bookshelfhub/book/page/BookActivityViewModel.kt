@@ -107,7 +107,7 @@ class BookActivityViewModel @Inject constructor(
         return bookShareLink
     }
 
-    fun getIsbnNo(): String {
+    fun getBookId(): String {
         return bookId
     }
 

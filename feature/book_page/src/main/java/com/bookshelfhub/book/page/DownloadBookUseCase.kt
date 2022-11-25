@@ -2,6 +2,7 @@ package com.bookshelfhub.book.page
 
 import androidx.lifecycle.asFlow
 import androidx.work.*
+import com.bookshelfhub.book.page.workers.DownloadBook
 import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.model.uistate.BookDownloadState
 import com.bookshelfhub.core.common.worker.Constraint

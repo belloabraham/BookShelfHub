@@ -11,9 +11,10 @@ dependencies {
 
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.functions.ktx)
+
 
     implementation(libs.androidx.paging.runtime.ktx)
-
     implementation(libs.squareup.retrofit2)
 
 
