@@ -20,10 +20,3 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-#Realtime database
--keepattributes Signature
-
-#Data models
--keep class com.bookshelfhub.core.models.**{
-    *;
-}

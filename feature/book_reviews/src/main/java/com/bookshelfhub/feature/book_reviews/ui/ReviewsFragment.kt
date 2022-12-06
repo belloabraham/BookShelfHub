@@ -23,7 +23,6 @@ import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 class ReviewsFragment : Fragment() {
 
     private val bookReviewsViewModel: BookReviewsActivityViewModel by viewModels()
-
     private var binding: ReviewsFragmentBinding?=null
     private var reviewsAdapter: ListAdapter<UserReview, RecyclerViewHolder<UserReview>>?=null
 

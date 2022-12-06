@@ -1,6 +1,5 @@
 package com.bookshelfhub.feature.home.ui.more
 
-
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
@@ -206,7 +205,6 @@ class BookInterestObservable (private val bookInterest: BookInterest): BaseObser
     }
 
 
-
     @Bindable
     fun getIsFashion():Boolean{
         return bookInterest.fashionChecked
@@ -278,7 +276,6 @@ class BookInterestObservable (private val bookInterest: BookInterest): BaseObser
             notifyPropertyChanged(BR.isBiography)
         }
     }
-
 
    @Bindable
     fun getIsNutrition():Boolean{

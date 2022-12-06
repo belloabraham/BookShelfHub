@@ -1,0 +1,4 @@
+<!DOCTYPE resources [<!ENTITY appname "BookShelf Hub">]>
+<resources>
+    <string name="app_name" translatable="false">&appname;</string>
+</resources>

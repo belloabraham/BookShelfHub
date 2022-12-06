@@ -560,9 +560,9 @@ class BookItemActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onStop() {
+    override fun onPause() {
         bookItemActivityViewModel.review = layout.userReviewEditText.text.toString()
-        super.onStop()
+        super.onPause()
     }
 
     private fun startBookActivity(){

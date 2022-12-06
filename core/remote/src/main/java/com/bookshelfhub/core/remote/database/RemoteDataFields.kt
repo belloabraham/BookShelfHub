@@ -21,11 +21,11 @@ object RemoteDataFields{
     //users/userId/earnings/userId/{total:0}
     const val EARNINGS = "earnings"
 
+    const val PUBLISHERS = "publishers"
 
     const val NOTIFICATION_TOKEN="notificationToken"
 
-    //Users/userId/Transaction
-    const val TRANSACTIONS_COLL = "transactions"
+    const val COLLABORATORS_COLL = "collaborators"
 
     //Fields
     //Must be same as .services.database.local.room.entities.UserReview.verified

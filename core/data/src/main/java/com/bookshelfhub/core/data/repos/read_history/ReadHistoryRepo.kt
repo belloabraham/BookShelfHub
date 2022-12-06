@@ -10,8 +10,7 @@ import javax.inject.Inject
 
 class ReadHistoryRepo @Inject constructor(
     appDatabase: AppDatabase,
-   ) :
-    IReadHistoryRepo {
+   ) : IReadHistoryRepo {
     private val readHistoryDao = appDatabase.getReadHistoryDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 

@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.Json
 import com.bookshelfhub.core.data.Book
-import com.bookshelfhub.core.data.repos.ordered_books.OrderedBooksRepo
+import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.remote.cloud_functions.CloudFunctions
 import com.bookshelfhub.core.remote.cloud_functions.ICloudFunctions
 import dagger.assisted.Assisted
@@ -19,7 +19,7 @@ class AddAFreeBook  @AssistedInject constructor (
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val cloudFunction: ICloudFunctions,
-    private val orderedBooksRepo: OrderedBooksRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
     private val json: Json,
     ): CoroutineWorker(context,
     workerParams

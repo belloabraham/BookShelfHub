@@ -8,7 +8,6 @@
     <string name="yes">yes</string>
     <string name="no">no</string>
 
-
     <string name="supported_currency_hint">
         You can only make payment with Nigerian Naira, Ghanaian Cedi or USD for now.
     </string>
@@ -95,7 +94,6 @@
     <!-- TODO: Earnings-->
     <string name="total_earnings">Total Earnings: %s%,.2f </string>
     <string name="earnings_connection_error">Error no internet connection.</string>
-
 
     <!-- TODO: Payment Verification Worker-->
     <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again after some time.</string>

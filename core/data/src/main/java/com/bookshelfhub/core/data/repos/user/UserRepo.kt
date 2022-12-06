@@ -26,7 +26,7 @@ class UserRepo @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher = IO
     private val userDao = appDatabase.getUserDao()
 
-    override suspend fun getRemoteUserDataSnapshot(userId:String): RemoteUser? {
+    override suspend fun getRemoteUser(userId:String): RemoteUser? {
        return withContext(ioDispatcher) {
            remoteDataSource.getDataAsync(
                RemoteDataFields.USERS_COLL,

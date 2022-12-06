@@ -35,7 +35,6 @@
 
     <!-- Todo Dynamic Link -->
     <string name="dlink_domain_prefix" translatable="false">https://ref.bookshelfhub.com</string>
-    <string name="manifest_dlink_domain_prefix" translatable="false">ref.bookshelfhub.com</string>
     <string name="dlink_deeplink_domain" translatable="false">https://bookshelfhub.com?id=%s</string>
 
 

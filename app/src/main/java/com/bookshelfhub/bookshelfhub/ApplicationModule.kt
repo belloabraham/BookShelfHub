@@ -25,6 +25,8 @@ import com.bookshelfhub.core.data.repos.private_keys.IPrivateKeysRepo
 import com.bookshelfhub.core.data.repos.private_keys.PrivateKeysRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.published_books.PublishedBooksRepo
+import com.bookshelfhub.core.data.repos.referral.IReferralRepo
+import com.bookshelfhub.core.data.repos.referral.ReferralRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.data.repos.user.UserRepo
 import com.bookshelfhub.core.data.repos.user_review.IUserReviewRepo
@@ -60,6 +62,12 @@ object ApplicationModule {
     @Provides
     fun provideBookDownloadStateRepo(appDatabase:AppDatabase): IBookDownloadStateRepo {
         return BookDownloadStateRepo(appDatabase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideReferralRepo(appDatabase: AppDatabase, remoteDataSource: IRemoteDataSource): IReferralRepo {
+        return ReferralRepo(appDatabase, remoteDataSource)
     }
 
     @Singleton

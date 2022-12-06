@@ -96,7 +96,7 @@ class MoreFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val isDarkTheme = isAppUsingDarkTheme() || mainActivityViewModel.isDarkUserPreferedTheme()
+            val isDarkTheme = isAppUsingDarkTheme() || mainActivityViewModel.isDarkUserPreferredTheme()
             darkModeToggle.setChecked(isDarkTheme, withAnimation = false)
         }
 
@@ -255,7 +255,6 @@ class MoreFragment : Fragment() {
     }
 
     private fun showEarnings(){
-
         val view = View.inflate(requireContext(), R.layout.earnings, null)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
@@ -263,8 +262,9 @@ class MoreFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val earnings =   moreViewModel.getRemoteEarnings()
-                val total = earnings?.total ?: 0
+                val total:Double = earnings?.total ?: 0.0
                 val user = moreViewModel.getUserRecord().get()
+
                 earningsText.text = String.format(
                     getString(R.string.total_earnings),
                     user.earningsCurrency,
@@ -275,11 +275,10 @@ class MoreFragment : Fragment() {
                 ErrorUtil.e(e)
                 return@launch
             }
+            MaterialBottomSheetDialogBuilder(requireActivity(), this@MoreFragment)
+                .setPositiveAction(R.string.ok){}
+                .showBottomSheet(view)
         }
-
-        MaterialBottomSheetDialogBuilder(requireActivity(), viewLifecycleOwner)
-            .setPositiveAction(R.string.ok){}
-            .showBottomSheet(view)
 
     }
 

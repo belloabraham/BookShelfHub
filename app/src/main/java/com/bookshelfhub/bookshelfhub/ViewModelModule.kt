@@ -7,8 +7,6 @@ import com.bookshelfhub.core.data.repos.payment_card.IPaymentCardRepo
 import com.bookshelfhub.core.data.repos.payment_card.PaymentCardRepo
 import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
 import com.bookshelfhub.core.data.repos.read_history.ReadHistoryRepo
-import com.bookshelfhub.core.data.repos.referral.IReferralRepo
-import com.bookshelfhub.core.data.repos.referral.ReferralRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.search_history.SearchHistoryRepo
 import com.bookshelfhub.core.database.AppDatabase
@@ -57,12 +55,6 @@ object ViewModelModule {
     @Provides
     fun providePaymentCardRepo(appDatabase:AppDatabase): IPaymentCardRepo {
         return PaymentCardRepo(appDatabase)
-    }
-
-    @ViewModelScoped
-    @Provides
-    fun provideReferralRepo(appDatabase: AppDatabase): IReferralRepo {
-        return ReferralRepo(appDatabase)
     }
 
     @ViewModelScoped

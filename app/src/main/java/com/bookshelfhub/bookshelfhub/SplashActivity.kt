@@ -41,11 +41,9 @@ class SplashActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                     val user = userRepo.getUser(userId)
-
                     val nextIntent = if (user.isPresent && userId == user.get().userId)
                         Intent(this@SplashActivity, MainActivity::class.java)
                     else Intent(this@SplashActivity, WelcomeActivity::class.java)
-
                     getCollaboratorOrUserReferralLink(nextIntent)
             }
 
@@ -82,7 +80,6 @@ class SplashActivity : AppCompatActivity() {
                 startNextActivityWith(intent, aCollaboratorOrUserReferralId)
             }
         }
-
     }
 
     private fun startNextActivityWith(intent:Intent, aCollaboratorOrUserReferralId:String?){

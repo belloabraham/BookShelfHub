@@ -6,7 +6,7 @@ import com.bookshelfhub.core.model.entities.remote.RemoteUser
 import java.util.*
 
 interface IUserRepo {
-    suspend fun getRemoteUserDataSnapshot(userId: String): RemoteUser?
+    suspend fun getRemoteUser(userId: String): RemoteUser?
 
     suspend fun uploadNotificationToken(notificationToken: String, userId: String): Void?
 

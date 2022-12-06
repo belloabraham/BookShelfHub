@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
-import com.bookshelfhub.core.data.repos.earnings.EarningsRepo
+import com.bookshelfhub.core.data.repos.earnings.IEarningsRepo
 import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.payment_card.IPaymentCardRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
@@ -26,7 +26,7 @@ class MoreViewModel @Inject constructor(
     private val userRepo: IUserRepo,
     private val settingsUtil: SettingsUtil,
     val userAuth: IUserAuth,
-    private val earningsRepo: EarningsRepo,
+    private val earningsRepo: IEarningsRepo,
     private val paymentCardRepo: IPaymentCardRepo
 ): ViewModel(){
 

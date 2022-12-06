@@ -16,8 +16,7 @@ import kotlin.collections.HashMap
 class UserReviewRepo @Inject constructor(
     appDatabase: AppDatabase,
     private val remoteDataSource: IRemoteDataSource,
-
-    ) : IUserReviewRepo {
+) : IUserReviewRepo {
     private val userReviewDao = appDatabase.getUserReviewsDao()
     private val ioDispatcher: CoroutineDispatcher = IO
 

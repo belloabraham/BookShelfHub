@@ -185,7 +185,6 @@
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/engineering_mathematics" />
 
-
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -193,7 +192,6 @@
                     android:checked="@={bookInterest.isEntertainment}"
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/entertainment" />
-
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"
@@ -210,7 +208,6 @@
                     android:checked="@={bookInterest.isPolitics}"
                     android:layout_margin="@dimen/dp_8"
                     android:text="@string/politics" />
-
 
                 <com.google.android.material.chip.Chip
                     android:layout_width="wrap_content"

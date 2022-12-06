@@ -4,10 +4,7 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.workDataOf
+import androidx.work.*
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.extensions.containsUrl
 import com.bookshelfhub.core.common.helpers.ErrorUtil
@@ -39,6 +36,7 @@ import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.feature.book.item.workers.AddAFreeBook
+import com.bookshelfhub.feature.book.item.workers.GetCollaboratorsCommission
 import com.bookshelfhub.feature.book.item.workers.PostUserReview
 import javax.inject.Inject
 
@@ -89,7 +87,6 @@ class BookItemActivityViewModel @Inject constructor(
     }
 
     generateBookShareLink()
-
     orderedBook = orderedBooksRepo.getALiveOptionalOrderedBook(bookId)
 
     if (isSearchItem){
@@ -101,7 +98,6 @@ class BookItemActivityViewModel @Inject constructor(
     }
 
      getARemotePublishedBook()
-
      getTwoBookReviewsRemotely()
      getRemoteUserReview()
   }
@@ -220,6 +216,18 @@ class BookItemActivityViewModel @Inject constructor(
   fun addToCart(cart: CartItem){
     viewModelScope.launch{
       cartItemsRepo.addToCart(cart)
+
+      val workData = workDataOf(
+        Book.ID to cart.bookId,
+        Book.PUB_ID to cart.pubId,
+        CollabCommission.COLLAB_ID to cart.collaboratorsId
+      )
+      val oneTimeGetCollabCommissionWorker =
+        OneTimeWorkRequestBuilder<GetCollaboratorsCommission>()
+          .setConstraints(Constraint.getConnected())
+          .setInputData(workData)
+          .build()
+      worker.enqueueUniqueWork(cart.bookId, ExistingWorkPolicy.KEEP, oneTimeGetCollabCommissionWorker)
     }
   }
 

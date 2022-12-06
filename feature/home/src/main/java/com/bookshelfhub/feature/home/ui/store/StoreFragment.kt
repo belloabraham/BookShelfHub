@@ -97,7 +97,7 @@ class StoreFragment : Fragment() {
         mRecommendBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
         val recommendBooksAdapter = mRecommendBooksAdapter!!
 
-        mFictionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
+        mFashionBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())
         val fashionBooksAdapter = mFashionBooksAdapter!!
 
         mTrendingBooksAdapter = StoreListAdapter(requireActivity(), DiffUtilItemCallback())

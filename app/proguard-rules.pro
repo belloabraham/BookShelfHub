@@ -27,3 +27,11 @@
 -keepclassmembers class * implements android.os.Parcelable {
     static ** CREATOR;
 }
+
+#Realtime database
+-keepattributes Signature
+
+#Data models
+-keep class com.bookshelfhub.core.model.**{
+    *;
+}

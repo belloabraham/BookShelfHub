@@ -13,7 +13,7 @@ import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.data.Payment
 import com.bookshelfhub.core.data.repos.bookinterest.IBookInterestRepo
 import com.bookshelfhub.core.data.repos.referral.IReferralRepo
-import com.bookshelfhub.core.data.repos.user.UserRepo
+import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
@@ -39,7 +39,7 @@ class MainActivityViewModel @Inject constructor(
     private val bookInterestRepo: IBookInterestRepo,
     private val connectionUtil: ConnectionUtil,
     private val referralRepo: IReferralRepo,
-    private val userRepo: UserRepo,
+    private val userRepo: IUserRepo,
     ):ViewModel() {
 
     private var bottomBarSelectedIndex: MutableLiveData<Int> = MutableLiveData()
@@ -69,9 +69,7 @@ class MainActivityViewModel @Inject constructor(
             val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.split(Referrer.SEPARATOR)
             val collaboratorId = collaboratorAndBookId[0]
             val bookId = collaboratorAndBookId[1]
-            val collabCommission =   collaboratorAndBookId[2]
-
-            val collaborator = Collaborator(collaboratorId, bookId, collabCommission.toDouble())
+            val collaborator = Collaborator(collaboratorId, bookId, 0.0)
             addCollaborator(collaborator)
             return bookId
         }
@@ -79,7 +77,7 @@ class MainActivityViewModel @Inject constructor(
     }
 
 
-    suspend fun isDarkUserPreferedTheme(): Boolean {
+    suspend fun isDarkUserPreferredTheme(): Boolean {
         return settingsUtil.getBoolean(Settings.IS_DARK_THEME, false)
     }
 
@@ -123,7 +121,6 @@ class MainActivityViewModel @Inject constructor(
         )
     }
 
-
     fun updatedRecommendedBooksNotification(bookInterest: Optional<BookInterest>){
          if (bookInterest.isPresent && bookInterest.get().added) {
             setBookInterestNotifNo(0)
@@ -134,7 +131,7 @@ class MainActivityViewModel @Inject constructor(
 
     private fun addCollaborator(collaborator: Collaborator){
         viewModelScope.launch {
-            referralRepo.addCollaboratorOrIgnore(collaborator)
+            referralRepo.addCollaboratorOrReplace(collaborator)
         }
     }
 
@@ -150,6 +147,7 @@ class MainActivityViewModel @Inject constructor(
     fun setOnBackPressed(value:Boolean){
         onBackPressed.value = value
     }
+
     fun getOnBackPressed():LiveData<Boolean>{
         return onBackPressed
     }

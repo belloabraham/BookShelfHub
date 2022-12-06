@@ -147,7 +147,7 @@ class ProfileFragment : Fragment() {
         return layout.root
     }
 
-    override fun onStop() {
+    override fun onPause() {
         val email = layout.emailEditTxt.text.toString().trim()
         val phone = layout.phoneEditTxt.text.toString().trim()
         val firstName = layout.firstNameEditTxt.text.toString().trim()
@@ -161,7 +161,7 @@ class ProfileFragment : Fragment() {
         user?.dateOfBirth = dateOfBirth
         user?.phone = phone
         user?.email = email
-        super.onStop()
+        super.onPause()
     }
 
     override fun onDestroyView() {

@@ -21,8 +21,7 @@ class BookmarksRepo @Inject constructor(
     appDatabase: AppDatabase,
     private val worker: Worker,
     private val remoteDataSource: IRemoteDataSource,
-    ) :
-    IBookmarksRepo {
+    ) : IBookmarksRepo {
     private val ioDispatcher: CoroutineDispatcher = IO
     private val bookmarksDao= appDatabase.getBookmarksDao()
 

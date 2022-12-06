@@ -15,5 +15,4 @@ abstract class ReferralDao: BaseDao<Collaborator> {
     @Query("SELECT * FROM Collaborators WHERE bookId = :bookId")
     abstract fun getAnOptionalCollaborator(bookId:String): Optional<Collaborator>
 
-
 }

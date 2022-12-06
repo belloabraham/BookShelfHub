@@ -11,7 +11,7 @@ import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
-import com.bookshelfhub.core.data.repos.user.UserRepo
+import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
@@ -33,7 +33,7 @@ class BookActivityViewModel @Inject constructor(
     private val publishedBooksRepo: IPublishedBooksRepo,
     private val readHistoryRepo: IReadHistoryRepo,
     private val searchHistoryRepo: ISearchHistoryRepo,
-    private val userRepo: UserRepo,
+    private val userRepo: IUserRepo,
     private val bookmarksRepo: IBookmarksRepo,
     private val remoteConfig:IRemoteConfig
 ) : ViewModel() {

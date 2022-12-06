@@ -89,7 +89,7 @@ class WelcomeActivityViewModel @Inject constructor(
      fun getRemoteUser(): LiveData<RemoteUser?> {
          viewModelScope.launch {
              try {
-                remoteUser.value = userRepo.getRemoteUserDataSnapshot(userAuth.getUserId())
+                remoteUser.value = userRepo.getRemoteUser(userAuth.getUserId())
              }catch (e:Exception){
                  ErrorUtil.e(e)
                  return@launch

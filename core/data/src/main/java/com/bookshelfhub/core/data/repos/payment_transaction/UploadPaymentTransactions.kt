@@ -12,9 +12,9 @@ import com.bookshelfhub.core.common.helpers.Json
 import com.bookshelfhub.core.common.notification.NotificationBuilder
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.data.repos.cartitems.ICartItemsRepo
-import com.bookshelfhub.core.data.repos.ordered_books.OrderedBooksRepo
-import com.bookshelfhub.core.data.repos.referral.ReferralRepo
-import com.bookshelfhub.core.data.repos.user.UserRepo
+import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
+import com.bookshelfhub.core.data.repos.referral.IReferralRepo
+import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.model.entities.OrderedBook
 import com.bookshelfhub.core.remote.cloud_functions.CloudFunctions
@@ -32,12 +32,12 @@ class UploadPaymentTransactions @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
     private val cartItemsRepo: ICartItemsRepo,
-    private val orderedBooksRepo: OrderedBooksRepo,
+    private val orderedBooksRepo: IOrderedBooksRepo,
     private val paymentTransactionRepo: IPaymentTransactionRepo,
     private val cloudMessaging: ICloudMessaging,
     private val cloudFunctions: ICloudFunctions,
-    private val userRepo: UserRepo,
-    private val referralRepo: ReferralRepo,
+    private val userRepo: IUserRepo,
+    private val referralRepo: IReferralRepo,
     private val json: Json,
     private val settingsUtil: SettingsUtil,
 ) : CoroutineWorker(

@@ -88,13 +88,15 @@ class UserInfoFragment : Fragment() {
             val firstName = layout.firstNameEditTxt.text.toString().trim()
             val lastName = layout.lastNameEditTxt.text.toString().trim()
 
-            if (!email.isValidEmailAddress()){
+            val shouldCheckForEmailValidation = userAuthType == AuthType.PHONE && !email.isValidEmailAddress()
+            val shouldCheckForPhoneValidation = userAuthType == AuthType.GOOGLE && !phone.isPhoneNumber()
+            if (shouldCheckForEmailValidation){
                 layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
             }else if(TextUtils.isEmpty(firstName)){
                 layout.firstNameEditTxtLayout.error=getString(R.string.first_name_req_error)
             }else if(TextUtils.isEmpty(lastName)){
                 layout.lastNameEditTxtLayout.error=getString(R.string.last_name_req_error)
-            }else if(!phone.isPhoneNumber()){
+            }else if(shouldCheckForPhoneValidation){
                 layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
             }else{
                 keyboardUtil.hideKeyboard(layout.emailEditTxt)
@@ -141,14 +143,13 @@ class UserInfoFragment : Fragment() {
         return layout.root
     }
 
-    override fun onStop() {
+    override fun onPause() {
         userInfoViewModel.email = layout.emailEditTxt.text.toString().trim()
         userInfoViewModel.phoneNumber = layout.phoneEditTxt.text.toString().trim()
         userInfoViewModel.firstName = layout.firstNameEditTxt.text.toString().trim()
         userInfoViewModel.lastName = layout.lastNameEditTxt.text.toString().trim()
-        super.onStop()
+        super.onPause()
     }
-
 
     override fun onDestroyView() {
         binding=null

@@ -10,6 +10,10 @@ android {
 
     namespace 'com.bookshelfhub.bookshelfhub'
 
+    buildFeatures {
+        dataBinding = true
+    }
+
     signingConfigs {
         release {
             storePassword 'J7,B&4D1-6S0/H~5<7\\2GPj^H1%M9$'
@@ -23,7 +27,7 @@ android {
     defaultConfig {
         applicationId "com.bookshelfhub.bookshelfhub"
         versionCode 4
-        versionName "1.3"
+        versionName "2"
         resConfigs "en"
     }
 

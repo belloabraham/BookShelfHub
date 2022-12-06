@@ -41,5 +41,4 @@ object FragmentModule {
         return TextLinkBuilder()
     }
 
-
 }
