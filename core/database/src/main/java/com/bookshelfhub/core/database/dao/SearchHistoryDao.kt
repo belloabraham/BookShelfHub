@@ -14,7 +14,7 @@ interface SearchHistoryDao{
     suspend fun getTop4ShelfSearchHistory(userId:String):List<ShelfSearchHistory>
 
     @Query("SELECT * FROM StoreSearchHistories WHERE userId = :userId Order BY dateTime DESC LIMIT 8")
-    fun getTop4StoreSearchHistory(userId:String): List<StoreSearchHistory>
+    suspend fun getTop4StoreSearchHistory(userId:String): List<StoreSearchHistory>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addStoreSearchHistory(searchHistory: StoreSearchHistory)

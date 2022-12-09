@@ -10,7 +10,6 @@ import com.bookshelfhub.core.data.repos.read_history.ReadHistoryRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.search_history.SearchHistoryRepo
 import com.bookshelfhub.core.database.AppDatabase
-import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.remote.database.IRemoteDataSource
 import com.bookshelfhub.core.remote.webapi.currencyconverter.CurrencyConversionAPI
 import com.bookshelfhub.core.remote.webapi.currencyconverter.ICurrencyConversionAPI
@@ -28,21 +27,14 @@ object ViewModelModule {
 
     @ViewModelScoped
     @Provides
-    fun provideDownloadBookUseCase(): DownloadBookUseCase {
-        return DownloadBookUseCase()
-    }
-
-    @ViewModelScoped
-    @Provides
-    fun provideGetBookIdCompoundId(): GetBookIdFromCompoundId {
-        return GetBookIdFromCompoundId()
-    }
-
-
-    @ViewModelScoped
-    @Provides
     fun provideCurrencyConversionAPI(): ICurrencyConversionAPI {
         return CurrencyConversionAPI(RetrofitInstance.fixerConversionAPI)
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideDownloadBookUseCase(): DownloadBookUseCase {
+        return DownloadBookUseCase()
     }
 
     @ViewModelScoped

@@ -12,6 +12,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage.ktx)
 
+    implementation("com.google.guava:guava:31.0.1-android")
+
     implementation(libs.play.services.basement)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
@@ -23,6 +25,7 @@ dependencies {
     implementation(libs.afollestad.material.dialogs.bottomsheets)
 
 
+    implementation(project(":core:domain"))
     implementation(project(":core:common"))
     implementation(project(":core:model"))
     implementation(project(":core:datastore"))

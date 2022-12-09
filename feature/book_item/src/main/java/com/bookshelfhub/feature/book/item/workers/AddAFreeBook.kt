@@ -35,7 +35,7 @@ class AddAFreeBook  @AssistedInject constructor (
 
         return try {
 
-           val aFreeBook = orderedBooksRepo.getAnOrderedBook(bookId)
+            val aFreeBook = orderedBooksRepo.getAnOrderedBook(bookId).get()
             val data = hashMapOf<String, Any?>(
                 A_FREE_BOOK to json.getJsonString(aFreeBook)
             )

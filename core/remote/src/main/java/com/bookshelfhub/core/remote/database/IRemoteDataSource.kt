@@ -6,6 +6,12 @@ import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
 
+    suspend fun updateDocData(
+        collection:String,
+        document:String,
+        field:String,
+        value:Any,
+    ): Void?
 
     suspend fun <T: Any> getListOfDataAsync(
         collection:String,

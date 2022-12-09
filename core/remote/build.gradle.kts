@@ -24,7 +24,6 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:common"))
 
-
     implementation(libs.squareup.retrofit2)
     implementation("com.squareup.retrofit2:converter-gson:2.5.0")
 

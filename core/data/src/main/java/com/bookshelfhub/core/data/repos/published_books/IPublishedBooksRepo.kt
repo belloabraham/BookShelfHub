@@ -7,6 +7,9 @@ import com.bookshelfhub.core.model.uistate.PublishedBookUiState
 import java.util.*
 
 interface IPublishedBooksRepo {
+
+    suspend fun updateBookTotalDownloadsByOne(bookId:String, field:String, value:Any): Void?
+
     suspend fun updatePublishedBook(publishedBook: PublishedBook)
 
     fun getALiveOptionalPublishedBook(bookId: String): LiveData<Optional<PublishedBook>>

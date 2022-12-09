@@ -190,8 +190,7 @@ class WelcomeActivity : AppCompatActivity() {
                     try {
                         val googleSignIn = GoogleSignIn.getSignedInAccountFromIntent(data).await()
                         try {
-                            val authResult =
-                                googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
+                            val authResult = googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
                             googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
                             googleAuthViewModel.setIsAuthenticatedSuccessful(true)
                         } catch (e: Exception) {
@@ -339,6 +338,18 @@ class WelcomeActivity : AppCompatActivity() {
                 val otpCodeMask = "000000"
                 phoneAuthViewModel.setOTPCode(otpCodeMask)
                 phoneAuth.signInWithCredential(credential)
+                    .addOnCompleteListener(this@WelcomeActivity) { task ->
+                        if (task.isSuccessful) {
+                            phoneAuthViewModel.setIsNewUser(task.result!!.additionalUserInfo!!.isNewUser)
+                            phoneAuthViewModel.setIsSignedInSuccessfully(true)
+                        }else {
+                            if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                                phoneAuthViewModel.setSignedInFailedError(this@WelcomeActivity.getString(wrongOTPErrorMsg))
+                            }
+                        }
+                        phoneAuthViewModel.setSignInCompleted(true)
+                    }
+
             }
 
             override fun onVerificationFailed(e: FirebaseException) {

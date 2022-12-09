@@ -40,14 +40,14 @@ class BookmarksRepo @Inject constructor(
         }
     }
 
-     override suspend fun getBookmark(pageNumb: Int, isbn: String): Optional<Bookmark> {
+     override suspend fun getBookmark(pageNumb: Int, bookId: String): Optional<Bookmark> {
         return  withContext(ioDispatcher){
-            bookmarksDao.getBookmark(pageNumb, isbn)
+            bookmarksDao.getBookmark(pageNumb, bookId)
         }
     }
 
-     override suspend fun deleteFromBookmark(pageNumb: Int, isbn:String) {
-         return withContext(ioDispatcher){bookmarksDao.deleteFromBookmark(pageNumb, isbn)}
+     override suspend fun deleteFromBookmark(pageNumb: Int, bookId:String) {
+         return withContext(ioDispatcher){bookmarksDao.deleteFromBookmark(pageNumb, bookId)}
     }
 
      override suspend fun addBookmark(bookmark: Bookmark) {

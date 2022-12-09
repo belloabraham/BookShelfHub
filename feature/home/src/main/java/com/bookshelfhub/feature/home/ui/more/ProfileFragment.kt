@@ -7,6 +7,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -144,25 +145,40 @@ class ProfileFragment : Fragment() {
         val spinnerAdapter: ArrayAdapter<*> = ArrayAdapter<Any?>(requireContext(), com.bookshelfhub.core.resources.R.layout.spinner_item, genderArr)
         layout.genderDropDown.setAdapter(spinnerAdapter)
 
+
+        layout.firstNameEditTxt.addTextChangedListener {
+            it?.let {
+                profileViewModel.getUser()?.firstName = it.toString()
+            }
+        }
+
+        layout.lastNameEditTxt.addTextChangedListener{
+            it?.let {
+                profileViewModel.getUser()?.lastName = it.toString()
+            }
+        }
+
+        layout.emailEditTxt.addTextChangedListener{
+            it?.let {
+                profileViewModel.getUser()?.email = it.toString()
+            }
+        }
+
+        layout.phoneEditTxt.addTextChangedListener{
+            it?.let {
+                profileViewModel.getUser()?.phone = it.toString()
+            }
+        }
+
+        layout.additionalInfoText.addTextChangedListener{
+            it?.let {
+                profileViewModel.getUser()?.additionInfo = it.toString()
+            }
+        }
+
         return layout.root
     }
 
-    override fun onPause() {
-        val email = layout.emailEditTxt.text.toString().trim()
-        val phone = layout.phoneEditTxt.text.toString().trim()
-        val firstName = layout.firstNameEditTxt.text.toString().trim()
-        val lastName = layout.firstNameEditTxt.text.toString().trim()
-        val additionalInfo = layout.additionalInfoText.text.toString().trim()
-        val user = profileViewModel.getUser()
-        user?.firstName = firstName
-        user?.lastName = lastName
-        user?.additionInfo = additionalInfo
-        user?.gender = gender
-        user?.dateOfBirth = dateOfBirth
-        user?.phone = phone
-        user?.email = email
-        super.onPause()
-    }
 
     override fun onDestroyView() {
         binding=null

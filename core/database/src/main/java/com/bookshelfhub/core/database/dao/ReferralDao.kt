@@ -13,6 +13,6 @@ abstract class ReferralDao: BaseDao<Collaborator> {
     abstract fun getLivePubReferrer(bookId:String): LiveData<Optional<Collaborator>>
 
     @Query("SELECT * FROM Collaborators WHERE bookId = :bookId")
-    abstract fun getAnOptionalCollaborator(bookId:String): Optional<Collaborator>
+    abstract suspend fun getAnOptionalCollaborator(bookId:String): Optional<Collaborator>
 
 }

@@ -14,6 +14,7 @@ import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
+import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.model.entities.*
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
@@ -30,6 +31,7 @@ class BookActivityViewModel @Inject constructor(
     private val connectionUtil: ConnectionUtil,
     private val orderedBooksRepo: IOrderedBooksRepo,
     private val dynamicLink: IDynamicLink,
+    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val publishedBooksRepo: IPublishedBooksRepo,
     private val readHistoryRepo: IReadHistoryRepo,
     private val searchHistoryRepo: ISearchHistoryRepo,
@@ -60,6 +62,10 @@ class BookActivityViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun getUnMergedBookId(): String {
+        return getBookIdFromCompoundId(bookId)
     }
 
     fun getRemoteString(key:String): String {

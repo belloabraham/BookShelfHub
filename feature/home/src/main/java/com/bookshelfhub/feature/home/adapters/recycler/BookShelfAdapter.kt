@@ -17,11 +17,10 @@ import androidx.work.*
 import com.bookshelfhub.book.page.BookActivity
 import com.bookshelfhub.core.common.extensions.showToast
 import com.bookshelfhub.core.resources.R
-import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
-import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.core.common.helpers.utils.IconUtil
 import com.bookshelfhub.core.common.helpers.utils.Toast
 import com.bookshelfhub.core.data.Book
+import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
 import com.bookshelfhub.feature.home.ui.shelf.ShelfViewModel
 import kotlinx.coroutines.launch
@@ -77,22 +76,17 @@ class BookShelfAdapter(
             title.text = bookName
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverDataUrl))
 
-            val bookId = shelfViewModel.getBookIdFromPossiblyMergedIds(model.bookId)
-            val pubId = model.pubId
-            val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
-            val fileDoesNotExist = !AppExternalStorage.getDocumentFilePath(
-                pubId,
-                bookId,
-                fileNameWithExt, activity).exists()
+            val bookFile = LocalFile.getBookFile(model.bookId, model.pubId, activity)
 
+            val fileDoesNotExist = !bookFile.exists()
             if (fileDoesNotExist) {
                 setDownloadIconVisibility(VISIBLE)
             }
 
             imageView.setOnClickListener {
-                val fileExist = !fileDoesNotExist
+                val fileExist = bookFile.exists()
                 if (fileExist){
-                    openBook(activity, bookName, bookId)
+                    openBook(activity, bookName, model.bookId)
                 }
 
                 if(fileDoesNotExist){
@@ -101,7 +95,7 @@ class BookShelfAdapter(
                         downloadActionIcon.setImageDrawable(downloadDrawable)
 
                         val workData = workDataOf(
-                            Book.ID to bookId,
+                            Book.ID to model.bookId,
                             Book.SERIAL_NO to model.serialNo.toInt(),
                             Book.PUB_ID to model.pubId,
                             Book.NAME to bookName
@@ -117,7 +111,7 @@ class BookShelfAdapter(
 
 
             lifecycleOwner.lifecycleScope.launch {
-                shelfViewModel.getLiveBookDownloadState(bookId).asFlow().collect{
+                shelfViewModel.getLiveBookDownloadState(model.bookId).asFlow().collect{
 
                     if(it.isPresent){
                         val downloadBookState = it.get()

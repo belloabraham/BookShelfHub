@@ -43,6 +43,16 @@ import javax.inject.Inject
 
     }
 
+     override suspend fun updateDocData(
+         collection:String,
+         document:String,
+         field:String,
+         value:Any,
+     ): Void? {
+         throwNoInternetConnectionError()
+         return db.collection(collection).document(document).update(field, value).await()
+     }
+
      override suspend fun addDataAsync(
          collection:String,
          document:String,

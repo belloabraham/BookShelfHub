@@ -8,42 +8,19 @@ import android.os.storage.StorageManager.ACTION_MANAGE_STORAGE
 import android.content.Intent
 
 object AppExternalStorage {
-    
-    fun isAudioFileExist(applicationContext: Context, fileName:String, fileFormat:String=".mp3", folderName:String = fileName): Boolean {
-        val path = "$folderName${File.separator}$fileName$fileFormat"
-        val storagePath =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), path)
-        }else{
-            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC), path)
-        }
-        return  storagePath.exists()
+                                
+    fun getDocumentDir(folderPath:String, context:Context):File{
+        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderPath)
+        file.mkdir()
+        return file
     }
 
-    fun isDocumentFileExist(applicationContext: Context, dirPath:String, fileName:String): Boolean {
-        val path = "$dirPath${File.separator}$fileName"
-        val storagePath = File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
-        return  storagePath.exists()
+    fun getDocumentFile(fileDirectory:File, fileNameWithExt:String): File {
+        return File(fileDirectory, fileNameWithExt)
     }
 
-    fun getDocumentFilePath(applicationContext: Context, folderName: String, pathToFile:String): String {
-        return File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), folderName+File.separator+pathToFile).absolutePath
-    }
-
-    fun getDocumentFilePath(folderName: String, subFolderName:String, fileNameWithExt:String, context: Context): File {
-        val path = "$folderName${File.separator}$subFolderName${File.separator}$fileNameWithExt"
-        return File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), path)
-    }
-
-    fun getAudioFilePath( applicationContext: Context, folderName: String): String {
-      return  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_AUDIOBOOKS), folderName).absolutePath
-        }else{
-            File(applicationContext.getExternalFilesDir(Environment.DIRECTORY_MUSIC), folderName).absolutePath
-        }
-    }
-
-    fun getFilePath(fileName:String, fileFormat:String=".pdf"): String {
-        return "$fileName$fileFormat"
+    fun getDocumentFile(fileNameWithExt:String, context: Context): File {
+        return File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), fileNameWithExt)
     }
 
     fun requestClearStorage(applicationContext:Context){

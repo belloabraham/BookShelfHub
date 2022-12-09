@@ -56,13 +56,11 @@ class MoreViewModel @Inject constructor(
         return userRepo.getUser(userId)
     }
 
-    fun deleteUserData(){
-        viewModelScope.launch {
+    suspend fun deleteUserData(){
             userRepo.deleteUserRecord()
             userReviewRepo.deleteAllReviews()
             orderedBooksRepo.deleteAllOrderedBooks()
             bookmarksRepo.deleteAllBookmarks()
-        }
     }
 
     fun deleteAllPaymentCards(){

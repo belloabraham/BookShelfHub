@@ -35,9 +35,11 @@ import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
+import com.bookshelfhub.core.remote.database.RemoteDataFields
 import com.bookshelfhub.feature.book.item.workers.AddAFreeBook
 import com.bookshelfhub.feature.book.item.workers.GetCollaboratorsCommission
 import com.bookshelfhub.feature.book.item.workers.PostUserReview
+import com.google.firebase.firestore.FieldValue
 import javax.inject.Inject
 
 @HiltViewModel
@@ -286,6 +288,18 @@ class BookItemActivityViewModel @Inject constructor(
           return@launch
         }
     }
+  }
+
+  fun updateBookTotalDownloadsByOne(){
+    viewModelScope.launch {
+      try {
+        val incrementValue = FieldValue.increment(1)
+        publishedBooksRepo.updateBookTotalDownloadsByOne(bookId, RemoteDataFields.TOTAL_DOWNLOADS, incrementValue)
+      }catch (e:Exception){
+        ErrorUtil.e(e)
+      }
+    }
+
   }
 
   fun getBookFromCart(): LiveData<Optional<CartItem>>{

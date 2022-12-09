@@ -21,8 +21,7 @@ class UserRepo @Inject constructor(
     appDatabase: AppDatabase,
     private val remoteDataSource: IRemoteDataSource,
     private val worker: Worker,
-
-    ) : IUserRepo {
+) : IUserRepo {
     private val ioDispatcher: CoroutineDispatcher = IO
     private val userDao = appDatabase.getUserDao()
 

@@ -125,13 +125,16 @@ class SavedCardsFragment : Fragment(){
 
         val payStackPublicKey = if (Config.isDevMode()) getString(R.string.paystack_test_public_key) else payStackLivePublicKey
 
-        payment.chargeCard(
-            payStackPublicKey!!,
-            paymentCard,
-            totalAmountToCharge,
-            cartFragmentViewModel.getUserEmail()!!,
-           cartFragmentViewModel.currencyToChargeForBooksSale
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            payment.chargeCard(
+                payStackPublicKey!!,
+                paymentCard,
+                totalAmountToCharge,
+                cartFragmentViewModel.getUserEmail(),
+                cartFragmentViewModel.currencyToChargeForBooksSale
+            )
+        }
+
     }
 
     private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
@@ -162,8 +165,7 @@ class SavedCardsFragment : Fragment(){
 
             override fun onError(error: Throwable?, transaction: Transaction?) {
                 error?.let {
-                    val errorMsg = String.format(getString(R.string.transaction_error), it.localizedMessage)
-                    showTransactionFailedMsg(errorMsg)
+                    showTransactionFailedMsg( it.localizedMessage)
                 }
             }
 
@@ -172,8 +174,7 @@ class SavedCardsFragment : Fragment(){
 
     private fun showTransactionFailedMsg(sdkErrorMsg:String?){
         sdkErrorMsg?.let {
-            val errorMsg = String.format(getString(R.string.transaction_error), it)
-            AlertDialogBuilder.with(errorMsg, requireActivity())
+            AlertDialogBuilder.with(it, requireActivity())
                 .setCancelable(false)
                 .setPositiveAction(R.string.ok){}
                 .build()

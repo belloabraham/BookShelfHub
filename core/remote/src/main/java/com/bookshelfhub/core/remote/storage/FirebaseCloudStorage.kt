@@ -1,46 +1,35 @@
 package com.bookshelfhub.core.remote.storage
 
-import android.content.Context
-import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
-import com.bookshelfhub.core.common.helpers.storage.FileExtension
+import com.google.android.gms.tasks.Task
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FileDownloadTask
+import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.tasks.await
+import java.io.File
 
-class FirebaseCloudStorage (
-    private val context:Context) : ICloudStorage {
+class FirebaseCloudStorage () : ICloudStorage {
 
     private val  storage = Firebase.storage
-    private var storageRef = storage.reference
-    private val SEPERATOR = "/"
+    private val storageRef = storage.reference
 
-   override suspend fun downloadAsTempFile(
-       folder:String,
-       subfolder:String,
-       fileName:String,
-       remoteFileExt:String,
+   override fun downloadAsTempFile(
+       remoteFilePath:String,
+       tempLocalFilePath: File,
        onProgress:(Int)->Unit,
-       onComplete:()->Unit,
+       onComplete:(downloadTask: Task<FileDownloadTask.TaskSnapshot>)->Unit,
        onError:(Exception)->Unit
-    ): FileDownloadTask.TaskSnapshot? {
-        val remotePath = "$folder${SEPERATOR}${subfolder}${SEPERATOR}$fileName$remoteFileExt"
-        val remotePathRef = storageRef.child(remotePath)
+    ): StorageTask<FileDownloadTask.TaskSnapshot> {
 
-        val tempLocalFilePath = AppExternalStorage.getDocumentFilePath(
-            folder,
-            subfolder,
-            "$fileName${FileExtension.DOT_TEMP}",
-            context)
+        val remotePathRef = storageRef.child(remoteFilePath)
 
-        return remotePathRef.getFile(tempLocalFilePath)
+       return remotePathRef.getFile(tempLocalFilePath)
             .addOnProgressListener {
                 val progress = (it.bytesTransferred/it.totalByteCount)*100
                 onProgress(progress.toInt())
-            }.addOnCompleteListener {
-                onComplete()
+            }.addOnCompleteListener{
+                onComplete(it)
             }.addOnFailureListener {
                 onError(it)
-            }.await()
+            }
     }
 }

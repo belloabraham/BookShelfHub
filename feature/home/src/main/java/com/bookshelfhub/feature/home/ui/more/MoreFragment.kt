@@ -39,6 +39,7 @@ import com.bookshelfhub.feature.webview.WebView
 import com.bookshelfhub.feature.webview.WebViewActivity
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.launch
@@ -137,22 +138,22 @@ class MoreFragment : Fragment() {
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
                      userAuth.signOut()
-                     if(authType == AuthType.PHONE){
-                           moreViewModel.deleteUserData()
-                           requireActivity().finish()
-                     }else{
-                         val googleAuth: IGoogleAuth =  GoogleAuth(requireActivity(), R.string.gcp_web_client)
-                         viewLifecycleOwner.lifecycleScope.launch{
+                     viewLifecycleOwner.lifecycleScope.launch {
+                         if (authType == AuthType.PHONE) {
+                             moreViewModel.deleteUserData()
+                             ProcessPhoenix.triggerRebirth(this@MoreFragment.requireContext().applicationContext)
+                         } else {
+                             val googleAuth: IGoogleAuth = GoogleAuth(requireActivity(), R.string.gcp_web_client)
+
                              try {
                                  googleAuth.signOut().await()
                                  moreViewModel.deleteUserData()
-                                 requireActivity().finish()
-                             }catch (e:Exception){
+                                 ProcessPhoenix.triggerRebirth(this@MoreFragment.requireContext().applicationContext)
+                             } catch (e: Exception) {
                                  ErrorUtil.e(e)
                              }
                          }
                      }
-
                  }.build()
                  .showDialog(R.string.sign_out)
 

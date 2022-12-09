@@ -26,7 +26,7 @@ class CartFragmentsViewModel @Inject constructor(
   private val paymentTransactionRepo: IPaymentTransactionRepo,
   private val earningsRepo: IEarningsRepo,
   private val settingsUtil: SettingsUtil,
-  private val userAuth: IUserAuth
+  userAuth: IUserAuth
 ): ViewModel(){
 
   private var liveCartItems: LiveData<List<CartItem>> = MutableLiveData()
@@ -40,7 +40,6 @@ class CartFragmentsViewModel @Inject constructor(
   internal var paymentSDKType: PaymentSDKType? = null
   internal var currencyToChargeForBooksSale = SupportedCurrencies.NGN
   private var paymentTransactions = mutableListOf<PaymentTransaction>()
-
 
   init {
 
@@ -95,8 +94,8 @@ class CartFragmentsViewModel @Inject constructor(
     return userEarningsFromReferrals
   }
 
-  fun getUserEmail(): String? {
-    return userAuth.getEmail()
+  suspend fun getUserEmail(): String{
+    return userRepo.getUser(userId).get().email
   }
 
   suspend fun getUser(): User {

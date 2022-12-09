@@ -9,6 +9,10 @@ android {
 
 dependencies {
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics.ktx)
+
+
     //--In App Update
     implementation(libs.android.play.core)
     implementation(libs.android.play.core.ktx)

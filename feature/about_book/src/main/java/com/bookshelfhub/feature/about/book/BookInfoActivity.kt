@@ -25,10 +25,8 @@ class BookInfoActivity : AppCompatActivity() {
         layout = ActivityBookInfoBinding.inflate (layoutInflater)
         setContentView(layout.root)
 
-
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = bookInfoActivityViewModel.getTitle()
-
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
         navController = navHostFragment.findNavController()

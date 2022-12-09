@@ -44,7 +44,7 @@ class CartItemsRepo @Inject constructor(
          val clearCart =
              OneTimeWorkRequestBuilder<
                      ClearCart>()
-                 .setInitialDelay( 2, TimeUnit.DAYS)
+                 .setInitialDelay( 1, TimeUnit.DAYS)
                  .build()
          worker.enqueueUniqueWork(Tag.CLEAR_CART, ExistingWorkPolicy.REPLACE , clearCart)
     }

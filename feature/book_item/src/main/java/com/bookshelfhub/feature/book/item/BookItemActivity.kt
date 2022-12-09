@@ -14,8 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.workDataOf
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.extensions.load
-import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
-import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.feature.webview.WebView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asFlow
@@ -44,6 +42,7 @@ import java.util.*
 import javax.inject.Inject
 import androidx.activity.viewModels
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
+import com.bookshelfhub.core.domain.usecases.LocalFile
 
 @AndroidEntryPoint
 class BookItemActivity : AppCompatActivity() {
@@ -178,7 +177,7 @@ class BookItemActivity : AppCompatActivity() {
         layout.downloadBtn.setOnClickListener {
 
             val workData = workDataOf(
-                Book.ID to bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this.bookId),
+                Book.ID to this.bookId,
                 Book.SERIAL_NO to onlinePublishedBook.serialNo.toInt(),
                 Book.PUB_ID to onlinePublishedBook.pubId,
                 Book.NAME to onlinePublishedBook.name
@@ -192,7 +191,7 @@ class BookItemActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             bookItemActivityViewModel.getLiveBookDownloadState(
-                bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(bookId)
+                bookId
             ).asFlow().collect{
                 if(it.isPresent){
 
@@ -212,10 +211,12 @@ class BookItemActivity : AppCompatActivity() {
                         layout.downloadProgressTxt.text = getString(R.string.download_complete)
                         layout.downloadProgressLayout.visibility = View.GONE
 
+                        val totalDownloads = onlinePublishedBook.totalDownloads + 1
+                        layout.noOfDownloadsText.text = "$totalDownloads"
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
                         checkIfBookAlreadyAddedByUser(orderedBook)
-                        layout.downloadBtn.visibility = View.VISIBLE
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
+                        bookItemActivityViewModel.updateBookTotalDownloadsByOne()
                     }
                 }
             }
@@ -284,10 +285,11 @@ class BookItemActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
                     layout.reviewLengthTxt.text  = String.format(getString(R.string.reviewtextLength), it.length)
+                    bookItemActivityViewModel.review = it.toString()
                 }
             }
-
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+            }
         })
 
 
@@ -400,16 +402,12 @@ class BookItemActivity : AppCompatActivity() {
         val bookAlreadyPurchasedByUser = orderedBook.isPresent
 
         if (bookAlreadyPurchasedByUser){
-            val bookId = bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(this.bookId)
             canUserPostReview = true
-
             val book = orderedBook.get()
-            val fileNameWithExt = "$bookId${FileExtension.DOT_PDF}"
 
-            val bookAlreadyDownloadedByUser =  AppExternalStorage.getDocumentFilePath(
-                book.pubId,
-                bookId,
-                fileNameWithExt, applicationContext).exists()
+            val bookFile = LocalFile.getBookFile(book.bookId, book.pubId, this)
+
+            val bookAlreadyDownloadedByUser = bookFile.exists()
 
             if(bookAlreadyDownloadedByUser){
                 showOpenBookButtonAndHideOthers()
@@ -560,19 +558,13 @@ class BookItemActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onPause() {
-        bookItemActivityViewModel.review = layout.userReviewEditText.text.toString()
-        super.onPause()
-    }
-
     private fun startBookActivity(){
         lifecycleScope.launch {
             val book = bookItemActivityViewModel.getOptionalOrderedBook(bookId).get()
-            val bookId = bookItemActivityViewModel.getBookIdFromPossiblyMergedIds(book.bookId)
             val intent = Intent(this@BookItemActivity, BookActivity::class.java)
             with(intent){
                 putExtra(Book.NAME, book.name)
-                putExtra(Book.ID, bookId)
+                putExtra(Book.ID, book.bookId)
             }
             startActivity(intent)
         }

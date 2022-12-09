@@ -4,90 +4,93 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.bookshelfhub.book.page.BookActivity
 import com.bookshelfhub.core.common.helpers.ErrorUtil
-import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
 import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.core.common.notification.NotificationBuilder
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
+import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
+import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.remote.storage.ICloudStorage
+import com.bookshelfhub.core.remote.storage.StoragePath
+import com.bookshelfhub.core.resources.R
+import com.google.android.gms.tasks.Tasks
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.runBlocking
-import com.bookshelfhub.core.resources.R
 import java.io.File
 import java.io.IOException
-
 
 @HiltWorker
 class DownloadBook @AssistedInject constructor(
     @Assisted val context: Context,
     @Assisted workerParams: WorkerParameters,
     private val cloudStorage: ICloudStorage,
+    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val bookDownloadStateRepo: IBookDownloadStateRepo
-): CoroutineWorker(context, workerParams){
+): Worker(context, workerParams){
 
-    private lateinit var message:String
-    private lateinit var bookName:String
+    private var message:String = ""
+    private var bookName:String = ""
     private val progressMax = 100
     private var progress = 0
     private var notificationId = 1
     private lateinit var notification:NotificationCompat.Builder
+    private val SEPERATOR = "/"
 
-    override suspend fun doWork(): Result {
+    override fun doWork(): Result {
 
         val pubId = inputData.getString(Book.PUB_ID)!!
         val bookId = inputData.getString(Book.ID)!!
         bookName = inputData.getString(Book.NAME)!!
         notificationId = inputData.getInt(Book.SERIAL_NO, 1)
         message = applicationContext.getString(R.string.downloading_in_prog)
-        notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
-        notification.setProgress(progressMax, 0 , true)
-        NotificationManagerCompat.from(context).notify(notificationId, notification.build())
+
+        val unMergedBookId = getBookIdFromCompoundId(bookId)
 
         try {
 
-            val localFile = AppExternalStorage.getDocumentFilePath(
-                folderName = pubId,
-                subFolderName = bookId,
-                fileNameWithExt = "$bookId+${FileExtension.DOT_PDF}",
-                applicationContext)
+            notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
+            setForegroundAsync(getDownloadForegroundInfo(notification))
+
+            val localFile = LocalFile.getBookFile(bookId, pubId, applicationContext)
 
             if(localFile.exists()){
                 return Result.success()
             }
 
-            cloudStorage.downloadAsTempFile(
-                folder =  pubId,
-                subfolder =  bookId,
-                fileName =  bookId,
-                remoteFileExt = FileExtension.DOT_PDF,
-                onProgress = {
+            val tempLocalFilePath = LocalFile.getBookFile(bookId, pubId, applicationContext, FileExtension.DOT_TEMP)
+
+            val remoteFilePath = "${StoragePath.PUBLISHED_BOOKS}$SEPERATOR$pubId$SEPERATOR$bookId$SEPERATOR$unMergedBookId${FileExtension.DOT_PDF}"
+
+            val storageTask = cloudStorage.downloadAsTempFile(
+                remoteFilePath,
+                tempLocalFilePath,
+                 onProgress = {
+                    notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
                     progress = it
                     message = getDownloadProgressMessage(progress)
-                    runBlocking {
-                        setForeground(getForegroundInfo())
+                     setForegroundAsync(getDownloadForegroundInfo(notification))
+
+                     runBlocking {
                         bookDownloadStateRepo.updatedDownloadState(bookId, progress)
                     }
                 },
-                onComplete = {
-                    runBlocking {
-                        progress = 100
-                        val tempLocalFilePath = AppExternalStorage.getDocumentFilePath(
-                            folderName =  pubId,
-                            subFolderName = bookId,
-                            fileNameWithExt = bookId+FileExtension.DOT_TEMP,
-                            applicationContext
-                        )
+                onComplete = { downloadTask->
 
-                        notification.setOngoing(false)
-                        notification.setAutoCancel(true)
+                    if(!downloadTask.isSuccessful){
+                        notification = getNotificationBuilder(bookName, "Download Error").getNotificationBuilder()
+                    }
+
+                    if(downloadTask.isSuccessful){
+                        progress = 100
+                        message = getDownloadProgressMessage(progress)
+                        notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
 
                         val intent = Intent(applicationContext, BookActivity::class.java)
                         with(intent) {
@@ -100,17 +103,27 @@ class DownloadBook @AssistedInject constructor(
                             NotificationBuilder.getIntentFlag()
                         )
                         notification.setContentIntent(bookActivityPendingIntent)
+
                         createLocalFileFromTempFile(tempLocalFilePath, localFile, bookId)
-                        bookDownloadStateRepo.updatedDownloadState(bookId, progress)
-                        message = getDownloadProgressMessage(progress)
-                        setForeground(getForegroundInfo())
+
+                        runBlocking {
+                            bookDownloadStateRepo.updatedDownloadState(bookId, progress)
+                        }
                     }
+
+                    notification.setOngoing(false)
+                    notification.setAutoCancel(true)
+
+                   setForegroundAsync(getDownloadForegroundInfo(notification))
                 },
                 onError =  {
+                    ErrorUtil.e(it)
                     runBlocking {
                         bookDownloadStateRepo.updatedDownloadState(bookId, true)
                     }
                 })
+
+            Tasks.await(storageTask)
 
         }catch (e:Exception){
             ErrorUtil.e(e)
@@ -120,9 +133,9 @@ class DownloadBook @AssistedInject constructor(
         return Result.success()
     }
 
-
-    override suspend fun getForegroundInfo(): ForegroundInfo {
-        notification.setProgress(progressMax, progress, false)
+     private fun getDownloadForegroundInfo(notification:NotificationCompat.Builder): ForegroundInfo {
+        val isDeterminate = this.progress == 0
+        notification.setProgress(progressMax, progress, isDeterminate)
         notification.setContentText(message)
         return ForegroundInfo(notificationId, notification.build())
     }
@@ -162,7 +175,7 @@ class DownloadBook @AssistedInject constructor(
             if(renameToFile.exists()){
                 val unableToDelete =  !renameToFile.delete()
                 if (unableToDelete){
-                    throw IOException("Existing book $bookId deletion Failed")
+                    throw IOException("$bookId deletion Failed")
                 }
             }
 
@@ -171,6 +184,8 @@ class DownloadBook @AssistedInject constructor(
                 throw IOException("Unable to rename to $bookId")
             }
 
+        }catch (e:Exception){
+            ErrorUtil.e(e)
         }finally {
             if(fromFile.exists()){
                 fromFile.delete()

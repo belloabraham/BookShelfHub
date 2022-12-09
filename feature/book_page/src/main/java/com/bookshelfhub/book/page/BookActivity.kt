@@ -23,13 +23,12 @@ import com.bookshelfhub.core.common.extensions.showToast
 import com.bookshelfhub.core.common.helpers.EnableWakeLock
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
 import com.bookshelfhub.core.common.helpers.dialog.MaterialBottomSheetDialogBuilder
-import com.bookshelfhub.core.common.helpers.storage.AppExternalStorage
-import com.bookshelfhub.core.common.helpers.storage.FileExtension
 import com.bookshelfhub.core.common.helpers.utils.DisplayUtil
 import com.bookshelfhub.core.common.helpers.utils.ShareUtil
 import com.bookshelfhub.core.common.helpers.utils.Toast
 import com.bookshelfhub.core.data.Fragment
 import com.bookshelfhub.core.datastore.settings.Settings
+import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.model.entities.OrderedBook
 import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.entities.ReadHistory
@@ -71,9 +70,11 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(layout.root)
 
         val isDarkMode = isAppUsingDarkTheme()
+
+
         lifecycleScope.launch {
              orderedBook = bookActivityViewModel.getAnOrderedBook()
-            loadBook(isDarkMode, orderedBook.pubId)
+             loadBook(isDarkMode, orderedBook.pubId)
 
             if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
                val readHistory = bookActivityViewModel.getReadHistory()
@@ -118,7 +119,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             val aboutBook = view.findViewById<MaterialCardView>(R.id.aboutBook)
 
             aboutBook.setOnClickListener {
-                startBookInfoActivity(R.id.bookInfoFragment)
+                startBookInfoActivity()
             }
 
             shareBtn.setOnClickListener {
@@ -150,16 +151,9 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private  fun loadBook(isDarkMode:Boolean, pubId:String){
-        val bookId = bookActivityViewModel.getBookId()
-        val fileNameWithExt = "$bookId+${FileExtension.DOT_PDF}"
-        val filePath = AppExternalStorage.getDocumentFilePath(
-            pubId,
-            bookId,
-            fileNameWithExt,
-            applicationContext
-        )
+        val bookFile = LocalFile.getBookFile(bookActivityViewModel.getBookId(), pubId, this)
 
-        layout.pdfView.fromFile(filePath)
+        layout.pdfView.fromFile(bookFile)
             .nightMode(isDarkMode)
             .fitEachPage(true)
             .defaultPage(0)
@@ -211,11 +205,10 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
     }
 
-    private fun startBookInfoActivity(fragmentID:Int){
+    private fun startBookInfoActivity(){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.core.data.Book.NAME,bookActivityViewModel.getBookName())
-            putExtra(Fragment.ID, fragmentID)
+            putExtra(com.bookshelfhub.core.data.Book.NAME, bookActivityViewModel.getBookName())
             putExtra(com.bookshelfhub.core.data.Book.ID, bookActivityViewModel.getBookId())
         }
         startActivity(intent)

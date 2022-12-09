@@ -33,6 +33,7 @@ import com.bookshelfhub.core.data.repos.user_review.IUserReviewRepo
 import com.bookshelfhub.core.data.repos.user_review.UserReviewRepo
 import com.bookshelfhub.core.database.AppDatabase
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
+import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.dynamic_link.firebase.FirebaseDynamicLink
 import com.bookshelfhub.core.remote.cloud_functions.ICloudFunctions
@@ -58,10 +59,17 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
 
+
     @Singleton
     @Provides
     fun provideBookDownloadStateRepo(appDatabase:AppDatabase): IBookDownloadStateRepo {
         return BookDownloadStateRepo(appDatabase)
+    }
+
+    @Singleton
+    @Provides
+    fun provideGetBookIdCompoundId(): GetBookIdFromCompoundId {
+        return GetBookIdFromCompoundId()
     }
 
     @Singleton
@@ -78,8 +86,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideCloudStorage(@ApplicationContext context: Context): ICloudStorage {
-        return FirebaseCloudStorage(context)
+    fun provideCloudStorage(): ICloudStorage {
+        return FirebaseCloudStorage()
     }
 
     @Singleton

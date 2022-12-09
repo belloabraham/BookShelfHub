@@ -15,16 +15,16 @@ class DownloadBookUseCase {
         worker: Worker, workData: Data,
         bookDownloadStateRepo: IBookDownloadStateRepo
     ){
+
         val bookId = workData.getString(Book.ID)!!
-        val expeditedDownloadBookWorker =
+        val foregroundDownloadBookWorker =
             OneTimeWorkRequestBuilder<DownloadBook>()
                 .setConstraints(Constraint.getConnected())
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(workData)
                 .build()
-        worker.enqueueUniqueWork(bookId, ExistingWorkPolicy.KEEP, expeditedDownloadBookWorker)
+        worker.enqueueUniqueWork(bookId, ExistingWorkPolicy.KEEP, foregroundDownloadBookWorker)
 
-        worker.getWorkInfoByIdLiveData(expeditedDownloadBookWorker.id).asFlow().collect{
+        worker.getWorkInfoByIdLiveData(foregroundDownloadBookWorker.id).asFlow().collect{
              val workIsEnqueuedButNotStarted = it.state == WorkInfo.State.ENQUEUED
            if(workIsEnqueuedButNotStarted){
                val initialDownloadProgress = (0..10).random()

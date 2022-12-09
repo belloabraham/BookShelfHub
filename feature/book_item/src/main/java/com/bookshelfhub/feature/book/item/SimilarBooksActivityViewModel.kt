@@ -21,8 +21,7 @@ class SimilarBooksActivityViewModel @Inject constructor(
 ) : ViewModel(){
 
   private val userId = userAuth.getUserId()
-
-   private val category = savedState.get<String>(SimilarBooks.CATEGORY)!!
+  private val category = savedState.get<String>(SimilarBooks.CATEGORY)!!
 
 
   private val config  = PagingConfig(

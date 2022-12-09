@@ -29,6 +29,6 @@ abstract class OrderedBooksDao : BaseDao<OrderedBook> {
     abstract suspend fun getAnOrderedBook(bookId:String): Optional<OrderedBook>
 
     @Query("DELETE FROM OrderedBooks")
-    abstract  fun deleteAllOrderedBooks()
+    abstract suspend fun deleteAllOrderedBooks()
 
 }

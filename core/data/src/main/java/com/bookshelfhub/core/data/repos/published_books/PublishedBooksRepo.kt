@@ -32,6 +32,10 @@ class PublishedBooksRepo @Inject constructor(
         return publishedBooksDao.getLivePublishedBook(bookId)
     }
 
+    override suspend fun updateBookTotalDownloadsByOne(bookId:String, field:String, value:Any): Void? {
+        return remoteDataSource.updateDocData(RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId, field, value)
+    }
+
     override suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {
            return remoteDataSource.getDataAsync(
                 RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,

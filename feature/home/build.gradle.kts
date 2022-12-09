@@ -27,6 +27,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.work.runtime.ktx)
 
+
+    implementation("com.jakewharton:process-phoenix:2.1.2")
+
     implementation(libs.github.ibrahimyilmaz)
     implementation(libs.joery.animatedbottombar)
     implementation(libs.bitvale.switcher)

@@ -41,11 +41,11 @@ class ShelfSearchResultAdapter(private val activity: Activity) {
 
 
     companion object{
-        fun startBookActivity(isbn:String, title:String, activity: Activity){
+        fun startBookActivity(bookId:String, title:String, activity: Activity){
             val intent = Intent(activity, BookActivity::class.java)
             with(intent){
                 putExtra(com.bookshelfhub.core.data.Book.NAME, title)
-                putExtra(com.bookshelfhub.core.data.Book.ID, isbn)
+                putExtra(com.bookshelfhub.core.data.Book.ID, bookId)
                 putExtra(com.bookshelfhub.core.data.Book.IS_SEARCH_ITEM, true)
             }
             activity.startActivity(intent)
@@ -56,10 +56,10 @@ class ShelfSearchResultAdapter(private val activity: Activity) {
     private class SearchHistoryViewHolder (view: View): RecyclerViewHolder<ShelfSearchHistory>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(isbn:String, name:String, activity: Activity){
+        fun bindToView(bookId:String, name:String, activity: Activity){
             title.text = name
             itemCardView.setOnClickListener {
-                startBookActivity(isbn, name, activity)
+                startBookActivity(bookId, name, activity)
             }
         }
     }
@@ -67,10 +67,10 @@ class ShelfSearchResultAdapter(private val activity: Activity) {
     private class SearchResultViewHolder(view: View) : RecyclerViewHolder<OrderedBookUiState>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
-        fun bindToView(isbn:String, name:String, activity: Activity){
+        fun bindToView(bookId:String, name:String, activity: Activity){
             title.text = name
             itemCardView.setOnClickListener {
-                startBookActivity(isbn, name, activity)
+                startBookActivity(bookId, name, activity)
             }
         }
     }

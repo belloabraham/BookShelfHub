@@ -61,8 +61,8 @@ class MainActivityViewModel @Inject constructor(
     }
 
     fun getBookIdFromACollaboratorReferrerId(): String? {
-        val sampleAttachedEarningsCurrency = Payment.SAMPLE_ATTACHED_EARNINGS_CURRENCY
-        val referrerIdAndEarningsCurrencyLength = Auth.USER_ID_LENGTH + sampleAttachedEarningsCurrency.length
+        val userSampleAttachedEarningsCurrency = Payment.SAMPLE_ATTACHED_EARNINGS_CURRENCY
+        val referrerIdAndEarningsCurrencyLength = Auth.USER_ID_LENGTH + userSampleAttachedEarningsCurrency.length
         val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > referrerIdAndEarningsCurrencyLength
 
         if(referrerIsACollaborator){

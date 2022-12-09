@@ -9,5 +9,5 @@ interface IPhoneAuth {
      fun sendVerificationCode(phoneNumber: String, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
      fun verifyPhoneNumberWithCode(code: String, storedVerificationId: String): Task<AuthResult>
      fun resendVerificationCode(phoneNumber: String, resendToken: PhoneAuthProvider.ForceResendingToken, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks)
-     fun signInWithCredential(credential: PhoneAuthCredential)
+     fun signInWithCredential(credential: PhoneAuthCredential):Task<AuthResult>
 }

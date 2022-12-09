@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -47,7 +48,6 @@ class UserInfoFragment : Fragment() {
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()
     private val welcomeActivityViewModel: WelcomeActivityViewModel by activityViewModels()
     private val args:UserInfoFragmentArgs by navArgs()
-    private lateinit var layout:FragmentUserInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,11 +78,37 @@ class UserInfoFragment : Fragment() {
             layout.emailEditTxt.setText(userAuth.getEmail())
         }
 
+        layout.firstNameEditTxt.addTextChangedListener {
+            it?.let {
+                userInfoViewModel.firstName = it.toString()
+            }
+        }
+
+        layout.lastNameEditTxt.addTextChangedListener{
+            it?.let {
+                userInfoViewModel.lastName = it.toString()
+            }
+        }
+
+        layout.emailEditTxt.addTextChangedListener{
+            it?.let {
+                userInfoViewModel.email = it.toString()
+            }
+        }
+
+        layout.phoneEditTxt.addTextChangedListener{
+            it?.let {
+                userInfoViewModel.phoneNumber = it.toString()
+            }
+        }
+
         layout.btnContinue.setOnClickListener {
+
             layout.firstNameEditTxtLayout.error=null
             layout.lastNameEditTxtLayout.error=null
             layout.emailEditTxtLayout.error=null
             layout.phoneEditTxtLayout.error=null
+
             val email = layout.emailEditTxt.text.toString().trim()
             val phone = layout.phoneEditTxt.text.toString().trim()
             val firstName = layout.firstNameEditTxt.text.toString().trim()
@@ -108,7 +134,6 @@ class UserInfoFragment : Fragment() {
                     userAuth.updateDisplayName(firstName)
                 }
 
-
                 val timeZone = DateTimeUtil.getTimeZone()
                 val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
                 val countryCode = Location.getCountryCode(requireContext().applicationContext)
@@ -128,8 +153,15 @@ class UserInfoFragment : Fragment() {
                 user.firstName = firstName.purifyJSONString()
                 user.lastName = lastName.purifyJSONString()
                 user.device = DeviceUtil.getDeviceBrandAndModel()
-                user.email = email.purifyJSONString()
-                user.phone = phone.purifyJSONString()
+
+                if (userAuthType == AuthType.PHONE){
+                    user.phone = userAuth.getPhone()!!
+                    user.email = email.purifyJSONString()
+                }else{
+                    user.email =  userAuth.getEmail()!!
+                    user.phone = phone.purifyJSONString()
+                }
+
                 user.referrerId = userReferralId
 
                 user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
@@ -141,14 +173,6 @@ class UserInfoFragment : Fragment() {
         }
 
         return layout.root
-    }
-
-    override fun onPause() {
-        userInfoViewModel.email = layout.emailEditTxt.text.toString().trim()
-        userInfoViewModel.phoneNumber = layout.phoneEditTxt.text.toString().trim()
-        userInfoViewModel.firstName = layout.firstNameEditTxt.text.toString().trim()
-        userInfoViewModel.lastName = layout.lastNameEditTxt.text.toString().trim()
-        super.onPause()
     }
 
     override fun onDestroyView() {

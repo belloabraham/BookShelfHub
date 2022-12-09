@@ -29,8 +29,8 @@ open class PhoneAuth(private  val activity: Activity) :
         return auth.signInWithCredential(credential)
     }
 
-    override fun signInWithCredential(credential:PhoneAuthCredential){
-        auth.signInWithCredential(credential)
+    override fun signInWithCredential(credential:PhoneAuthCredential): Task<AuthResult> {
+        return auth.signInWithCredential(credential)
     }
 
     override fun resendVerificationCode(phoneNumber: String, resendToken: PhoneAuthProvider.ForceResendingToken, callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks) {
