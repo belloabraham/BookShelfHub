@@ -35,20 +35,22 @@ class SplashActivity : AppCompatActivity() {
 
         enableFullScreenDisplayForSplashActivity(window)
 
-        if  (userAuth.getIsUserAuthenticated()){
+        val intent = Intent(this, WelcomeActivity::class.java)
 
+        if  (userAuth.getIsUserAuthenticated()){
             val userId = userAuth.getUserId()
 
             lifecycleScope.launch {
                     val user = userRepo.getUser(userId)
-                    val nextIntent = if (user.isPresent && userId == user.get().userId)
+                    val nextIntent = if (user.isPresent && userId == user.get().userId){
                         Intent(this@SplashActivity, MainActivity::class.java)
-                    else Intent(this@SplashActivity, WelcomeActivity::class.java)
+                    }else {
+                        intent
+                    }
                     getCollaboratorOrUserReferralLink(nextIntent)
             }
 
         }else{
-            val intent = Intent(this, WelcomeActivity::class.java)
             getCollaboratorOrUserReferralLink(intent)
         }
     }

@@ -1,24 +1,22 @@
 package com.bookshelfhub.book.purchase.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bookshelfhub.book.purchase.R
 import com.bookshelfhub.book.purchase.adapters.CartItemsListAdapter
 import com.bookshelfhub.book.purchase.databinding.FragmentCartBinding
-import com.bookshelfhub.core.common.recycler.SwipeToDeleteCallBack
+import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
 import com.bookshelfhub.core.model.entities.CartItem
 import com.bookshelfhub.core.model.entities.PaymentTransaction
 import com.bookshelfhub.core.model.entities.User
@@ -37,7 +35,7 @@ class CartFragment : Fragment() {
     private lateinit var layout: FragmentCartBinding
     private val cartFragmentViewModel by hiltNavGraphViewModels<CartFragmentsViewModel>(R.id.cartActivityNavigation)
     private var mCartListAdapter:ListAdapter<CartItem, RecyclerViewHolder<CartItem>>?=null
-
+    private var totalNoOfCartItems = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,8 +45,34 @@ class CartFragment : Fragment() {
         binding = FragmentCartBinding.inflate(inflater, container, false)
         layout = binding!!
 
-        mCartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{
-            showRemoveCartItemMsg()
+        val menuHost: MenuHost = requireActivity()
+
+        menuHost.addMenuProvider(object : MenuProvider {
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.cart_activity_menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+
+                if(menuItem.itemId == R.id.clearCart){
+                    AlertDialogBuilder.with(R.string.clear_cart_msg, requireActivity())
+                        .setCancelable(true)
+                        .setNegativeAction(R.string.cancel){}
+                        .setPositiveAction(R.string.clear){
+                            cartFragmentViewModel.deleteAllCartItems()
+                        }
+                        .build().showDialog(R.string.clear_cart_title)
+                }
+
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        val arrayListOfCartItems  =  arrayListOf<CartItem>()
+
+        mCartListAdapter = CartItemsListAdapter(requireContext()).getCartListAdapter{cartItem, position ->
+            removeFromCart(arrayListOfCartItems, cartItem, position)
         }
 
         val cartListAdapter = mCartListAdapter!!
@@ -67,15 +91,16 @@ class CartFragment : Fragment() {
                 findNavController().navigate(savedCardsAction)
         }
 
-
-        val arrayListOfCartItems  =  arrayListOf<CartItem>()
-
         cartFragmentViewModel.getListOfCartItemsAfterUserEarningsFromReferrals().observe(viewLifecycleOwner) { cartItems ->
 
             showCartItemsState(cartItems)
 
+            totalNoOfCartItems = cartItems.size
             cartFragmentViewModel.totalCostOfBook = 0.0
             cartFragmentViewModel.getPaymentTransactions().clear()
+
+            cartListAdapter.submitList(cartItems)
+            layout.totalCostTxt.text = ""
 
             if (cartItems.isNotEmpty()) {
 
@@ -121,31 +146,19 @@ class CartFragment : Fragment() {
             }
         }
 
-        val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.errorColor, R.drawable.ic_cart_minus_white) {
-
-            @SuppressLint("ShowToast")
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
-                val position: Int = viewHolder.bindingAdapterPosition
-                val cart = cartListAdapter.currentList[position]
-
-                arrayListOfCartItems.removeAt(position)
-                cartListAdapter.notifyItemRemoved(position)
-
-                cartFragmentViewModel.deleteFromCart(cart) //This triggers the live cart block above
-
-                 Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
-                     .setAction(R.string.undo) {
-                    arrayListOfCartItems.add(position, cart)
-                    cartListAdapter.notifyItemInserted(position)
-                    cartFragmentViewModel.addToCart(cart) //This triggers the live cart block above
-                   }.show()
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
-        itemTouchHelper.attachToRecyclerView(layout.cartItemsRecView)
-
         return layout.root
+    }
+
+    private fun removeFromCart(arrayListOfCartItems:ArrayList<CartItem>, cartItem:CartItem, position:Int){
+        arrayListOfCartItems.removeAt(position)
+        mCartListAdapter!!.notifyItemRemoved(position)
+        cartFragmentViewModel.deleteFromCart(cartItem) //This triggers the live cart block above
+        Snackbar.make(layout.rootCoordinateLayout, R.string.item_in_cart_removed_msg, Snackbar.LENGTH_LONG)
+            .setAction(R.string.undo) {
+                arrayListOfCartItems.add(position, cartItem)
+                mCartListAdapter!!.notifyItemInserted(position)
+                cartFragmentViewModel.addToCart(cartItem) //This triggers the live cart block above
+            }.show()
     }
 
     private fun addBooksToPaymentTransaction(cartItems:List<CartItem>, user:User): Double {
@@ -179,7 +192,9 @@ class CartFragment : Fragment() {
 
     private fun showTotalAmountOfBooks(
         currencyToChargeForBookSale:String,
-        totalAmountOfBooks:Double, user: User){
+        totalAmountOfBooks:Double,
+        user: User
+    ){
 
         cartFragmentViewModel.currencyToChargeForBooksSale = currencyToChargeForBookSale
         val totalUserEarnings = cartFragmentViewModel.getTotalUserEarnings()
@@ -232,13 +247,6 @@ class CartFragment : Fragment() {
         binding=null
         mCartListAdapter = null
         super.onDestroyView()
-    }
-
-
-    private fun showRemoveCartItemMsg():Boolean{
-        Snackbar.make(layout.rootCoordinateLayout, R.string.cart_item_remove_msg, Snackbar.LENGTH_LONG)
-            .show()
-        return  true
     }
 
 }

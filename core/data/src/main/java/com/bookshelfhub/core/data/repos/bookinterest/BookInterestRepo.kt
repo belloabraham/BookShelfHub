@@ -32,13 +32,11 @@ class BookInterestRepo @Inject constructor(
     }
 
     override suspend fun updateRemoteUserBookInterest(bookInterest: BookInterest, userId:String): Void? {
-       return  withContext(ioDispatcher){
-           remoteDataSource.addDataAsync(
+       return  remoteDataSource.addDataAsync(
                RemoteDataFields.USERS_COLL,
                userId,
                RemoteDataFields.BOOK_INTEREST,
                bookInterest)
-       }
     }
 
     override fun getLiveBookInterest(userId:String): LiveData<Optional<BookInterest>> {

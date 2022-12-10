@@ -85,34 +85,28 @@ class BookmarksRepo @Inject constructor(
     }
 
     override suspend fun updateRemoteUserBookmarks(listOfBookmarks:List<Bookmark>, userId: String): Void? {
-       return withContext(ioDispatcher){
-           remoteDataSource.addListOfDataAsync(
+       return remoteDataSource.addListOfDataAsync(
                listOfBookmarks,
                RemoteDataFields.USERS_COLL,
                userId,
                RemoteDataFields.BOOKMARKS_COLL)
-       }
     }
 
     override suspend fun deleteRemoteBookmarks(list: List<IEntityId>, userId:String): Void {
-       return withContext(ioDispatcher){
-           remoteDataSource.deleteListOfDataAsync(
+       return  remoteDataSource.deleteListOfDataAsync(
                list,
                RemoteDataFields.USERS_COLL,
                userId,
                RemoteDataFields.BOOKMARKS_COLL)
-       }
     }
 
    override suspend fun getRemoteBookmarks(userId: String): List<Bookmark> {
-        return withContext(ioDispatcher){
-            remoteDataSource.getListOfDataAsync(
+        return remoteDataSource.getListOfDataAsync(
             RemoteDataFields.USERS_COLL,
             userId,
             RemoteDataFields.BOOKMARKS_COLL,
             Bookmark::class.java
           )
-        }
     }
 
      override fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>> {

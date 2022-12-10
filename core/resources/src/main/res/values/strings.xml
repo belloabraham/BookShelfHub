@@ -8,6 +8,13 @@
     <string name="yes">yes</string>
     <string name="no">no</string>
 
+    <string name="clear_cart">Clear Cart</string>
+    <string name="clear_cart_title">Clear Cart?</string>
+    <string name="clear_cart_msg">Remove all books from the cart</string>
+
+    <string name="clear">Clear</string>
+
+
     <string name="supported_currency_hint">
         You can only make payment with Nigerian Naira, Ghanaian Cedi or USD for now.
     </string>
@@ -134,8 +141,6 @@
     <string name="transaction_failed">Transaction failed</string>
 
     <string name="item_in_cart_removed_msg">Book removed from cart</string>
-    <string name="cart_item_remove_msg">Slide left to remove an item from the cart.</string>
-
 
     <!-- TODO: Book Info Fragment-->
     <string name="published_date">Published date: %s</string>
@@ -327,7 +332,7 @@
 
     <!-- TODO: Sign Up Completed -->
     <string name="get_started">Let\'s get started</string>
-    <string name="account_created">Your account have been created successfully.</string>
+    <string name="account_created">Your account have been created.</string>
     <string name="huray">Hurrayyyy!!!</string>
 
     <string name="sign_up_terms">By proceeding, you agree to our <a href="https://bookshelfhub.com/terms">terms</a>  and <a href="https://bookshelfhub.com/privacy">privacy policy</a>. </string>

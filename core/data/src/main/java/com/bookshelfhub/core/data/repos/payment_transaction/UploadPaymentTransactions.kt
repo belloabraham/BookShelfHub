@@ -94,7 +94,7 @@ class UploadPaymentTransactions @AssistedInject constructor(
                     transaction.userCountryCode,
                     transactionRef,
                     null,
-                    ++totalNoOfPreviouslyOrderedBooks,
+                    serialNo =  ++totalNoOfPreviouslyOrderedBooks,
                     transaction.additionInfo,
                     commissionInPercentageAssignedToCollaborator,
                     idForCollaborator,

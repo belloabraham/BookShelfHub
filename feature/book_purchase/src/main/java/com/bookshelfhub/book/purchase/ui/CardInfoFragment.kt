@@ -48,7 +48,6 @@ class CardInfoFragment : Fragment() {
         binding = FragmentCardInfoBinding.inflate(inflater, container, false)
         layout = binding!!
 
-
         layout.cardNoTxt.addTextChangedListener(EditTextCreditCardNumberFormatterWatcher(maxUserInputLength = 16,
             inputChuckDividerChar = cardNoSeparator,
             inputChunkLen = 4

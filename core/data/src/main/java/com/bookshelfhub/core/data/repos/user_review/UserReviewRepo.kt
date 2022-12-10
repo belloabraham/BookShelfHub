@@ -33,8 +33,7 @@ class UserReviewRepo @Inject constructor(
         bookUpdatedValues: HashMap<String, FieldValue>?,
         bookId: String,
         userId: String): Void? {
-        return withContext(ioDispatcher) {
-            remoteDataSource.updateUserReview(
+        return remoteDataSource.updateUserReview(
                 bookUpdatedValues,
                 userReview,
                 RemoteDataFields.PUBLISHED_BOOKS_COLL,
@@ -42,38 +41,33 @@ class UserReviewRepo @Inject constructor(
                 RemoteDataFields.REVIEWS_COLL,
                 userId
             )
-        }
     }
 
    override suspend fun updateRemoteUserReviews(
        userReviews: List<UserReview>,
        bookUpdatedValues: List<HashMap<String, FieldValue>>,
        userId: String): Void? {
-      return withContext(ioDispatcher) {
-          remoteDataSource.updateUserReviews(
+      return remoteDataSource.updateUserReviews(
               userReviews,
               RemoteDataFields.PUBLISHED_BOOKS_COLL,
               RemoteDataFields.REVIEWS_COLL,
               userId,
               bookUpdatedValues
           )
-      }
    }
 
 
     override suspend fun getRemoteUserReview(bookId:String, userId:String): UserReview? {
-       return withContext(ioDispatcher){ remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
+       return  remoteDataSource.getDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL,
             bookId, RemoteDataFields.REVIEWS_COLL,
-            userId, UserReview::class.java) }
+            userId, UserReview::class.java)
     }
 
     override suspend  fun getRemoteListOfBookReviews(bookId:String, limit:Long, excludedDocId:String): List<UserReview> {
-       return withContext(ioDispatcher) {
-           remoteDataSource.getListOfDataWhereAsync(
+       return remoteDataSource.getListOfDataWhereAsync(
             RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId,
             RemoteDataFields.REVIEWS_COLL, UserReview::class.java,
             RemoteDataFields.VERIFIED, whereValue = true, limit, excludedDocId)
-       }
     }
 
      override suspend fun updateReview(isbn: String, isVerified: Boolean) {

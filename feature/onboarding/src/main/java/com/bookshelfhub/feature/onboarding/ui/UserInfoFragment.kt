@@ -104,72 +104,72 @@ class UserInfoFragment : Fragment() {
 
         layout.btnContinue.setOnClickListener {
 
-            layout.firstNameEditTxtLayout.error=null
-            layout.lastNameEditTxtLayout.error=null
-            layout.emailEditTxtLayout.error=null
-            layout.phoneEditTxtLayout.error=null
+                layout.firstNameEditTxtLayout.error=null
+                layout.lastNameEditTxtLayout.error=null
+                layout.emailEditTxtLayout.error=null
+                layout.phoneEditTxtLayout.error=null
 
-            val email = layout.emailEditTxt.text.toString().trim()
-            val phone = layout.phoneEditTxt.text.toString().trim()
-            val firstName = layout.firstNameEditTxt.text.toString().trim()
-            val lastName = layout.lastNameEditTxt.text.toString().trim()
+                val email = layout.emailEditTxt.text.toString().trim()
+                val phone = layout.phoneEditTxt.text.toString().trim()
+                val firstName = layout.firstNameEditTxt.text.toString().trim()
+                val lastName = layout.lastNameEditTxt.text.toString().trim()
 
-            val shouldCheckForEmailValidation = userAuthType == AuthType.PHONE && !email.isValidEmailAddress()
-            val shouldCheckForPhoneValidation = userAuthType == AuthType.GOOGLE && !phone.isPhoneNumber()
-            if (shouldCheckForEmailValidation){
-                layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
-            }else if(TextUtils.isEmpty(firstName)){
-                layout.firstNameEditTxtLayout.error=getString(R.string.first_name_req_error)
-            }else if(TextUtils.isEmpty(lastName)){
-                layout.lastNameEditTxtLayout.error=getString(R.string.last_name_req_error)
-            }else if(shouldCheckForPhoneValidation){
-                layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
-            }else{
-                keyboardUtil.hideKeyboard(layout.emailEditTxt)
-                keyboardUtil.hideKeyboard(layout.phoneEditTxt)
+                val shouldCheckForEmailValidation = userAuthType == AuthType.PHONE && !email.isValidEmailAddress()
+                val shouldCheckForPhoneValidation = userAuthType == AuthType.GOOGLE && !phone.isPhoneNumber()
+                if (shouldCheckForEmailValidation){
+                    layout.emailEditTxtLayout.error=getString(R.string.valid_email_error)
+                }else if(TextUtils.isEmpty(firstName)){
+                    layout.firstNameEditTxtLayout.error=getString(R.string.first_name_req_error)
+                }else if(TextUtils.isEmpty(lastName)){
+                    layout.lastNameEditTxtLayout.error=getString(R.string.last_name_req_error)
+                }else if(shouldCheckForPhoneValidation){
+                    layout.phoneEditTxtLayout.error=getString(R.string.valid_phone_error)
+                } else{
 
-                val optionalUserReferralId = if(isNewUser) welcomeActivityViewModel.getUserReferralId() else null
+                    keyboardUtil.hideKeyboard(layout.emailEditTxt)
+                    keyboardUtil.hideKeyboard(layout.phoneEditTxt)
 
-                viewLifecycleOwner.lifecycleScope.launch {
-                    userAuth.updateDisplayName(firstName)
-                }
+                    val optionalUserReferralId = if(isNewUser) welcomeActivityViewModel.getUserReferralId() else null
 
-                val timeZone = DateTimeUtil.getTimeZone()
-                val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
-                val countryCode = Location.getCountryCode(requireContext().applicationContext)
-                val user = User(userId, userAuthType, countryCode!!, earningsCurrency)
-
-                var userReferralId:String? = null
-
-                if(optionalUserReferralId != null){
-                    val userReferralIdAndCurrency = optionalUserReferralId.split(Referrer.SEPARATOR)
-                    val referralCurrency = userReferralIdAndCurrency[1]
-                    if(referralCurrency == user.earningsCurrency){
-                        userReferralId = userReferralIdAndCurrency[0]
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        userAuth.updateDisplayName(firstName)
                     }
+
+                    val timeZone = DateTimeUtil.getTimeZone()
+                    val earningsCurrency = EarningsCurrency.getByTimeZone(timeZone)
+                    val countryCode = Location.getCountryCode(requireContext().applicationContext)
+                    val user = User(userId, userAuthType, countryCode!!, earningsCurrency)
+
+                    var userReferralId:String? = null
+
+                    if(optionalUserReferralId != null){
+                        val userReferralIdAndCurrency = optionalUserReferralId.split(Referrer.SEPARATOR)
+                        val referralCurrency = userReferralIdAndCurrency[1]
+                        if(referralCurrency == user.earningsCurrency){
+                            userReferralId = userReferralIdAndCurrency[0]
+                        }
+                    }
+
+                    user.appVersion=appUtil.getAppVersionName()
+                    user.firstName = firstName.purifyJSONString()
+                    user.lastName = lastName.purifyJSONString()
+                    user.device = DeviceUtil.getDeviceBrandAndModel()
+
+                    if (userAuthType == AuthType.PHONE){
+                        user.phone = userAuth.getPhone()!!
+                        user.email = email.purifyJSONString()
+                    }else{
+                        user.email =  userAuth.getEmail()!!
+                        user.phone = phone.purifyJSONString()
+                    }
+
+                    user.referrerId = userReferralId
+                    user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
+                        Build.VERSION.SDK_INT)
+                    userInfoViewModel.setIsAddingUser(true)
+                    userInfoViewModel.addRemoteAndLocalUser(RemoteUser(user, null, null))
                 }
 
-                user.appVersion=appUtil.getAppVersionName()
-                user.firstName = firstName.purifyJSONString()
-                user.lastName = lastName.purifyJSONString()
-                user.device = DeviceUtil.getDeviceBrandAndModel()
-
-                if (userAuthType == AuthType.PHONE){
-                    user.phone = userAuth.getPhone()!!
-                    user.email = email.purifyJSONString()
-                }else{
-                    user.email =  userAuth.getEmail()!!
-                    user.phone = phone.purifyJSONString()
-                }
-
-                user.referrerId = userReferralId
-
-                user.deviceOs = DeviceUtil.getDeviceOSVersionInfo(
-                Build.VERSION.SDK_INT)
-
-                userInfoViewModel.setIsAddingUser(true)
-                userInfoViewModel.addRemoteAndLocalUser(RemoteUser(user, null, null))
-            }
         }
 
         return layout.root

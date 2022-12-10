@@ -25,7 +25,7 @@ import javax.inject.Inject
 @WithFragmentBindings
 class BookInfoFragment : Fragment() {
 
-    private val bookInfoActivityViewModel: BookInfoActivityViewModel by activityViewModels()
+    private val bookInfoActivityViewModel by activityViewModels<BookInfoActivityViewModel>()
     private var binding: BookInfoFragmentBinding? =null
     @Inject
     lateinit var intentUtil: IntentUtil
@@ -58,7 +58,7 @@ class BookInfoFragment : Fragment() {
                 }
 
                 layout.authorTxt.text = String.format(getString(R.string.author), book.author)
-                layout.isbnTxt.text = String.format(
+                layout.bookIdTxt.text = String.format(
                     getString(R.string.isbn),
                     bookInfoActivityViewModel.getBookIdFromCompoundId()
                 )

@@ -10,7 +10,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 
-open class UserAuth() : IUserAuth {
+open class UserAuth : IUserAuth {
 
     private val auth: FirebaseAuth = Firebase.auth
 
@@ -28,15 +28,11 @@ open class UserAuth() : IUserAuth {
     }
 
     override fun getEmail(): String? {
-        return auth.currentUser?.email
+        return  auth.currentUser?.providerData!![1].email
     }
 
     override fun getAuthType(): String {
-        var id = ""
-        for (i in auth.currentUser?.providerData!!) {
-            id = i.providerId
-        }
-        return id
+        return auth.currentUser?.providerData!![1].providerId
     }
 
    private var noOfUserNameUpdateRetry = 4

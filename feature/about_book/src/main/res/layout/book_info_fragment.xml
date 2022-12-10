@@ -25,7 +25,7 @@
             android:layout_marginTop="@dimen/dp_16"
             android:textColor="?colorOnBackground"
             android:textSize="16sp"
-            android:id="@+id/isbnTxt"/>
+            android:id="@+id/bookIdTxt"/>
 
          <TextView
             android:layout_width="match_parent"

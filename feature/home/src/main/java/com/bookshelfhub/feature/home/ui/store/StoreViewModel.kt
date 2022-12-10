@@ -14,7 +14,6 @@ import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.data.repos.cartitems.ICartItemsRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
-import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.entities.StoreSearchHistory
 import com.bookshelfhub.core.model.uistate.PublishedBookUiState
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
@@ -48,40 +47,48 @@ class StoreViewModel @Inject constructor(
 
     init {
         totalCartItems = cartItemsRepo.getLiveTotalCartItemsNo(userId)
-        loadRemotePublishedBooks()
-    }
 
-    fun loadRemotePublishedBooks() {
-        viewModelScope.launch{
-            val totalNoOfLocalPublishedBooks = publishedBooksRepo.getTotalNoOfPublishedBooks()
-            val noLocalPublishedBooks = totalNoOfLocalPublishedBooks <= 0
-            val thereAreLocalPublishedBooks = !noLocalPublishedBooks
-
+        viewModelScope.launch {
             try {
-                var publishedBooks = emptyList<PublishedBook>()
-                if (noLocalPublishedBooks){
-                     publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
-                    publishedBooksRepo.addAllPubBooks(publishedBooks)
-                }
-
-                if(thereAreLocalPublishedBooks){
-                      publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
-                      fromSerialNo =   totalNoOfLocalPublishedBooks
-                    )
-                    publishedBooksRepo.addAllPubBooks(publishedBooks)
-                }
-
-                if(publishedBooks.isNotEmpty()){
-                    updatedRecommendedBooks()
-                }
-
+                val totalNoOfLocallyCachedPublishedBooks =  loadRemotePublishedBooks()
+                loadRemotePublishedBooksForFirstTime(totalNoOfLocallyCachedPublishedBooks)
                 isBookLoadSuccessfully.value = true
-
             }catch (e:Exception){
                 ErrorUtil.e(e)
                 isBookLoadSuccessfully.value = false
-           }
+            }
         }
+    }
+
+     fun setIsBookLoadSuccessfully(value:Boolean){
+        isBookLoadSuccessfully.value = value
+    }
+
+    private suspend fun loadRemotePublishedBooksForFirstTime(totalNoOfLocallyCachedPublishedBooks:Int){
+        val noLocallyCachedPublishedBooks = totalNoOfLocallyCachedPublishedBooks <= 0
+        if(noLocallyCachedPublishedBooks){
+            val publishedBooks = publishedBooksRepo.getRemotePublishedBooks()
+            publishedBooksRepo.addAllPubBooks(publishedBooks)
+            if(publishedBooks.isNotEmpty()){
+                updatedRecommendedBooks()
+            }
+        }
+    }
+
+    suspend fun loadRemotePublishedBooks(): Int {
+            var totalNoOfLocalPublishedBooks = publishedBooksRepo.getTotalNoOfPublishedBooks()
+            val thereAreLocallyCachedPublishedBooks = totalNoOfLocalPublishedBooks > 0
+
+            if(thereAreLocallyCachedPublishedBooks){
+                val publishedBooks = publishedBooksRepo.getRemotePublishedBooksFrom(
+                    fromSerialNo =   ++totalNoOfLocalPublishedBooks
+                )
+                publishedBooksRepo.addAllPubBooks(publishedBooks)
+                if(publishedBooks.isNotEmpty()){
+                    updatedRecommendedBooks()
+                }
+            }
+        return totalNoOfLocalPublishedBooks
     }
 
     private fun updatedRecommendedBooks(){

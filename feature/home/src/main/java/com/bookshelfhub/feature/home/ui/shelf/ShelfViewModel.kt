@@ -11,7 +11,7 @@ import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.book.page.DownloadBookUseCase
-import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.model.entities.ShelfSearchHistory
 import com.bookshelfhub.core.model.uistate.BookDownloadState
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
@@ -32,7 +32,6 @@ class ShelfViewModel @Inject constructor(
     private val settingsUtil: SettingsUtil,
     private val worker: Worker,
     private val bookDownloadStateRepo: IBookDownloadStateRepo,
-    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val downloadBookUseCase: DownloadBookUseCase,
     val userAuth: IUserAuth
 ): ViewModel(){
@@ -40,10 +39,11 @@ class ShelfViewModel @Inject constructor(
     private var liveOrderedBooksUiState: LiveData<List<OrderedBookUiState>> = MutableLiveData()
     private val _isNewlyPurchasedBookFlow = MutableStateFlow(false)
     private var doesUserHaveUnDownloadedPurchasedBooks = _isNewlyPurchasedBookFlow.asStateFlow()
-    private val userId:String = userAuth.getUserId()
+    private val userId = userAuth.getUserId()
 
     init {
         liveOrderedBooksUiState = orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
+        getRemoteOrderedBooksForTheFirstTime()
     }
 
 
@@ -53,9 +53,6 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-    fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
-        return getBookIdFromCompoundId(possiblyMergedIds)
-    }
 
     fun isConnected(): Boolean {
        return connectionUtil.isConnected()
@@ -79,42 +76,37 @@ class ShelfViewModel @Inject constructor(
         return doesUserHaveUnDownloadedPurchasedBooks
     }
 
-    fun checkIfUserHaveUnDownloadedPurchasedBook(){
+    fun checkIfAnyUnDownloadedPurchasedBook(){
         viewModelScope.launch {
-          val isNewlyPurchased =  settingsUtil.getBoolean(com.bookshelfhub.core.data.Book.IS_NEWLY_PURCHASED, false)
+          val isNewlyPurchased =  settingsUtil.getBoolean(Book.IS_NEWLY_PURCHASED, false)
           _isNewlyPurchasedBookFlow.emit(isNewlyPurchased)
         }
     }
 
-    fun updateBookPurchaseState(isNewlyPurchased:Boolean){
+    fun updateBookPurchasedBookDownloadStatus(isNewlyPurchased:Boolean){
         viewModelScope.launch {
             _isNewlyPurchasedBookFlow.emit(isNewlyPurchased)
-            settingsUtil.setBoolean(com.bookshelfhub.core.data.Book.IS_NEWLY_PURCHASED, isNewlyPurchased)
+            settingsUtil.setBoolean(Book.IS_NEWLY_PURCHASED, isNewlyPurchased)
         }
     }
 
-     fun getRemoteOrderedBooksRepeatedly(){
-         viewModelScope.launch {
-             try {
-                 val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
-                 val remoteOrderedBooks = orderedBooksRepo.getRemoteListOfOrderedBooks(
-                     userId,
-                     lastOrderedBookSN.toLong()
-                 )
-                 orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
-             }catch (e:Exception){
-                 ErrorUtil.e(e)
-                 val isFirebasePermissionDeniedError = (e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
-                 //User have no ordered books in record, likely a new user
-                 val isNotFirebasePermissionDeniedError  = !isFirebasePermissionDeniedError
-                 if(isNotFirebasePermissionDeniedError){
-                     ErrorUtil.e(e)
-                     return@launch
-                 }
-             }
-
-         }
-
+     fun getRemoteOrderedBooksForTheFirstTime(){
+        viewModelScope.launch {
+            val totalNoOfOrderedBooks = orderedBooksRepo.getTotalNoOfOrderedBooks()
+            val noPreviouslyDownloadedOrderedBooks = totalNoOfOrderedBooks <= 0
+            try {
+                if(noPreviouslyDownloadedOrderedBooks){
+                    val remoteOrderedBooks = orderedBooksRepo.getRemoteOrderedBooks(userId)
+                    orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
+                }
+            }catch (e:Exception){
+                ErrorUtil.e(e)
+                val ifUserHaveOrderedBooks = !(e is FirebaseFirestoreException && e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                if(ifUserHaveOrderedBooks){
+                    return@launch
+                }
+            }
+        }
     }
 
    suspend fun loadRemoteOrderedBooks(){

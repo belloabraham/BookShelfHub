@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.book.purchase.CartActivity
 import com.bookshelfhub.bookshelfhub.adapters.paging.StoreListAdapter
+import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.utils.IconUtil
 import com.bookshelfhub.feature.books_by_category.Category
 import com.bookshelfhub.core.model.BookRequest
@@ -175,13 +176,13 @@ class StoreFragment : Fragment() {
         layout.fictionRecView.adapter= fictionBooksAdapter
         layout.travelRecView.adapter= travelBooksAdapter
         layout.recommendedRecView.adapter = recommendBooksAdapter
-        layout.fashionRecView.adapter = recommendBooksAdapter
+        layout.fashionRecView.adapter = fashionBooksAdapter
         layout.sciAndTechRecView.adapter=scienceAndTechBooksAdapter
         layout.comicRecView.adapter=comicBooksAdapter
         layout.islamRecView.adapter=islamBooksAdapter
         layout.christianityRecView.adapter=christianityBooksAdapter
         layout.religionRecView.adapter=religionBooksAdapter
-        layout.engAndMathRecView.adapter=religionBooksAdapter
+        layout.engAndMathRecView.adapter=engAndMathBooksAdapter
         layout.artAndCraftRecView.adapter=artAndCraftBooksAdapter
         layout.literatureRecView.adapter=literatureBooksAdapter
 
@@ -275,7 +276,15 @@ class StoreFragment : Fragment() {
         layout.retryBtn.setOnClickListener {
             layout.errorLayout.visibility = GONE
             layout.progressBar.visibility = VISIBLE
-            storeViewModel.loadRemotePublishedBooks()
+            lifecycleScope.launch {
+                try {
+                    storeViewModel.loadRemotePublishedBooks()
+                    storeViewModel.setIsBookLoadSuccessfully(true)
+                }catch(e:Exception){
+                    ErrorUtil.e(e)
+                    storeViewModel.setIsBookLoadSuccessfully(false)
+                }
+            }
         }
 
         if(storeViewModel.shouldEnableTrending()){
@@ -299,7 +308,7 @@ class StoreFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            storeViewModel.getBooksByCategoryPageSource(getString(R.string.fashion)).collectLatest { books ->
+            storeViewModel.getBooksByCategoryPageSource(getString(R.string.engineering_mathematics)).collectLatest { books ->
                 loadBooks(books, engAndMathBooksAdapter, layout.engAndMathLayout)
             }
         }
@@ -440,15 +449,15 @@ class StoreFragment : Fragment() {
         }
 
         layout.recommendedCard.setOnClickListener {
-            startBookCategoryActivity( getString(com.bookshelfhub.feature.home.R.string.recommended_for))
+            startBookCategoryActivity( getString(R.string.recommended_for))
         }
 
         layout.fashionCard.setOnClickListener {
-            startBookCategoryActivity( getString(com.bookshelfhub.feature.home.R.string.fashion))
+            startBookCategoryActivity( getString(R.string.fashion))
         }
 
         layout.trendingCard.setOnClickListener {
-            startBookCategoryActivity( getString(com.bookshelfhub.feature.home.R.string.trending))
+            startBookCategoryActivity( getString( R.string.trending))
         }
         layout.artAndCraftCard.setOnClickListener {
             startBookCategoryActivity( getString(R.string.art_craft))
@@ -461,7 +470,7 @@ class StoreFragment : Fragment() {
         }
 
         layout.engAndMathCard.setOnClickListener {
-            startBookCategoryActivity( getString(R.string.engineering_mathematics))
+            startBookCategoryActivity(getString(R.string.engineering_mathematics))
         }
 
         layout.businessAndFinanceCard.setOnClickListener {

@@ -376,7 +376,7 @@ class BookItemActivity : AppCompatActivity() {
     }
 
     private suspend fun addFreeBook(book:PublishedBook, countryCode:String){
-        val serialNo = bookItemActivityViewModel.getTotalNoOfOrderedBooks()
+        var serialNo =  bookItemActivityViewModel.getTotalNoOfOrderedBooks().toLong()
         val additionalInfo = user.additionInfo
         val orderedBook = OrderedBook(
             book.bookId,
@@ -388,7 +388,7 @@ class BookItemActivity : AppCompatActivity() {
             countryCode,
             null,
             null,
-            serialNo.toLong(),
+            ++serialNo,
             additionalInfo,
             null,
             null,
@@ -515,7 +515,7 @@ class BookItemActivity : AppCompatActivity() {
             putExtra(Book.NAME, title)
             putExtra(Book.ID, bookId)
         }
-        startActivity(Intent(this, BookInfoActivity::class.java))
+        startActivity(intent)
     }
 
     private fun loadSimilarBooks(category: String, excludedBookId:String, similarBooksAdapter: SimilarBooksAdapter){

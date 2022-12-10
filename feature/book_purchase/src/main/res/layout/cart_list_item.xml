@@ -1,60 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/itemCardView"
-    style="@style/ProfileItemCardView">
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
+        android:layout_height="wrap_content">
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/dp_8"
-            android:layout_marginStart="@dimen/dp_16"
-            app:cardUseCompatPadding="true">
+            android:layout_gravity="start"
+            style="@style/ProfileItemCardView">
 
-        <ImageView
-            android:layout_width="70dp"
-            android:layout_height="95dp"
-            android:contentDescription="@null"
-            android:scaleType="fitXY"
-            android:id="@+id/cover"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/dp_8"
+                    android:layout_marginStart="@dimen/dp_16"
+                    app:cardUseCompatPadding="true">
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="95dp"
+                        android:contentDescription="@null"
+                        android:scaleType="fitXY"
+                        android:id="@+id/cover"/>
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/dp_16"
+                    android:paddingVertical="@dimen/dp_16"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/title"
+                        style="@style/CartItemTextStyle"
+                        android:textSize="@dimen/dp_16sp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/author"
+                        android:layout_marginVertical="@dimen/dp_8"
+                        style="@style/CartItemTextStyle"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:id="@+id/price"
+                        style="@style/CartItemTextStyle"/>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
         </com.google.android.material.card.MaterialCardView>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/dp_16"
-        android:paddingVertical="@dimen/dp_16"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/title"
-            style="@style/CartItemTextStyle"
-           android:textSize="@dimen/dp_16sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/author"
-            android:layout_marginVertical="@dimen/dp_8"
-            style="@style/CartItemTextStyle"/>
-
-        <TextView
-            android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_gravity="end"
+        android:layout_height="match_parent">
+        <ImageButton
+            android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:id="@+id/price"
-            style="@style/CartItemTextStyle"/>
-
+            android:id="@+id/deleteCartItem"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_cart_minus_red"
+            android:contentDescription="@null" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</com.google.android.material.card.MaterialCardView>
+</FrameLayout>

@@ -26,7 +26,7 @@ import com.bookshelfhub.core.common.helpers.dialog.MaterialBottomSheetDialogBuil
 import com.bookshelfhub.core.common.helpers.utils.DisplayUtil
 import com.bookshelfhub.core.common.helpers.utils.ShareUtil
 import com.bookshelfhub.core.common.helpers.utils.Toast
-import com.bookshelfhub.core.data.Fragment
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.model.entities.OrderedBook
@@ -208,8 +208,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private fun startBookInfoActivity(){
         val intent = Intent(this, BookInfoActivity::class.java)
         with(intent){
-            putExtra(com.bookshelfhub.core.data.Book.NAME, bookActivityViewModel.getBookName())
-            putExtra(com.bookshelfhub.core.data.Book.ID, bookActivityViewModel.getBookId())
+            putExtra(Book.NAME, bookActivityViewModel.getBookName())
+            putExtra(Book.ID, bookActivityViewModel.getBookId())
         }
         startActivity(intent)
     }

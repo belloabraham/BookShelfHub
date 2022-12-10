@@ -33,12 +33,20 @@ class OrderedBooksRepo @Inject constructor(
         return orderedBooksDao.getLiveListOfOrderedBooksUiState(userId)
     }
 
+    override suspend fun getRemoteOrderedBooks(userId: String): List<OrderedBook> {
+       return remoteDataSource.getListOfDataAsync(
+            RemoteDataFields.USERS_COLL,
+            userId,
+           RemoteDataFields.ORDERED_BOOKS_COLL,
+           OrderedBook::class.java
+       )
+    }
+
     override suspend fun getRemoteListOfOrderedBooks(
         userId: String,
         lastOrderedBookSN:Long,
         direction:Query.Direction): List<OrderedBook> {
-          return  withContext(ioDispatcher){
-              remoteDataSource.getListOfDataAsync(
+          return  remoteDataSource.getListOfDataAsync(
                 RemoteDataFields.USERS_COLL,
                 userId,
                 RemoteDataFields.ORDERED_BOOKS_COLL,
@@ -46,7 +54,7 @@ class OrderedBooksRepo @Inject constructor(
                 direction,
                  startAfter =  lastOrderedBookSN,
                 OrderedBook::class.java
-            )}
+            )
     }
 
 

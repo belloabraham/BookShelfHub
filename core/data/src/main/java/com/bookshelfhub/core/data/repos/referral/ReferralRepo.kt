@@ -27,15 +27,13 @@ class ReferralRepo @Inject constructor(
 
     override suspend fun getARemoteCollaborator(pubId:String, collabId:String, bookId:String):RemoteCollaborator?{
         val collabAndBookId = "${collabId}-${bookId}"
-        return withContext(ioDispatcher){
-            remoteDataSource.getDataAsync(
+        return remoteDataSource.getDataAsync(
                 RemoteDataFields.PUBLISHERS,
                 pubId,
                 RemoteDataFields.COLLABORATORS_COLL,
                 collabAndBookId,
                 RemoteCollaborator::class.java
             )
-        }
     }
 
     override suspend fun getAnOptionalCollaborator(bookId:String): Optional<Collaborator> {

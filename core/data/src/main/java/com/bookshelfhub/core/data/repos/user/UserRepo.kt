@@ -26,39 +26,32 @@ class UserRepo @Inject constructor(
     private val userDao = appDatabase.getUserDao()
 
     override suspend fun getRemoteUser(userId:String): RemoteUser? {
-       return withContext(ioDispatcher) {
-           remoteDataSource.getDataAsync(
+       return  remoteDataSource.getDataAsync(
                RemoteDataFields.USERS_COLL,
                userId,
                RemoteUser::class.java
            )
-       }
+
     }
 
     override suspend fun uploadNotificationToken(notificationToken:String, userId: String): Void? {
-      return withContext(ioDispatcher) {
-          remoteDataSource.addDataAsync(
+      return  remoteDataSource.addDataAsync(
               notificationToken,
               RemoteDataFields.USERS_COLL, userId, RemoteDataFields.NOTIFICATION_TOKEN
           )
-      }
     }
 
     override suspend fun uploadUser(user: User, userId: String): Void? {
-      return  withContext(ioDispatcher) {
-          remoteDataSource.addDataAsync(
+      return  remoteDataSource.addDataAsync(
               RemoteDataFields.USERS_COLL,
               userId,
               RemoteDataFields.USER,
               user
           )
-      }
     }
 
     override suspend fun uploadRemoteUser(remoteUser: RemoteUser, userId: String): Void? {
-        return withContext(ioDispatcher) {
-            remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
-        }
+        return remoteDataSource.addDataAsync(RemoteDataFields.USERS_COLL, userId, remoteUser)
     }
 
      override suspend fun getUser(userId:String): Optional<User> {

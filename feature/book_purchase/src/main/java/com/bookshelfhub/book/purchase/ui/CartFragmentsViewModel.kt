@@ -59,6 +59,12 @@ class CartFragmentsViewModel @Inject constructor(
     }
   }
 
+   fun deleteAllCartItems(){
+    viewModelScope.launch {
+      cartItemsRepo.deleteAllCartItems()
+    }
+  }
+
   fun getPaymentTransactions(): MutableList<PaymentTransaction> {
     return paymentTransactions
   }

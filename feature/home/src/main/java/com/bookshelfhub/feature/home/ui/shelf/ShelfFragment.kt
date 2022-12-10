@@ -69,7 +69,7 @@ class ShelfFragment : Fragment() {
                     layout.progressBar.visibility = GONE
                     if (orderedBooksUiStates.isNotEmpty()) {
                         //Notify the UI that there is no book on the cloud that need to be sync down to the device
-                        shelfViewModel.updateBookPurchaseState(isNewlyPurchased = false)
+                        shelfViewModel.updateBookPurchasedBookDownloadStatus(isNewlyPurchased = false)
                         layout.orderedBooksRecView.visibility = VISIBLE
                         layout.emptyShelf.visibility = GONE
                         layout.appbarLayout.visibility = VISIBLE
@@ -101,8 +101,15 @@ class ShelfFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            shelfViewModel.doesUserHaveUnDownloadedPurchasedBooks().collect{ ifUserHaveUnDownloadedPurchasedBooks->
-                layout.newlyPurchasedBooksMsgTxt.isVisible = ifUserHaveUnDownloadedPurchasedBooks
+            shelfViewModel.doesUserHaveUnDownloadedPurchasedBooks().collect{ userHaveUnDownloadedPurchasedBooks->
+                try {
+                    if(userHaveUnDownloadedPurchasedBooks){
+                        shelfViewModel.loadRemoteOrderedBooks()
+                    }
+                    layout.newlyPurchasedBooksMsgTxt.isVisible = false
+                }catch (e:Exception){
+                    layout.newlyPurchasedBooksMsgTxt.isVisible = true
+                }
             }
         }
 
@@ -187,8 +194,7 @@ class ShelfFragment : Fragment() {
 
     override fun onResume() {
         //Check if more remote ordered books in the case of user just purchasing a book or books
-        shelfViewModel.getRemoteOrderedBooksRepeatedly()
-        shelfViewModel.checkIfUserHaveUnDownloadedPurchasedBook()
+        shelfViewModel.checkIfAnyUnDownloadedPurchasedBook()
         super.onResume()
     }
 

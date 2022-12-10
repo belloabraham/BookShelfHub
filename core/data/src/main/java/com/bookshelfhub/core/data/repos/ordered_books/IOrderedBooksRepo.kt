@@ -7,7 +7,7 @@ import com.google.firebase.firestore.Query
 import java.util.*
 
 interface IOrderedBooksRepo {
-
+    suspend fun getRemoteOrderedBooks(userId: String): List<OrderedBook>
     suspend fun getAnOrderedBook(bookId: String): Optional<OrderedBook>
     fun getLiveListOfOrderedBooksUiState(userId: String): LiveData<List<OrderedBookUiState>>
     suspend fun getOrderedBooks(userId: String): List<OrderedBook>
