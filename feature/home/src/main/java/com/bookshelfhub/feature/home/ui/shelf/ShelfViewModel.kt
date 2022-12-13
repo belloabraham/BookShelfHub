@@ -8,11 +8,10 @@ import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
-import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.book.page.DownloadBookUseCase
 import com.bookshelfhub.core.data.Book
-import com.bookshelfhub.core.model.entities.ShelfSearchHistory
+import com.bookshelfhub.core.model.entities.OrderedBook
 import com.bookshelfhub.core.model.uistate.BookDownloadState
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -27,7 +26,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ShelfViewModel @Inject constructor(
     private val orderedBooksRepo: IOrderedBooksRepo,
-    private val searchHistoryRepo: ISearchHistoryRepo,
     private val connectionUtil: ConnectionUtil,
     private val settingsUtil: SettingsUtil,
     private val worker: Worker,
@@ -40,12 +38,18 @@ class ShelfViewModel @Inject constructor(
     private val _isNewlyPurchasedBookFlow = MutableStateFlow(false)
     private var doesUserHaveUnDownloadedPurchasedBooks = _isNewlyPurchasedBookFlow.asStateFlow()
     private val userId = userAuth.getUserId()
-
+    private var liveRemoteListOfOrderedBooks: MutableLiveData<List<OrderedBook>> = MutableLiveData()
     init {
         liveOrderedBooksUiState = orderedBooksRepo.getLiveListOfOrderedBooksUiState(userId)
         getRemoteOrderedBooksForTheFirstTime()
     }
 
+
+    fun getLocalLiveOrderedBooksAfterRemoteOrderedBooks(): LiveData<List<OrderedBookUiState>> {
+        return Transformations.switchMap(getRemoteOrderedBooksForTheFirstTime()) {
+            getLiveListOfOrderedBooksUiState()
+        }
+    }
 
     fun startBookDownload(workData: Data){
         viewModelScope.launch {
@@ -58,7 +62,7 @@ class ShelfViewModel @Inject constructor(
        return connectionUtil.isConnected()
     }
 
-     fun getLiveListOfOrderedBooksUiState(): LiveData<List<OrderedBookUiState>> {
+     private fun getLiveListOfOrderedBooksUiState(): LiveData<List<OrderedBookUiState>> {
       return  liveOrderedBooksUiState
     }
 
@@ -90,7 +94,7 @@ class ShelfViewModel @Inject constructor(
         }
     }
 
-     fun getRemoteOrderedBooksForTheFirstTime(){
+     private fun getRemoteOrderedBooksForTheFirstTime(): LiveData<List<OrderedBook>> {
         viewModelScope.launch {
             val totalNoOfOrderedBooks = orderedBooksRepo.getTotalNoOfOrderedBooks()
             val noPreviouslyDownloadedOrderedBooks = totalNoOfOrderedBooks <= 0
@@ -98,6 +102,9 @@ class ShelfViewModel @Inject constructor(
                 if(noPreviouslyDownloadedOrderedBooks){
                     val remoteOrderedBooks = orderedBooksRepo.getRemoteOrderedBooks(userId)
                     orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
+                    liveRemoteListOfOrderedBooks.value = remoteOrderedBooks
+                }else{
+                    liveRemoteListOfOrderedBooks.value = emptyList()
                 }
             }catch (e:Exception){
                 ErrorUtil.e(e)
@@ -107,6 +114,7 @@ class ShelfViewModel @Inject constructor(
                 }
             }
         }
+         return liveRemoteListOfOrderedBooks
     }
 
    suspend fun loadRemoteOrderedBooks(){
@@ -116,10 +124,6 @@ class ShelfViewModel @Inject constructor(
            lastOrderedBookSN.toLong()
        )
        return orderedBooksRepo.addOrderedBooks(remoteOrderedBooks)
-    }
-
-    suspend fun getTop4ShelfSearchHistory():List<ShelfSearchHistory>{
-        return searchHistoryRepo.getTop4ShelfSearchHistory(userId)
     }
 
 }

@@ -101,8 +101,6 @@
                         android:text="@string/verify_email"
                         style="@style/ProfileItemTitle"/>
 
-
-
                     <com.google.android.material.card.MaterialCardView
                         android:layout_width="@dimen/notif_circle_size"
                         android:layout_height="@dimen/notif_circle_size"
@@ -151,6 +149,41 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text="@string/publish_book"
+                        style="@style/ProfileItemTitle"/>
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:layout_gravity="end"
+                        android:src="@drawable/ic_baseline_chevron_right_24"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/requestBookCard"
+                style="@style/ProfileItemCardView">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/dp_4"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="@dimen/image_btn_size"
+                        android:layout_height="@dimen/image_btn_size"
+                        android:src="@drawable/text_box_plus"
+                        android:layout_gravity="start"
+                        android:contentDescription="@null"
+                        android:scaleType="centerInside"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/request_a_book"
                         style="@style/ProfileItemTitle"/>
 
                     <ImageView
@@ -235,30 +268,47 @@
                     android:layout_marginVertical="@dimen/dp_4"
                     android:layout_height="wrap_content">
 
-                    <ImageView
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="@dimen/image_btn_size"
-                        android:src="@drawable/ic_rating_yellow"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:layout_marginStart="@dimen/dp_16"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"/>
+                        android:orientation="horizontal">
 
-                    <TextView
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/image_btn_size"
+                            android:src="@drawable/ic_rating_yellow"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="@string/write_review"
+                            android:gravity="center_vertical"
+                            android:foregroundGravity="center_vertical"
+                            android:layout_marginStart="@dimen/dp_16"
+                            style="@style/ProfileItemTitle"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="@string/write_review"
-                        style="@style/ProfileItemTitle"
-                        android:layout_marginStart="120dp"/>
+                        android:layout_height="wrap_content">
 
-
-                    <ImageView
-                        android:layout_width="@dimen/image_btn_size"
-                        android:layout_height="@dimen/image_btn_size"
-                        android:layout_gravity="end"
-                        android:src="@drawable/ic_baseline_chevron_right_24"
-                        android:contentDescription="@null"
-                        android:scaleType="centerInside"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end">
+                        <ImageView
+                            android:layout_width="@dimen/image_btn_size"
+                            android:layout_height="@dimen/image_btn_size"
+                            android:src="@drawable/ic_baseline_chevron_right_24"
+                            android:contentDescription="@null"
+                            android:scaleType="centerInside"/>
+                    </LinearLayout>
 
                 </FrameLayout>
             </com.google.android.material.card.MaterialCardView>

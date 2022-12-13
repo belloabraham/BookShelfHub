@@ -2,9 +2,17 @@ package com.bookshelfhub.core.remote.database
 
 import com.bookshelfhub.core.model.entities.IEntityId
 import com.bookshelfhub.core.model.entities.UserReview
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 
 interface IRemoteDataSource {
+
+    fun updateDocDataAsync(
+        collection:String,
+        document:String,
+        field:String,
+        value:Any,
+    ): Task<Void>
 
     suspend fun updateDocData(
         collection:String,

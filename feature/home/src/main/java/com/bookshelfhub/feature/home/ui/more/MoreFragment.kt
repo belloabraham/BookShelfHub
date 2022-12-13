@@ -126,6 +126,15 @@ class MoreFragment : Fragment() {
             }
         }
 
+        layout.requestBookCard.setOnClickListener {
+            val intent = Intent(requireActivity(), WebViewActivity::class.java)
+            with(intent){
+                putExtra(WebView.TITLE,  getString(R.string.request_a_book))
+                putExtra(WebView.URL,  getString(R.string.book_req_url))
+            }
+            startActivity(intent)
+        }
+
         profileBtn.setOnClickListener {
             startMoreActivity(R.id.profileFragment)
         }
@@ -137,8 +146,8 @@ class MoreFragment : Fragment() {
                  .setCancelable(true)
                  .setNegativeAction(R.string.cancel){}
                  .setPositiveAction(R.string.sign_out){
-                     userAuth.signOut()
                      viewLifecycleOwner.lifecycleScope.launch {
+                         userAuth.signOut()
                          if (authType == AuthType.PHONE) {
                              moreViewModel.deleteUserData()
                              ProcessPhoenix.triggerRebirth(this@MoreFragment.requireContext().applicationContext)
@@ -233,8 +242,7 @@ class MoreFragment : Fragment() {
             }
         }
 
-        mainActivityViewModel.getLiveOptionalBookInterest().observe(viewLifecycleOwner
-        ) { bookInterest ->
+        mainActivityViewModel.getLiveOptionalBookInterest().observe(viewLifecycleOwner) { bookInterest ->
             if (bookInterest.isPresent && bookInterest.get().added) {
                 layout.interestNotifCard.visibility = GONE
             } else {
@@ -286,16 +294,17 @@ class MoreFragment : Fragment() {
     private fun setAppTheme(userSelectedDarkTheme: Boolean) {
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivityViewModel.setIsDarkTheme(userSelectedDarkTheme)
-        }
-        val appIsUsingLightTheme = !isAppUsingDarkTheme()
-        val userSelectedLightTheme = !userSelectedDarkTheme
 
-        if (userSelectedDarkTheme && appIsUsingLightTheme) {
-            //Set darkTheme
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }else if (userSelectedLightTheme && isAppUsingDarkTheme()){
-            //Set Light theme
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            val appIsUsingLightTheme = !isAppUsingDarkTheme()
+            val userSelectedLightTheme = !userSelectedDarkTheme
+
+            if (userSelectedDarkTheme && appIsUsingLightTheme) {
+                //Set darkTheme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }else if (userSelectedLightTheme && isAppUsingDarkTheme()){
+                //Set Light theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
     }
 

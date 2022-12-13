@@ -51,7 +51,7 @@ class StoreSearchResultAdapter (private val context:Context) {
 
             register(
                 layoutResource = R.layout.cant_find_a_book,
-                viewHolder = StoreSearchResultAdapter::FindABookViewHolder,
+                viewHolder = StoreSearchResultAdapter::RequestForABookViewHolder,
                 onBindViewHolder = { vh, _, model ->
                    vh.bindToView(model, context)
                 }
@@ -85,7 +85,7 @@ class StoreSearchResultAdapter (private val context:Context) {
         }
     }
 
-    private class FindABookViewHolder(view: View) : RecyclerViewHolder<BookRequest>(view) {
+    private class RequestForABookViewHolder(view: View) : RecyclerViewHolder<BookRequest>(view) {
         private val title: TextView = view.findViewById(R.id.title)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         fun bindToView(model: BookRequest, context: Context){

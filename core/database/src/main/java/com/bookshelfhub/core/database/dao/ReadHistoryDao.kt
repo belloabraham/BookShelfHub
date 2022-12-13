@@ -7,8 +7,8 @@ import java.util.*
 @Dao
 abstract class ReadHistoryDao : BaseDao<ReadHistory> {
 
-    @Query("SELECT * FROM ReadHistories WHERE id =:id")
-    abstract suspend fun getReadHistory(id:Int): Optional<ReadHistory>
+    @Query("SELECT * FROM ReadHistories WHERE bookId =:bookId")
+    abstract suspend fun getReadHistory(bookId:String): Optional<ReadHistory>
 
     @Query("DELETE FROM ReadHistories")
     abstract suspend fun deleteAllHistory()

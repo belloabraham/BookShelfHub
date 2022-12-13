@@ -9,7 +9,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -23,7 +22,6 @@ import com.bookshelfhub.feature.home.databinding.FragmentShelfBinding
 import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 import com.bookshelfhub.core.resources.R
@@ -51,8 +49,8 @@ class ShelfFragment : Fragment() {
         mOrderedBooksAdapter = BookShelfAdapter(
             requireActivity(),
             shelfViewModel,
-            viewLifecycleOwner)
-            .getOrderedBooksAdapter()
+            viewLifecycleOwner
+        ).getOrderedBooksAdapter()
 
         val searchListAdapter = mSearchListAdapter!!
         val orderedBooksAdapter = mOrderedBooksAdapter!!
@@ -60,27 +58,26 @@ class ShelfFragment : Fragment() {
         layout.orderedBooksRecView.layoutManager = GridLayoutManager(requireContext(), 3)
         layout.orderedBooksRecView.adapter = orderedBooksAdapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            shelfViewModel.getLiveListOfOrderedBooksUiState().asFlow()
-                .collectLatest { orderedBooksUiStates ->
-                    //Hide just in case data get load by user swipe to refresh
-                    layout.swipeRefreshLayout.isRefreshing = false
-                    //Hide as this is visible by default
-                    layout.progressBar.visibility = GONE
-                    if (orderedBooksUiStates.isNotEmpty()) {
-                        //Notify the UI that there is no book on the cloud that need to be sync down to the device
-                        shelfViewModel.updateBookPurchasedBookDownloadStatus(isNewlyPurchased = false)
-                        layout.orderedBooksRecView.visibility = VISIBLE
-                        layout.emptyShelf.visibility = GONE
-                        layout.appbarLayout.visibility = VISIBLE
-                        orderedBooksAdapter.submitList(orderedBooksUiStates)
-                        orderedBookList = orderedBooksUiStates
-                    } else {
-                        layout.emptyShelf.visibility = VISIBLE
-                        layout.appbarLayout.visibility = INVISIBLE
-                        layout.orderedBooksRecView.visibility = GONE
-                    }
+        shelfViewModel.getLocalLiveOrderedBooksAfterRemoteOrderedBooks().observe(viewLifecycleOwner) { orderedBooksUiStates ->
+
+            //Hide just in case data get load by user swipe to refresh
+            layout.swipeRefreshLayout.isRefreshing = false
+            //Hide as this is visible by default
+            layout.progressBar.visibility = GONE
+            if (orderedBooksUiStates.isNotEmpty()) {
+                //Notify the UI that there is no book on the cloud that need to be sync down to the device
+                shelfViewModel.updateBookPurchasedBookDownloadStatus(isNewlyPurchased = false)
+                layout.swipeRefreshLayout.visibility = VISIBLE
+                layout.emptyShelf.visibility = GONE
+                layout.appbarLayout.visibility = VISIBLE
+                orderedBooksAdapter.submitList(orderedBooksUiStates)
+                orderedBookList = orderedBooksUiStates
+            } else {
+                layout.emptyShelf.visibility = VISIBLE
+                layout.appbarLayout.visibility = INVISIBLE
+                layout.swipeRefreshLayout.visibility = GONE
             }
+
         }
 
         layout.swipeRefreshLayout.setColorSchemeResources(
@@ -140,13 +137,6 @@ class ShelfFragment : Fragment() {
                         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
                                 AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
 
-                        // Fill the searchList Adapter with the default value after being changed
-                        // by @setOnQueryTextListener when user exits search view
-
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            val searchHistory = shelfViewModel.getTop4ShelfSearchHistory()
-                            searchListAdapter.submitList(searchHistory)
-                        }
 
                         SearchLayout.NavigationIconSupport.SEARCH
                     }

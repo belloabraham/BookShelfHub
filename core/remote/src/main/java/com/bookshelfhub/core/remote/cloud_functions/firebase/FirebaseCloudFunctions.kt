@@ -12,8 +12,7 @@ class FirebaseCloudFunctions : ICloudFunctions {
     private var functions = Firebase.functions(CloudFunctions.defaultLocation)
 
     override suspend fun call(functionName:String, data: HashMap<String, Any?>): HttpsCallableResult? {
-      return  functions.getHttpsCallable(functionName)
-            .call(data).await()
+      return  functions.getHttpsCallable(functionName).call(data).await()
     }
 
 }

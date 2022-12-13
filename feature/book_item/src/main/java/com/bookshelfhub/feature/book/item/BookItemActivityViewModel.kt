@@ -34,12 +34,9 @@ import com.bookshelfhub.core.common.helpers.utils.Regex
 import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.common.worker.Tag
 import com.bookshelfhub.core.data.Book
-import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
-import com.bookshelfhub.core.remote.database.RemoteDataFields
 import com.bookshelfhub.feature.book.item.workers.AddAFreeBook
 import com.bookshelfhub.feature.book.item.workers.GetCollaboratorsCommission
 import com.bookshelfhub.feature.book.item.workers.PostUserReview
-import com.google.firebase.firestore.FieldValue
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,7 +50,6 @@ class BookItemActivityViewModel @Inject constructor(
     private val dynamicLink: IDynamicLink,
     private val userRepo: IUserRepo,
     private val worker: Worker,
-    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val downloadBookUseCase: DownloadBookUseCase,
     private val referralRepo: IReferralRepo,
     private val bookDownloadStateRepo: IBookDownloadStateRepo,
@@ -202,10 +198,6 @@ class BookItemActivityViewModel @Inject constructor(
      return userReviewRepo.getLiveUserReview(bookId)
   }
 
-  fun getBookIdFromPossiblyMergedIds(possiblyMergedIds:String): String {
-   return getBookIdFromCompoundId(possiblyMergedIds)
-  }
-
   fun getBookId():String{
     return  bookId
   }
@@ -290,23 +282,11 @@ class BookItemActivityViewModel @Inject constructor(
     }
   }
 
-  fun updateBookTotalDownloadsByOne(){
-    viewModelScope.launch {
-      try {
-        val incrementValue = FieldValue.increment(1)
-        publishedBooksRepo.updateBookTotalDownloadsByOne(bookId, RemoteDataFields.TOTAL_DOWNLOADS, incrementValue)
-      }catch (e:Exception){
-        ErrorUtil.e(e)
-      }
-    }
-
-  }
-
   fun getBookFromCart(): LiveData<Optional<CartItem>>{
    return  cartItemsRepo.getLiveCartItem(bookId)
   }
 
-  fun getOnlinePublishedBook(): LiveData<PublishedBook> {
+  fun getRemotePublishedBook(): LiveData<PublishedBook> {
     return publishedBookOnline
   }
 

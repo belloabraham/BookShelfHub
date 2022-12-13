@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="72dp"
+            android:visibility="gone"
             android:id="@+id/swipeRefreshLayout">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -50,7 +51,6 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:paddingBottom="@dimen/dp_16"
                     android:id="@+id/orderedBooksRecView" />
 

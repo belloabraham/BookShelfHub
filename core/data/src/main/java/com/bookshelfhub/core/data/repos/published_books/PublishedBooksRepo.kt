@@ -7,6 +7,7 @@ import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.uistate.PublishedBookUiState
 import com.bookshelfhub.core.remote.database.IRemoteDataSource
 import com.bookshelfhub.core.remote.database.RemoteDataFields
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,8 +33,8 @@ class PublishedBooksRepo @Inject constructor(
         return publishedBooksDao.getLivePublishedBook(bookId)
     }
 
-    override suspend fun updateBookTotalDownloadsByOne(bookId:String, field:String, value:Any): Void? {
-        return remoteDataSource.updateDocData(RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId, field, value)
+    override fun updateBookTotalDownloadsByOneAsync(bookId:String, field:String, value:Any): Task<Void> {
+        return remoteDataSource.updateDocDataAsync(RemoteDataFields.PUBLISHED_BOOKS_COLL, bookId, field, value)
     }
 
     override suspend fun getARemotePublishedBook(bookId:String): PublishedBook? {

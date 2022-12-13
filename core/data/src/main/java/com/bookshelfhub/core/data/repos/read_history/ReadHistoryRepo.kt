@@ -19,8 +19,8 @@ class ReadHistoryRepo @Inject constructor(
     }
 
 
-    override suspend fun getReadHistory(id:Int): Optional<ReadHistory> {
-        return withContext(ioDispatcher){ readHistoryDao.getReadHistory(id)}
+    override suspend fun getReadHistory(bookId:String): Optional<ReadHistory> {
+        return withContext(ioDispatcher){ readHistoryDao.getReadHistory(bookId)}
     }
 
      override suspend fun deleteAllHistory() {

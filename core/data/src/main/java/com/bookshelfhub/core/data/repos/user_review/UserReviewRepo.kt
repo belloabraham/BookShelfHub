@@ -78,8 +78,8 @@ class UserReviewRepo @Inject constructor(
         return  withContext(ioDispatcher){userReviewDao.deleteAllReviews()}
     }
 
-     override suspend fun getUserReview(isbn: String): Optional<UserReview> {
-        return withContext(ioDispatcher){userReviewDao.getUserReview(isbn)}
+     override suspend fun getUserReview(bookId: String): Optional<UserReview> {
+        return withContext(ioDispatcher){userReviewDao.getUserReview(bookId)}
     }
 
      override suspend fun addUserReview(userReview: UserReview) {

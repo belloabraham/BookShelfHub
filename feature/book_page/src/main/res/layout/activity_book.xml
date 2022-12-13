@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.BookShelfHub.FullscreenContainer"
-    android:transitionName="@string/trans_book"
     tools:context="com.bookshelfhub.book.page.BookActivity">
 
     <!-- The primary full-screen view. This can be replaced with whatever view

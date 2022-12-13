@@ -5,6 +5,6 @@ import java.util.*
 
 interface IReadHistoryRepo {
     suspend fun addReadHistory(history: ReadHistory)
-    suspend fun getReadHistory(id:Int): Optional<ReadHistory>
+    suspend fun getReadHistory(bookId:String): Optional<ReadHistory>
     suspend fun deleteAllHistory()
 }

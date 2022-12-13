@@ -35,7 +35,7 @@ interface IUserReviewRepo {
 
     suspend fun deleteAllReviews()
 
-    suspend fun getUserReview(isbn: String): Optional<UserReview>
+    suspend fun getUserReview(bookId: String): Optional<UserReview>
 
     suspend fun addUserReview(userReview: UserReview)
 

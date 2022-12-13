@@ -7,7 +7,7 @@ import com.bookshelfhub.core.database.dao.*
 import com.bookshelfhub.core.model.entities.User
 import com.bookshelfhub.core.model.uistate.BookDownloadState
 
-@Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, ShelfSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookDownloadState::class], version = 1, exportSchema = false)
+@Database(entities = [User::class, OrderedBook::class, BookInterest::class, StoreSearchHistory::class, Collaborator::class, PublishedBook::class, PaymentCard::class, CartItem::class, UserReview::class, ReadHistory::class, Bookmark::class, PaymentTransaction::class, BookDownloadState::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
 

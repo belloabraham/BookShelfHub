@@ -4,17 +4,13 @@ import androidx.lifecycle.*
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
-import com.bookshelfhub.core.common.helpers.utils.datetime.DateTimeUtil
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.data.repos.bookmarks.IBookmarksRepo
 import com.bookshelfhub.core.data.repos.ordered_books.IOrderedBooksRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.data.repos.read_history.IReadHistoryRepo
-import com.bookshelfhub.core.data.repos.search_history.ISearchHistoryRepo
 import com.bookshelfhub.core.data.repos.user.IUserRepo
-import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
-import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.dynamic_link.IDynamicLink
 import com.bookshelfhub.core.model.entities.*
 import com.bookshelfhub.core.remote.remote_config.IRemoteConfig
@@ -31,10 +27,8 @@ class BookActivityViewModel @Inject constructor(
     private val connectionUtil: ConnectionUtil,
     private val orderedBooksRepo: IOrderedBooksRepo,
     private val dynamicLink: IDynamicLink,
-    private val getBookIdFromCompoundId: GetBookIdFromCompoundId,
     private val publishedBooksRepo: IPublishedBooksRepo,
     private val readHistoryRepo: IReadHistoryRepo,
-    private val searchHistoryRepo: ISearchHistoryRepo,
     private val userRepo: IUserRepo,
     private val bookmarksRepo: IBookmarksRepo,
     private val remoteConfig:IRemoteConfig
@@ -43,7 +37,6 @@ class BookActivityViewModel @Inject constructor(
     val userId = userAuth.getUserId()
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
-    private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM) ?: false
     private var bookShareLink:String?=null
 
     init {
@@ -52,20 +45,6 @@ class BookActivityViewModel @Inject constructor(
             bookShareLink = settingsUtil.getString(bookId)
         }
 
-        if (isSearchItem) {
-            addShelfSearchHistory(
-                ShelfSearchHistory(
-                    bookId,
-                    bookName,
-                    userId,
-                    DateTimeUtil.getDateTimeAsString()
-                )
-            )
-        }
-    }
-
-    fun getUnMergedBookId(): String {
-        return getBookIdFromCompoundId(bookId)
     }
 
     fun getRemoteString(key:String): String {
@@ -142,30 +121,19 @@ class BookActivityViewModel @Inject constructor(
         return orderedBooksRepo.getAnOrderedBook(bookId).get()
     }
 
-    private fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory) {
-        viewModelScope.launch {
-            searchHistoryRepo.addShelfSearchHistory(shelfSearchHistory)
-        }
-    }
-
     suspend fun getBoolean(key: String, defaultVal: Boolean): Boolean {
         return settingsUtil.getBoolean(key, defaultVal)
     }
 
     suspend fun getReadHistory(): Optional<ReadHistory> {
-        val firstRecordInTheDatabase = 0
-        return readHistoryRepo.getReadHistory(firstRecordInTheDatabase)
+        return readHistoryRepo.getReadHistory(bookId)
     }
 
     fun addReadHistory(currentPage: Int, totalPages: Int) {
         viewModelScope.launch {
-            readHistoryRepo.deleteAllHistory()
-            val showPopup = settingsUtil.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)
-            if (showPopup) {
-                val percentage = (currentPage / totalPages) * 100
-                val readHistory = ReadHistory(bookId, currentPage, percentage, bookName)
-                readHistoryRepo.addReadHistory(readHistory)
-            }
+            val percentage = (currentPage / totalPages) * 100
+            val readHistory = ReadHistory( currentPage, percentage, bookName, bookId)
+            readHistoryRepo.addReadHistory(readHistory)
         }
     }
 

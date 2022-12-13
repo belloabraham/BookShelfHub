@@ -4,11 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.uistate.PublishedBookUiState
+import com.google.android.gms.tasks.Task
 import java.util.*
 
 interface IPublishedBooksRepo {
 
-    suspend fun updateBookTotalDownloadsByOne(bookId:String, field:String, value:Any): Void?
+    fun updateBookTotalDownloadsByOneAsync(bookId:String, field:String, value:Any): Task<Void>
 
     suspend fun updatePublishedBook(publishedBook: PublishedBook)
 

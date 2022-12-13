@@ -1,7 +1,6 @@
 package com.bookshelfhub.core.data.repos.search_history
 
 import com.bookshelfhub.core.database.AppDatabase
-import com.bookshelfhub.core.model.entities.ShelfSearchHistory
 import com.bookshelfhub.core.model.entities.StoreSearchHistory
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers.IO
@@ -16,10 +15,6 @@ class SearchHistoryRepo @Inject constructor(
     private val searchHistoryDao = appDatabase.getSearchHistoryDao()
 
 
-    override suspend fun getTop4ShelfSearchHistory(userId:String): List<ShelfSearchHistory> {
-        return withContext(ioDispatcher){searchHistoryDao.getTop4ShelfSearchHistory(userId)}
-    }
-
     override suspend fun getTop4StoreSearchHistory(userId:String): List<StoreSearchHistory> {
         return withContext(ioDispatcher){searchHistoryDao.getTop4StoreSearchHistory(userId)}
     }
@@ -28,7 +23,4 @@ class SearchHistoryRepo @Inject constructor(
          withContext(ioDispatcher){searchHistoryDao.addStoreSearchHistory(searchHistory)}
     }
 
-     override suspend fun addShelfSearchHistory(shelfSearchHistory: ShelfSearchHistory){
-        withContext(ioDispatcher){searchHistoryDao.addShelfSearchHistory(shelfSearchHistory)}
-    }
 }

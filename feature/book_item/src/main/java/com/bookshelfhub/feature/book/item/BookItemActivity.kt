@@ -83,7 +83,7 @@ class BookItemActivity : AppCompatActivity() {
             checkIfBookAlreadyAddedByUser(orderedBook)
         }
 
-        bookItemActivityViewModel.getOnlinePublishedBook().observe(this) { onlinePublishedBook ->
+        bookItemActivityViewModel.getRemotePublishedBook().observe(this) { onlinePublishedBook ->
             this.onlinePublishedBook = onlinePublishedBook
 
             lifecycleScope.launch {
@@ -216,7 +216,6 @@ class BookItemActivity : AppCompatActivity() {
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
                         checkIfBookAlreadyAddedByUser(orderedBook)
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
-                        bookItemActivityViewModel.updateBookTotalDownloadsByOne()
                     }
                 }
             }
@@ -256,25 +255,38 @@ class BookItemActivity : AppCompatActivity() {
 
         layout.postBtn.setOnClickListener {
 
-            bookItemActivityViewModel.review = layout.userReviewEditText.text.toString().escapeJSONSpecialChars()
-            val newRating = layout.ratingBar.rating.toDouble()
-            val userName = user.firstName
+            lifecycleScope.launch {
 
-            var ratingDiff = 0.0
-            var postedBefore = false
-            userReview?.let {
-                ratingDiff = newRating - it.userRating
-                postedBefore = it.postedBefore
+                val newRating = layout.ratingBar.rating.toDouble()
+
+                if(userReview == null){
+                    val totalRatings = onlinePublishedBook.totalRatings + newRating
+                    val totalReviews = onlinePublishedBook.totalReviews + 1
+                    val rating =  totalRatings/totalReviews
+                    layout.noRatingTxt.text = "$rating"
+                    layout.noOfReviewTxt.text = String.format(getString(R.string.review_no), totalReviews)
+                }
+
+                bookItemActivityViewModel.review = layout.userReviewEditText.text.toString().escapeJSONSpecialChars()
+                val userName = user.firstName
+
+                var ratingDiff = 0.0
+                var postedBefore = false
+                userReview?.let {
+                    ratingDiff = newRating - it.userRating
+                    postedBefore = it.postedBefore
+                }
+
+                val newReview = UserReview(
+                    bookId,
+                    bookItemActivityViewModel.review,
+                    newRating, userName,
+                    canUserPostReview,
+                    userPhotoUri,
+                    postedBefore
+                )
+                bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
             }
-
-            val newReview = UserReview(
-                bookId,
-                bookItemActivityViewModel.review,
-                newRating, userName,
-                canUserPostReview,
-                userPhotoUri,
-                postedBefore)
-            bookItemActivityViewModel.addUserReview(newReview, ratingDiff)
 
         }
 
@@ -304,9 +316,7 @@ class BookItemActivity : AppCompatActivity() {
 
             if (reviews.isNotEmpty()) {
                 layout.ratingsAndReviewLayout.visibility = View.VISIBLE
-                val reviewsAdapter =
-                    com.bookshelfhub.feature.book_reviews.adapters.UserReviewListAdapter()
-                        .getAdapter()
+                val reviewsAdapter = com.bookshelfhub.feature.book_reviews.adapters.UserReviewListAdapter().getAdapter()
                 layout.reviewRecView.adapter = reviewsAdapter
                 reviewsAdapter.submitList(reviews)
             }
@@ -321,6 +331,7 @@ class BookItemActivity : AppCompatActivity() {
                 layout.rateBookLayout.visibility = View.GONE
 
                 review.get().let { userReview ->
+                    this.userReview = userReview
                     layout.ratingBar.rating = userReview.userRating.toFloat()
 
                     userReview.dateTime?.let {
@@ -348,8 +359,7 @@ class BookItemActivity : AppCompatActivity() {
 
             val reviewLength = layout.userReviewEditText.text.toString().length
 
-            layout.reviewLengthTxt.text =
-                String.format(getString(R.string.reviewtextLength), reviewLength)
+            layout.reviewLengthTxt.text = String.format(getString(R.string.reviewtextLength), reviewLength)
 
         }
     }

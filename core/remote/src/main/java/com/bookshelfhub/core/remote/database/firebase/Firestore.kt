@@ -6,6 +6,7 @@ import com.bookshelfhub.core.model.entities.IEntityId
 import com.bookshelfhub.core.model.entities.UserReview
 import com.bookshelfhub.core.remote.database.IRemoteDataSource
 import com.bookshelfhub.core.remote.database.RemoteDataFields
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
@@ -42,6 +43,16 @@ import javax.inject.Inject
                 .set(newData, SetOptions.merge()).await()
 
     }
+
+     override fun updateDocDataAsync(
+         collection:String,
+         document:String,
+         field:String,
+         value:Any,
+     ): Task<Void> {
+         throwNoInternetConnectionError()
+         return db.collection(collection).document(document).update(field, value)
+     }
 
      override suspend fun updateDocData(
          collection:String,

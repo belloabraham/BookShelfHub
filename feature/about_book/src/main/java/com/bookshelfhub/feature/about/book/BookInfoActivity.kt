@@ -3,22 +3,25 @@ package com.bookshelfhub.feature.about.book
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import com.bookshelfhub.core.common.extensions.applyLinks
+import com.bookshelfhub.core.common.helpers.textlinkbuilder.TextLinkBuilder
+import com.bookshelfhub.core.common.helpers.utils.IntentUtil
 import com.bookshelfhub.feature.about.book.databinding.ActivityBookInfoBinding
 import dagger.hilt.android.AndroidEntryPoint
-
+import com.bookshelfhub.core.common.helpers.utils.Regex
+import java.util.regex.Pattern
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BookInfoActivity : AppCompatActivity() {
 
     private lateinit var layout: ActivityBookInfoBinding
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private val bookInfoActivityViewModel by viewModels<BookInfoActivityViewModel>()
+    @Inject
+    lateinit var intentUtil: IntentUtil
+    @Inject
+    lateinit var textLinkBuilder: TextLinkBuilder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -28,18 +31,34 @@ class BookInfoActivity : AppCompatActivity() {
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = bookInfoActivityViewModel.getTitle()
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
-        navController = navHostFragment.findNavController()
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        bookInfoActivityViewModel.getLivePublishedBook().observe(this) { pubBook ->
+
+            val book = pubBook.get()
+            val links = listOf(textLinkBuilder.getTextLink(Pattern.compile(Regex.WEB_LINK)) { link ->
+                    openLink(link)
+            })
+
+            layout.authorTxt.text = String.format(getString(R.string.author), book.author)
+            layout.bookIdTxt.text = String.format(
+                getString(R.string.isbn),
+                bookInfoActivityViewModel.getBookIdFromCompoundId()
+            )
+            layout.categoryTxt.text = String.format(getString(R.string.category), book.category)
+
+            layout.descriptionTxt.text = book.description
+            layout.descriptionTxt.applyLinks(links)
+
+        }
 
     }
 
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return super.onSupportNavigateUp()
+    private fun openLink(link:String){
+        val url =  if (!link.contains("http")){
+            "https://$link"
+        }else{
+            link
+        }
+        startActivity(intentUtil.intent(url))
     }
-
 
 }

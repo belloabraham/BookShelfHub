@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.ListAdapter
 import com.bookshelfhub.book.page.BookActivity
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.feature.home.R
 import com.bookshelfhub.core.model.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
@@ -38,8 +39,8 @@ class BookmarkListAdapter( private val context: Context) {
             itemCardView.setOnClickListener {
                 val intent = Intent(context, BookActivity::class.java)
                 with(intent){
-                    putExtra(com.bookshelfhub.core.data.Book.NAME, model.title)
-                    putExtra(com.bookshelfhub.core.data.Book.ID, model.bookId)
+                    putExtra(Book.NAME, model.title)
+                    putExtra(Book.ID, model.bookId)
                 }
                 context.startActivity(intent)
             }

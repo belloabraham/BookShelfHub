@@ -5,10 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName= "ReadHistories")
 data class ReadHistory(
-    val bookId:String,
     var lastPageNumber:Int,
     val readPercentage:Int,
     val bookName:String,
     @PrimaryKey
-    val id:Int=0
+    val bookId:String
 )

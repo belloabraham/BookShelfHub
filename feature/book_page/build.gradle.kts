@@ -11,6 +11,7 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.storage.ktx)
+    implementation(libs.firebase.firestore.ktx)
 
     implementation("com.google.guava:guava:31.0.1-android")
 

@@ -1,7 +1,6 @@
 package com.bookshelfhub.feature.home.adapters.recycler
 
 import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
 import android.view.View
 import android.view.View.GONE
@@ -77,38 +76,39 @@ class BookShelfAdapter(
             imageView.setImageBitmap(IconUtil.getBitmap(model.coverDataUrl))
 
             val bookFile = LocalFile.getBookFile(model.bookId, model.pubId, activity)
-
             val fileDoesNotExist = !bookFile.exists()
+
             if (fileDoesNotExist) {
                 setDownloadIconVisibility(VISIBLE)
             }
 
-            imageView.setOnClickListener {
-                val fileExist = bookFile.exists()
-                if (fileExist){
-                    openBook(activity, bookName, model.bookId)
-                }
+                imageView.setOnClickListener {
 
-                if(fileDoesNotExist){
-                    if(shelfViewModel.isConnected()){
-                        val downloadDrawable =  IconUtil.getDrawable(activity, R.drawable.download_outline)
-                        downloadActionIcon.setImageDrawable(downloadDrawable)
+                    val fileExist = bookFile.exists()
 
-                        val workData = workDataOf(
-                            Book.ID to model.bookId,
-                            Book.SERIAL_NO to model.serialNo.toInt(),
-                            Book.PUB_ID to model.pubId,
-                            Book.NAME to bookName
-                        )
+                    if (fileExist){
+                        openBook(activity, bookName, model.bookId)
+                    }
 
-                        shelfViewModel.startBookDownload(workData)
+                    if(fileDoesNotExist){
 
-                    }else{
-                        activity.showToast(R.string.no_internet_error_msg, Toast.LENGTH_LONG)
+                        if(shelfViewModel.isConnected()){
+                            val downloadDrawable =  IconUtil.getDrawable(activity, R.drawable.download_outline)
+                            downloadActionIcon.setImageDrawable(downloadDrawable)
+
+                            val workData = workDataOf(
+                                Book.ID to model.bookId,
+                                Book.SERIAL_NO to model.serialNo.toInt(),
+                                Book.PUB_ID to model.pubId,
+                                Book.NAME to bookName
+                            )
+
+                            shelfViewModel.startBookDownload(workData)
+                        }else{
+                            activity.showToast(R.string.no_internet_error_msg, Toast.LENGTH_LONG)
+                        }
                     }
                 }
-            }
-
 
             lifecycleOwner.lifecycleScope.launch {
                 shelfViewModel.getLiveBookDownloadState(model.bookId).asFlow().collect{
@@ -145,12 +145,7 @@ class BookShelfAdapter(
                 putExtra(Book.NAME, bookName)
                 putExtra(Book.ID, bookId)
             }
-            val options = ActivityOptions.makeSceneTransitionAnimation(
-                activity,
-                imageView,
-                activity.getString(R.string.trans_book)
-            )
-            activity.startActivity(intent, options.toBundle())
+            activity.startActivity(intent)
         }
 
     }

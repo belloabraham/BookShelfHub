@@ -22,14 +22,51 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/navHost"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/book_info_activity_navigation"
-        android:paddingBottom="?actionBarSize"
-        app:defaultNavHost="true" />
+        android:paddingBottom="?actionBarSize">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/dp_16"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16"
+                android:textSize="16sp"
+                android:textColor="?colorOnBackground"
+                android:id="@+id/authorTxt"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16"
+                android:textColor="?colorOnBackground"
+                android:textSize="16sp"
+                android:id="@+id/bookIdTxt"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?colorOnBackground"
+                android:layout_marginTop="@dimen/dp_16"
+                android:textSize="16sp"
+                android:id="@+id/categoryTxt"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_marginTop="@dimen/dp_16"
+                android:id="@+id/descriptionTxt" />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

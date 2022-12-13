@@ -30,7 +30,6 @@ import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.model.entities.OrderedBook
-import com.bookshelfhub.core.model.entities.PublishedBook
 import com.bookshelfhub.core.model.entities.ReadHistory
 import com.bookshelfhub.core.remote.remote_config.RemoteConfig
 import com.bookshelfhub.feature.about.book.BookInfoActivity
@@ -51,9 +50,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private val bookActivityViewModel by viewModels<BookActivityViewModel>()
     private lateinit var layout: ActivityBookBinding
     private lateinit var bottomNavigationLayout: LinearLayout
-    private var currentPage:Double = 0.0
-    private var totalPages:Double = 0.0
-    private var publishedBook: PublishedBook? = null
+    private var currentPage = 1
     private val hideHandler = Handler()
     private lateinit var orderedBook:OrderedBook
 
@@ -62,22 +59,22 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        EnableWakeLock(this, lifecycle)
-
-        title = bookActivityViewModel.getBookName()
-
         layout = ActivityBookBinding.inflate(layoutInflater)
+
         setContentView(layout.root)
 
-        val isDarkMode = isAppUsingDarkTheme()
+        EnableWakeLock(this, lifecycle)
+        title = bookActivityViewModel.getBookName()
 
+         val isDarkMode = isAppUsingDarkTheme()
+         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         lifecycleScope.launch {
-             orderedBook = bookActivityViewModel.getAnOrderedBook()
-             loadBook(isDarkMode, orderedBook.pubId)
+            orderedBook = bookActivityViewModel.getAnOrderedBook()
 
-            if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
-               val readHistory = bookActivityViewModel.getReadHistory()
+           loadBook(isDarkMode, orderedBook.pubId)
+           if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
+                val readHistory = bookActivityViewModel.getReadHistory()
                 if (readHistory.isPresent) {
                     showReadProgressDialog(readHistory.get())
                 }
@@ -88,19 +85,19 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
             override fun liked(likeButton: LikeButton?) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
-                bookActivityViewModel.addBookmark(currentPage.toInt())
+                bookActivityViewModel.addBookmark(currentPage)
                 showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
             }
 
             override fun unLiked(likeButton: LikeButton?) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
-                bookActivityViewModel.deleteFromBookmark(currentPage.toInt())
+                bookActivityViewModel.deleteFromBookmark(currentPage)
                 showToast(R.string.removed_bookmark_msg, Toast.LENGTH_SHORT)
             }
         })
 
         layout.bookCategoryVideoLinkBtn.setOnClickListener {
-            lifecycleScope.launch {
+          lifecycleScope.launch {
                 val publishedBook = bookActivityViewModel.getPublishedBook().get()
                 val videosLink = bookActivityViewModel.getRemoteString(RemoteConfig.VIDEOS_DOMAIN) +"/"+ publishedBook.category.makeUrlPath()
                 val intent = Intent(this@BookActivity, WebViewActivity::class.java)
@@ -111,7 +108,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 startActivity(intent)
             }
         }
-
 
         layout.menuBtn.setOnClickListener {
             val view = View.inflate(this, R.layout.book_menu, null)
@@ -141,10 +137,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         }
 
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         isFullscreen = true
-        // Set up the user interaction to manually show or hide the system UI.
+         //Set up the user interaction to manually show or hide the system UI.
         layout.pdfView.setOnClickListener { toggle() }
 
         bottomNavigationLayout = layout.fullscreenContentControls
@@ -161,12 +155,17 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 layout.pageNumberText.text = "${page.plus(1)}"
                 layout.pageNumLabel.isVisible = page > 0
                 layout.progressIndicator.isVisible = page > 0
-                currentPage = page.toDouble() + 1
-                totalPages = pageCount.toDouble()
-                val progress = ((currentPage / totalPages) * 100.0)
-                layout.progressIndicator.progress = progress.toInt()
+                currentPage = page + 1
+                val progress = ((currentPage / pageCount) * 100)
+                layout.progressIndicator.progress = progress
 
-                checkIfPageIsBookmarked()
+                checkIfPageIsBookmarked(currentPage)
+                if(currentPage > 1){
+                    bookActivityViewModel.addReadHistory(
+                        currentPage,
+                        pageCount
+                    )
+                }
             }
             .enableAnnotationRendering(true)
             .enableSwipe(true)
@@ -174,8 +173,8 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     override fun onResume() {
-        super.onResume()
         bookActivityViewModel.generateBookShareLink()
+        super.onResume()
     }
 
 
@@ -214,21 +213,25 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         startActivity(intent)
     }
 
-    private fun checkIfPageIsBookmarked(){
+    private fun checkIfPageIsBookmarked(currentPage:Int){
         lifecycleScope.launch{
-            val bookmark = bookActivityViewModel.getBookmark(currentPage.toInt())
+            val bookmark = bookActivityViewModel.getBookmark(currentPage)
             layout.bookmarkBtn.isLiked = bookmark.isPresent
         }
     }
 
     private fun shareBookLink(){
-        val bookShareLink = bookActivityViewModel.getBookShareLink()
-        bookShareLink?.let {
-            startActivity(ShareUtil.getShareIntent(it, publishedBook!!.name))
+        lifecycleScope.launch {
+            val bookShareLink = bookActivityViewModel.getBookShareLink()
+            val publishedBook = bookActivityViewModel.getPublishedBook().get()
+            bookShareLink?.let {
+                startActivity(ShareUtil.getShareIntent(it, publishedBook.name))
+            }
+            if(bookShareLink==null){
+                showToast(R.string.internet_connection_required)
+            }
         }
-        if(bookShareLink==null){
-            showToast(R.string.internet_connection_required)
-        }
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -248,7 +251,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     @SuppressLint("InlinedApi")
     private val hidePart2Runnable = Runnable {
-        // Delayed removal of status and navigation bar
+         //Delayed removal of status and navigation bar
         layout.pdfView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LOW_PROFILE or
                     View.SYSTEM_UI_FLAG_FULLSCREEN or
@@ -260,7 +263,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private val showPart2Runnable = Runnable {
-        // Delayed display of UI elements
+         //Delayed display of UI elements
         supportActionBar?.show()
         bottomNavigationLayout.visibility = VISIBLE
         setTopMargin(24f, layout.pageNumLabel)
@@ -280,12 +283,12 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun hide() {
-        // Hide UI first
+         //Hide UI first
         supportActionBar?.hide()
         bottomNavigationLayout.visibility = GONE
         isFullscreen = false
 
-        // Schedule a runnable to remove the status and navigation bar after a delay
+         //Schedule a runnable to remove the status and navigation bar after a delay
         hideHandler.removeCallbacks(showPart2Runnable)
         hideHandler.postDelayed(hidePart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
@@ -297,7 +300,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         isFullscreen = true
 
-        // Schedule a runnable to display UI elements after a delay
+         //Schedule a runnable to display UI elements after a delay
         hideHandler.removeCallbacks(hidePart2Runnable)
         hideHandler.postDelayed(showPart2Runnable, UI_ANIMATION_DELAY.toLong())
     }
@@ -326,14 +329,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
          * and a change of the status and navigation bar.
          */
         private const val UI_ANIMATION_DELAY = 300
-    }
-
-    override fun onDestroy() {
-        bookActivityViewModel.addReadHistory(
-            currentPage.toInt(),
-            totalPages.toInt()
-        )
-        super.onDestroy()
     }
 
 }
