@@ -2,17 +2,15 @@ package com.bookshelfhub.feature.book_reviews
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.NavController
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
+import android.view.View
+import androidx.activity.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
+import com.bookshelfhub.feature.book_reviews.adapters.UserReviewListAdapter
 import com.bookshelfhub.feature.book_reviews.databinding.ActivityBookReviewsBinding
 
 class BookReviewsActivity : AppCompatActivity() {
     private lateinit var layout: ActivityBookReviewsBinding
-    private lateinit var navController: NavController
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    private val bookReviewsViewModel by viewModels<BookReviewsActivityViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,18 +20,23 @@ class BookReviewsActivity : AppCompatActivity() {
 
         setSupportActionBar(layout.toolbar)
         supportActionBar?.title = getString(R.string.ratings_reviews)
+        val reviewsAdapter = UserReviewListAdapter().getAdapter()
+        layout.reviewRecView.adapter = reviewsAdapter
+        layout.reviewRecView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
-
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHost) as NavHostFragment
-        navController = navHostFragment.findNavController()
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        bookReviewsViewModel.getTop300UserReviews().observe(this) { reviews ->
+            if (reviews.isNotEmpty()){
+                layout.progressBar.visibility = View.GONE
+                layout.reviewRecView.visibility = View.VISIBLE
+                reviewsAdapter.submitList(reviews)
+            }
+        }
 
     }
 
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return super.onSupportNavigateUp()
-    }
 }

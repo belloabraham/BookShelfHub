@@ -207,15 +207,14 @@ class BookItemActivity : AppCompatActivity() {
                         layout.downloadProgressTxt.text = String.format(getString(R.string.unable_to_download_book))
                     }
 
-                    if(progress>=100){
+                    if(progress >= 100){
                         layout.downloadProgressTxt.text = getString(R.string.download_complete)
-                        layout.downloadProgressLayout.visibility = View.GONE
-
                         val totalDownloads = onlinePublishedBook.totalDownloads + 1
                         layout.noOfDownloadsText.text = "$totalDownloads"
                         val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
                         checkIfBookAlreadyAddedByUser(orderedBook)
                         bookItemActivityViewModel.deleteDownloadState(downloadBookState)
+                        layout.downloadProgressLayout.visibility = View.GONE
                     }
                 }
             }

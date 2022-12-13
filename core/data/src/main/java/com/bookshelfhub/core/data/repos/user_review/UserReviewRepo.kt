@@ -47,7 +47,7 @@ class UserReviewRepo @Inject constructor(
        userReviews: List<UserReview>,
        bookUpdatedValues: List<HashMap<String, FieldValue>>,
        userId: String): Void? {
-      return remoteDataSource.updateUserReviews(
+          return remoteDataSource.updateUserReviews(
               userReviews,
               RemoteDataFields.PUBLISHED_BOOKS_COLL,
               RemoteDataFields.REVIEWS_COLL,

@@ -23,18 +23,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/pageNumb"
+                android:id="@+id/bookName"
                 android:layout_marginTop="@dimen/dp_8"
                 android:singleLine="true"
                 android:maxLines="1"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bookName"
-            android:layout_marginTop="@dimen/dp_8"
-            android:singleLine="true"
-            android:maxLines="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pageNumb"
+                android:layout_marginTop="@dimen/dp_8"
+                android:singleLine="true"
+                android:maxLines="1"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </com.google.android.material.card.MaterialCardView>
