@@ -37,14 +37,21 @@ class BookActivityViewModel @Inject constructor(
     val userId = userAuth.getUserId()
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
+    private var bookmarkPageNo = savedState.get<Int>(Book.BOOKMARK_PAGE_NO)
+
+
     private var bookShareLink:String?=null
 
     init {
-
         viewModelScope.launch {
             bookShareLink = settingsUtil.getString(bookId)
         }
+    }
 
+
+
+    fun getBookmarkPageNo(): Int? {
+        return bookmarkPageNo
     }
 
     fun getRemoteString(key:String): String {
@@ -110,8 +117,8 @@ class BookActivityViewModel @Inject constructor(
         return bookmarksRepo.getBookmark(currentPage, bookId)
     }
 
-    fun addBookmark(pageNumber: Int) {
-        val bookmark = Bookmark(userId, bookId, pageNumber, bookName)
+    fun addBookmark(pageNumber: Int, label:String) {
+        val bookmark = Bookmark(userId, bookId, pageNumber, bookName, label)
         viewModelScope.launch {
             bookmarksRepo.addBookmark(bookmark)
         }

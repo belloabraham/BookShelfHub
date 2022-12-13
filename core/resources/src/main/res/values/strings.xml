@@ -8,6 +8,12 @@
     <string name="yes">yes</string>
     <string name="no">no</string>
 
+    <string name="default_bookmark_label">Page %d - %s</string>
+
+    <string name="bookmark_label">Bookmark Label</string>
+
+    <string name="add_bookmark">Add Bookmark</string>
+
     <string name="clear_cart">Clear Cart</string>
     <string name="clear_cart_title">Clear Cart?</string>
     <string name="clear_cart_msg">Remove all books from the cart</string>

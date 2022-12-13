@@ -29,7 +29,6 @@ import com.bookshelfhub.core.common.helpers.utils.Toast
 import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.domain.usecases.LocalFile
-import com.bookshelfhub.core.model.entities.OrderedBook
 import com.bookshelfhub.core.model.entities.ReadHistory
 import com.bookshelfhub.core.remote.remote_config.RemoteConfig
 import com.bookshelfhub.feature.about.book.BookInfoActivity
@@ -37,6 +36,7 @@ import com.bookshelfhub.feature.webview.WebView
 import com.bookshelfhub.feature.webview.WebViewActivity
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.textfield.TextInputEditText
 import com.like.LikeButton
 import com.like.OnLikeListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,8 +52,6 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var bottomNavigationLayout: LinearLayout
     private var currentPage = 1
     private val hideHandler = Handler()
-    private lateinit var orderedBook:OrderedBook
-
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,23 +68,23 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
          supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         lifecycleScope.launch {
-            orderedBook = bookActivityViewModel.getAnOrderedBook()
 
-           loadBook(isDarkMode, orderedBook.pubId)
-           if(bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
+           loadBook(isDarkMode)
+
+           if(bookActivityViewModel.getBookmarkPageNo() == null &&  bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
                 val readHistory = bookActivityViewModel.getReadHistory()
                 if (readHistory.isPresent) {
                     showReadProgressDialog(readHistory.get())
                 }
             }
+
         }
 
         layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
 
             override fun liked(likeButton: LikeButton?) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
-                bookActivityViewModel.addBookmark(currentPage)
-                showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
+                addBookmark()
             }
 
             override fun unLiked(likeButton: LikeButton?) {
@@ -144,8 +142,10 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         bottomNavigationLayout = layout.fullscreenContentControls
     }
 
-    private  fun loadBook(isDarkMode:Boolean, pubId:String){
-        val bookFile = LocalFile.getBookFile(bookActivityViewModel.getBookId(), pubId, this)
+    private suspend fun loadBook(isDarkMode:Boolean){
+        val orderedBook = bookActivityViewModel.getAnOrderedBook()
+
+        val bookFile = LocalFile.getBookFile(bookActivityViewModel.getBookId(), orderedBook.pubId, this)
 
         layout.pdfView.fromFile(bookFile)
             .nightMode(isDarkMode)
@@ -162,7 +162,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 checkIfPageIsBookmarked(currentPage)
                 if(currentPage > 1){
                     bookActivityViewModel.addReadHistory(
-                        currentPage,
+                        (currentPage -1),
                         pageCount
                     )
                 }
@@ -170,6 +170,12 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             .enableAnnotationRendering(true)
             .enableSwipe(true)
             .load()
+
+        val bookmarkPageNo = bookActivityViewModel.getBookmarkPageNo()
+        val isBookmarkedPage = bookmarkPageNo != null
+        if(isBookmarkedPage){
+            layout.pdfView.jumpTo(bookmarkPageNo!!, true)
+        }
     }
 
     override fun onResume() {
@@ -177,6 +183,24 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         super.onResume()
     }
 
+    private fun addBookmark(){
+        val view = View.inflate(this, R.layout.add_bookmark, null)
+        val labelEditText = view.findViewById<TextInputEditText>(R.id.bookmarkLabelEditTxt)
+        MaterialBottomSheetDialogBuilder(this, this)
+            .setPositiveAction(R.string.cancel) {}
+            .setNegativeAction(R.string.add_bookmark) {
+                val label = labelEditText.text.toString().ifBlank {
+                    String.format(
+                        getString(R.string.default_bookmark_label),
+                        currentPage,
+                        bookActivityViewModel.getBookName()
+                    )
+                }
+                bookActivityViewModel.addBookmark((currentPage - 1), label)
+                showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
+            }
+            .showBottomSheet(view)
+    }
 
     private fun showReadProgressDialog(readHistory: ReadHistory) {
         lifecycleScope.launch {

@@ -9,4 +9,5 @@ object Book{
     const val AUTHOR="author"
     const val RATING_DIFF="rating_diff"
     const val IS_NEWLY_PURCHASED = "is_newly_purchased"
+    const val BOOKMARK_PAGE_NO = "bookmark_page_no"
 }

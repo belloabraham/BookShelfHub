@@ -30,17 +30,22 @@ class BookmarkListAdapter( private val context: Context) {
 
 
     private class BookmarkListViewHolder (view: View): RecyclerViewHolder<Bookmark>(view) {
-        private val title: TextView = view.findViewById(R.id.title)
+        private val label: TextView = view.findViewById(R.id.label)
         private val pageNum: TextView = view.findViewById(R.id.pageNumb)
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
+        private val bookName: TextView = view.findViewById(R.id.bookName)
+
         fun bindToView(model: Bookmark, context: Context, onLongClickListener:()->Boolean) {
-            title.text =  model.title
+            label.text =  model.label
+            bookName.text = model.bookName
             pageNum.text =  String.format(context.getString(R.string.pageNum), model.pageNumb)
+
             itemCardView.setOnClickListener {
                 val intent = Intent(context, BookActivity::class.java)
                 with(intent){
-                    putExtra(Book.NAME, model.title)
+                    putExtra(Book.NAME, model.bookName)
                     putExtra(Book.ID, model.bookId)
+                    putExtra(Book.BOOKMARK_PAGE_NO, model.pageNumb)
                 }
                 context.startActivity(intent)
             }

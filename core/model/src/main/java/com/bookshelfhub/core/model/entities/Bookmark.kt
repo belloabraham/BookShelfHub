@@ -8,7 +8,8 @@ data class Bookmark(
     val userId:String,
     val bookId:String,
     val pageNumb:Int,
-    val title:String,
+    val bookName:String,
+    val label:String,
     @PrimaryKey(autoGenerate = true)
     override val id:Long=0,
     var deleted:Boolean=false,
