@@ -9,6 +9,7 @@
 
     <application>
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name=".BookActivity"
             android:exported="false">
             <meta-data

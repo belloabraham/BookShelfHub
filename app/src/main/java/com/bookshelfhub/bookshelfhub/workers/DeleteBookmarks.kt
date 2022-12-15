@@ -46,8 +46,8 @@ workerParams
             Result.success()
 
         }catch (e:Exception){
-         ErrorUtil.e(e)
-         Result.retry()
+            ErrorUtil.e(e)
+            Result.retry()
         }
 
     }

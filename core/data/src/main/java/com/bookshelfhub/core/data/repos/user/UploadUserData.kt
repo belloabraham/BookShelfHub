@@ -42,15 +42,12 @@ class UploadUserData  @AssistedInject constructor (
                  userData.uploaded = true
                  userRepo.addUser(userData)
 
-           val userAddedAdditionalInfo = userData.additionInfo.isNullOrBlank()
-           if(userAddedAdditionalInfo){
                val notificationId = (4..40).random()
                NotificationBuilder(applicationContext)
                    .setTitle(R.string.profile_updated)
                    .setContentText(R.string.profile_updated_msg)
                    .Builder(applicationContext)
                    .showNotification(notificationId)
-           }
 
            Result.success()
          }catch (e:Exception){

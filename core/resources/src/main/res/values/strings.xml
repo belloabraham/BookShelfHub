@@ -10,7 +10,7 @@
 
     <string name="default_bookmark_label">Page %d - %s</string>
 
-    <string name="bookmark_label">Bookmark Label</string>
+    <string name="optional_bookmark_label">Bookmark Label (Optional)</string>
 
     <string name="add_bookmark">Add Bookmark</string>
 

@@ -68,16 +68,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
          supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         lifecycleScope.launch {
-
            loadBook(isDarkMode)
-
-           if(bookActivityViewModel.getBookmarkPageNo() == null &&  bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
-                val readHistory = bookActivityViewModel.getReadHistory()
-                if (readHistory.isPresent) {
-                    showReadProgressDialog(readHistory.get())
-                }
-            }
-
         }
 
         layout.bookmarkBtn.setOnLikeListener(object : OnLikeListener{
@@ -89,7 +80,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
             override fun unLiked(likeButton: LikeButton?) {
                 delayedHide(AUTO_HIDE_DELAY_MILLIS)
-                bookActivityViewModel.deleteFromBookmark(currentPage)
+                bookActivityViewModel.markBookmarkAsDeleted(currentPage)
                 showToast(R.string.removed_bookmark_msg, Toast.LENGTH_SHORT)
             }
         })
@@ -144,13 +135,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     private suspend fun loadBook(isDarkMode:Boolean){
         val orderedBook = bookActivityViewModel.getAnOrderedBook()
-
         val bookFile = LocalFile.getBookFile(bookActivityViewModel.getBookId(), orderedBook.pubId, this)
+
+        val defaultPage = bookActivityViewModel.getBookmarkPageNo() ?: 0
 
         layout.pdfView.fromFile(bookFile)
             .nightMode(isDarkMode)
             .fitEachPage(true)
-            .defaultPage(0)
+            .defaultPage(defaultPage)
             .onPageChange { page, pageCount ->
                 layout.pageNumberText.text = "${page.plus(1)}"
                 layout.pageNumLabel.isVisible = page > 0
@@ -158,24 +150,25 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 currentPage = page + 1
                 val progress = ((currentPage / pageCount) * 100)
                 layout.progressIndicator.progress = progress
-
                 checkIfPageIsBookmarked(currentPage)
                 if(currentPage > 1){
-                    bookActivityViewModel.addReadHistory(
-                        (currentPage -1),
-                        pageCount
-                    )
+                    bookActivityViewModel.addReadHistory((currentPage -1), pageCount)
                 }
             }
             .enableAnnotationRendering(true)
+            .onLoad {
+                lifecycleScope.launch {
+                    if(bookActivityViewModel.getBookmarkPageNo() == null &&  bookActivityViewModel.getBoolean(Settings.SHOW_CONTINUE_POPUP, true)){
+                        val readHistory = bookActivityViewModel.getReadHistory()
+                        if (readHistory.isPresent) {
+                            showReadProgressDialog(readHistory.get())
+                        }
+                    }
+                }
+            }
             .enableSwipe(true)
             .load()
 
-        val bookmarkPageNo = bookActivityViewModel.getBookmarkPageNo()
-        val isBookmarkedPage = bookmarkPageNo != null
-        if(isBookmarkedPage){
-            layout.pdfView.jumpTo(bookmarkPageNo!!, true)
-        }
     }
 
     override fun onResume() {
@@ -187,8 +180,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
         val view = View.inflate(this, R.layout.add_bookmark, null)
         val labelEditText = view.findViewById<TextInputEditText>(R.id.bookmarkLabelEditTxt)
         MaterialBottomSheetDialogBuilder(this, this)
-            .setPositiveAction(R.string.cancel) {}
-            .setNegativeAction(R.string.add_bookmark) {
+            .setPositiveAction(R.string.add_bookmark) {
                 val label = labelEditText.text.toString().ifBlank {
                     String.format(
                         getString(R.string.default_bookmark_label),
@@ -199,6 +191,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 bookActivityViewModel.addBookmark((currentPage - 1), label)
                 showToast(R.string.bookmark_added_msg, Toast.LENGTH_SHORT)
             }
+            .setNegativeAction(R.string.cancel) {}
             .showBottomSheet(view)
     }
 
@@ -239,7 +232,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun checkIfPageIsBookmarked(currentPage:Int){
         lifecycleScope.launch{
-            val bookmark = bookActivityViewModel.getBookmark(currentPage)
+            val bookmark = bookActivityViewModel.getBookmark((currentPage - 1))
             layout.bookmarkBtn.isLiked = bookmark.isPresent
         }
     }

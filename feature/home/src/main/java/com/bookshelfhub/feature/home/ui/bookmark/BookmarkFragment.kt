@@ -36,7 +36,7 @@ class BookmarkFragment : Fragment() {
         binding= FragmentBookmarkBinding.inflate(inflater, container, false)
         val layout = binding!!
 
-         mAdapter = BookmarkListAdapter(requireContext()).getBookmarkListAdapter{
+         mAdapter = BookmarkListAdapter(requireActivity()).getBookmarkListAdapter{
             showRemoveBookmarkHint(layout)
         }
 
@@ -73,8 +73,8 @@ class BookmarkFragment : Fragment() {
         val swipeToDeleteCallback  = object : SwipeToDeleteCallBack(requireContext(), R.color.red, R.drawable.ic_bookmark_minus_white) {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, i: Int) {
-                val position: Int = viewHolder.bindingAdapterPosition
-                val bookmark: Bookmark = adapter.currentList[position]
+                val position = viewHolder.bindingAdapterPosition
+                val bookmark = adapter.currentList[position]
                 bookmark.deleted=true
                 bookmarkArrayList.removeAt(position)
                 adapter.notifyItemRemoved(position)

@@ -284,11 +284,10 @@ import javax.inject.Inject
          throwNoInternetConnectionError()
        return  db.runBatch { batch->
              for (item in list){
-                 val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
+                 val docRef = db.collection(collection).document(document).collection(subCollection).document(item.id)
                  batch.set(docRef, item)
              }
          }.await()
-
     }
 
      override suspend fun deleteListOfDataAsync(
@@ -299,7 +298,7 @@ import javax.inject.Inject
          throwNoInternetConnectionError()
         return db.runBatch { batch->
              for (item in list){
-                 val docRef = db.collection(collection).document(document).collection(subCollection).document("${item.id}")
+                 val docRef = db.collection(collection).document(document).collection(subCollection).document(item.id)
                  batch.delete(docRef)
              }
          }.await()

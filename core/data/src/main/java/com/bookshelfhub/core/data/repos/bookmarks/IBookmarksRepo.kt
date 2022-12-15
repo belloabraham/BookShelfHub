@@ -8,9 +8,9 @@ import java.util.*
 interface IBookmarksRepo {
     suspend fun getBookmarks(isDeleted: Boolean): List<Bookmark>
 
-    suspend fun getBookmark(pageNumb: Int, bookId: String): Optional<Bookmark>
+    suspend fun getBookmark(pageNumb: Int, bookId: String, isDeleted: Boolean): Optional<Bookmark>
 
-    suspend fun deleteFromBookmark(pageNumb: Int, bookId: String)
+    suspend fun markBookmark(isDeleted: Boolean, pageNumb: Int, bookId: String)
 
     suspend fun addBookmark(bookmark: Bookmark)
 

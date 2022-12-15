@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bookmarkLabelEditTxt"
             android:inputType="text"
-            android:hint="@string/bookmark_label" />
+            android:hint="@string/optional_bookmark_label" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

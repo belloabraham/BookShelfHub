@@ -40,25 +40,28 @@ class BookmarksRepo @Inject constructor(
         }
     }
 
-     override suspend fun getBookmark(pageNumb: Int, bookId: String): Optional<Bookmark> {
+     override suspend fun getBookmark(pageNumb: Int, bookId: String, isDeleted: Boolean): Optional<Bookmark> {
         return  withContext(ioDispatcher){
-            bookmarksDao.getBookmark(pageNumb, bookId)
+            bookmarksDao.getBookmark(pageNumb, bookId, isDeleted)
         }
     }
 
-     override suspend fun deleteFromBookmark(pageNumb: Int, bookId:String) {
-         return withContext(ioDispatcher){bookmarksDao.deleteFromBookmark(pageNumb, bookId)}
+     override suspend fun markBookmark(isDeleted: Boolean, pageNumb: Int, bookId:String) {
+         return withContext(ioDispatcher){bookmarksDao.markBookmark(isDeleted, pageNumb, bookId)}
     }
 
      override suspend fun addBookmark(bookmark: Bookmark) {
          withContext(ioDispatcher) {
              bookmarksDao.insertOrReplace(bookmark)
-         }
+
              val oneTimeBookmarkUpload =
                  OneTimeWorkRequestBuilder<UploadBookmarks>()
                      .setConstraints(Constraint.getConnected())
                      .build()
-             worker.enqueueUniqueWork(Tag.oneTimeBookmarkUpload, ExistingWorkPolicy.REPLACE, oneTimeBookmarkUpload)
+           //  worker.enqueueUniqueWork(Tag.oneTimeBookmarkUpload, ExistingWorkPolicy.REPLACE, oneTimeBookmarkUpload)
+             worker.enqueue(oneTimeBookmarkUpload)
+         }
+
     }
 
      override suspend fun getDeletedBookmarks(isDeleted: Boolean, isUploaded: Boolean): List<Bookmark> {

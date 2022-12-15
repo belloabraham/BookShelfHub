@@ -1,6 +1,6 @@
 package com.bookshelfhub.feature.home.adapters.recycler
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
@@ -13,7 +13,7 @@ import com.bookshelfhub.core.model.entities.Bookmark
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
-class BookmarkListAdapter( private val context: Context) {
+class BookmarkListAdapter( private val activity: Activity) {
 
      fun getBookmarkListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>> {
         return adapterOf {
@@ -21,7 +21,7 @@ class BookmarkListAdapter( private val context: Context) {
                 layoutResource = R.layout.bookmarks_page_item,
                 viewHolder = BookmarkListAdapter::BookmarkListViewHolder,
                 onBindViewHolder = { vh, _, model ->
-                    vh.bindToView(model, context, onItemLongClickListener)
+                    vh.bindToView(model, activity, onItemLongClickListener)
                 }
             )
 
@@ -35,19 +35,19 @@ class BookmarkListAdapter( private val context: Context) {
         private val itemCardView: CardView = view.findViewById(R.id.itemCardView)
         private val bookName: TextView = view.findViewById(R.id.bookName)
 
-        fun bindToView(model: Bookmark, context: Context, onLongClickListener:()->Boolean) {
+        fun bindToView(model: Bookmark, activity: Activity, onLongClickListener:()->Boolean) {
             label.text =  model.label
             bookName.text = model.bookName
-            pageNum.text =  String.format(context.getString(R.string.pageNum), model.pageNumb)
+            pageNum.text =  String.format(activity.getString(R.string.pageNum), model.pageNumb.plus(1))
 
             itemCardView.setOnClickListener {
-                val intent = Intent(context, BookActivity::class.java)
+                val intent = Intent(activity, BookActivity::class.java)
                 with(intent){
                     putExtra(Book.NAME, model.bookName)
                     putExtra(Book.ID, model.bookId)
                     putExtra(Book.BOOKMARK_PAGE_NO, model.pageNumb)
                 }
-                context.startActivity(intent)
+                activity.startActivity(intent)
             }
            itemCardView.setOnLongClickListener {
                onLongClickListener()

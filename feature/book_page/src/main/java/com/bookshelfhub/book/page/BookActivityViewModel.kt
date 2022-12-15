@@ -107,18 +107,19 @@ class BookActivityViewModel @Inject constructor(
         return bookName
     }
 
-    fun deleteFromBookmark(pageNumb: Int) {
+    fun markBookmarkAsDeleted(pageNumb: Int, isDeleted: Boolean = true) {
         viewModelScope.launch {
-            bookmarksRepo.deleteFromBookmark(pageNumb, bookId)
+            bookmarksRepo.markBookmark(isDeleted, pageNumb, bookId)
         }
     }
 
-    suspend fun getBookmark(currentPage: Int): Optional<Bookmark> {
-        return bookmarksRepo.getBookmark(currentPage, bookId)
+    suspend fun getBookmark(currentPage: Int, isDeleted: Boolean = false): Optional<Bookmark> {
+        return bookmarksRepo.getBookmark(currentPage, bookId, isDeleted)
     }
 
     fun addBookmark(pageNumber: Int, label:String) {
-        val bookmark = Bookmark(userId, bookId, pageNumber, bookName, label)
+        val id = "$bookId-$pageNumber"
+        val bookmark = Bookmark(userId, bookId, pageNumber, bookName, label, id)
         viewModelScope.launch {
             bookmarksRepo.addBookmark(bookmark)
         }

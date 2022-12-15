@@ -25,10 +25,7 @@ workerParams
                 val bookmarks = bookmarksRepo.getRemoteBookmarks(userId)
 
                 if (bookmarks.isNotEmpty()) {
-                    val length = bookmarks.size - 1
-
-
-                    for (i in 0..length) {
+                    for (i in bookmarks.indices) {
                         bookmarks[i].uploaded = true
                     }
                     bookmarksRepo.addBookmarkList(bookmarks)

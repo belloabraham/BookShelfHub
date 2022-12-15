@@ -63,7 +63,7 @@
         <item name="android:layout_marginEnd">@dimen/dp_16</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:maxLines">1</item>
-        <item name="android:textSize">@dimen/dp_16sp</item>
+        <item name="android:textSize">@dimen/sp_16</item>
         <item name="android:ellipsize">end</item>
     </style>
 
