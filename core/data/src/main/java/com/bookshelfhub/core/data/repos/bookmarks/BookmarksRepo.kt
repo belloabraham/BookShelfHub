@@ -58,8 +58,7 @@ class BookmarksRepo @Inject constructor(
                  OneTimeWorkRequestBuilder<UploadBookmarks>()
                      .setConstraints(Constraint.getConnected())
                      .build()
-           //  worker.enqueueUniqueWork(Tag.oneTimeBookmarkUpload, ExistingWorkPolicy.REPLACE, oneTimeBookmarkUpload)
-             worker.enqueue(oneTimeBookmarkUpload)
+             worker.enqueueUniqueWork(Tag.oneTimeBookmarkUpload, ExistingWorkPolicy.REPLACE, oneTimeBookmarkUpload)
          }
 
     }
