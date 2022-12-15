@@ -3,20 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bookshelfhub.bookshelfhub">
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!--
-uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" /
-    -->
-    <queries>
 
+    <queries>
         <!-- Google Play Store -->
         <package android:name="com.android.vending" />
-
         <intent>
             <action android:name="android.intent.action.VIEW" />
         </intent>
@@ -34,8 +27,9 @@ uses-permission
         <!--
  Completely stop all dependencies from using App startup bcos I will
         initialize them on required (Only for dependencies that use App Startup)
-        one of those dependency is work manager
+        one of those dependencies is work manager
         -->
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -57,7 +51,6 @@ uses-permission
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
