@@ -137,9 +137,8 @@ class BookActivityViewModel @Inject constructor(
         return readHistoryRepo.getReadHistory(bookId)
     }
 
-    fun addReadHistory(currentPage: Int, totalPages: Int) {
+    fun addReadHistory(currentPage: Int, percentage: Int) {
         viewModelScope.launch {
-            val percentage = (currentPage / totalPages) * 100
             val readHistory = ReadHistory( currentPage, percentage, bookName, bookId)
             readHistoryRepo.addReadHistory(readHistory)
         }

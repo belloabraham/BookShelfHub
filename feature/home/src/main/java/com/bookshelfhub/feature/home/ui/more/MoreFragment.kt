@@ -264,29 +264,29 @@ class MoreFragment : Fragment() {
     }
 
     private fun showEarnings(){
+
         val view = View.inflate(requireContext(), R.layout.earnings, null)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val earningsText = view.findViewById<TextView>(R.id.earningsText)
+        MaterialBottomSheetDialogBuilder(requireActivity(), viewLifecycleOwner)
+            .setPositiveAction(R.string.ok){}
+            .showBottomSheet(view)
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val earnings =   moreViewModel.getRemoteEarnings()
+                val earnings = moreViewModel.getRemoteEarnings()
                 val total:Double = earnings?.total ?: 0.0
                 val user = moreViewModel.getUserRecord().get()
-
+                progressBar.visibility = GONE
                 earningsText.text = String.format(
                     getString(R.string.total_earnings),
                     user.earningsCurrency,
                     total
                 )
-                progressBar.visibility = GONE
             }catch (e:Exception){
                 ErrorUtil.e(e)
                 return@launch
             }
-            MaterialBottomSheetDialogBuilder(requireActivity(), this@MoreFragment)
-                .setPositiveAction(R.string.ok){}
-                .showBottomSheet(view)
         }
 
     }

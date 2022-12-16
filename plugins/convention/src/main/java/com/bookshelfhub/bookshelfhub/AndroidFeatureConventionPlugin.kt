@@ -18,10 +18,10 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+
                 apply("dagger.hilt.android.plugin")
                 apply("org.jetbrains.kotlin.kapt")
             }
-
 
             extensions.configure<LibraryExtension>{
                 configureAndroidAndKotlin(this)
@@ -35,6 +35,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs["dagger.hilt.android"])
                 "kapt"(libs["dagger.hilt.compiler"])
                 "kapt"(libs["androidx.hilt.compiler"])
+
                 "implementation"(libs["androidx.core"])
                 "implementation"(libs["androidx.appcompat"])
                 "implementation"(libs["google.material"])

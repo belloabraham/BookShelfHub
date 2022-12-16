@@ -81,7 +81,7 @@
                         android:layout_marginTop="2dp"
                         android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_play"
+                        android:src="@drawable/ic_videos"
                         android:contentDescription="@null"
                         android:scaleType="centerInside" />
 
@@ -158,6 +158,6 @@
         android:layout_gravity="top"
         android:layout_marginEnd="?actionBarSize"
         app:indicatorColor="?colorPrimaryVariant"
-        android:background="@color/white"/>
+        />
 
 </FrameLayout>

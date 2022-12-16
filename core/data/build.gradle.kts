@@ -1,7 +1,8 @@
+
 plugins {
     id ("bookshelfhub.android.library")
+    id ("bookshelfhub.android.dagger.hilt")
     id ("bookshelfhub.android.workmanager")
-
 }
 
 android {

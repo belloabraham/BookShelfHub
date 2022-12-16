@@ -45,8 +45,7 @@ gradlePlugin{
             id = "bookshelfhub.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
-        
-        
+
         register("bookshelfhubAndroidRoom") {
             id = "bookshelfhub.android.room"
             implementationClass = "AndroidRoomConventionPlugin"
@@ -57,10 +56,14 @@ gradlePlugin{
             implementationClass = "AndroidViewModelConventionPlugin"
         }
 
-
         register("bookshelfhubAndroidKotlinCoroutines") {
             id = "bookshelfhub.android.kotlin.coroutines"
             implementationClass = "KotlinCoroutinesConventionPlugin"
+        }
+
+        register("bookshelfhubAndroidDaggerHilt") {
+            id = "bookshelfhub.android.dagger.hilt"
+            implementationClass = "AndroidDaggerHiltConventionPlugin"
         }
     }
 }

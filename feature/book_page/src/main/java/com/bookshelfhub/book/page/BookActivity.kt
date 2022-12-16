@@ -148,11 +148,14 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 layout.pageNumLabel.isVisible = page > 0
                 layout.progressIndicator.isVisible = page > 0
                 currentPage = page + 1
-                val progress = ((currentPage / pageCount) * 100)
-                layout.progressIndicator.progress = progress
+                val percentageRed = ((currentPage / pageCount) * 100)
+                showToast("Current Page $currentPage")
+                showToast("Page count $pageCount")
+                showToast("Percentage Read $percentageRed")
+                layout.progressIndicator.progress = percentageRed
                 checkIfPageIsBookmarked(currentPage)
                 if(currentPage > 1){
-                    bookActivityViewModel.addReadHistory((currentPage -1), pageCount)
+                    bookActivityViewModel.addReadHistory((currentPage -1), percentageRed)
                 }
             }
             .enableAnnotationRendering(true)
@@ -200,20 +203,17 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
             val noOfDismiss = bookActivityViewModel.getInt(Settings.NO_OF_TIME_DISMISSED, 0)
             val view = View.inflate(this@BookActivity, R.layout.continue_reading, null)
             view.findViewById<TextView>(R.id.bookName).text = readHistory.bookName
-            view.findViewById<TextView>(R.id.percentageText).text =
-                String.format(getString(R.string.percent), readHistory.readPercentage)
-            view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress =
-                readHistory.readPercentage
-
+            view.findViewById<TextView>(R.id.percentageText).text = String.format(getString(R.string.percent), readHistory.readPercentage)
+            view.findViewById<LinearProgressIndicator>(R.id.progressIndicator).progress = readHistory.readPercentage
+            showToast(readHistory.readPercentage.toString())
             MaterialBottomSheetDialogBuilder(this@BookActivity, this@BookActivity)
-                .setOnDismissListener {
+                .setPositiveAction(R.string.dismiss) {
                     if (noOfDismiss < 2) {
                         showToast(R.string.dismiss_msg)
                         bookActivityViewModel.addIntToSettings(Settings.NO_OF_TIME_DISMISSED,
                             noOfDismiss + 1)
                     }
                 }
-                .setPositiveAction(R.string.dismiss) {}
                 .setNegativeAction(R.string.continue_reading) {
                     layout.pdfView.jumpTo(readHistory.lastPageNumber, true)
                 }

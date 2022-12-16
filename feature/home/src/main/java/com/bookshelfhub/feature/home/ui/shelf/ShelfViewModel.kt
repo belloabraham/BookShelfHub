@@ -52,9 +52,7 @@ class ShelfViewModel @Inject constructor(
     }
 
     fun startBookDownload(workData: Data){
-        viewModelScope.launch {
-            downloadBookUseCase(worker, workData, bookDownloadStateRepo)
-        }
+        downloadBookUseCase(worker, workData)
     }
 
 

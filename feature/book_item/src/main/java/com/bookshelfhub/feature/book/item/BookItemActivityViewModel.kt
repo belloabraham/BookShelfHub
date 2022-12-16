@@ -135,9 +135,7 @@ class BookItemActivityViewModel @Inject constructor(
   }
 
   fun startBookDownload(workData: Data){
-    viewModelScope.launch {
-      downloadBookUseCase(worker, workData, bookDownloadStateRepo)
-    }
+    downloadBookUseCase(worker, workData)
   }
 
   suspend fun updatePublishedBook(publishedBook: PublishedBook){

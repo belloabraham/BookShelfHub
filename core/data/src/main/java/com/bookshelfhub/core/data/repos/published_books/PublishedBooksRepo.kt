@@ -125,7 +125,9 @@ class PublishedBooksRepo @Inject constructor(
     }
 
    override suspend fun getBooksByCategory(category:String): List<PublishedBookUiState>{
-        return withContext(ioDispatcher) {publishedBooksDao.getBooksByCategory(category)}
+        return withContext(ioDispatcher) {
+            publishedBooksDao.getBooksByCategory(category)
+        }
     }
 
      override fun getBooksByCategoryPageSource(category:String): PagingSource<Int, PublishedBookUiState> {

@@ -83,7 +83,6 @@ class DownloadBook @AssistedInject constructor(
                     progress = it - 5
                     message = getDownloadProgressMessage(progress)
                      setForegroundAsync(getDownloadForegroundInfo(notification))
-
                      runBlocking {
                         bookDownloadStateRepo.updatedDownloadState(bookId, progress)
                     }
@@ -166,10 +165,7 @@ class DownloadBook @AssistedInject constructor(
         return if(progress == 100 ){
            applicationContext.getString(R.string.download_complete)
         }else{
-            String.format(
-                applicationContext.getString(R.string.download_progress),
-                progress
-            )
+            applicationContext.getString(R.string.downloading)
         }
     }
 

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.imageview.ShapeableImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="75dp"
-    android:layout_height="100dp"
+    android:layout_width="100dp"
+    android:layout_height="125dp"
     style="@style/BookItemImageView"
     android:contentDescription="@null"
+    android:layout_marginBottom="@dimen/dp_32"
     android:layout_marginStart="@dimen/dp_16"
     android:id="@+id/itemImageView"/>
 

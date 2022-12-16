@@ -23,7 +23,6 @@ class SimilarBooksActivityViewModel @Inject constructor(
   private val userId = userAuth.getUserId()
   private val category = savedState.get<String>(SimilarBooks.CATEGORY)!!
 
-
   private val config  = PagingConfig(
     pageSize = 10,
     prefetchDistance=5,

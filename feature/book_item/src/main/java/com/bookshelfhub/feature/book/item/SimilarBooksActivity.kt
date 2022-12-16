@@ -20,13 +20,15 @@ import com.bookshelfhub.feature.book.item.adapters.SimilarBooksAdapter
 import com.bookshelfhub.feature.book.item.adapters.SimilarBooksSearchResultAdapter
 import com.bookshelfhub.feature.book.item.databinding.ActivitySimilarBooksBinding
 import com.google.android.material.appbar.AppBarLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SimilarBooksActivity : AppCompatActivity() {
     private lateinit var layout: ActivitySimilarBooksBinding
     private var listOfBooks = mutableListOf<PublishedBookUiState>()
-    private val bookCategoryActivityViewModel by viewModels<SimilarBooksActivityViewModel>()
+    private val similarBooksActivityViewModel by viewModels<SimilarBooksActivityViewModel>()
     private lateinit var bookRequestMsg:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +50,7 @@ class SimilarBooksActivity : AppCompatActivity() {
 
 
         lifecycleScope.launch {
-            bookCategoryActivityViewModel.getFlowOfBookBy().collectLatest { books->
+            similarBooksActivityViewModel.getFlowOfBookBy().collectLatest { books->
                 bookListAdapter.submitData(books)
             }
         }
@@ -98,7 +100,7 @@ class SimilarBooksActivity : AppCompatActivity() {
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
         }
 
-        bookCategoryActivityViewModel.getLiveTotalCartItemsNo().observe(this) { cartItemsCount ->
+        similarBooksActivityViewModel.getLiveTotalCartItemsNo().observe(this) { cartItemsCount ->
             val cartIsNotEmpty = cartItemsCount > 0
             if(cartIsNotEmpty){
                 layout.cartNotifText.text = "$cartItemsCount"
@@ -110,7 +112,8 @@ class SimilarBooksActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-             listOfBooks.addAll(bookCategoryActivityViewModel.getBooksByCategory())
+            val booksByCategory = similarBooksActivityViewModel.getBooksByCategory()
+             listOfBooks.addAll(booksByCategory)
         }
 
     }
