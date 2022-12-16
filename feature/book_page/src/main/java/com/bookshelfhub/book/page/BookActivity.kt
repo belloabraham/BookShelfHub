@@ -148,10 +148,7 @@ class BookActivity : AppCompatActivity(), LifecycleOwner {
                 layout.pageNumLabel.isVisible = page > 0
                 layout.progressIndicator.isVisible = page > 0
                 currentPage = page + 1
-                val percentageRed = ((currentPage / pageCount) * 100)
-                showToast("Current Page $currentPage")
-                showToast("Page count $pageCount")
-                showToast("Percentage Read $percentageRed")
+                val percentageRed = ((currentPage.toDouble() / pageCount.toDouble()) * 100.0).toInt()
                 layout.progressIndicator.progress = percentageRed
                 checkIfPageIsBookmarked(currentPage)
                 if(currentPage > 1){
