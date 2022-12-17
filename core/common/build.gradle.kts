@@ -18,8 +18,6 @@ dependencies {
     implementation(libs.android.play.core.ktx)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
 
     implementation(libs.jakewharton.timber)
     implementation(libs.jakewharton.threetenabp)

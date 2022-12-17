@@ -8,10 +8,9 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.paging.runtime.ktx)
-
     implementation(libs.github.ibrahimyilmaz)
+
 
     implementation(project(":core:data"))
     implementation(project(":core:common"))

@@ -38,6 +38,8 @@ class BookActivityViewModel @Inject constructor(
     private var bookId = savedState.get<String>(Book.ID)!!
     private var bookName = savedState.get<String>(Book.NAME)!!
     private var bookmarkPageNo = savedState.get<Int>(Book.BOOKMARK_PAGE_NO)
+    internal var isActivityRecreated = false
+    internal var currentPage = 0
 
 
     private var bookShareLink:String?=null

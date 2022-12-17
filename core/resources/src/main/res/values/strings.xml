@@ -62,7 +62,8 @@
     <string name="unable_to_process_payment">Unable to process payment transaction: %s</string>
     <string name="payment_trans_failed">Payment transaction failed</string>
 
-    <string translatable="false" name="gcp_web_client">665623853292-e00h53fjf1qnfeobr8879be7jd2ao97g.apps.googleusercontent.com</string>
+    <string name="download_error">Download Error</string>
+
 
     <string name="resend_code_link">Resend code</string>
     <string name="time_remaining">%1$d:%2$d secs</string>

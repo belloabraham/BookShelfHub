@@ -42,10 +42,8 @@ android {
 dependencies {
 
     debugImplementation(libs.squareup.leakcanary)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.androidx.room.ktx)
-
     implementation(libs.com.google.code.gson)
 
     //Firebase

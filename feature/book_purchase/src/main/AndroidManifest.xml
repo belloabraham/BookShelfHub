@@ -9,6 +9,7 @@
     <application>
         <activity
             android:name=".CartActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

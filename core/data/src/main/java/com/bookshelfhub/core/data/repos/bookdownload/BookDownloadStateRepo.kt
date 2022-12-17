@@ -19,14 +19,6 @@ class BookDownloadStateRepo constructor(
         return bookDownloadDao.getLiveBookDownloadState(bookId)
     }
 
-    override suspend fun updatedDownloadState(bookId: String, hasError:Boolean){
-        return withContext(ioDispatcher){bookDownloadDao.updateBookDownloadState(bookId, hasError)}
-    }
-
-    override suspend fun updatedDownloadState(bookId: String, progress:Int){
-        return withContext(ioDispatcher){bookDownloadDao.updateBookDownloadState(bookId, progress)}
-    }
-
      override suspend fun addDownloadState(bookDownloadState: BookDownloadState){
          withContext(ioDispatcher){
              bookDownloadDao.insertOrReplace(bookDownloadState)

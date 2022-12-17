@@ -14,6 +14,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(project(":core:model"))
-    implementation("com.google.firebase:firebase-firestore-ktx:24.4.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.4.1")
 
 }

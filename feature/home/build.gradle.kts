@@ -1,3 +1,4 @@
+
 plugins {
     id ("bookshelfhub.android.feature")
     id ("bookshelfhub.android.navigation")
@@ -22,11 +23,8 @@ dependencies {
     implementation(libs.android.play.core)
     implementation(libs.android.play.core.ktx)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.work.runtime.ktx)
-
 
     implementation("com.jakewharton:process-phoenix:2.1.2")
 

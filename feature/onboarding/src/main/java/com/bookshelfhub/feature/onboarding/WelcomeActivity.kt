@@ -79,7 +79,6 @@ class WelcomeActivity : AppCompatActivity() {
 
         resultLauncher = getGoogleSignInActivityResult()
 
-
         lifecycleScope.launch {
             phoneAuthViewModel.getIsCodeSent().collect{
                 hideAnimation()
@@ -112,7 +111,6 @@ class WelcomeActivity : AppCompatActivity() {
             } else {
                 hideAnimation()
                 val intent = Intent(this, MainActivity::class.java)
-
                 val isNewUser = googleAuthViewModel.getIsNewUser() == true || phoneAuthViewModel.getIsNewUser() == true
                 if (isNewUser) {
                     showConfettiAnim()
@@ -173,10 +171,10 @@ class WelcomeActivity : AppCompatActivity() {
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser()!!
                 val isExistingUser = !isNewUser
+                afterAuthCompletes(isExistingUser)
                 if(isNewUser){
                     hideAnimation()
                 }
-                afterAuthCompletes(isExistingUser)
             }
         })
 
@@ -186,26 +184,20 @@ class WelcomeActivity : AppCompatActivity() {
         return  registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
-                lifecycleScope.launch{
-                    try {
-                        val googleSignIn = GoogleSignIn.getSignedInAccountFromIntent(data).await()
-                        try {
-                            val authResult = googleAuth.authWithGoogle(googleSignIn.idToken!!).await()
-                            googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
-                            googleAuthViewModel.setIsAuthenticatedSuccessful(true)
-                        } catch (e: Exception) {
-                            val authErrorMsg =
-                                getString(R.string.authentication) + ": " + signInErrorMsg
-                            googleAuthViewModel.setAuthenticationError(authErrorMsg)
-                        } finally {
-                            googleAuthViewModel.setIsAuthenticationComplete(true)
-                        }
 
-                    } catch (e: Exception) {
-                        hideAnimation()
-                        googleAuthViewModel.setSignInError(signInErrorMsg)
+                GoogleSignIn.getSignedInAccountFromIntent(data)
+                    .addOnSuccessListener {
+                        googleAuth.authWithGoogle(it.idToken!!)
+                            .addOnSuccessListener { authResult->
+                                googleAuthViewModel.setIsNewUser(authResult.additionalUserInfo!!.isNewUser)
+                                googleAuthViewModel.setIsAuthenticatedSuccessful(true)
+                                googleAuthViewModel.setIsAuthenticationComplete(true)
+                            }.addOnFailureListener {
+                                showGoogleAuthErrorMessage()
+                            }
+                    }.addOnFailureListener {
+                       showGoogleAuthErrorMessage()
                     }
-                }
 
             } else {
                 hideAnimation()
@@ -213,8 +205,16 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun showGoogleAuthErrorMessage(){
+        val authErrorMsg = getString(R.string.authentication) + ": " + signInErrorMsg
+        lifecycleScope.launch {
+            googleAuthViewModel.setAuthenticationError(authErrorMsg)
+        }
+        googleAuthViewModel.setIsAuthenticationComplete(true)
+    }
+
     private fun afterAuthCompletes(isExistingUser:Boolean){
-        if (isExistingUser){
+       if (isExistingUser){
             lifecycleScope.launch {
                 welcomeActivityViewModel.getRemoteUser()
                     .asFlow()
@@ -246,8 +246,8 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun hideAnimation() {
-        layout.lottieContainerView.visibility = View.GONE
         layout.lottieAnimView.cancelAnimation()
+        layout.lottieContainerView.visibility = View.GONE
     }
 
 

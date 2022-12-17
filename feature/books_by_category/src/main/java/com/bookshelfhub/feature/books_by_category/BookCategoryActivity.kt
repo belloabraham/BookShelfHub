@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bookshelfhub.core.resources.R
@@ -50,7 +49,8 @@ class BookCategoryActivity : AppCompatActivity() {
         val categorySearchListAdapter = CategorySearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = CategoryListAdapter(this, DiffUtilItemCallback())
 
-        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
+        val noOfRows = resources.getInteger(R.integer.no_of_category_books_in_a_row)
+        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, noOfRows)
         layout.categoryBookRecView.adapter = bookListAdapter
 
 

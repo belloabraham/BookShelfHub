@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Todo Notification and tooltip color -->
+    <color name="notf_color">#FF320066</color>
+</resources>

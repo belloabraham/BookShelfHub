@@ -21,7 +21,10 @@ class BookmarkViewModel @Inject constructor(
     private var liveBookmarks: LiveData<List<Bookmark>> = MutableLiveData()
 
     init{
-       liveBookmarks = bookmarksRepo.getLiveBookmarks(false)
+        liveBookmarks = bookmarksRepo.getLiveBookmarks(isDeleted = false)
+        viewModelScope.launch {
+            bookmarksRepo.loadRemoteBookmarks()
+        }
     }
 
     fun addBookmark(bookmark: Bookmark){

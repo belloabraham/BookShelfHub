@@ -2,7 +2,6 @@ plugins {
     id ("bookshelfhub.android.feature")
     id ("bookshelfhub.android.navigation")
     id ("bookshelfhub.android.workmanager")
-
 }
 
 android {
@@ -17,7 +16,6 @@ dependencies {
     implementation(libs.firebase.bom)
     implementation(libs.firebase.functions.ktx)
     implementation(libs.firebase.firestore.ktx)
-
 
     implementation(libs.github.ibrahimyilmaz)
     implementation(libs.hbb20.country.picker)

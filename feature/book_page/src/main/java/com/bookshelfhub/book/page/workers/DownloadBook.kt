@@ -17,6 +17,7 @@ import com.bookshelfhub.core.data.repos.bookdownload.IBookDownloadStateRepo
 import com.bookshelfhub.core.data.repos.published_books.IPublishedBooksRepo
 import com.bookshelfhub.core.domain.usecases.GetBookIdFromCompoundId
 import com.bookshelfhub.core.domain.usecases.LocalFile
+import com.bookshelfhub.core.model.uistate.BookDownloadState
 import com.bookshelfhub.core.remote.database.RemoteDataFields
 import com.bookshelfhub.core.remote.storage.ICloudStorage
 import com.bookshelfhub.core.remote.storage.StoragePath
@@ -64,6 +65,7 @@ class DownloadBook @AssistedInject constructor(
 
             notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
             setForegroundAsync(getDownloadForegroundInfo(notification))
+            message = applicationContext.getString(R.string.downloading)
 
             localFile = LocalFile.getBookFile(bookId, pubId, applicationContext)
 
@@ -75,26 +77,28 @@ class DownloadBook @AssistedInject constructor(
 
             val remoteFilePath = "${StoragePath.PUBLISHED_BOOKS}$SEPERATOR$pubId$SEPERATOR$bookId$SEPERATOR$unMergedBookId${FileExtension.DOT_PDF}"
 
-            val storageTask = cloudStorage.downloadAsTempFile(
-                remoteFilePath,
-                tempLocalFilePath,
-                 onProgress = {
-                    notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
-                    progress = it - 5
-                    message = getDownloadProgressMessage(progress)
-                     setForegroundAsync(getDownloadForegroundInfo(notification))
-                     runBlocking {
-                        bookDownloadStateRepo.updatedDownloadState(bookId, progress)
+            val storageTask = cloudStorage.downloadAsTempFile(remoteFilePath, tempLocalFilePath)
+
+            storageTask.addOnFailureListener{
+                ErrorUtil.e(it)
+                runBlocking {
+                    val downloadState = BookDownloadState(bookId, progress, true)
+                    bookDownloadStateRepo.addDownloadState(downloadState)
+                }
+            }
+
+            storageTask.addOnProgressListener {
+                progress = ((it.bytesTransferred.toFloat()/it.totalByteCount.toFloat())*100F).toInt()
+                notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
+                setForegroundAsync(getDownloadForegroundInfo(notification))
+                runBlocking {
+                    if(progress > 0){
+                        val stateProgress = progress - 1
+                        val downloadState = BookDownloadState(bookId, stateProgress)
+                        bookDownloadStateRepo.addDownloadState(downloadState)
                     }
-                },
-                onComplete = { _ ->
-                },
-                onError =  {
-                    ErrorUtil.e(it)
-                    runBlocking {
-                        bookDownloadStateRepo.updatedDownloadState(bookId, true)
-                    }
-                })
+                }
+            }
 
             Tasks.await(storageTask)
 
@@ -112,7 +116,10 @@ class DownloadBook @AssistedInject constructor(
             }
 
             if(!storageTask.isSuccessful){
-                notification = getNotificationBuilder(bookName, "Download Error").getNotificationBuilder()
+                notification = getNotificationBuilder(
+                    bookName,
+                    applicationContext.getString(R.string.download_error)
+                ).getNotificationBuilder()
             }
 
             notification.setOngoing(false)
@@ -133,7 +140,8 @@ class DownloadBook @AssistedInject constructor(
         createLocalFileFromTempFile(tempLocalFilePath, localFile, bookId)
 
         progress = 100
-        message = getDownloadProgressMessage(progress)
+        message =  applicationContext.getString(R.string.download_complete)
+
         notification = getNotificationBuilder(bookName, message).getNotificationBuilder()
 
         val intent = Intent(applicationContext, BookActivity::class.java)
@@ -149,7 +157,8 @@ class DownloadBook @AssistedInject constructor(
         notification.setContentIntent(bookActivityPendingIntent)
 
         runBlocking {
-            bookDownloadStateRepo.updatedDownloadState(bookId, progress)
+            val bookDownloadState = BookDownloadState(bookId, progress)
+            bookDownloadStateRepo.addDownloadState(bookDownloadState)
         }
     }
 
@@ -159,14 +168,6 @@ class DownloadBook @AssistedInject constructor(
         notification.setProgress(progressMax, progress, isDeterminate)
         notification.setContentText(message)
         return ForegroundInfo(notificationId, notification.build())
-    }
-
-    private fun getDownloadProgressMessage(progress:Int): String {
-        return if(progress == 100 ){
-           applicationContext.getString(R.string.download_complete)
-        }else{
-            applicationContext.getString(R.string.downloading)
-        }
     }
 
     private fun getNotificationBuilder(

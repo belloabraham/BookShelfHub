@@ -45,7 +45,8 @@ class SimilarBooksActivity : AppCompatActivity() {
         val categorySearchListAdapter = SimilarBooksSearchResultAdapter(this).getSearchResultAdapter()
         val bookListAdapter = SimilarBooksAdapter(this, DiffUtilItemCallback())
 
-        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, 3)
+        val noOfRows = resources.getInteger(R.integer.no_of_category_books_in_a_row)
+        layout.categoryBookRecView.layoutManager = GridLayoutManager(this, noOfRows)
         layout.categoryBookRecView.adapter = bookListAdapter
 
 

@@ -49,7 +49,7 @@
     <color name="black_overlay">#D9000000</color>
 
     <!-- Todo Notification and tooltip color -->
-    <color name="notf_color">@color/light_blue_A400</color>
+    <color name="notf_color">#FF320066</color>
 
     <color name="light_blue_A400">#FF00B0FF</color>
 

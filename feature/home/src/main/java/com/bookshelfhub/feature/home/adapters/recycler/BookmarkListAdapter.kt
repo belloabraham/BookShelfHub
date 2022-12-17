@@ -17,6 +17,12 @@ class BookmarkListAdapter( private val activity: Activity) {
 
      fun getBookmarkListAdapter(onItemLongClickListener:()->Boolean): ListAdapter<Bookmark, RecyclerViewHolder<Bookmark>> {
         return adapterOf {
+
+            diff(
+                areContentsTheSame = { old, new -> old.id == new.id },
+                areItemsTheSame = { old, new -> old.id == new.id }
+            )
+
             register(
                 layoutResource = R.layout.bookmarks_page_item,
                 viewHolder = BookmarkListAdapter::BookmarkListViewHolder,

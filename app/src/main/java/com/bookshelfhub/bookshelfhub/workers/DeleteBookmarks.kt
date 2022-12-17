@@ -16,9 +16,7 @@ class DeleteBookmarks @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val bookmarksRepo: IBookmarksRepo,
     private val userAuth: IUserAuth
-): CoroutineWorker(context,
-workerParams
-){
+): CoroutineWorker(context, workerParams){
     override suspend fun doWork(): Result {
 
         val userIsNotAuthenticated  = !userAuth.getIsUserAuthenticated()

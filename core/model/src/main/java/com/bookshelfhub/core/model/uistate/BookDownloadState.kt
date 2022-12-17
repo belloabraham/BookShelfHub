@@ -3,7 +3,7 @@ package com.bookshelfhub.core.model.uistate
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "BookDownloadStates")
+@Entity(tableName = "BookDownloadState")
 class BookDownloadState(
      @PrimaryKey
      val bookId:String,

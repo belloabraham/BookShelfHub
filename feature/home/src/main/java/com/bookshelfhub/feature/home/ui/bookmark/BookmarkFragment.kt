@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
@@ -46,8 +47,7 @@ class BookmarkFragment : Fragment() {
 
         var bookmarkArrayList: ArrayList<Bookmark> =  arrayListOf()
 
-        bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner) { bookmarkList ->
-
+        bookmarkViewModel.getLiveBookmarks().observe(viewLifecycleOwner, Observer { bookmarkList ->
             if (bookmarkArrayList.isEmpty()) {
                 bookmarkArrayList = bookmarkList as ArrayList<Bookmark>
                 adapter.submitList(bookmarkArrayList)
@@ -60,7 +60,7 @@ class BookmarkFragment : Fragment() {
                 layout.emptyBookmarksLayout.visibility = View.GONE
                 layout.bookmarkListRecView.visibility = View.VISIBLE
             }
-        }
+        })
 
         layout.bookmarkListRecView.addItemDecoration(
             DividerItemDecoration(
@@ -78,14 +78,14 @@ class BookmarkFragment : Fragment() {
                 bookmark.deleted=true
                 bookmarkArrayList.removeAt(position)
                 adapter.notifyItemRemoved(position)
-                    bookmarkViewModel.addBookmark(bookmark)
-                        bookmark.deleted = false
-                        val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.bookmark_removed_msg, Snackbar.LENGTH_LONG)
-                        snackBar.setAction(R.string.undo) {
-                            bookmarkArrayList.add(position, bookmark)
-                            adapter.notifyItemInserted(position)
-                                bookmarkViewModel.addBookmark(bookmark)
-                        }.show()
+                bookmarkViewModel.addBookmark(bookmark)
+                bookmark.deleted = false
+                val snackBar = Snackbar.make(layout.rootCoordinateLayout, R.string.bookmark_removed_msg, Snackbar.LENGTH_LONG)
+                snackBar.setAction(R.string.undo) {
+                    bookmarkArrayList.add(position, bookmark)
+                    adapter.notifyItemInserted(position)
+                        bookmarkViewModel.addBookmark(bookmark)
+                }.show()
             }
         }
 

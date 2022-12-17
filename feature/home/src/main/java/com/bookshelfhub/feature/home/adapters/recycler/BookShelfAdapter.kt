@@ -9,8 +9,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ListAdapter
 import androidx.work.*
 import com.bookshelfhub.book.page.BookActivity
@@ -22,7 +20,6 @@ import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.core.domain.usecases.LocalFile
 import com.bookshelfhub.core.model.uistate.OrderedBookUiState
 import com.bookshelfhub.feature.home.ui.shelf.ShelfViewModel
-import kotlinx.coroutines.launch
 import me.ibrahimyilmaz.kiel.adapterOf
 import me.ibrahimyilmaz.kiel.core.RecyclerViewHolder
 
@@ -110,28 +107,27 @@ class BookShelfAdapter(
                     }
                 }
 
-            lifecycleOwner.lifecycleScope.launch {
-                shelfViewModel.getLiveBookDownloadState(model.bookId).asFlow().collect{
+            shelfViewModel.getLiveBookDownloadState(model.bookId).observe(lifecycleOwner){
+                if(it.isPresent){
+                    val downloadBookState = it.get()
+                    val progress = downloadBookState.progress
 
-                    if(it.isPresent){
-                        val downloadBookState = it.get()
-                        val progress = downloadBookState.progress
-                        progressBar.progress = progress
+                    progressBar.progress = progress
 
-                        if(downloadBookState.hasError){
-                            val retryDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
-                            downloadActionIcon.setImageDrawable(retryDrawable)
-                        }
+                    if(downloadBookState.hasError){
+                        val retryDrawable =  IconUtil.getDrawable(activity, R.drawable.error_reload)
+                        downloadActionIcon.setImageDrawable(retryDrawable)
+                    }
 
-                        if(progress==100){
-                            setDownloadIconVisibility(GONE)
-                            val message =  String.format(activity.getString(R.string.name_download_complete), bookName)
-                            activity.showToast(message)
-                            shelfViewModel.deleteDownloadState(downloadBookState)
-                        }
+                    if(progress==100){
+                        setDownloadIconVisibility(GONE)
+                        val message =  String.format(activity.getString(R.string.name_download_complete), bookName)
+                        activity.showToast(message)
+                        shelfViewModel.deleteDownloadState(downloadBookState)
                     }
                 }
             }
+
         }
 
         private fun setDownloadIconVisibility(visibility:Int){

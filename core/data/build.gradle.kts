@@ -18,8 +18,8 @@ dependencies {
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.functions.ktx)
 
-
     implementation(libs.androidx.lifecycle.livedata.ktx)
+
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
 

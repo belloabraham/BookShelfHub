@@ -16,9 +16,7 @@ class UnPublishedBooks @AssistedInject constructor (
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
     private val publishedBooksRepo: IPublishedBooksRepo,
-) : CoroutineWorker(context,
-    workerParams
-) {
+) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
 

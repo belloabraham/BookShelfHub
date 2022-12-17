@@ -17,8 +17,7 @@ class UploadNotificationToken @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val userAuth: IUserAuth,
     private val userRepo: IUserRepo,
-): CoroutineWorker(context,
-    workerParams) {
+): CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
 

@@ -16,9 +16,7 @@ dependencies {
     implementation("com.google.guava:guava:31.0.1-android")
 
     implementation(libs.play.services.basement)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
 
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.com.github.barteksc)

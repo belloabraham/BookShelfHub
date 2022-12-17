@@ -126,8 +126,7 @@ class LoginFragment:Fragment() {
             if (isAuthSuccessful){
                 val isNewUser = googleAuthViewModel.getIsNewUser()!!
                 if (isNewUser){
-                    val actionUserInfo =
-                        LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
+                    val actionUserInfo =  LoginFragmentDirections.actionLoginFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }
             }

@@ -2,7 +2,6 @@ plugins {
     id("bookshelfhub.android.feature")
     id ("bookshelfhub.android.navigation")
     id ("bookshelfhub.android.workmanager")
-
 }
 
 android {
@@ -19,6 +18,7 @@ dependencies {
     implementation(libs.github.ibrahimyilmaz)
     implementation(libs.ivbaranov.materiallettericon)
     implementation(libs.zhangai.android.materialratingbar)
+
 
     implementation(project(":core:common"))
     implementation(project(":core:authentication"))

@@ -6,7 +6,10 @@ import com.bookshelfhub.core.model.entities.IEntityId
 import java.util.*
 
 interface IBookmarksRepo {
-    suspend fun getBookmarks(isDeleted: Boolean): List<Bookmark>
+    fun getLiveBookmarks(isDeleted: Boolean): LiveData<List<Bookmark>>
+
+    suspend fun loadRemoteBookmarks()
+
 
     suspend fun getBookmark(pageNumb: Int, bookId: String, isDeleted: Boolean): Optional<Bookmark>
 
@@ -32,5 +35,4 @@ interface IBookmarksRepo {
     suspend fun deleteRemoteBookmarks(list: List<IEntityId>, userId: String): Void
 
     suspend fun getRemoteBookmarks(userId: String): List<Bookmark>
-    fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>>
 }

@@ -123,10 +123,7 @@ class VerificationFragment:Fragment(){
             if (isSignedInSuccessfully) {
                 val isNewUser = phoneAuthViewModel.getIsNewUser()!!
                 if (isNewUser) {
-                    val actionUserInfo =
-                        VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(
-                            true
-                        )
+                    val actionUserInfo =  VerificationFragmentDirections.actionVerificationFragmentToUserInfoFragment(true)
                     findNavController().navigate(actionUserInfo)
                 }
             }

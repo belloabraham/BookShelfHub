@@ -16,10 +16,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
 
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-
-    implementation(libs.jetbrains.kotlinx.coroutines.play.services)
 
     implementation(libs.klinkerapps.link.builder)
     implementation(libs.smarteist.autoimageslider)

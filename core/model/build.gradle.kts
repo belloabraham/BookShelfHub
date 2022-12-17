@@ -8,7 +8,7 @@ android {
 
 dependencies {
 
-    implementation("com.google.firebase:firebase-firestore-ktx:24.4.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.4.1")
     implementation("com.google.firebase:firebase-database-ktx:20.1.0")
     implementation(libs.androidx.room.ktx)
 }

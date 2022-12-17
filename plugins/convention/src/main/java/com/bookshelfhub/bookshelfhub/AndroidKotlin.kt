@@ -55,9 +55,11 @@ internal  fun Project.configureAndroidAndKotlin(extension: CommonExtension<*,*,*
         ))
 
        with(dependencies){
-            add("coreLibraryDesugaring", libs["android.desugarJdkLibs"])
-            add("implementation", libs["jetbrains.kotlin.stdlib.jdk8"] )
-            add("implementation", libs["androidx.fragment"] )
+           add("coreLibraryDesugaring", libs["android.desugarJdkLibs"])
+           add("implementation", libs["jetbrains.kotlin.stdlib.jdk8"] )
+
+           add("implementation", libs["kotlinx.coroutines.android"])
+           add("implementation", libs["jetbrains.kotlinx.coroutines.play.services"])
 
            add("testImplementation", libs["junit"] )
            add("testImplementation", libs["com.google.truth"] )

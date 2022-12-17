@@ -190,9 +190,8 @@ class BookItemActivity : AppCompatActivity() {
 
 
         lifecycleScope.launch {
-            bookItemActivityViewModel.getLiveBookDownloadState(
-                bookId
-            ).asFlow().collect{
+            bookItemActivityViewModel.getLiveBookDownloadState(bookId).asFlow().collect{
+
                 if(it.isPresent){
 
                     layout.downloadProgressLayout.visibility = View.VISIBLE
@@ -211,10 +210,11 @@ class BookItemActivity : AppCompatActivity() {
                         layout.downloadProgressTxt.text = getString(R.string.download_complete)
                         val totalDownloads = onlinePublishedBook.totalDownloads + 1
                         layout.noOfDownloadsText.text = "$totalDownloads"
-                        val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
-                        checkIfBookAlreadyAddedByUser(orderedBook)
-                        bookItemActivityViewModel.deleteDownloadState(downloadBookState)
+                        //val orderedBook = bookItemActivityViewModel.getAnOrderedBook()
+                        //checkIfBookAlreadyAddedByUser(orderedBook)
+                        showOpenBookButtonAndHideOthers()
                         layout.downloadProgressLayout.visibility = View.GONE
+                        bookItemActivityViewModel.deleteDownloadState(downloadBookState)
                     }
                 }
             }

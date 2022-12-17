@@ -23,22 +23,21 @@ class BookmarksRepo @Inject constructor(
     private val remoteDataSource: IRemoteDataSource,
     ) : IBookmarksRepo {
     private val ioDispatcher: CoroutineDispatcher = IO
-    private val bookmarksDao= appDatabase.getBookmarksDao()
+    private val bookmarksDao = appDatabase.getBookmarksDao()
 
-     override suspend fun getBookmarks(isDeleted: Boolean): List<Bookmark> {
-        return withContext(ioDispatcher){
-          val bookmarks =  bookmarksDao.getBookmarks(isDeleted)
-
-          if (bookmarks.isEmpty()){
-                val oneTimeBookmarksDataDownload =
-                    OneTimeWorkRequestBuilder<DownloadBookmarks>()
-                        .setConstraints(Constraint.getConnected())
-                        .build()
-                worker.enqueueUniqueWork(Tag.oneTimeBookmarksDataDownload, ExistingWorkPolicy.KEEP, oneTimeBookmarksDataDownload)
-          }
-            bookmarks
+    override suspend fun loadRemoteBookmarks(){
+        val bookmarks =  bookmarksDao.getBookmarks(false)
+        if (bookmarks.isEmpty()){
+            val oneTimeBookmarksDataDownload = OneTimeWorkRequestBuilder<DownloadBookmarks>()
+                    .setConstraints(Constraint.getConnected())
+                    .build()
+            worker.enqueueUniqueWork(Tag.oneTimeBookmarksDataDownload, ExistingWorkPolicy.KEEP, oneTimeBookmarksDataDownload)
         }
     }
+
+     override fun getLiveBookmarks(isDeleted: Boolean): LiveData<List<Bookmark>> {
+          return  bookmarksDao.getLiveBookmarks(isDeleted)
+     }
 
      override suspend fun getBookmark(pageNumb: Int, bookId: String, isDeleted: Boolean): Optional<Bookmark> {
         return  withContext(ioDispatcher){
@@ -110,10 +109,5 @@ class BookmarksRepo @Inject constructor(
             Bookmark::class.java
           )
     }
-
-     override fun getLiveBookmarks(deleted: Boolean): LiveData<List<Bookmark>> {
-        return  bookmarksDao.getLiveBookmarks( deleted)
-    }
-
 
 }

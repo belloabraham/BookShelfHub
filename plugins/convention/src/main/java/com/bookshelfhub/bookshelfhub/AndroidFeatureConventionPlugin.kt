@@ -8,7 +8,6 @@ import com.bookshelfhub.bookshelfhub.libs
 import com.bookshelfhub.bookshelfhub.get
 import org.gradle.kotlin.dsl.configure
 
-
 class AndroidFeatureConventionPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
@@ -36,6 +35,10 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "kapt"(libs["dagger.hilt.compiler"])
                 "kapt"(libs["androidx.hilt.compiler"])
 
+                "implementation"(libs["androidx.lifecycle.viewmodel.ktx"])
+                "implementation"(libs["androidx.lifecycle.livedata.ktx"])
+
+                "implementation"(libs["androidx.fragment"])
                 "implementation"(libs["androidx.core"])
                 "implementation"(libs["androidx.appcompat"])
                 "implementation"(libs["google.material"])
