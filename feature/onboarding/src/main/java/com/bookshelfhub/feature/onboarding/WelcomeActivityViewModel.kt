@@ -94,7 +94,7 @@ class WelcomeActivityViewModel @Inject constructor(
                  val user = userRepo.getRemoteUser(userId)
                 remoteUser.value = user
              }catch (e:Exception){
-                 if(noOFRetries < 2){
+                 if(noOFRetries < 1){
                      noOFRetries++
                      return@launch
                  }
