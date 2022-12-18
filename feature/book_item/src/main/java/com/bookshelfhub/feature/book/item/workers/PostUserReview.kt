@@ -30,13 +30,14 @@ class PostUserReview @AssistedInject constructor(
     override suspend fun doWork(): Result {
 
         val bookId = inputData.getString(Book.ID)!!
+        val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
+
         val apiKey:String = settingsUtil.getString(Settings.PERSPECTIVE_API)!!
         val userReview  = userReviewRepo.getUserReview(bookId).get()
 
-        val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
 
         val userId = userAuth.getUserId()
-        val updatedBookValues: HashMap<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
+        val updatedBookValues: Map<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
 
         try {
              val postBody = getPostBody(userReview.review)
@@ -52,6 +53,7 @@ class PostUserReview @AssistedInject constructor(
                 val isNonToxicUserReview = toxicityScore <= 0.5
 
                 if (isNonToxicUserReview){
+
                     userReviewRepo.updateRemoteUserReview(userReview, updatedBookValues, bookId, userId)
 
                     if (userReview.isVerified){
@@ -69,16 +71,17 @@ class PostUserReview @AssistedInject constructor(
 
     }
 
-    private fun getUpdatedBookValues(userReview: UserReview, userRatingDiff:Double): HashMap<String, FieldValue>? {
+    private fun getUpdatedBookValues(userReview: UserReview, userRatingDiff:Double): Map<String, FieldValue>? {
         val userReviewNoForBook: Long = if (userReview.postedBefore) 0  else  1
         if (userReview.isVerified) {
-            return if (userReviewNoForBook > 0) {
-                hashMapOf(
+            val isNewReview = userReviewNoForBook > 0
+            return if (isNewReview) {
+                mapOf(
                     RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(userReviewNoForBook),
                     RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             } else {
-                hashMapOf(
+                mapOf(
                     RemoteDataFields.TOTAL_RATINGS to FieldValue.increment(userRatingDiff)
                 )
             }

@@ -82,6 +82,7 @@ class BookItemActivityViewModel @Inject constructor(
 
     viewModelScope.launch {
       user = userRepo.getUser(userId).get()
+
     }
 
     generateBookShareLink()

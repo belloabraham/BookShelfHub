@@ -65,7 +65,7 @@ class UpdatePreviouslyPostedUnverifiedUserReview @AssistedInject constructor(
             return Result.success()
         }
 
-           val listOfUpdatedBookValues = mutableListOf<HashMap<String, FieldValue>>()
+           val listOfUpdatedBookValues = mutableListOf<Map<String, FieldValue>>()
            for (review in verifiedReviews){
                val dynamicBookAttr =  hashMapOf(
                    RemoteDataFields.TOTAL_REVIEWS to FieldValue.increment(1),

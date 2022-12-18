@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 class UserReviewRepo @Inject constructor(
     appDatabase: AppDatabase,
@@ -30,7 +29,7 @@ class UserReviewRepo @Inject constructor(
 
     override suspend fun updateRemoteUserReview(
         userReview: UserReview,
-        bookUpdatedValues: HashMap<String, FieldValue>?,
+        bookUpdatedValues: Map<String, FieldValue>?,
         bookId: String,
         userId: String): Void? {
         return remoteDataSource.updateUserReview(
@@ -45,7 +44,7 @@ class UserReviewRepo @Inject constructor(
 
    override suspend fun updateRemoteUserReviews(
        userReviews: List<UserReview>,
-       bookUpdatedValues: List<HashMap<String, FieldValue>>,
+       bookUpdatedValues: List<Map<String, FieldValue>>,
        userId: String): Void? {
           return remoteDataSource.updateUserReviews(
               userReviews,

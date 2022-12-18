@@ -86,23 +86,22 @@ class WelcomeActivityViewModel @Inject constructor(
         }
     }
 
-    var noOFRetries = 0
-    fun getRemoteUser(): LiveData<RemoteUser?> {
+
+    fun getLiveRemoteUser(): LiveData<RemoteUser?> {
+        return remoteUser
+    }
+
+    fun getRemoteUser() {
          viewModelScope.launch {
              val userId = userAuth.getUserId()
              try {
                  val user = userRepo.getRemoteUser(userId)
                 remoteUser.value = user
              }catch (e:Exception){
-                 if(noOFRetries < 1){
-                     noOFRetries++
-                     return@launch
-                 }
                  remoteUser.value = null
                  ErrorUtil.e(e)
              }
          }
-       return remoteUser
     }
 
 }

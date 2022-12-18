@@ -217,12 +217,13 @@ import javax.inject.Inject
 
 
      override suspend fun updateUserReview(
-         bookUpdatedValues: HashMap<String, FieldValue>?,
+         bookUpdatedValues: Map<String, FieldValue>?,
          userReview: UserReview,
          collection: String,
-         document:String,
+         document: String,
          subCollection: String,
-         subDocument: String): Void? {
+         subDocument: String
+     ): Void? {
          throwNoInternetConnectionError()
          return db.runBatch { batch->
              val reviewDocRef = db.collection(collection).document(document).collection(subCollection).document(subDocument)
@@ -234,7 +235,7 @@ import javax.inject.Inject
              batch.set(reviewDocRef, userReview)
              batch.set(reviewDocRef, reviewDate, SetOptions.merge())
              bookUpdatedValues?.let {
-                 batch.set(bookDynamicAttrDocRef, it, SetOptions.merge())
+                 batch.update(bookDynamicAttrDocRef, it)
              }
          }.await()
 
@@ -246,15 +247,14 @@ import javax.inject.Inject
          collection: String,
          subCollection: String,
          subDocument: String,
-         bookUpdatedValues: List<HashMap<String, FieldValue>>): Void? {
+         bookUpdatedValues: List<Map<String, FieldValue>>): Void? {
          throwNoInternetConnectionError()
        return  db.runBatch { batch->
-             val length = userReviews.size - 1
-             for (i in 0..length){
+             for (i in userReviews.indices){
                  val reviewDocRef = db.collection(collection).document(userReviews[i].bookId).collection(subCollection).document(subDocument)
                  val bookDynamicAttrDocRef = db.collection(collection).document(userReviews[i].bookId)
                  batch.set(reviewDocRef, userReviews[i], SetOptions.merge())
-                 batch.set(bookDynamicAttrDocRef, bookUpdatedValues[i], SetOptions.merge())
+                 batch.update(bookDynamicAttrDocRef, bookUpdatedValues[i])
              }
          }.await()
 

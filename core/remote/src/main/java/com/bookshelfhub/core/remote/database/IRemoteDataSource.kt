@@ -88,7 +88,7 @@ interface IRemoteDataSource {
        collection: String,
        subCollection: String,
        subDocument: String,
-       bookUpdatedValues: List<HashMap<String, FieldValue>>): Void?
+       bookUpdatedValues: List<Map<String, FieldValue>>): Void?
 
    suspend fun addListOfDataAsync(
        collection: String,
@@ -98,7 +98,7 @@ interface IRemoteDataSource {
 
 
     suspend fun updateUserReview(
-        bookUpdatedValues: HashMap<String, FieldValue>?,
+        bookUpdatedValues: Map<String, FieldValue>?,
         userReview: UserReview, collection: String,
         document:String, subCollection: String,
         subDocument: String): Void?

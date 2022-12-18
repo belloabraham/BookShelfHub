@@ -216,7 +216,7 @@ class WelcomeActivity : AppCompatActivity() {
     private fun afterAuthCompletes(isExistingUser:Boolean){
        if (isExistingUser){
             lifecycleScope.launch {
-                welcomeActivityViewModel.getRemoteUser()
+                welcomeActivityViewModel.getLiveRemoteUser()
                     .asFlow()
                     .collect{ remoteUser->
                         val userDataExist = remoteUser !=null
@@ -230,7 +230,9 @@ class WelcomeActivity : AppCompatActivity() {
                         }
                     }
             }
-        }
+
+           welcomeActivityViewModel.getRemoteUser()
+       }
     }
 
     private fun showAnimation(animation: Int = com.bookshelfhub.feature.onboarding.R.raw.loading) {
