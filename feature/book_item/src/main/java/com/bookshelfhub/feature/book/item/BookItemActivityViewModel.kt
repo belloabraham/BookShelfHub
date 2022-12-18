@@ -233,16 +233,17 @@ class BookItemActivityViewModel @Inject constructor(
       val urlNotInReview = !userReview.review.containsUrl(Regex.WEB_LINK_IN_TEXT)
       if (urlNotInReview){
 
-        val data = Data.Builder()
-        data.putString(Book.ID, userReview.bookId)
-        data.putDouble(Book.RATING_DIFF, diffInRating)
+        val data = workDataOf(
+          Book.ID to userReview.bookId,
+          Book.RATING_DIFF to diffInRating
+        )
 
-        val userReviewPostWorker =
-          OneTimeWorkRequestBuilder<PostUserReview>()
+        val userReviewPostWorker = OneTimeWorkRequestBuilder<PostUserReview>()
             .setConstraints(Constraint.getConnected())
-            .setInputData(data.build())
+            .setInputData(data)
             .build()
         worker.enqueue(userReviewPostWorker)
+
       }
     }
   }

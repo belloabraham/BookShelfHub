@@ -87,14 +87,14 @@ class WelcomeActivityViewModel @Inject constructor(
     }
 
     var noOFRetries = 0
-     fun getRemoteUser(): LiveData<RemoteUser?> {
+    fun getRemoteUser(): LiveData<RemoteUser?> {
          viewModelScope.launch {
              val userId = userAuth.getUserId()
              try {
                  val user = userRepo.getRemoteUser(userId)
                 remoteUser.value = user
              }catch (e:Exception){
-                 if(noOFRetries < 3){
+                 if(noOFRetries < 2){
                      noOFRetries++
                      return@launch
                  }

@@ -12,6 +12,7 @@ import com.bookshelfhub.core.datastore.settings.Settings
 import com.bookshelfhub.core.datastore.settings.SettingsUtil
 import com.bookshelfhub.core.model.entities.UserReview
 import com.bookshelfhub.core.remote.database.RemoteDataFields
+import com.bookshelfhub.core.remote.webapi.PerspectiveAPI.getPostBody
 import com.bookshelfhub.core.remote.webapi.wordtoxicityanalyzer.IWordAnalyzerAPI
 import com.google.firebase.firestore.FieldValue
 import dagger.assisted.Assisted
@@ -24,9 +25,7 @@ class PostUserReview @AssistedInject constructor(
     private val userReviewRepo: IUserReviewRepo,
     private val settingsUtil: SettingsUtil,
     private val userAuth: IUserAuth
-): CoroutineWorker(context,
-    workerParams
-){
+): CoroutineWorker(context, workerParams){
 
     override suspend fun doWork(): Result {
 
@@ -35,12 +34,12 @@ class PostUserReview @AssistedInject constructor(
         val userReview  = userReviewRepo.getUserReview(bookId).get()
 
         val userRatingDiff = inputData.getDouble(Book.RATING_DIFF, 0.0)
+
         val userId = userAuth.getUserId()
         val updatedBookValues: HashMap<String, FieldValue>? = getUpdatedBookValues(userReview, userRatingDiff)
 
-
         try {
-             val postBody = com.bookshelfhub.core.remote.webapi.PerspectiveAPI.getPostBody(userReview.review)
+             val postBody = getPostBody(userReview.review)
              val response = wordAnalyzerAPI.analyze(postBody, apiKey)
 
                val requestNotSuccessful = !response.isSuccessful || response.body() == null
@@ -49,13 +48,14 @@ class PostUserReview @AssistedInject constructor(
                }
 
                 val responseBody = response.body()!!
-                val isNonToxicUserReview = responseBody.attributeScores.TOXICITY.summaryScore.value<=0.5
+                val toxicityScore = responseBody.attributeScores.TOXICITY.summaryScore.value
+                val isNonToxicUserReview = toxicityScore <= 0.5
+
                 if (isNonToxicUserReview){
-                    userReviewRepo.updateRemoteUserReview(
-                        userReview, updatedBookValues, bookId, userId)
+                    userReviewRepo.updateRemoteUserReview(userReview, updatedBookValues, bookId, userId)
 
                     if (userReview.isVerified){
-                       userReview.postedBefore = true
+                        userReview.postedBefore = true
                         userReviewRepo.addUserReview(userReview)
                     }
                 }

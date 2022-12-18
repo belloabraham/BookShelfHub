@@ -269,7 +269,7 @@ class BookItemActivity : AppCompatActivity() {
                 bookItemActivityViewModel.review = layout.userReviewEditText.text.toString().escapeJSONSpecialChars()
                 val userName = user.firstName
 
-                var ratingDiff = 0.0
+                var ratingDiff = newRating
                 var postedBefore = false
                 userReview?.let {
                     ratingDiff = newRating - it.userRating
