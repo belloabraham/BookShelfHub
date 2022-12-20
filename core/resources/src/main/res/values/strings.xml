@@ -8,6 +8,10 @@
     <string name="yes">yes</string>
     <string name="no">no</string>
 
+    <string name="go_to_my_books">Go to my books</string>
+
+    <string name="try_again_later">Try again later</string>
+
     <string name="default_bookmark_label">Page %d - %s</string>
 
     <string name="optional_bookmark_label">Bookmark Label (Optional)</string>
@@ -53,8 +57,6 @@
     <string name="history">History</string>
     <string name="politics">Politics</string>
     <string name="entertainment">Entertainment</string>
-
-
 
 
     <string name="profile_updated">Profile updated</string>
@@ -110,7 +112,7 @@
     <string name="earnings_connection_error">Error no internet connection.</string>
 
     <!-- TODO: Payment Verification Worker-->
-    <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again after some time.</string>
+    <string name="payment_unsuccessful">Sorry your payment transaction was unsuccessful, try again later.</string>
     <string name="payment_unsuccessful_title">Error processing your transaction</string>
 
     <string name="location_not_supported">Your location or region is not yet supported for book purchase at the moment.</string>
@@ -142,8 +144,11 @@
     <string name="payment_error">There was an error processing your payment</string>
     <string name="by">By: %s</string>
     <string name="undo">undo</string>
-    <string name="transaction_processing">Your payment transaction is being verified, you will get a notification about your payment transaction status in a short time, please do not repeat book purchase, while verifying your payment.</string>
+<!--    <string name="transaction_processing">Your payment transaction is being verified, you will get a notification about your payment transaction status in a short time, please do not repeat book purchase, while verifying your payment.</string>-->
     <string name="processing_transaction">Processing payment transaction</string>
+
+    <string name="processing_trans_msg">Processing payment transaction. Please wait</string>
+
 
     <string name="transaction_failed">Transaction failed</string>
 

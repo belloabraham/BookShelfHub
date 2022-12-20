@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ListAdapter
+import androidx.work.WorkInfo
 import co.paystack.android.Paystack
 import co.paystack.android.Transaction
 import com.bookshelfhub.book.purchase.R
@@ -20,9 +21,11 @@ import com.bookshelfhub.book.purchase.adapters.PaymentCardsAdapter
 import com.bookshelfhub.book.purchase.databinding.FragmentSavedCardsBinding
 import com.bookshelfhub.core.common.helpers.Json
 import com.bookshelfhub.core.common.helpers.dialog.AlertDialogBuilder
+import com.bookshelfhub.core.common.worker.Worker
 import com.bookshelfhub.core.model.entities.PaymentCard
 import com.bookshelfhub.payment.*
 import com.bookshelfhub.payment.pay_stack.PayStack
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.WithFragmentBindings
 import kotlinx.coroutines.launch
@@ -41,6 +44,9 @@ class SavedCardsFragment : Fragment(){
 
     @Inject
     lateinit var json: Json
+    @Inject
+    lateinit var worker: Worker
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,8 +81,7 @@ class SavedCardsFragment : Fragment(){
                 layout.paymentCardsRecView.adapter = paymentCardsAdapter!!
 
                 layout.addNewCardBtn.setOnClickListener {
-                    val actionCardInfo =
-                        SavedCardsFragmentDirections.actionSavedCardsFragmentToCardInfoFragment()
+                    val actionCardInfo = SavedCardsFragmentDirections.actionSavedCardsFragmentToCardInfoFragment()
                     findNavController().navigate(actionCardInfo)
                 }
 
@@ -90,6 +95,11 @@ class SavedCardsFragment : Fragment(){
                         paymentCardsAdapter!!.submitList(savedPaymentCards)
                     }
                 }
+
+                layout.myBooksBtn.setOnClickListener {
+                    ProcessPhoenix.triggerRebirth(requireContext().applicationContext)
+                }
+
 
         return layout.root
     }
@@ -137,6 +147,7 @@ class SavedCardsFragment : Fragment(){
 
     }
 
+
     private fun getPayStackPaymentCallBack(): Paystack.TransactionCallback {
 
         return object : Paystack.TransactionCallback{
@@ -155,8 +166,44 @@ class SavedCardsFragment : Fragment(){
 
                     cartFragmentViewModel.initializePaymentVerificationProcess(paymentTransaction)
 
-                    //Show user a message that their transaction is processing and close Cart activity when the click ok
-                    showPaymentProcessingMsg()
+                    worker.getWorkInfoByIdLiveDataByTag(it.reference).observe(viewLifecycleOwner){ workInfoList->
+
+
+                        if( workInfoList[0].state == WorkInfo.State.CANCELLED){
+                            layout.progressBarLayout.visibility = GONE
+                            layout.paymentCardsRecView.visibility = VISIBLE
+
+                            layout.myBooksBtn.visibility = GONE
+                            layout.progressBar.visibility = VISIBLE
+
+                        }
+
+                        if( workInfoList[0].state == WorkInfo.State.SUCCEEDED){
+                            layout.paymentCardsRecView.visibility = GONE
+                            layout.progressBarLayout.visibility = VISIBLE
+
+                            layout.progressMsgTxt.text = getString(R.string.payment_successful)
+
+                            layout.myBooksBtn.visibility = VISIBLE
+                            layout.progressBar.visibility = GONE
+                        }
+
+
+                        if( workInfoList[0].state == WorkInfo.State.ENQUEUED){
+                            layout.paymentCardsRecView.visibility = GONE
+                            layout.progressBarLayout.visibility = VISIBLE
+
+                            layout.progressMsgTxt.text = getString(R.string.processing_trans_msg)
+
+                            layout.myBooksBtn.visibility = GONE
+                            layout.progressBar.visibility = VISIBLE
+                        }
+
+                        if( workInfoList[0].state == WorkInfo.State.FAILED){
+                            showTransactionFailedMsg(getString(R.string.payment_unsuccessful))
+                        }
+                    }
+
                 }
 
             }
@@ -165,7 +212,7 @@ class SavedCardsFragment : Fragment(){
 
             override fun onError(error: Throwable?, transaction: Transaction?) {
                 error?.let {
-                    showTransactionFailedMsg( it.localizedMessage)
+                    showTransactionFailedMsg(it.localizedMessage?.plus(". ").plus(getString(R.string.try_again_later)))
                 }
             }
 
@@ -178,7 +225,7 @@ class SavedCardsFragment : Fragment(){
                 .setCancelable(false)
                 .setPositiveAction(R.string.ok){}
                 .build()
-                .showDialog(R.string.transaction_failed)
+                .showDialog(R.string.payment_unsuccessful_title)
         }
     }
 
@@ -190,14 +237,5 @@ class SavedCardsFragment : Fragment(){
             .showDialog(R.string.unsupported_currency)
     }
 
-    private fun showPaymentProcessingMsg(){
-        AlertDialogBuilder.with(R.string.transaction_processing, requireActivity())
-            .setCancelable(false)
-            .setPositiveAction(R.string.ok){
-                requireActivity().finish()
-            }
-            .build()
-            .showDialog(R.string.processing_transaction)
-    }
 
 }

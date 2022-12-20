@@ -79,7 +79,6 @@ class CartFragmentsViewModel @Inject constructor(
 
   fun initializePaymentVerificationProcess(paymentTransactions:List<PaymentTransaction>){
     viewModelScope.launch {
-
       paymentTransactionRepo.initializePaymentVerificationProcess(
         paymentTransactions,
         currencyToChargeForBooksSale,

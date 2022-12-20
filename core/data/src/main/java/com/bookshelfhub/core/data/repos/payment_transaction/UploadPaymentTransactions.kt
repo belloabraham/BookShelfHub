@@ -134,8 +134,14 @@ class UploadPaymentTransactions @AssistedInject constructor(
 
           cartItemsRepo.deleteFromCart(listOfBookIdsToBeDeletedFromCart)
 
-          //Required by bookshelf tab to know if user just purchase new books
-          settingsUtil.setBoolean(Book.IS_NEWLY_PURCHASED, true)
+          val newlyPurchasedBooks = getNewlyOrderedBooks(userId)
+
+          if(newlyPurchasedBooks.isNotEmpty()){
+              orderedBooksRepo.addOrderedBooks(newlyPurchasedBooks)
+          }else{
+              //Required by bookshelf tab to know if user just purchase new books
+              settingsUtil.setBoolean(Book.IS_NEWLY_PURCHASED, true)
+          }
 
           Result.success()
 
@@ -143,11 +149,20 @@ class UploadPaymentTransactions @AssistedInject constructor(
             val message = String.format(applicationContext.getString(R.string.unable_to_process_payment), e.message)
             showNotification(message, R.string.payment_trans_failed)
             ErrorUtil.e(e)
-            return Result.success()
+            return Result.failure()
         } finally {
             paymentTransactionRepo.deletePaymentTransactions(paymentTransactions)
             Result.success()
         }
+    }
+
+
+    private suspend fun getNewlyOrderedBooks(userId: String): List<OrderedBook> {
+        val lastOrderedBookSN = orderedBooksRepo.getTotalNoOfOrderedBooks()
+        return orderedBooksRepo.getRemoteListOfOrderedBooks(
+            userId,
+            lastOrderedBookSN.toLong()
+        )
     }
 
     private  fun getPaymentCLoudFunctionToBeCalled(paymentSDK:String): String? {

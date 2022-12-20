@@ -12,6 +12,8 @@ android {
 dependencies {
 
     implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")
+    implementation(libs.com.jakewharton.phoenix)
+
 
     implementation(libs.firebase.bom)
     implementation(libs.firebase.functions.ktx)

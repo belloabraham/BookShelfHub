@@ -2,7 +2,6 @@ package com.bookshelfhub.core.data.repos.payment_transaction
 
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.workDataOf
 import com.bookshelfhub.core.common.worker.Constraint
 import com.bookshelfhub.core.database.AppDatabase
@@ -47,7 +46,6 @@ class PaymentTransactionRepo @Inject constructor(
             OneTimeWorkRequestBuilder<UploadPaymentTransactions>()
                 .setConstraints(Constraint.getConnected())
                 .setInputData(workData)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .build()
         worker.enqueueUniqueWork(tag = transactionRef, ExistingWorkPolicy.KEEP,  oneTimeVerifyPaymentTrans)
     }

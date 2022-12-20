@@ -3,7 +3,6 @@ package com.bookshelfhub.core.common.worker
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.work.*
-import java.util.*
 
 class Worker(private val  context: Context){
 
@@ -19,11 +18,8 @@ class Worker(private val  context: Context){
         WorkManager.getInstance(context).enqueueUniqueWork(tag, workPolicy, workReq)
     }
 
-    fun getWorkInfoById(id:UUID){
-        WorkManager.getInstance(context).getWorkInfoById(id)
-    }
 
-    fun getWorkInfoByIdLiveData(id:UUID): LiveData<WorkInfo> {
-       return WorkManager.getInstance(context).getWorkInfoByIdLiveData(id)
+    fun getWorkInfoByIdLiveDataByTag(tag:String): LiveData<MutableList<WorkInfo>> {
+        return WorkManager.getInstance(context).getWorkInfosByTagLiveData(tag)
     }
 }
