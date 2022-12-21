@@ -75,7 +75,7 @@ class SplashActivity : AppCompatActivity() {
 
                     val domainPrefixLen = getString(R.string.replace_dlink_deeplink_domain).length
                     val stringUri = uri.toString()
-                    aCollaboratorOrUserReferralId = getUriData(stringUri, domainPrefixLen)
+                    aCollaboratorOrUserReferralId = getUriData(stringUri, startIndex = domainPrefixLen)
 
                     startNextActivityWith(intent, aCollaboratorOrUserReferralId)
 
