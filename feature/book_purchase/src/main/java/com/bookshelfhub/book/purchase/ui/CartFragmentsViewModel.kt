@@ -1,6 +1,7 @@
 package com.bookshelfhub.book.purchase.ui
 
 import androidx.lifecycle.*
+import androidx.work.OneTimeWorkRequest
 import com.bookshelfhub.core.authentication.IUserAuth
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.data.repos.cartitems.ICartItemsRepo
@@ -77,15 +78,13 @@ class CartFragmentsViewModel @Inject constructor(
     return totalEarnings
   }
 
-  fun initializePaymentVerificationProcess(paymentTransactions:List<PaymentTransaction>){
-    viewModelScope.launch {
-      paymentTransactionRepo.initializePaymentVerificationProcess(
+  suspend fun initializePaymentVerificationProcess(paymentTransactions:List<PaymentTransaction>): OneTimeWorkRequest {
+     return paymentTransactionRepo.initializePaymentVerificationProcess(
         paymentTransactions,
         currencyToChargeForBooksSale,
         paymentSDKType!!,
         subtractedUserEarnings
       )
-    }
   }
 
   fun getListOfCartItemsAfterUserEarningsFromReferrals(): LiveData<List<CartItem>> {

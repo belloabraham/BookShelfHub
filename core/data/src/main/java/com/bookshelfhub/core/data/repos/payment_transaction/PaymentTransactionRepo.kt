@@ -1,6 +1,7 @@
 package com.bookshelfhub.core.data.repos.payment_transaction
 
 import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.workDataOf
 import com.bookshelfhub.core.common.worker.Constraint
@@ -27,7 +28,7 @@ class PaymentTransactionRepo @Inject constructor(
         currencyToChargeForBookSale:String,
         paymentSDKType: PaymentSDKType,
         subtractedUserEarnings:Double
-    ) {
+    ): OneTimeWorkRequest {
 
         withContext(ioDispatcher){
             paymentTransactionDao.insertAllOrReplace(paymentTransactions)
@@ -48,6 +49,8 @@ class PaymentTransactionRepo @Inject constructor(
                 .setInputData(workData)
                 .build()
         worker.enqueueUniqueWork(tag = transactionRef, ExistingWorkPolicy.KEEP,  oneTimeVerifyPaymentTrans)
+
+        return oneTimeVerifyPaymentTrans
     }
 
     override suspend fun getPaymentTransactions(transactionRef:String): List<PaymentTransaction> {

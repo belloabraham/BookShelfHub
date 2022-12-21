@@ -5,6 +5,27 @@ import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.WordUtils
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
+
+/**
+ * Replaces all new line characters namely \n,\t,\r,
+ */
+@JvmSynthetic
+fun String.splitBy(value:Char): ArrayList<String> {
+    val result = arrayListOf<String>()
+    val string = StringBuilder()
+    for (char in this){
+        if(char != value){
+            string.append(char)
+        }else{
+            result.add(string.toString())
+            string.clear()
+        }
+    }
+    result.add(string.toString())
+    return result
+}
+
 
 /**
  * Replaces all new line characters namely \n,\t,\r,

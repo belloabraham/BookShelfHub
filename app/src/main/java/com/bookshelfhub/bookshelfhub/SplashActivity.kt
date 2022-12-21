@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.bookshelfhub.feature.onboarding.WelcomeActivity
 import com.bookshelfhub.feature.home.MainActivity
+import com.bookshelfhub.core.resources.R
 
 
 @SuppressLint("CustomSplashScreen")
@@ -67,22 +68,37 @@ class SplashActivity : AppCompatActivity() {
 
     private fun getCollaboratorOrUserReferralLink(intent:Intent){
         var aCollaboratorOrUserReferralId:String?=null
-
         dynamicLink.getDeepLinkFromDynamicLinkAsync(this){ uri ->
-            val userLaunchedAppByClickingALink = uri != null
 
-            if(userLaunchedAppByClickingALink){
-                val deeplinkDomainPrefix = String.format(getString(R.string.dlink_deeplink_domain), "").trim()
+                val userLaunchedAppByClickingALink = uri != null
+                if(userLaunchedAppByClickingALink){
 
-                aCollaboratorOrUserReferralId = uri.toString().replace(deeplinkDomainPrefix,"").trim()
+                    val domainPrefixLen = getString(R.string.replace_dlink_deeplink_domain).length
+                    val stringUri = uri.toString()
+                    aCollaboratorOrUserReferralId = getUriData(stringUri, domainPrefixLen)
 
-                startNextActivityWith(intent, aCollaboratorOrUserReferralId)
+                    startNextActivityWith(intent, aCollaboratorOrUserReferralId)
 
-            }else{
-                startNextActivityWith(intent, aCollaboratorOrUserReferralId)
-            }
+                }else{
+                    startNextActivityWith(intent, aCollaboratorOrUserReferralId)
+                }
         }
+
     }
+
+
+    private  fun getUriData(uri:String, startIndex:Int): String {
+        val result = StringBuilder()
+        var index = 0
+        for (char in uri){
+            if(index >= startIndex){
+                result.append(char)
+            }
+            index++
+        }
+        return result.toString()
+    }
+
 
     private fun startNextActivityWith(intent:Intent, aCollaboratorOrUserReferralId:String?){
         intent.putExtra(Referrer.ID, aCollaboratorOrUserReferralId)

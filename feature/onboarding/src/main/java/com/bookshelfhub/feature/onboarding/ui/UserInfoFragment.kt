@@ -13,11 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bookshelfhub.core.resources.R
-import com.bookshelfhub.core.common.extensions.isValidEmailAddress
-import com.bookshelfhub.core.common.extensions.isPhoneNumber
 import com.bookshelfhub.core.authentication.AuthType
 import com.bookshelfhub.core.authentication.IUserAuth
-import com.bookshelfhub.core.common.extensions.purifyJSONString
+import com.bookshelfhub.core.common.extensions.*
 import com.bookshelfhub.core.common.helpers.KeyboardUtil
 import com.bookshelfhub.core.common.helpers.utils.AppUtil
 import com.bookshelfhub.core.common.helpers.utils.DeviceUtil
@@ -143,7 +141,7 @@ class UserInfoFragment : Fragment() {
                     var userReferralId:String? = null
 
                     if(optionalUserReferralId != null){
-                        val userReferralIdAndCurrency = optionalUserReferralId.split(Referrer.SEPARATOR)
+                        val userReferralIdAndCurrency = optionalUserReferralId.splitBy(Referrer.SEPARATOR[0])
                         val referralCurrency = userReferralIdAndCurrency[1]
                         if(referralCurrency == user.earningsCurrency){
                             userReferralId = userReferralIdAndCurrency[0]

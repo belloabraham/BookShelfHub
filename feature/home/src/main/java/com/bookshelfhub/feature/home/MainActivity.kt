@@ -5,12 +5,12 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bookshelfhub.core.common.helpers.google.InAppUpdate
+import com.bookshelfhub.core.data.Book
 import com.bookshelfhub.feature.home.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.install.model.InstallStatus
 import dagger.hilt.android.AndroidEntryPoint
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import com.bookshelfhub.core.dynamic_link.Referrer
 import com.bookshelfhub.feature.book.item.BookItemActivity
 import com.bookshelfhub.feature.home.adapters.viewpager.ViewPagerAdapter
 import com.bookshelfhub.feature.home.ui.bookmark.BookmarkFragment
@@ -36,13 +36,14 @@ class MainActivity : AppCompatActivity() {
         checkForNewAppUpdate(inAppUpdate)
 
 
-        mainActivityViewModel.getBookIdFromACollaboratorReferrerId()?.let { bookId->
-            /*
-            Book Id will exist if collaborator Id exist
-            Normal user referrer id does not make it here but in onboarding module  an is only considered if user is signing up for the first time
-            */
-            openBookInBookStore(bookId)
-        }
+            mainActivityViewModel.getBookIdFromACollaboratorReferrerId()?.let { bookId->
+                /*
+                Book Id will exist if collaborator Id exist
+                Normal user referrer id does not make it here but in onboarding module  an is only considered if user is signing up for the first time
+                */
+                    openBookInBookStore(bookId)
+            }
+
 
         mainActivityViewModel.getSelectedIndex().observe(this) {
             layout.bottomBar.selectTabAt(it, true)
@@ -122,7 +123,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openBookInBookStore(bookId:String){
         val intent = Intent(this, BookItemActivity::class.java)
-        intent.putExtra(Referrer.BOOK_REFERRED, bookId)
+        intent.putExtra(Book.ID, bookId)
         startActivity(intent)
     }
 

@@ -5,6 +5,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import com.bookshelfhub.core.authentication.Auth
 import com.bookshelfhub.core.authentication.IUserAuth
+import com.bookshelfhub.core.common.extensions.splitBy
 import com.bookshelfhub.core.common.helpers.ErrorUtil
 import com.bookshelfhub.core.common.helpers.utils.ConnectionUtil
 import com.bookshelfhub.core.common.worker.Constraint
@@ -66,7 +67,7 @@ class MainActivityViewModel @Inject constructor(
         val referrerIsACollaborator = aCollaboratorOrUserReferralId != null && aCollaboratorOrUserReferralId.length > referrerIdAndEarningsCurrencyLength
 
         if(referrerIsACollaborator){
-            val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.split(Referrer.SEPARATOR)
+            val collaboratorAndBookId = aCollaboratorOrUserReferralId!!.splitBy(Referrer.SEPARATOR[0])
             val collaboratorId = collaboratorAndBookId[0]
             val bookId = collaboratorAndBookId[1]
             val collaborator = Collaborator(collaboratorId, bookId, 0.0)

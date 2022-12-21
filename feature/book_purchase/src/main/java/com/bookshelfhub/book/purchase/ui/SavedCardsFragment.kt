@@ -164,49 +164,53 @@ class SavedCardsFragment : Fragment(){
                         paymentTransaction[i].transactionReference = it.reference
                     }
 
-                    cartFragmentViewModel.initializePaymentVerificationProcess(paymentTransaction)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                      val paymentTransOnetimeWorkReq =  cartFragmentViewModel.initializePaymentVerificationProcess(paymentTransaction)
 
-                    worker.getWorkInfoByIdLiveDataByTag(it.reference).observe(viewLifecycleOwner){ workInfoList->
+                        val workId = paymentTransOnetimeWorkReq.id
+                        val livePaymentTransWork = worker.getWorkInfoLiveDataByID(workId)
 
+                        livePaymentTransWork.observe(viewLifecycleOwner){ workInfo->
 
-                        if( workInfoList[0].state == WorkInfo.State.CANCELLED){
-                            layout.progressBarLayout.visibility = GONE
-                            layout.paymentCardsRecView.visibility = VISIBLE
+                            if( workInfo.state == WorkInfo.State.CANCELLED){
+                                layout.progressBarLayout.visibility = GONE
+                                layout.paymentCardsRecView.visibility = VISIBLE
 
-                            layout.myBooksBtn.visibility = GONE
-                            layout.progressBar.visibility = VISIBLE
+                                layout.myBooksBtn.visibility = GONE
+                                layout.progressBar.visibility = VISIBLE
+                            }
 
+                            if( workInfo.state == WorkInfo.State.SUCCEEDED){
+                                layout.paymentCardsRecView.visibility = GONE
+                                layout.progressBarLayout.visibility = VISIBLE
+
+                                layout.progressMsgTxt.text = getString(R.string.payment_successful)
+
+                                layout.myBooksBtn.visibility = VISIBLE
+                                layout.progressBar.visibility = GONE
+                            }
+
+                            if( workInfo.state == WorkInfo.State.ENQUEUED){
+                                layout.paymentCardsRecView.visibility = GONE
+                                layout.progressBarLayout.visibility = VISIBLE
+
+                                layout.progressMsgTxt.text = getString(R.string.processing_trans_msg)
+
+                                layout.myBooksBtn.visibility = GONE
+                                layout.progressBar.visibility = VISIBLE
+                            }
+
+                            if(workInfo.state == WorkInfo.State.FAILED){
+                                showTransactionFailedMsg(getString(R.string.payment_unsuccessful))
+                            }
                         }
 
-                        if( workInfoList[0].state == WorkInfo.State.SUCCEEDED){
-                            layout.paymentCardsRecView.visibility = GONE
-                            layout.progressBarLayout.visibility = VISIBLE
-
-                            layout.progressMsgTxt.text = getString(R.string.payment_successful)
-
-                            layout.myBooksBtn.visibility = VISIBLE
-                            layout.progressBar.visibility = GONE
-                        }
-
-
-                        if( workInfoList[0].state == WorkInfo.State.ENQUEUED){
-                            layout.paymentCardsRecView.visibility = GONE
-                            layout.progressBarLayout.visibility = VISIBLE
-
-                            layout.progressMsgTxt.text = getString(R.string.processing_trans_msg)
-
-                            layout.myBooksBtn.visibility = GONE
-                            layout.progressBar.visibility = VISIBLE
-                        }
-
-                        if( workInfoList[0].state == WorkInfo.State.FAILED){
-                            showTransactionFailedMsg(getString(R.string.payment_unsuccessful))
-                        }
                     }
 
                 }
 
             }
+
 
             override fun beforeValidate(transaction: Transaction?) {}
 

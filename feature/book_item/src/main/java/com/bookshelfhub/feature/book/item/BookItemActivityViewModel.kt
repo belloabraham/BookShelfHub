@@ -63,8 +63,8 @@ class BookItemActivityViewModel @Inject constructor(
   private var orderedBook: LiveData<Optional<OrderedBook>> = MutableLiveData()
 
   private val userId = userAuth.getUserId()
-  private val title = savedState.get<String>(Book.NAME)!!
-  private val author = savedState.get<String>(Book.AUTHOR)!!
+  private val title = savedState.get<String>(Book.NAME)
+  private val author = savedState.get<String>(Book.AUTHOR)
   private val bookId = savedState.get<String>(Book.ID)!!
   private val isSearchItem = savedState.get<Boolean>(Book.IS_SEARCH_ITEM)?:false
   private var bookShareUrl: String? = null
@@ -90,8 +90,8 @@ class BookItemActivityViewModel @Inject constructor(
 
     if (isSearchItem){
       val searchHistory = StoreSearchHistory(
-        bookId, title, userAuth.getUserId(),
-        author, DateTimeUtil.getDateTimeAsString()
+        bookId, title!!, userAuth.getUserId(),
+        author!!, DateTimeUtil.getDateTimeAsString()
       )
       addStoreSearchHistory(searchHistory)
     }

@@ -68,6 +68,7 @@ dependencies {
     implementation(project(":core:model"))
     implementation(project(":core:remote"))
     implementation(project(":core:payment"))
+    implementation(project(":core:resources"))
     implementation(project(":feature:book_reviews"))
     implementation(project(":feature:book_page"))
     implementation(project(":feature:onboarding"))
